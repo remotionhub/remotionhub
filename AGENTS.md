@@ -1,0 +1,104 @@
+<!-- intent-skills:start -->
+## Skill Loading
+
+Before substantial work:
+- Skill check: run `npx @tanstack/intent@latest list`, or use skills already listed in context.
+- Skill guidance: if one local skill clearly matches the task, run `npx @tanstack/intent@latest load <package>#<skill>` and follow the returned `SKILL.md`.
+- Monorepos: when working across packages, run the skill check from the workspace root and prefer the local skill for the package being changed.
+- Multiple matches: prefer the most specific local skill for the package or concern you are changing; load additional skills only when the task spans multiple packages or concerns.
+<!-- intent-skills:end -->
+
+# AGENTS.md
+
+TanStack Start blank app (React, file-based routing, Tailwind CSS v4).
+
+## Scaffolding
+
+- CLI command: `npx @tanstack/cli@latest create my-tanstack-app --agent`
+- Intent commands run: `npx @tanstack/intent@latest install`, `npx @tanstack/intent@latest list`
+- Stack: React 19, TanStack Start, TanStack Router (file-based), Tailwind CSS v4, Vitest 4, TypeScript 6, Vite 8
+- Toolchain: default CLI toolchain (npm)
+- No extra integrations or feature scaffolding beyond the blank starter
+
+## Project Structure & Module Organization
+
+- `src/` — TanStack Start app code (routes, components, styles).
+- `src/routes/` — file-based routes (`__root.tsx`, `index.tsx`, `about.tsx`).
+- `src/components/` — shared UI components (Header, Footer, ThemeToggle).
+- `docs/` — documentation.
+- `public/` — static assets (favicon, logos, manifest, robots.txt).
+- `.vscode/` — editor settings (routeTree.gen.ts excluded from search/watch).
+
+## Durable Intent & Specs
+
+- Use `specs/` to persist system/subsystem intent, invariants, and design rationale that future agents should preserve.
+- Keep intended behavior for security-sensitive flows there, especially moderation, upload gating, scanner outcomes, appeals, bans, ownership, package installability, and API trust boundaries.
+- If code changes reveal or change how a subsystem is supposed to work, update the relevant spec or add a focused spec note instead of burying the intent only in PR text or public docs.
+- Keep `docs/` user/operator-facing: explain current behavior and commands there, but put internal “why this must work this way” context in `specs/`.
+
+## Build, Test, and Development Commands
+
+Keep this section as the command map agents normally need, not a full `package.json` script index.
+
+- `npm run dev` — foreground local app server at `http://localhost:3000`.
+- `npm run build` — production build (Vite + Nitro SSR).
+- `npm run preview` — preview production build locally.
+- `npm run test` — Vitest test suite.
+- `npm run generate-routes` — regenerate TanStack Router route tree (`routeTree.gen.ts`).
+
+## Coding Style & Naming Conventions
+
+- TypeScript strict; ESM.
+- Indentation: 2 spaces, single quotes (Biome).
+- Lint/format: Biome + oxlint (type-aware).
+- Convex function names: verb-first (`getBySlug`, `publishVersion`).
+- Inline code comments: add brief comments for tricky, bug-prone, or previously buggy logic.
+
+## Testing Guidelines
+
+- Framework: Vitest 4 + jsdom.
+- Tests live in `src/**` and `convex/lib/**`.
+- Coverage threshold: 80% global (lines/functions/branches/statements).
+
+## Commit & Pull Request Guidelines
+
+- Commit messages: Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`…).
+- Keep changes scoped; avoid repo-wide search/replace.
+- Before commit/PR handoff, run `bun run ci:static` so formatting, linting, audit/peer checks, and dead-code export checks match the CI `static` job. For faster inner loops, targeted `bun run format:check -- <files>` / `bun run lint` are fine, but do not treat them as the final pre-push gate.
+- Before commit/PR handoff for non-trivial code changes, use `$autoreview` until no accepted/actionable findings remain, unless equivalent manual review already happened, the change is trivial/docs-only, or the user opts out.
+- Before opening a PR for source or test changes, run the targeted tests for the touched behavior and `bun run ci:unit` (`VITE_CONVEX_URL=https://example.invalid bun run coverage`) unless the change is docs/config-only or the user explicitly asks to rely on CI. For runtime, build, or package changes, also run the matching broader gate when it covers the touched surface: `bun run ci:types-build`, `bun run ci:packages`, `bun run ci:e2e-http`, or `bun run ci:playwright-smoke`.
+- PRs: include summary + test commands run. Add screenshots for UI changes.
+- Screenshot proof MUST come from a real running RemotionHub instance in a real browser. Do not use generated HTML mockups, synthetic terminal cards, or manually composed images as proof. For route/status/backend visibility bugs, run RemotionHub locally with the relevant Convex code and fixture state, capture the actual browser page, and state the local URL and fixture used.
+- Before merging any PR, verify TypeScript cleanly with `bunx tsc -p packages/schema/tsconfig.json --noEmit` and `bunx tsc -p packages/remotionhub/tsconfig.json --noEmit`; if Convex code changed, also run the repo typecheck path used by deploy so `bunx convex deploy` will not fail on `tsc`.
+- GitHub comments: for multiline `gh` comments/close messages, use `--body-file`, `--input`, or stdin/heredoc with real newlines; never pass literal `\\n` in shell strings.
+- Repo-local developer skills under `.agents/skills/` are allowed only when they are RemotionHub-specific, such as Convex, moderation, PR maintainer, or UI proof workflows. Keep generic shared skills such as `crabbox` and `autoreview` in the global `agent-skills` install, not this repo. Keep top-level `skills/` reserved for installed/published skill content and ignored by git.
+
+## Production Release
+
+- Production deploys are manual-only. Merging to `main` does **not** deploy.
+- To release production, start the GitHub Actions `Deploy` workflow from `main`:
+  `gh workflow run deploy.yml --repo tangwz/remotionhub --ref main`
+- The workflow supports `full`, `backend`, and `frontend` targets.
+- `frontend` currently means: wait for the Vercel production deploy for the selected `main` SHA, then run production smoke checks. It does not call `vercel deploy` directly yet.
+- The workflow uses the GitHub `Production` environment for deploy secrets, but it does not require a separate approval step.
+- Prod deploy secrets live on the `Production` environment, not as ordinary repo secrets. Required: `CONVEX_DEPLOY_KEY`. Optional: `PLAYWRIGHT_AUTH_STORAGE_STATE_JSON`.
+- CLI npm releases are also manual-only and tag-based. Stable tags only: `vX.Y.Z`. Start `RemotionHub CLI NPM Release` from `main`, first with `preflight_only=true`, then rerun it with the same tag and the successful `preflight_run_id`.
+- Real CLI publishes wait at the GitHub `npm-release` environment and use npm trusted publishing. Required npm trusted publisher settings: repository `tangwz/remotionhub`, workflow `remotionhub-cli-npm-release.yml`, environment `npm-release`.
+
+## Git Notes
+
+- If `git branch -d/-D <branch>` is policy-blocked, delete the local ref directly: `git update-ref -d refs/heads/<branch>`.
+
+## URL Quick Reference
+
+- Canonical site: `https://remotionhub.ai` (prefer this over legacy domains).
+- Remotion page URL format: `https://remotionhub.ai/<owner>/<slug>` (owner handle preferred; falls back to owner id).
+- Remotion API detail URL: `https://remotionhub.ai/api/v1/remotion/<slug>`.
+- Remotion file URL: `https://remotionhub.ai/api/v1/remotion/<slug>/file?path=README.md`.
+- For “full URL?” requests, return the canonical page URL first, then API URL if useful.
+
+## Configuration & Security
+
+- Local env: `.env.local` (never commit secrets).
+- Convex env holds JWT keys; Vercel only needs `VITE_CONVEX_URL` + `VITE_CONVEX_SITE_URL`.
+- OAuth: GitHub OAuth App credentials required for login.
