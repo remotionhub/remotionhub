@@ -1,0 +1,41 @@
+{
+  "publisher": "terence",
+  "runtime": "hyperframes",
+  "slug": "lower-third-pack",
+  "displayName": "Lower Third Pack",
+  "summary": "HyperFrames lower thirds for tutorial and launch videos.",
+  "categories": ["lower-third", "social"],
+  "tags": ["hyperframes", "caption", "social"],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial release with three lower-third styles.",
+      "preview": {
+        "thumbnailUrl": "https://pub-1cc20f8a898349ab9b2823b040fcd0b8.r2.dev/showcase/transition-slide-push/thumb.jpg",
+        "previewVideoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-slide-push"
+      },
+      "metadata": {
+        "runtime": "hyperframes",
+        "entryPoint": "src/lower-third.html",
+        "aspectRatios": ["16:9"],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": ["caption", "social"],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "tangwz/remotionhub-assets",
+          "ref": "v1.0.0",
+          "commit": "def456abc123",
+          "path": "hyperframes/lower-third-pack"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy the HyperFrames composition folder and register the HTML entry in your HyperFrames project.",
+        "agentPrompt": "Add the Lower Third Pack from tangwz/remotionhub-assets at hyperframes/lower-third-pack to my HyperFrames project. Keep the timing and editable text slots intact."
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "kinetic-title-pack",
+  "displayName": "Kinetic Title Pack",
+  "summary": "Image-led Remotion title animations for product videos.",
+  "categories": ["title", "motion-graphics"],
+  "tags": ["remotion", "text", "intro"],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial release with title animation variants.",
+      "preview": {
+        "thumbnailUrl": "https://pub-1cc20f8a898349ab9b2823b040fcd0b8.r2.dev/showcase/transition-fade-cross/thumb.jpg",
+        "previewVideoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-fade-cross"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/KineticTitlePack.tsx",
+        "aspectRatios": ["16:9", "9:16"],
+        "durationFrames": 180,
+        "fps": 30
+      },
+      "tags": ["text", "intro", "motion"],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "tangwz/remotionhub-assets",
+          "ref": "v1.0.0",
+          "commit": "abc123def456",
+          "path": "remotion/kinetic-title-pack"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy the component folder into your Remotion project and import `KineticTitlePack` from `src/KineticTitlePack.tsx`.",
+        "agentPrompt": "Add the Kinetic Title Pack from tangwz/remotionhub-assets at remotion/kinetic-title-pack to my Remotion project. Preserve the exported component API and wire it into my composition."
+      }
+    }
+  ]
+}
