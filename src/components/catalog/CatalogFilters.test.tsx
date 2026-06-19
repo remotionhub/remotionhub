@@ -69,7 +69,9 @@ describe('CatalogFilters', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'transition (17)' }))
 
     expect(onCategoryChange).toHaveBeenCalledWith('transition')
+    expect(screen.getByText('Tags')).toBeTruthy()
     expect(screen.getByText('minimal').tagName).toBe('SPAN')
+    expect(screen.queryByText('All tags')).toBeNull()
     expect(screen.queryByRole('button', { name: 'minimal' })).toBeNull()
   })
 

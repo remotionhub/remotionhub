@@ -211,11 +211,25 @@ pre code {
 }
 
 .catalog-filter-row,
-.catalog-tag-row {
+.catalog-tag-list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
+}
+
+.catalog-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.catalog-tag-row-label {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  font-weight: 650;
 }
 
 .filter-chip {
@@ -244,10 +258,6 @@ pre code {
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
-}
-
-.tag-chip-label {
-  background: var(--muted);
 }
 
 .catalog-grid {
