@@ -1,43 +1,64 @@
-import { ToggleGroup, ToggleGroupItem } from '#/components/ui/toggle-group'
 import { useI18n } from '#/components/I18nProvider'
-import type { Runtime } from '#/lib/catalog'
+
+export type CatalogFilterOption = {
+  value: string
+  label: string
+  count?: number
+}
 
 export default function CatalogFilters({
-  runtime,
   categories,
+  tags,
   selectedCategory,
   onCategoryChange,
 }: {
-  runtime?: Runtime
-  categories: string[]
+  categories: CatalogFilterOption[]
+  tags: CatalogFilterOption[]
   selectedCategory?: string
   onCategoryChange: (category?: string) => void
 }) {
   const { t } = useI18n()
-  const runtimeLabel =
-    runtime === 'remotion'
-      ? t('filters.remotionCatalog')
-      : t('filters.hyperframesCatalog')
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <span>{runtime ? runtimeLabel : t('filters.allRuntimes')}</span>
-      </div>
-      <ToggleGroup
-        value={[selectedCategory ?? 'all']}
-        onValueChange={(value) =>
-          onCategoryChange(value[0] && value[0] !== 'all' ? value[0] : undefined)
-        }
-        className="flex flex-wrap justify-start gap-2"
-      >
-        <ToggleGroupItem value="all">{t('filters.all')}</ToggleGroupItem>
+    <div className="catalog-filters" aria-label={t('filters.categories')}>
+      <div className="catalog-filter-row" aria-label={t('filters.categories')}>
+        <button
+          type="button"
+          className="filter-chip"
+          data-active={!selectedCategory}
+          onClick={() => onCategoryChange(undefined)}
+        >
+          {t('filters.all')}
+        </button>
         {categories.map((category) => (
-          <ToggleGroupItem key={category} value={category}>
-            {category}
-          </ToggleGroupItem>
+          <button
+            key={category.value}
+            type="button"
+            className="filter-chip"
+            data-active={selectedCategory === category.value}
+            onClick={() => onCategoryChange(category.value)}
+          >
+            {formatOptionLabel(category)}
+          </button>
         ))}
-      </ToggleGroup>
+      </div>
+
+      {tags.length > 0 ? (
+        <div className="catalog-tag-row" aria-label={t('filters.tags')}>
+          <span className="tag-chip tag-chip-label">{t('filters.allTags')}</span>
+          {tags.map((tag) => (
+            <span key={tag.value} className="tag-chip">
+              {tag.label}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
+}
+
+function formatOptionLabel(option: CatalogFilterOption) {
+  return typeof option.count === 'number'
+    ? `${option.label} (${option.count})`
+    : option.label
 }

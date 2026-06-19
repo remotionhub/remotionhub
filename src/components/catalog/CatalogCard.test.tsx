@@ -49,6 +49,7 @@ describe('CatalogCard', () => {
     const link = screen.getByRole('link', { name: /Kinetic Title Pack/ })
     expect(link.getAttribute('href')).toBe('/remotion/terence/kinetic-title-pack')
     expect(screen.getByRole('img', { name: /Kinetic Title Pack/ })).toBeTruthy()
+    expect(screen.queryByText('Image-led Remotion title animations.')).toBeNull()
     expect(screen.getByText('remotion')).toBeTruthy()
     expect(screen.getByText('text')).toBeTruthy()
     expect(screen.queryByText('motion')).toBeNull()

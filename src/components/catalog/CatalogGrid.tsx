@@ -26,9 +26,21 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
       initialNumItems: 12,
     },
   )
-  const categories = useMemo(
-    () => Array.from(new Set(results.flatMap((item) => item.categories))).sort(),
-    [results],
+  const [facetItems, setFacetItems] = useState<typeof results>([])
+
+  useEffect(() => {
+    if (!category && results.length > 0) {
+      setFacetItems(results)
+    }
+  }, [category, results])
+
+  const categoryOptions = useMemo(
+    () => buildFacetOptions(facetItems, (item) => item.categories),
+    [facetItems],
+  )
+  const tagOptions = useMemo(
+    () => buildFacetOptions(facetItems, (item) => item.tags).slice(0, 18),
+    [facetItems],
   )
 
   useEffect(() => {
@@ -49,24 +61,25 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
   return (
     <section className="flex flex-col gap-6">
       <CatalogFilters
-        runtime={runtime}
-        categories={categories}
+        categories={categoryOptions}
+        tags={tagOptions}
         selectedCategory={category}
         onCategoryChange={setCategory}
       />
+      <div className="catalog-divider" />
       {results.length === 0 && status === 'Exhausted' ? (
         <Alert>
           <AlertTitle>{t('catalog.emptyTitle')}</AlertTitle>
           <AlertDescription>{t('catalog.emptyDescription')}</AlertDescription>
         </Alert>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="catalog-grid">
         {results.map((item) => (
           <CatalogCard key={item.componentId} item={item} />
         ))}
       </div>
       {status === 'LoadingFirstPage' ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="catalog-grid">
           {Array.from({ length: 6 }, (_, index) => (
             <Skeleton key={index} className="aspect-video rounded-lg" />
           ))}
@@ -83,4 +96,25 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
       ) : null}
     </section>
   )
+}
+
+function buildFacetOptions<T>(
+  items: T[],
+  selectValues: (item: T) => string[],
+) {
+  const counts = new Map<string, number>()
+
+  for (const item of items) {
+    for (const value of selectValues(item)) {
+      counts.set(value, (counts.get(value) ?? 0) + 1)
+    }
+  }
+
+  return Array.from(counts.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([value, count]) => ({
+      value,
+      label: value,
+      count,
+    }))
 }
