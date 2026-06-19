@@ -1,12 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Badge } from '#/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '#/components/ui/card'
+import { Card, CardContent, CardTitle } from '#/components/ui/card'
 import type { Runtime } from '#/lib/catalog'
 import PreviewMedia from './PreviewMedia'
 
@@ -49,21 +43,16 @@ export default function CatalogCard({ item }: { item: CatalogCardItem }) {
             className="flex size-full items-center justify-center object-cover text-2xl font-semibold text-muted-foreground transition group-hover:scale-[1.02]"
           />
         </div>
-        <CardHeader className="gap-1 px-4 pb-2 pt-4">
+        <CardContent className="flex flex-col gap-3 px-4 py-4">
           <CardTitle className="truncate text-base">{item.displayName}</CardTitle>
-        </CardHeader>
-        <CardContent className="px-4 pb-3">
-          <p className="line-clamp-2 min-h-10 text-sm text-muted-foreground">
-            {item.summary}
-          </p>
+          <div className="flex flex-wrap gap-2">
+            {visibleBadges.map((badge) => (
+              <Badge key={badge} variant="secondary">
+                {badge}
+              </Badge>
+            ))}
+          </div>
         </CardContent>
-        <CardFooter className="flex flex-wrap gap-2 px-4 pb-4 pt-0">
-          {visibleBadges.map((badge) => (
-            <Badge key={badge} variant="secondary">
-              {badge}
-            </Badge>
-          ))}
-        </CardFooter>
       </Card>
     </Link>
   )
