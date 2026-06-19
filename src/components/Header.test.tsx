@@ -53,22 +53,6 @@ function installLocalStorage() {
   })
 }
 
-function installMatchMedia() {
-  Object.defineProperty(window, 'matchMedia', {
-    configurable: true,
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  })
-}
-
 function renderHeader() {
   render(
     <I18nProvider>
@@ -80,7 +64,6 @@ function renderHeader() {
 describe('Header', () => {
   beforeEach(() => {
     installLocalStorage()
-    installMatchMedia()
   })
 
   afterEach(() => {
@@ -89,25 +72,21 @@ describe('Header', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders Chinese navigation and language controls by default', () => {
+  it('renders navigation and global controls by default', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     renderHeader()
 
-    expect(screen.getByRole('link', { name: '目录' })).toBeTruthy()
+    await screen.findByRole('link', { name: 'Catalog' })
+    expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Remotion' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'HyperFrames' })).toBeTruthy()
-    expect(
-      screen.getByRole('link', { name: '打开 RemotionHub GitHub' }),
-    ).toBeTruthy()
-    expect(screen.getByRole('group', { name: '语言' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: '中文' }).getAttribute('aria-pressed')).toBe(
+    expect(screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'EN' }).getAttribute('aria-pressed')).toBe(
       'true',
     )
     expect(screen.getByRole('button', { name: 'EN' })).toBeTruthy()
-    expect(
-      Array.from(screen.getByRole('group', { name: '语言' }).children).map(
-        (child) => child.tagName,
-      ),
-    ).toEqual(['BUTTON', 'BUTTON'])
+    expect(screen.getByRole('button', { name: /theme mode: light/i })).toBeTruthy()
   })
 
   it('switches to English and persists the selected locale', async () => {
