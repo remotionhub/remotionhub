@@ -941,7 +941,11 @@ In `src/styles.css`, update `.page-wrap`, `.catalog-grid`, and add page/filter c
   line-height: 1.05;
 }
 
-.catalog-hero p {
+.catalog-hero > p {
+  margin: 0;
+}
+
+.catalog-hero > p:last-child {
   margin: 0;
   color: var(--muted-foreground);
   font-size: 1.05rem;
