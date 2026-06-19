@@ -29,7 +29,7 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
   const [facetItems, setFacetItems] = useState<typeof results>([])
 
   useEffect(() => {
-    if (!category && results.length > 0) {
+    if (!category) {
       setFacetItems(results)
     }
   }, [category, results])

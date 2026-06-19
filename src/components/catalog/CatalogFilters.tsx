@@ -45,12 +45,14 @@ export default function CatalogFilters({
 
       {tags.length > 0 ? (
         <div className="catalog-tag-row" aria-label={t('filters.tags')}>
-          <span className="tag-chip tag-chip-label">{t('filters.allTags')}</span>
-          {tags.map((tag) => (
-            <span key={tag.value} className="tag-chip">
-              {tag.label}
-            </span>
-          ))}
+          <p className="catalog-tag-row-label">{t('filters.tags')}</p>
+          <div className="catalog-tag-list">
+            {tags.map((tag) => (
+              <span key={tag.value} className="tag-chip">
+                {tag.label}
+              </span>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
