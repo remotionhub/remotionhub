@@ -13,7 +13,7 @@ test.describe('catalog smoke', () => {
 
     await page.goto('/')
     await expect(
-      page.getByRole('heading', { name: /动态组件目录/ }),
+      page.getByRole('heading', { name: /动画模板库/ }),
     ).toBeVisible()
     await expect(
       page.getByRole('link', { name: /Kinetic Title Pack/ }),
@@ -37,7 +37,7 @@ test.describe('catalog smoke', () => {
   }) => {
     await page.goto('/')
     await expect(
-      page.getByRole('heading', { name: /动态组件目录/ }),
+      page.getByRole('heading', { name: /动画模板库/ }),
     ).toBeVisible()
     await expect(
       page.getByRole('link', { name: /Kinetic Title Pack/ }),
@@ -45,7 +45,7 @@ test.describe('catalog smoke', () => {
 
     await page.getByRole('button', { name: 'EN' }).click()
     await expect(
-      page.getByRole('heading', { name: /Motion component catalog/ }),
+      page.getByRole('heading', { name: /Motion template library/ }),
     ).toBeVisible()
     await expect(
       page.getByRole('link', { name: /Kinetic Title Pack/ }),
@@ -53,7 +53,7 @@ test.describe('catalog smoke', () => {
 
     await page.reload()
     await expect(
-      page.getByRole('heading', { name: /Motion component catalog/ }),
+      page.getByRole('heading', { name: /Motion template library/ }),
     ).toBeVisible()
     await expect(
       page.getByRole('link', { name: /Kinetic Title Pack/ }),
@@ -61,7 +61,7 @@ test.describe('catalog smoke', () => {
 
     await page.getByRole('button', { name: '中文' }).click()
     await expect(
-      page.getByRole('heading', { name: /动态组件目录/ }),
+      page.getByRole('heading', { name: /动画模板库/ }),
     ).toBeVisible()
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem('remotionhub.locale')))
@@ -94,7 +94,7 @@ test.describe('catalog smoke', () => {
 
     await page.goto('/')
     await expect(
-      page.getByRole('heading', { name: /动态组件目录/ }),
+      page.getByRole('heading', { name: /动画模板库/ }),
     ).toBeVisible()
     await expect(
       page.getByRole('link', { name: /Kinetic Title Pack/ }),

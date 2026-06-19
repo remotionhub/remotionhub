@@ -61,7 +61,7 @@ validate: ## Validate local catalog fixture JSON.
 	npm run catalog:validate
 
 seed: ## Import fixture catalog into local Convex.
-	npm run catalog:import -- --apply --target=dev
+	CONVEX_URL="$(CONVEX_URL)" VITE_CONVEX_URL="$(CONVEX_URL)" npm run catalog:import -- --apply --target=dev
 
 test: ## Run Vitest unit and contract tests.
 	npm run test
