@@ -21,11 +21,7 @@ function Home() {
   const { t } = useI18n()
 
   return (
-    <CatalogPageShell
-      eyebrow={t('home.eyebrow')}
-      title={t('home.title')}
-      description={t('home.description')}
-    >
+    <CatalogPageShell title={t('home.title')}>
       <CatalogGrid />
     </CatalogPageShell>
   )

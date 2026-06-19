@@ -21,11 +21,7 @@ function HyperFramesCatalog() {
   const { t } = useI18n()
 
   return (
-    <CatalogPageShell
-      eyebrow={t('hyperframes.eyebrow')}
-      title={t('hyperframes.title')}
-      description={t('hyperframes.description')}
-    >
+    <CatalogPageShell title={t('hyperframes.title')}>
       <CatalogGrid runtime="hyperframes" />
     </CatalogPageShell>
   )
