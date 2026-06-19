@@ -96,45 +96,6 @@
   --sea-ink-soft: var(--muted-foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --background: oklch(0.16 0.01 255);
-    --foreground: oklch(0.96 0.003 247);
-    --card: oklch(0.21 0.012 255);
-    --card-foreground: oklch(0.96 0.003 247);
-    --popover: oklch(0.21 0.012 255);
-    --popover-foreground: oklch(0.96 0.003 247);
-    --primary: oklch(0.92 0.004 247);
-    --primary-foreground: oklch(0.18 0.012 255);
-    --secondary: oklch(0.28 0.012 255);
-    --secondary-foreground: oklch(0.96 0.003 247);
-    --muted: oklch(0.27 0.012 255);
-    --muted-foreground: oklch(0.72 0.008 247);
-    --accent: oklch(0.31 0.026 220);
-    --accent-foreground: oklch(0.96 0.003 247);
-    --destructive: oklch(0.68 0.18 24);
-    --border: oklch(1 0 0 / 12%);
-    --input: oklch(1 0 0 / 16%);
-    --ring: oklch(0.64 0.02 245);
-    --sidebar: oklch(0.21 0.012 255);
-    --sidebar-foreground: oklch(0.96 0.003 247);
-    --sidebar-primary: oklch(0.92 0.004 247);
-    --sidebar-primary-foreground: oklch(0.18 0.012 255);
-    --sidebar-accent: oklch(0.28 0.012 255);
-    --sidebar-accent-foreground: oklch(0.96 0.003 247);
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: oklch(0.64 0.02 245);
-    --line: var(--border);
-    --header-bg: oklch(0.16 0.01 255 / 86%);
-    --chip-bg: oklch(0.23 0.012 255 / 82%);
-    --chip-line: var(--border);
-    --link-bg-hover: oklch(0.28 0.012 255);
-    --sea-ink: var(--foreground);
-    --sea-ink-soft: var(--muted-foreground);
-  }
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
