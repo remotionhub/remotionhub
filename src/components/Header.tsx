@@ -13,7 +13,7 @@ export default function Header() {
         <h2 className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-[var(--sea-ink)] no-underline"
+            className="inline-flex items-center gap-2 whitespace-nowrap text-[var(--sea-ink)] no-underline"
           >
             <span className="grid h-5 w-5 place-items-center rounded-md bg-[var(--brand-mark-bg)] text-[10px] font-bold text-[var(--brand-mark-fg)]">
               RH

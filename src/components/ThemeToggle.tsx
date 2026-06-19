@@ -49,7 +49,7 @@ export default function ThemeToggle() {
       onClick={toggleMode}
       aria-label={label}
       title={label}
-      className="rounded-md border border-[var(--chip-line)] bg-transparent px-3 py-1.5 text-sm font-semibold text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)]"
+      className="rounded-md border border-[var(--chip-line)] bg-transparent px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)]"
     >
       {mode === 'dark' ? 'Dark' : 'Light'}
     </button>
