@@ -1,7 +1,7 @@
 import semver from 'semver'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
-import type { Id } from './_generated/dataModel'
+import type { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 import type { DatabaseReader, DatabaseWriter } from './_generated/server'
 import {
@@ -60,6 +60,7 @@ const importVersion = v.object({
 
 type Runtime = 'remotion' | 'hyperframes'
 type DbReader = DatabaseReader | DatabaseWriter
+type CatalogDigest = Doc<'componentSearchDigest'>
 
 async function getPublisherByHandle(db: DbReader, handle: string) {
   return await db
@@ -280,16 +281,54 @@ export const listCatalog = query({
     paginationOpts: paginationOptsValidator,
   },
   handler: async (ctx, args) => {
-    const result = await ctx.db
-      .query('componentSearchDigest')
-      .withIndex('by_active_updated', (q) => q.eq('isActive', true))
-      .order('desc')
-      .paginate(args.paginationOpts)
+    const numItems = args.paginationOpts.numItems
+    let cursor = args.paginationOpts.cursor
+    const filteredPage: CatalogDigest[] = []
+    const maxScanItems = Math.max(numItems * 10, 50)
+    let scannedItems = 0
+    let isDone = false
 
-    const filtered = result.page.filter((item) => {
-      if (args.runtime && item.runtime !== args.runtime) {
-        return false
+    let continueCursor = cursor ?? ''
+
+    async function paginateDigest(batchSize: number, pageCursor: string | null) {
+      if (args.sort === 'name') {
+        if (args.runtime) {
+          const runtimeValue = args.runtime
+          return await ctx.db
+            .query('componentSearchDigest')
+            .withIndex('by_active_runtime_name', (q) =>
+              q.eq('isActive', true).eq('runtime', runtimeValue),
+            )
+            .order('asc')
+            .paginate({ numItems: batchSize, cursor: pageCursor })
+        }
+
+        return await ctx.db
+          .query('componentSearchDigest')
+          .withIndex('by_active_name', (q) => q.eq('isActive', true))
+          .order('asc')
+          .paginate({ numItems: batchSize, cursor: pageCursor })
       }
+
+      if (args.runtime) {
+        const runtimeValue = args.runtime
+        return await ctx.db
+          .query('componentSearchDigest')
+          .withIndex('by_active_runtime_updated', (q) =>
+            q.eq('isActive', true).eq('runtime', runtimeValue),
+          )
+          .order('desc')
+          .paginate({ numItems: batchSize, cursor: pageCursor })
+      }
+
+      return await ctx.db
+        .query('componentSearchDigest')
+        .withIndex('by_active_updated', (q) => q.eq('isActive', true))
+        .order('desc')
+        .paginate({ numItems: batchSize, cursor: pageCursor })
+    }
+
+    function matchesFilters(item: CatalogDigest) {
       if (args.tags?.length && !args.tags.every((tag) => item.tags.includes(tag))) {
         return false
       }
@@ -306,9 +345,37 @@ export const listCatalog = query({
         return false
       }
       return true
-    })
+    }
 
-    return { ...result, page: filtered }
+    while (filteredPage.length < numItems && scannedItems < maxScanItems) {
+      const batchSize = Math.min(
+        numItems - filteredPage.length,
+        maxScanItems - scannedItems,
+      )
+      const result = await paginateDigest(batchSize, cursor)
+
+      scannedItems += result.page.length
+
+      for (const item of result.page) {
+        if (matchesFilters(item)) {
+          filteredPage.push(item)
+        }
+      }
+
+      cursor = result.continueCursor
+      continueCursor = result.continueCursor
+      isDone = result.isDone
+
+      if (isDone) {
+        break
+      }
+    }
+
+    return {
+      page: filteredPage,
+      isDone,
+      continueCursor,
+    }
   },
 })
 

@@ -144,4 +144,187 @@ describe('components catalog mutations and queries', () => {
     expect(page.page).toHaveLength(0)
     expect(detail?.component.slug).toBe('kinetic-title-pack')
   })
+
+  it('correctly filters sparsely matched items across multiple DB pagination pages', async () => {
+    const t = convexTest(schema, modules)
+
+    // Insert 5 components. Only the first and last have tag "special".
+    // Others do not have the "special" tag.
+    for (let i = 1; i <= 5; i++) {
+      await t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        slug: `comp-${i}`,
+        displayName: `Component ${i}`,
+        tags: i === 1 || i === 5 ? ['special', 'remotion'] : ['remotion'],
+        versions: [
+          {
+            ...component.versions[0],
+            fingerprint: `fingerprint-${i}`,
+          },
+        ],
+      })
+    }
+
+    // Call listCatalog with a small page size (numItems: 1) and filter by special tag
+    const firstPage = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      tags: ['special'],
+      paginationOpts: { numItems: 1, cursor: null },
+    })
+
+    expect(firstPage.page).toHaveLength(1)
+    expect(firstPage.page[0]?.slug).toBe('comp-5') // desc by updated, so last inserted comes first
+    expect(firstPage.isDone).toBe(false)
+
+    const secondPage = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      tags: ['special'],
+      paginationOpts: { numItems: 1, cursor: firstPage.continueCursor },
+    })
+
+    expect(secondPage.page).toHaveLength(1)
+    expect(secondPage.page[0]?.slug).toBe('comp-1')
+  })
+
+  it('caps filtered results to the requested page size when matches span batches', async () => {
+    const t = convexTest(schema, modules)
+
+    for (let i = 1; i <= 5; i++) {
+      await t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        slug: `cap-comp-${i}`,
+        displayName: `Cap Component ${i}`,
+        tags: [2, 3, 5].includes(i)
+          ? ['special', 'remotion']
+          : ['remotion'],
+        versions: [
+          {
+            ...component.versions[0],
+            fingerprint: `cap-fingerprint-${i}`,
+          },
+        ],
+      })
+    }
+
+    const page = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      tags: ['special'],
+      paginationOpts: { numItems: 2, cursor: null },
+    })
+
+    expect(page.page).toHaveLength(2)
+    expect(page.page.map((item) => item.slug)).toEqual([
+      'cap-comp-5',
+      'cap-comp-3',
+    ])
+    expect(page.isDone).toBe(false)
+  })
+
+  it('correctly sorts active components by name', async () => {
+    const t = convexTest(schema, modules)
+
+    // Insert B, then A, then C
+    const items = [
+      { slug: 'b-comp', name: 'Beta Component' },
+      { slug: 'a-comp', name: 'Alpha Component' },
+      { slug: 'c-comp', name: 'Gamma Component' },
+    ]
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]!
+      await t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        slug: item.slug,
+        displayName: item.name,
+        versions: [
+          {
+            ...component.versions[0],
+            fingerprint: `fingerprint-${item.slug}`,
+          },
+        ],
+      })
+    }
+
+    const sortedPage = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      sort: 'name',
+      paginationOpts: { numItems: 10, cursor: null },
+    })
+
+    const names = sortedPage.page.map((item) => item.displayName)
+    // Should be sorted alphabetically (ascending): Alpha Component, Beta Component, Gamma Component, and the default one if present.
+    // Let's filter only the components we inserted here to be safe and clean.
+    const relevantNames = names.filter((name) =>
+      ['Alpha Component', 'Beta Component', 'Gamma Component'].includes(name),
+    )
+    expect(relevantNames).toEqual([
+      'Alpha Component',
+      'Beta Component',
+      'Gamma Component',
+    ])
+  })
+
+  it('uses runtime-aware indexes for updated and name sorting', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      slug: 'runtime-remotion-beta',
+      displayName: 'Runtime Beta',
+      versions: [
+        {
+          ...component.versions[0],
+          fingerprint: 'runtime-remotion-beta-fingerprint',
+        },
+      ],
+    })
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      slug: 'runtime-remotion-alpha',
+      displayName: 'Runtime Alpha',
+      versions: [
+        {
+          ...component.versions[0],
+          fingerprint: 'runtime-remotion-alpha-fingerprint',
+        },
+      ],
+    })
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      runtime: 'hyperframes',
+      slug: 'runtime-hyperframes-alpha',
+      displayName: 'Runtime HyperFrames Alpha',
+      versions: [
+        {
+          ...component.versions[0],
+          metadata: {
+            ...component.versions[0].metadata,
+            runtime: 'hyperframes',
+          },
+          fingerprint: 'runtime-hyperframes-alpha-fingerprint',
+        },
+      ],
+    })
+
+    const updatedPage = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      paginationOpts: { numItems: 10, cursor: null },
+    })
+    const namePage = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      sort: 'name',
+      paginationOpts: { numItems: 10, cursor: null },
+    })
+
+    expect(updatedPage.page.every((item) => item.runtime === 'remotion')).toBe(
+      true,
+    )
+    expect(updatedPage.page.map((item) => item.slug)).not.toContain(
+      'runtime-hyperframes-alpha',
+    )
+    expect(namePage.page.map((item) => item.displayName)).toEqual([
+      'Runtime Alpha',
+      'Runtime Beta',
+    ])
+  })
 })

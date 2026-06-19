@@ -121,5 +121,8 @@ export default defineSchema({
   })
     .index('by_component', ['componentId'])
     .index('by_active_updated', ['isActive', 'updatedAt'])
-    .index('by_status_updated', ['status', 'updatedAt']),
+    .index('by_status_updated', ['status', 'updatedAt'])
+    .index('by_active_name', ['isActive', 'displayName'])
+    .index('by_active_runtime_updated', ['isActive', 'runtime', 'updatedAt'])
+    .index('by_active_runtime_name', ['isActive', 'runtime', 'displayName']),
 })
