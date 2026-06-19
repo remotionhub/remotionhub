@@ -46,6 +46,8 @@
   --sidebar-ring: oklch(0.58 0.03 245);
   --line: var(--border);
   --header-bg: oklch(0.985 0.002 247 / 86%);
+  --brand-mark-bg: oklch(0.93 0.04 205);
+  --brand-mark-fg: oklch(0.36 0.08 220);
   --chip-bg: oklch(1 0 0 / 82%);
   --chip-line: var(--border);
   --link-bg-hover: oklch(0.94 0.004 247);
@@ -89,6 +91,8 @@
   --sidebar-ring: oklch(0.64 0.02 245);
   --line: var(--border);
   --header-bg: oklch(0.16 0.01 255 / 86%);
+  --brand-mark-bg: oklch(0.31 0.026 220);
+  --brand-mark-fg: oklch(0.86 0.04 205);
   --chip-bg: oklch(0.23 0.012 255 / 82%);
   --chip-line: var(--border);
   --link-bg-hover: oklch(0.28 0.012 255);
@@ -189,6 +193,40 @@ pre code {
 .nav-link:hover::after,
 .nav-link.is-active::after {
   transform: scaleX(1);
+}
+
+.site-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 4.75rem;
+  gap: 1rem;
+}
+
+.site-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+@media (max-width: 760px) {
+  .site-nav {
+    grid-template-columns: 1fr auto;
+    min-height: auto;
+    padding-block: 0.75rem;
+  }
+
+  .site-nav-links {
+    grid-column: 1 / -1;
+    order: 3;
+    justify-content: flex-start;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+  }
 }
 
 .island-kicker {
