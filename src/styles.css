@@ -188,16 +188,6 @@ pre code {
   line-height: 1.05;
 }
 
-.catalog-hero > p {
-  margin: 0;
-}
-
-.catalog-hero > p:last-child {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 1.05rem;
-}
-
 .catalog-divider {
   height: 1px;
   width: 100%;

@@ -21,11 +21,7 @@ function RemotionCatalog() {
   const { t } = useI18n()
 
   return (
-    <CatalogPageShell
-      eyebrow={t('remotion.eyebrow')}
-      title={t('remotion.title')}
-      description={t('remotion.description')}
-    >
+    <CatalogPageShell title={t('remotion.title')}>
       <CatalogGrid runtime="remotion" />
     </CatalogPageShell>
   )
