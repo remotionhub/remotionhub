@@ -9,8 +9,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial release with title animation variants.",
+      "version": "1.0.1",
+      "changelog": "Update source repository owner to the canonical RemotionHub assets repository.",
       "preview": {
         "thumbnailUrl": "https://pub-1cc20f8a898349ab9b2823b040fcd0b8.r2.dev/showcase/transition-fade-cross/thumb.jpg",
         "previewVideoUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
@@ -28,7 +28,7 @@
         "kind": "github-source",
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
-          "ref": "v1.0.0",
+          "ref": "v1.0.1",
           "commit": "abc123def456",
           "path": "remotion/kinetic-title-pack"
         },
