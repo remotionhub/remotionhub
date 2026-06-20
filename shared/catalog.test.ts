@@ -25,7 +25,7 @@ const baseVersion = {
   artifact: {
     kind: 'github-source',
     githubSource: {
-      repo: 'tangwz/remotionhub-assets',
+      repo: 'remotionhub/remotionhub-assets',
       ref: 'v1.0.0',
       commit: 'abc123',
       path: 'components/scene',
@@ -51,6 +51,63 @@ describe('catalog validation', () => {
     })
 
     expect(parsed.slug).toBe('kinetic-title-pack')
+  })
+
+  it('accepts only the canonical RemotionHub asset repository for migrated source', () => {
+    const parsed = catalogComponentSchema.parse({
+      publisher: 'terence',
+      runtime: 'remotion',
+      slug: 'card-avatar',
+      displayName: 'Card Avatar',
+      summary: 'Animated avatar lower-third card for Remotion videos.',
+      categories: ['card', 'lower-third'],
+      tags: ['remotion', 'avatar', 'profile'],
+      status: 'published',
+      versions: [
+        {
+          ...baseVersion,
+          artifact: {
+            ...baseVersion.artifact,
+            githubSource: {
+              repo: 'remotionhub/remotionhub-assets',
+              ref: 'main',
+              commit: 'abc123def456',
+              path: 'remotion/card-avatar',
+            },
+          },
+        },
+      ],
+    })
+
+    expect(parsed.versions[0]?.artifact.githubSource.repo).toBe(
+      'remotionhub/remotionhub-assets',
+    )
+    expect(() =>
+      catalogComponentSchema.parse({
+        publisher: 'terence',
+        runtime: 'remotion',
+        slug: 'card-avatar',
+        displayName: 'Card Avatar',
+        summary: 'Animated avatar lower-third card for Remotion videos.',
+        categories: ['card', 'lower-third'],
+        tags: ['remotion', 'avatar', 'profile'],
+        status: 'published',
+        versions: [
+          {
+            ...baseVersion,
+            artifact: {
+              ...baseVersion.artifact,
+              githubSource: {
+                repo: 'tangwz/remotionhub-assets',
+                ref: 'main',
+                commit: 'abc123def456',
+                path: 'remotion/card-avatar',
+              },
+            },
+          },
+        ],
+      }),
+    ).toThrow()
   })
 
   it('rejects unsafe publisher handles and slugs', () => {

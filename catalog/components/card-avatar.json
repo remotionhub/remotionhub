@@ -1,0 +1,54 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-avatar",
+  "displayName": "Card Avatar",
+  "summary": "Animated avatar lower-third card for Remotion videos.",
+  "categories": [
+    "card",
+    "lower-third"
+  ],
+  "tags": [
+    "remotion",
+    "avatar",
+    "profile"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release from RemotionLab source archive.",
+      "preview": {
+        "thumbnailUrl": "https://assets.remotionhub.ai/showcase/card-avatar/15c7ad983dc4-thumb.jpg",
+        "previewVideoUrl": "https://assets.remotionhub.ai/showcase/card-avatar/e5da5795afb6-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-avatar"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardAvatar.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "avatar",
+        "profile",
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb6c55c4f4a93cedaf093e5b771028d7543ef28b",
+          "path": "remotion/card-avatar"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-avatar/src/CardAvatar.tsx` into your Remotion project, import `CardAvatar` and `cardAvatarDefaultProps`, then register the `CardAvatar` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Card Avatar Remotion asset from remotionhub/remotionhub-assets at remotion/card-avatar to my project. Preserve the exported CardAvatarProps API and register the CardAvatar composition with the default props."
+      }
+    }
+  ]
+}

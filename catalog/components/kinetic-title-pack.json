@@ -27,14 +27,14 @@
       "artifact": {
         "kind": "github-source",
         "githubSource": {
-          "repo": "tangwz/remotionhub-assets",
+          "repo": "remotionhub/remotionhub-assets",
           "ref": "v1.0.0",
           "commit": "abc123def456",
           "path": "remotion/kinetic-title-pack"
         },
         "license": "MIT",
         "usageMarkdown": "Copy the component folder into your Remotion project and import `KineticTitlePack` from `src/KineticTitlePack.tsx`.",
-        "agentPrompt": "Add the Kinetic Title Pack from tangwz/remotionhub-assets at remotion/kinetic-title-pack to my Remotion project. Preserve the exported component API and wire it into my composition."
+        "agentPrompt": "Add the Kinetic Title Pack from remotionhub/remotionhub-assets at remotion/kinetic-title-pack to my Remotion project. Preserve the exported component API and wire it into my composition."
       }
     }
   ]

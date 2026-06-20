@@ -49,7 +49,13 @@ export const metadataSchema = z.object({
 export const artifactSchema = z.object({
   kind: z.literal('github-source'),
   githubSource: z.object({
-    repo: z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/),
+    repo: z
+      .string()
+      .regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/)
+      .refine((value) => value === 'remotionhub/remotionhub-assets', {
+        message:
+          'RemotionHub catalog source must use remotionhub/remotionhub-assets.',
+      }),
     ref: z.string().min(1),
     commit: z.string().min(6),
     path: z.string().min(1),
