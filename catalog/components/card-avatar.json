@@ -16,8 +16,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial migrated release from RemotionLab source archive.",
+      "version": "1.0.1",
+      "changelog": "Point to media-aware validated asset source.",
       "preview": {
         "thumbnailUrl": "https://assets.remotionhub.ai/showcase/card-avatar/15c7ad983dc4-thumb.jpg",
         "previewVideoUrl": "https://assets.remotionhub.ai/showcase/card-avatar/e5da5795afb6-preview.mp4",
@@ -42,7 +42,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb6c55c4f4a93cedaf093e5b771028d7543ef28b",
+          "commit": "6f3f65ac32e790be089e54cb9f94d4936e253952",
           "path": "remotion/card-avatar"
         },
         "license": "MIT",
