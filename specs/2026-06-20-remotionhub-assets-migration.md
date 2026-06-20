@@ -21,7 +21,7 @@ RemotionHub 当前已经有 catalog 数据模型和页面能力：
 
 第一阶段包含：
 
-- 建立或准备 `tangwz/remotionhub-assets` 作为素材源码仓库，并采用 npm workspaces 的 monorepo 结构。
+- 使用 `remotionhub/remotionhub-assets` 作为素材源码仓库，并采用 npm workspaces 的 monorepo 结构。
 - 迁移 `card-avatar` 一个案例。
 - 为该案例生成可运行 Remotion 项目或可独立复制的组件包。
 - 为该案例生成 RemotionHub catalog JSON。
@@ -39,7 +39,7 @@ RemotionHub 当前已经有 catalog 数据模型和页面能力：
 
 ## 推荐架构
 
-采用独立资产仓库 `tangwz/remotionhub-assets` 保存素材源码，RemotionHub 主仓库继续保存产品站、catalog metadata、导入脚本和页面展示逻辑。
+采用独立资产仓库 `remotionhub/remotionhub-assets` 保存素材源码，RemotionHub 主仓库继续保存产品站、catalog metadata、导入脚本和页面展示逻辑。`remotionhub/remotionhub-assets` 是 canonical asset repo，所有 catalog `githubSource.repo` 和未来 CLI 默认来源都必须使用该仓库。
 
 核心边界：
 
