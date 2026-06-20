@@ -27,14 +27,14 @@
       "artifact": {
         "kind": "github-source",
         "githubSource": {
-          "repo": "tangwz/remotionhub-assets",
+          "repo": "remotionhub/remotionhub-assets",
           "ref": "v1.0.0",
           "commit": "def456abc123",
           "path": "hyperframes/lower-third-pack"
         },
         "license": "MIT",
         "usageMarkdown": "Copy the HyperFrames composition folder and register the HTML entry in your HyperFrames project.",
-        "agentPrompt": "Add the Lower Third Pack from tangwz/remotionhub-assets at hyperframes/lower-third-pack to my HyperFrames project. Keep the timing and editable text slots intact."
+        "agentPrompt": "Add the Lower Third Pack from remotionhub/remotionhub-assets at hyperframes/lower-third-pack to my HyperFrames project. Keep the timing and editable text slots intact."
       }
     }
   ]
