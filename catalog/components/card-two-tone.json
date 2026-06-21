@@ -38,7 +38,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "43d3d32bbb6e6b1599d4f69910edd2ff3a1019f4",
+          "commit": "9464db996d1e348b9276d5672c1e583296b24cc9",
           "path": "remotion/card-two-tone"
         },
         "license": "MIT",
