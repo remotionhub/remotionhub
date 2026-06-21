@@ -38,7 +38,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "9464db996d1e348b9276d5672c1e583296b24cc9",
+          "commit": "7b0951b35dbb6cde75c5100faa4b23c267f3cdd4",
           "path": "remotion/card-stagger"
         },
         "license": "MIT",
