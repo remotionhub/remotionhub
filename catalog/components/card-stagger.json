@@ -38,12 +38,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "43d3d32bbb6e6b1599d4f69910edd2ff3a1019f4",
+          "commit": "9464db996d1e348b9276d5672c1e583296b24cc9",
           "path": "remotion/card-stagger"
         },
         "license": "MIT",
         "usageMarkdown": "Copy `remotion/card-stagger/src/CardStagger.tsx` into your Remotion project, import `CardStagger` and `cardStaggerDefaultProps`, then register the composition.",
-        "agentPrompt": "Customize the CardStagger Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the staggered fade-in line effect."
+        "agentPrompt": "Customize the CardStagger Remotion component by setting the name, title, tagline, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the staggered fade-in line effect."
       }
     }
   ]
