@@ -16,11 +16,11 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.1",
-      "changelog": "Point to media-aware validated asset source.",
+      "version": "1.0.2",
+      "changelog": "Publish publicly readable OSS preview media.",
       "preview": {
-        "thumbnailUrl": "https://assets.remotionhub.ai/showcase/card-avatar/15c7ad983dc4-thumb.jpg",
-        "previewVideoUrl": "https://assets.remotionhub.ai/showcase/card-avatar/e5da5795afb6-preview.mp4",
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-avatar/15c7ad983dc4-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-avatar/e5da5795afb6-preview.mp4",
         "demoUrl": "https://remotionlab.com/showcase/card-avatar"
       },
       "metadata": {
@@ -42,7 +42,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "6f3f65ac32e790be089e54cb9f94d4936e253952",
+          "commit": "48f2401399f8e68ef2f8e04403d407102d0251a8",
           "path": "remotion/card-avatar"
         },
         "license": "MIT",
