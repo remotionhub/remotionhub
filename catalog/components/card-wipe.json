@@ -5,7 +5,8 @@
   "displayName": "Card Wipe",
   "summary": "Wipe-in card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

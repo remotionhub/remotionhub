@@ -5,7 +5,8 @@
   "displayName": "Card Stagger",
   "summary": "Staggered slide-in card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

@@ -5,8 +5,8 @@
   "displayName": "Lower Third Callout",
   "summary": "Lower-third callout connection card.",
   "categories": [
-    "lower-third",
-    "title"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

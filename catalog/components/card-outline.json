@@ -5,7 +5,8 @@
   "displayName": "Card Outline",
   "summary": "Border outline slide-in card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",
