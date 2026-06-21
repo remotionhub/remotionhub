@@ -15,8 +15,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial migration.",
+      "version": "1.0.1",
+      "changelog": "Update Props API to use standard accentColor, cardBackgroundColor, and animationStiffness.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-left/d7b8d862073c-thumb.jpg",
         "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-left/2ef3edc9847c-preview.mp4",
@@ -40,12 +40,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "commit": "cd78dfbf0f7b3985de50262a0423d922976560f8",
           "path": "remotion/card-from-left"
         },
         "license": "MIT",
         "usageMarkdown": "Copy `remotion/card-from-left/src/CardFromLeft.tsx` into your Remotion project, import `CardFromLeft` and `cardFromLeftDefaultProps`, then register the composition.",
-        "agentPrompt": "Customize the CardFromLeft Remotion component by setting the name, title, left highlight line color, title text color, background color, and animation stiffness while preserving the slide-in animation from the left."
+        "agentPrompt": "Customize the CardFromLeft Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the slide-in animation from the left."
       }
     }
   ]
