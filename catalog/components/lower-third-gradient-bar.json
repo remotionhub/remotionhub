@@ -39,7 +39,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "75954eb1ba408d906c7ebf190ab54452cfcef738",
+          "commit": "43d3d32bbb6e6b1599d4f69910edd2ff3a1019f4",
           "path": "remotion/lower-third-gradient-bar"
         },
         "license": "MIT",
