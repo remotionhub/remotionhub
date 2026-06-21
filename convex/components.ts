@@ -282,50 +282,43 @@ export const listCatalog = query({
   },
   handler: async (ctx, args) => {
     const numItems = args.paginationOpts.numItems
-    let cursor = args.paginationOpts.cursor
-    const filteredPage: CatalogDigest[] = []
-    const maxScanItems = Math.max(numItems * 10, 50)
-    let scannedItems = 0
-    let isDone = false
+    const cursor = args.paginationOpts.cursor
 
-    let continueCursor = cursor ?? ''
-
-    async function paginateDigest(batchSize: number, pageCursor: string | null) {
-      if (args.sort === 'name') {
-        if (args.runtime) {
-          const runtimeValue = args.runtime
-          return await ctx.db
-            .query('componentSearchDigest')
-            .withIndex('by_active_runtime_name', (q) =>
-              q.eq('isActive', true).eq('runtime', runtimeValue),
-            )
-            .order('asc')
-            .paginate({ numItems: batchSize, cursor: pageCursor })
-        }
-
-        return await ctx.db
+    let allItems: CatalogDigest[] = []
+    if (args.sort === 'name') {
+      if (args.runtime) {
+        const runtimeValue = args.runtime
+        allItems = await ctx.db
+          .query('componentSearchDigest')
+          .withIndex('by_active_runtime_name', (q) =>
+            q.eq('isActive', true).eq('runtime', runtimeValue),
+          )
+          .order('asc')
+          .collect()
+      } else {
+        allItems = await ctx.db
           .query('componentSearchDigest')
           .withIndex('by_active_name', (q) => q.eq('isActive', true))
           .order('asc')
-          .paginate({ numItems: batchSize, cursor: pageCursor })
+          .collect()
       }
-
+    } else {
       if (args.runtime) {
         const runtimeValue = args.runtime
-        return await ctx.db
+        allItems = await ctx.db
           .query('componentSearchDigest')
           .withIndex('by_active_runtime_updated', (q) =>
             q.eq('isActive', true).eq('runtime', runtimeValue),
           )
           .order('desc')
-          .paginate({ numItems: batchSize, cursor: pageCursor })
+          .collect()
+      } else {
+        allItems = await ctx.db
+          .query('componentSearchDigest')
+          .withIndex('by_active_updated', (q) => q.eq('isActive', true))
+          .order('desc')
+          .collect()
       }
-
-      return await ctx.db
-        .query('componentSearchDigest')
-        .withIndex('by_active_updated', (q) => q.eq('isActive', true))
-        .order('desc')
-        .paginate({ numItems: batchSize, cursor: pageCursor })
     }
 
     function matchesFilters(item: CatalogDigest) {
@@ -347,32 +340,23 @@ export const listCatalog = query({
       return true
     }
 
-    while (filteredPage.length < numItems && scannedItems < maxScanItems) {
-      const batchSize = Math.min(
-        numItems - filteredPage.length,
-        maxScanItems - scannedItems,
-      )
-      const result = await paginateDigest(batchSize, cursor)
+    const filtered = allItems.filter(matchesFilters)
 
-      scannedItems += result.page.length
-
-      for (const item of result.page) {
-        if (matchesFilters(item)) {
-          filteredPage.push(item)
-        }
-      }
-
-      cursor = result.continueCursor
-      continueCursor = result.continueCursor
-      isDone = result.isDone
-
-      if (isDone) {
-        break
+    let startIndex = 0
+    if (cursor) {
+      const parsed = parseInt(cursor, 10)
+      if (!isNaN(parsed)) {
+        startIndex = parsed
       }
     }
 
+    const page = filtered.slice(startIndex, startIndex + numItems)
+    const nextIndex = startIndex + page.length
+    const isDone = nextIndex >= filtered.length
+    const continueCursor = isDone ? '' : String(nextIndex)
+
     return {
-      page: filteredPage,
+      page,
       isDone,
       continueCursor,
     }
