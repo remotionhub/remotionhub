@@ -5,7 +5,8 @@
   "displayName": "Card Elastic",
   "summary": "Elastic slide-in card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

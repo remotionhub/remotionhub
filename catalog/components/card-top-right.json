@@ -5,7 +5,8 @@
   "displayName": "Card Top Right",
   "summary": "Horizontal slide-in card from the right side at the top-right.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

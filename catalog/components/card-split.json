@@ -5,7 +5,8 @@
   "displayName": "Card Split",
   "summary": "Split-opening card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

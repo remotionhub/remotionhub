@@ -5,7 +5,8 @@
   "displayName": "Card Two Tone",
   "summary": "Two-tone highlight card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

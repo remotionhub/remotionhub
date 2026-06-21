@@ -5,7 +5,8 @@
   "displayName": "Card Typewriter",
   "summary": "Typewriter card with typing cursor.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",

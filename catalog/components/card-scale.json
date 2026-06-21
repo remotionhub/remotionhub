@@ -5,7 +5,8 @@
   "displayName": "Card Scale",
   "summary": "Pop-up scale card.",
   "categories": [
-    "card"
+    "card",
+    "lower-third"
   ],
   "tags": [
     "remotion",
