@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-outline",
+  "displayName": "Card Outline",
+  "summary": "Border outline slide-in card.",
+  "categories": [
+    "card",
+    "lower-third"
+  ],
+  "tags": [
+    "remotion",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-outline/12f867dc2fb7-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-outline/218d3bc9424c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-outline"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardOutline.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/card-outline"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-outline/src/CardOutline.tsx` into your Remotion project, import `CardOutline` and `cardOutlineDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardOutline Remotion component by setting the name, title, outlineColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the transparent outline border slide-in effect."
+      }
+    }
+  ]
+}

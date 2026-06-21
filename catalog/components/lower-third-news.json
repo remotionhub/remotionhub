@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-news",
+  "displayName": "Lower Third News",
+  "summary": "News banner with rolling ticker lower-third.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-news/819a0e448ec6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-news/3cd491db34db-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-news"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdNews.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-news"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-news/src/LowerThirdNews.tsx` into your Remotion project, import `LowerThirdNews` and `lowerThirdNewsDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdNews Remotion component by setting the name, title, segmentLabel, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the news live banner and rolling ticker animation."
+      }
+    }
+  ]
+}

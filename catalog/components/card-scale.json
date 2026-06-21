@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-scale",
+  "displayName": "Card Scale",
+  "summary": "Pop-up scale card.",
+  "categories": [
+    "card",
+    "lower-third"
+  ],
+  "tags": [
+    "remotion",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-scale/95a290715a5c-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-scale/f1c29b7eac90-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-scale"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardScale.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/card-scale"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-scale/src/CardScale.tsx` into your Remotion project, import `CardScale` and `cardScaleDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardScale Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the pop-up scaling effect."
+      }
+    }
+  ]
+}

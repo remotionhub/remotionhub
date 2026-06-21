@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-slide",
+  "displayName": "Lower Third Slide",
+  "summary": "Slide-in lower-third.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-slide/aea404f9c0cd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-slide/4281aa9166dd-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-slide"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdSlide.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-slide"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-slide/src/LowerThirdSlide.tsx` into your Remotion project, import `LowerThirdSlide` and `lowerThirdSlideDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdSlide Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the left slide-in animation."
+      }
+    }
+  ]
+}

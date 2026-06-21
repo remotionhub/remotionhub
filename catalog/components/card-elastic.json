@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-elastic",
+  "displayName": "Card Elastic",
+  "summary": "Elastic slide-in card.",
+  "categories": [
+    "card",
+    "lower-third"
+  ],
+  "tags": [
+    "remotion",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-elastic/faf3b34d543a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-elastic/b75d8d3a51f7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-elastic"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardElastic.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/card-elastic"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-elastic/src/CardElastic.tsx` into your Remotion project, import `CardElastic` and `cardElasticDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardElastic Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the elastic slide-in effect."
+      }
+    }
+  ]
+}

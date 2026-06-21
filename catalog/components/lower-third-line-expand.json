@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-line-expand",
+  "displayName": "Lower Third Line Expand",
+  "summary": "Lower-third line expanding card.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-line-expand/b9ca089bcbf2-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-line-expand/a52a64ac067b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-line-expand"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdLineExpand.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-line-expand"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-line-expand/src/LowerThirdLineExpand.tsx` into your Remotion project, import `LowerThirdLineExpand` and `lowerThirdLineExpandDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdLineExpand Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the line expanding and text unfolding animation."
+      }
+    }
+  ]
+}

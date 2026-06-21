@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-social",
+  "displayName": "Lower Third Social",
+  "summary": "Social platform handle lower-third.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-social/794eea2604b0-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-social/69ee00cecfe2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-social"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdSocial.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-social"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-social/src/LowerThirdSocial.tsx` into your Remotion project, import `LowerThirdSocial` and `lowerThirdSocialDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdSocial Remotion component by setting the name, title, handle, platform, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the social tag pop animation."
+      }
+    }
+  ]
+}
