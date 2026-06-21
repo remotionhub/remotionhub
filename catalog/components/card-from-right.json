@@ -15,8 +15,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial migration.",
+      "version": "1.0.1",
+      "changelog": "Update Props API to use standard accentColor, cardBackgroundColor, and animationStiffness.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-right/bd1fb1c2e023-thumb.jpg",
         "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-right/5b2b01c8263e-preview.mp4",
@@ -40,12 +40,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "commit": "cd78dfbf0f7b3985de50262a0423d922976560f8",
           "path": "remotion/card-from-right"
         },
         "license": "MIT",
         "usageMarkdown": "Copy `remotion/card-from-right/src/CardFromRight.tsx` into your Remotion project, import `CardFromRight` and `cardFromRightDefaultProps`, then register the composition.",
-        "agentPrompt": "Customize the CardFromRight Remotion component by setting the name, title, right highlight line color, title text color, background color, and animation stiffness while preserving the slide-in animation from the right and right text alignment."
+        "agentPrompt": "Customize the CardFromRight Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the slide-in animation from the right and right text alignment."
       }
     }
   ]

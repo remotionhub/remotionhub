@@ -15,8 +15,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial migration.",
+      "version": "1.0.1",
+      "changelog": "Update Props API to use standard accentColor, cardBackgroundColor, and animationStiffness.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-top-left/6aca63ae46ee-thumb.jpg",
         "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-top-left/df3cee163da6-preview.mp4",
@@ -40,12 +40,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "commit": "cd78dfbf0f7b3985de50262a0423d922976560f8",
           "path": "remotion/card-top-left"
         },
         "license": "MIT",
         "usageMarkdown": "Copy `remotion/card-top-left/src/CardTopLeft.tsx` into your Remotion project, import `CardTopLeft` and `cardTopLeftDefaultProps`, then register the composition.",
-        "agentPrompt": "Customize the CardTopLeft Remotion component by setting the name, title, bottom highlight line color, title text color, background color, animation stiffness, and text delay while preserving the diagonal slide-in animation from the top-left."
+        "agentPrompt": "Customize the CardTopLeft Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, animationStiffness, and textDelay while preserving the diagonal slide-in animation from the top-left."
       }
     }
   ]

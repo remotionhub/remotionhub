@@ -15,8 +15,8 @@
   "status": "published",
   "versions": [
     {
-      "version": "1.0.0",
-      "changelog": "Initial migration.",
+      "version": "1.0.1",
+      "changelog": "Update Props API to use standard accentColor, cardBackgroundColor, and animationStiffness.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-top-right/c2d614220e0a-thumb.jpg",
         "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-top-right/8817b071b193-preview.mp4",
@@ -40,12 +40,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "commit": "cd78dfbf0f7b3985de50262a0423d922976560f8",
           "path": "remotion/card-top-right"
         },
         "license": "MIT",
         "usageMarkdown": "Copy `remotion/card-top-right/src/CardTopRight.tsx` into your Remotion project, import `CardTopRight` and `cardTopRightDefaultProps`, then register the composition.",
-        "agentPrompt": "Customize the CardTopRight Remotion component by setting the name, title, left highlight line color, title text color, background color, animation stiffness, and text delay while preserving the horizontal slide-in animation from the right at the top right of the viewport."
+        "agentPrompt": "Customize the CardTopRight Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, animationStiffness, and textDelay while preserving the horizontal slide-in animation from the right at the top right of the viewport."
       }
     }
   ]
