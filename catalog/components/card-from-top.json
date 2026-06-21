@@ -1,0 +1,52 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-from-top",
+  "displayName": "Card From Top",
+  "summary": "Slide-in card from the top side.",
+  "categories": [
+    "card"
+  ],
+  "tags": [
+    "remotion",
+    "slide-in",
+    "top"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-top/ada992b63a26-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-top/c74771d86448-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-from-top"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardFromTop.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "slide-in",
+        "top"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "path": "remotion/card-from-top"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-from-top/src/CardFromTop.tsx` into your Remotion project, import `CardFromTop` and `cardFromTopDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardFromTop Remotion component by setting the name, title, bottom highlight line color, title text color, background color, and animation stiffness while preserving the slide-in animation from the top."
+      }
+    }
+  ]
+}
