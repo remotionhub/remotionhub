@@ -1,0 +1,52 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-from-right",
+  "displayName": "Card From Right",
+  "summary": "Slide-in card from the right side.",
+  "categories": [
+    "card"
+  ],
+  "tags": [
+    "remotion",
+    "slide-in",
+    "right"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-right/bd1fb1c2e023-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-from-right/5b2b01c8263e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-from-right"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardFromRight.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "slide-in",
+        "right"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fc562b232878d906f6aed015e7d0d4386ea3b140",
+          "path": "remotion/card-from-right"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-from-right/src/CardFromRight.tsx` into your Remotion project, import `CardFromRight` and `cardFromRightDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardFromRight Remotion component by setting the name, title, right highlight line color, title text color, background color, and animation stiffness while preserving the slide-in animation from the right and right text alignment."
+      }
+    }
+  ]
+}
