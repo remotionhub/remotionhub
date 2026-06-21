@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-box-pop",
+  "displayName": "Lower Third Box Pop",
+  "summary": "Lower-third with box scaling effect.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-box-pop/4df2b1855220-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-box-pop/b79809a13e2d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-box-pop"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdBoxPop.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-box-pop"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-box-pop/src/LowerThirdBoxPop.tsx` into your Remotion project, import `LowerThirdBoxPop` and `lowerThirdBoxPopDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdBoxPop Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the left-bottom scaling pop-up effect."
+      }
+    }
+  ]
+}

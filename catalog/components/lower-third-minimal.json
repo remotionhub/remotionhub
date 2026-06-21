@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-minimal",
+  "displayName": "Lower Third Minimal",
+  "summary": "Minimalistic lower-third.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-minimal/9a9a7d83da91-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-minimal/f4d8ec46c694-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-minimal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdMinimal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-minimal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-minimal/src/LowerThirdMinimal.tsx` into your Remotion project, import `LowerThirdMinimal` and `lowerThirdMinimalDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdMinimal Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the clean fading rise animation."
+      }
+    }
+  ]
+}

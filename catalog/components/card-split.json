@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "card-split",
+  "displayName": "Card Split",
+  "summary": "Split-opening card.",
+  "categories": [
+    "card",
+    "lower-third"
+  ],
+  "tags": [
+    "remotion",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-split/0a2b8f5ad059-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/card-split/a4429062c8c7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/card-split"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CardSplit.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/card-split"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/card-split/src/CardSplit.tsx` into your Remotion project, import `CardSplit` and `cardSplitDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the CardSplit Remotion component by setting the name, title, leftColor, rightColor, textColor, and animationStiffness while preserving the split opening animation."
+      }
+    }
+  ]
+}

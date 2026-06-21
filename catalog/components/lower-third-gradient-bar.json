@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-gradient-bar",
+  "displayName": "Lower Third Gradient Bar",
+  "summary": "Lower-third full width gradient bar.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-gradient-bar/93985f8abb97-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-gradient-bar/bb338d09f242-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-gradient-bar"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdGradientBar.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-gradient-bar"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-gradient-bar/src/LowerThirdGradientBar.tsx` into your Remotion project, import `LowerThirdGradientBar` and `lowerThirdGradientBarDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdGradientBar Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the full width bottom bar rising effect."
+      }
+    }
+  ]
+}

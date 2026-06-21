@@ -1,0 +1,51 @@
+{
+  "publisher": "terence",
+  "runtime": "remotion",
+  "slug": "lower-third-callout",
+  "displayName": "Lower Third Callout",
+  "summary": "Lower-third callout connection card.",
+  "categories": [
+    "lower-third",
+    "title"
+  ],
+  "tags": [
+    "remotion",
+    "lower-third"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Initial batch migration release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-callout/e8ef813104d7-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-callout/5b2a00472627-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-callout"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LowerThirdCallout.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "lower-third"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "49ec6727d0eb7ebb1db71097f758bf3b089b9bed",
+          "path": "remotion/lower-third-callout"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/lower-third-callout/src/LowerThirdCallout.tsx` into your Remotion project, import `LowerThirdCallout` and `lowerThirdCalloutDefaultProps`, then register the composition.",
+        "agentPrompt": "Customize the LowerThirdCallout Remotion component by setting the name, title, accentColor, titleColor, cardBackgroundColor, and animationStiffness while preserving the dot callout line connection and text box animation."
+      }
+    }
+  ]
+}
