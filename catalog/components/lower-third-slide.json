@@ -39,7 +39,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "38c16ab26807b8ee315f38bc656b69acdd856c2d",
+          "commit": "75954eb1ba408d906c7ebf190ab54452cfcef738",
           "path": "remotion/lower-third-slide"
         },
         "license": "MIT",
