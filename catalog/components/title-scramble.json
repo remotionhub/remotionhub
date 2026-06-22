@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-scramble",
+  "displayName": "Title Scramble",
+  "summary": "Scramble and decode text effect animation component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "scramble"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-scramble/845a65df9284-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-scramble/f1db6dacf02b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-scramble"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleScramble.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "scramble"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-scramble"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-scramble/src/TitleScramble.tsx` into your Remotion project, import `TitleScramble` and `titleScrambleDefaultProps`, then register the `TitleScramble` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Scramble Remotion asset from remotionhub/remotionhub-assets at remotion/title-scramble to my project. Preserve the exported TitleScrambleProps API and register the TitleScramble composition with the default props."
+      }
+    }
+  ]
+}

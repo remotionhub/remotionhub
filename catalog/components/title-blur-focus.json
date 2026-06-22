@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-blur-focus",
+  "displayName": "Title Blur Focus",
+  "summary": "Blur and focus text effect card component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "blur-focus"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-blur-focus/982a7f964f56-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-blur-focus/e5564135d47b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-blur-focus"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleBlurFocus.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "blur-focus"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-blur-focus"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-blur-focus/src/TitleBlurFocus.tsx` into your Remotion project, import `TitleBlurFocus` and `titleBlurFocusDefaultProps`, then register the `TitleBlurFocus` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Blur Focus Remotion asset from remotionhub/remotionhub-assets at remotion/title-blur-focus to my project. Preserve the exported TitleBlurFocusProps API and register the TitleBlurFocus composition with the default props."
+      }
+    }
+  ]
+}

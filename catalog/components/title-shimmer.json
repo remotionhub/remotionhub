@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-shimmer",
+  "displayName": "Title Shimmer",
+  "summary": "Shimmer and sweep shining text effect component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "shimmer"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-shimmer/b3a96a120a43-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-shimmer/20580a562cfd-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-shimmer"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleShimmer.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "shimmer"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-shimmer"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-shimmer/src/TitleShimmer.tsx` into your Remotion project, import `TitleShimmer` and `titleShimmerDefaultProps`, then register the `TitleShimmer` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Shimmer Remotion asset from remotionhub/remotionhub-assets at remotion/title-shimmer to my project. Preserve the exported TitleShimmerProps API and register the TitleShimmer composition with the default props."
+      }
+    }
+  ]
+}
