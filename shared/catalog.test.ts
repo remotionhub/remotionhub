@@ -41,16 +41,16 @@ describe('catalog validation', () => {
     const parsed = catalogComponentSchema.parse({
       publisher: 'terence',
       runtime: 'remotion',
-      slug: 'kinetic-title-pack',
-      displayName: 'Kinetic Title Pack',
-      summary: 'Reusable title animations.',
-      categories: ['title'],
-      tags: ['remotion', 'text'],
+      slug: 'card-avatar',
+      displayName: 'Card Avatar',
+      summary: 'Animated avatar lower-third card for Remotion videos.',
+      categories: ['card'],
+      tags: ['remotion', 'avatar', 'profile'],
       status: 'published',
       versions: [baseVersion],
     })
 
-    expect(parsed.slug).toBe('kinetic-title-pack')
+    expect(parsed.slug).toBe('card-avatar')
   })
 
   it('accepts only the canonical RemotionHub asset repository for migrated source', () => {

@@ -9,17 +9,17 @@ const component = {
   publisher: 'terence',
   publisherDisplayName: 'Terence',
   runtime: 'remotion' as const,
-  slug: 'kinetic-title-pack',
-  displayName: 'Kinetic Title Pack',
-  summary: 'Reusable Remotion title animations.',
-  categories: ['title'],
-  tags: ['remotion', 'text'],
+  slug: 'card-avatar',
+  displayName: 'Card Avatar',
+  summary: 'Animated avatar lower-third card for Remotion videos.',
+  categories: ['card'],
+  tags: ['remotion', 'avatar', 'profile'],
   status: 'published' as const,
-  catalogFile: 'catalog/components/kinetic-title-pack.json',
+  catalogFile: 'catalog/components/card-avatar.json',
   versions: [
     {
-      version: '1.0.0',
-      changelog: 'Initial release.',
+      version: '1.0.2',
+      changelog: 'Publish publicly readable OSS preview media.',
       preview: {
         thumbnailUrl: 'https://example.com/thumb.jpg',
         previewVideoUrl: 'https://example.com/preview.mp4',
@@ -27,25 +27,25 @@ const component = {
       },
       metadata: {
         runtime: 'remotion' as const,
-        entryPoint: 'src/Scene.tsx',
+        entryPoint: 'src/CardAvatar.tsx',
         aspectRatios: ['16:9'],
-        durationFrames: 180,
+        durationFrames: 120,
         fps: 30,
       },
-      tags: ['text'],
-      fingerprint: 'fingerprint-100',
+      tags: ['avatar', 'profile'],
+      fingerprint: 'fingerprint-102',
       artifact: {
         kind: 'github-source' as const,
         githubSource: {
-          repo: 'tangwz/remotionhub-assets',
-          ref: 'v1.0.0',
-          commit: 'abc123',
-          path: 'components/scene',
+          repo: 'remotionhub/remotionhub-assets',
+          ref: 'main',
+          commit: '48f2401399f8e68ef2f8e04403d407102d0251a8',
+          path: 'remotion/card-avatar',
           pinned: true,
         },
         license: 'MIT',
-        usageMarkdown: 'Copy the component folder into your project.',
-        agentPrompt: 'Add the Kinetic Title Pack.',
+        usageMarkdown: 'Copy the component into your project.',
+        agentPrompt: 'Add the Card Avatar.',
       },
     },
   ],
@@ -67,7 +67,7 @@ describe('components catalog mutations and queries', () => {
     })
 
     expect(page.page).toHaveLength(1)
-    expect(page.page[0]?.slug).toBe('kinetic-title-pack')
+    expect(page.page[0]?.slug).toBe('card-avatar')
   })
 
   it('is idempotent for identical version fingerprints', async () => {
@@ -116,10 +116,10 @@ describe('components catalog mutations and queries', () => {
     const detail = await t.query(api.components.getCatalogDetail, {
       runtime: 'remotion',
       owner: 'terence',
-      slug: 'kinetic-title-pack',
+      slug: 'card-avatar',
     })
 
-    expect(detail?.selectedVersion.version).toBe('1.0.0')
+    expect(detail?.selectedVersion.version).toBe('1.0.2')
     expect(detail?.component.latestIsPrerelease).toBe(false)
   })
 
@@ -138,11 +138,11 @@ describe('components catalog mutations and queries', () => {
     const detail = await t.query(api.components.getCatalogDetail, {
       runtime: 'remotion',
       owner: 'terence',
-      slug: 'kinetic-title-pack',
+      slug: 'card-avatar',
     })
 
     expect(page.page).toHaveLength(0)
-    expect(detail?.component.slug).toBe('kinetic-title-pack')
+    expect(detail?.component.slug).toBe('card-avatar')
   })
 
   it('correctly filters sparsely matched items across multiple DB pagination pages', async () => {
