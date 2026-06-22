@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-wave-text",
+  "displayName": "Title Wave Text",
+  "summary": "Dynamic floating sine-wave text colorized animation component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "wave-text"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-wave-text/ff53bdfb657e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-wave-text/0ac2753ac860-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-wave-text"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleWaveText.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "wave-text"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-wave-text"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-wave-text/src/TitleWaveText.tsx` into your Remotion project, import `TitleWaveText` and `titleWaveTextDefaultProps`, then register the `TitleWaveText` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Wave Text Remotion asset from remotionhub/remotionhub-assets at remotion/title-wave-text to my project. Preserve the exported TitleWaveTextProps API and register the TitleWaveText composition with the default props."
+      }
+    }
+  ]
+}

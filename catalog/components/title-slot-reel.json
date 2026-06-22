@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-slot-reel",
+  "displayName": "Title Slot Reel",
+  "summary": "Casino slot machine style vertical scrolling text reveal component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "slot-reel"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-slot-reel/1a6c792a7713-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-slot-reel/82c85612a2ab-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-slot-reel"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleSlotReel.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "slot-reel"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-slot-reel"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-slot-reel/src/TitleSlotReel.tsx` into your Remotion project, import `TitleSlotReel` and `titleSlotReelDefaultProps`, then register the `TitleSlotReel` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Slot Reel Remotion asset from remotionhub/remotionhub-assets at remotion/title-slot-reel to my project. Preserve the exported TitleSlotReelProps API and register the TitleSlotReel composition with the default props."
+      }
+    }
+  ]
+}

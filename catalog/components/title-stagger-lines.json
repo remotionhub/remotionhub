@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-stagger-lines",
+  "displayName": "Title Stagger Lines",
+  "summary": "Staggered text lines from custom directions animation component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "stagger-lines"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-stagger-lines/2c3acb67fed2-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-stagger-lines/ca94cc40e25e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-stagger-lines"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleStaggerLines.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "stagger-lines"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-stagger-lines"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-stagger-lines/src/TitleStaggerLines.tsx` into your Remotion project, import `TitleStaggerLines` and `titleStaggerLinesDefaultProps`, then register the `TitleStaggerLines` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Stagger Lines Remotion asset from remotionhub/remotionhub-assets at remotion/title-stagger-lines to my project. Preserve the exported TitleStaggerLinesProps API and register the TitleStaggerLines composition with the default props."
+      }
+    }
+  ]
+}

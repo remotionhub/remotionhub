@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-split-reveal",
+  "displayName": "Title Split Reveal",
+  "summary": "Top/bottom split opening divider text reveal component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "split-reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-split-reveal/90598ce7b5cb-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-split-reveal/a5bf75562265-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-split-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleSplitReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "split-reveal"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-split-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-split-reveal/src/TitleSplitReveal.tsx` into your Remotion project, import `TitleSplitReveal` and `titleSplitRevealDefaultProps`, then register the `TitleSplitReveal` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Split Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/title-split-reveal to my project. Preserve the exported TitleSplitRevealProps API and register the TitleSplitReveal composition with the default props."
+      }
+    }
+  ]
+}
