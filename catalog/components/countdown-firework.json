@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "countdown-firework",
+  "displayName": "Countdown Firework",
+  "summary": "Festive fireworks celebration countdown timer component for Remotion.",
+  "categories": [
+    "countdown"
+  ],
+  "tags": [
+    "remotion",
+    "countdown",
+    "firework"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-firework/02a4b7f610bc-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-firework/2d8aaaf7500b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/countdown-firework"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CountdownFirework.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "firework",
+        "countdown"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "05a6a826e675ec21ff2724c8d745b9d759ea8ee1",
+          "path": "remotion/countdown-firework"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/countdown-firework/src/CountdownFirework.tsx` into your Remotion project, import `CountdownFirework` and `countdownFireworkDefaultProps`, then register the `CountdownFirework` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Countdown Firework Remotion asset from remotionhub/remotionhub-assets at remotion/countdown-firework to my project. Preserve the exported CountdownFireworkProps API and register the CountdownFirework composition with the default props."
+      }
+    }
+  ]
+}

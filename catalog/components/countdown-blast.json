@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "countdown-blast",
+  "displayName": "Countdown Blast",
+  "summary": "Action-packed, explosive countdown timer component for Remotion.",
+  "categories": [
+    "countdown"
+  ],
+  "tags": [
+    "remotion",
+    "countdown",
+    "blast"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-blast/9fbb6bfe2484-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-blast/f0c744920e47-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/countdown-blast"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CountdownBlast.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "blast",
+        "countdown"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "05a6a826e675ec21ff2724c8d745b9d759ea8ee1",
+          "path": "remotion/countdown-blast"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/countdown-blast/src/CountdownBlast.tsx` into your Remotion project, import `CountdownBlast` and `countdownBlastDefaultProps`, then register the `CountdownBlast` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Countdown Blast Remotion asset from remotionhub/remotionhub-assets at remotion/countdown-blast to my project. Preserve the exported CountdownBlastProps API and register the CountdownBlast composition with the default props."
+      }
+    }
+  ]
+}
