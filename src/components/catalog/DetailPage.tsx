@@ -22,7 +22,9 @@ export type CatalogDetail = {
     runtime: 'remotion' | 'hyperframes'
     slug: string
     displayName: string
+    displayNameZh?: string
     summary: string
+    summaryZh?: string
     tags: string[]
     categories: string[]
     latestIsPrerelease?: boolean
@@ -56,7 +58,9 @@ export type CatalogDetail = {
 }
 
 export default function DetailPage({ detail }: { detail: CatalogDetail }) {
-  const { t } = useI18n()
+  const { locale, t } = useI18n()
+  const displayName = locale === 'zh' ? (detail.component.displayNameZh ?? detail.component.displayName) : detail.component.displayName
+  const summary = locale === 'zh' ? (detail.component.summaryZh ?? detail.component.summary) : detail.component.summary
   const sourceTreeRef =
     detail.artifact.githubSource.commit || detail.artifact.githubSource.ref
   const sourceUrl = `https://github.com/${detail.artifact.githubSource.repo}/tree/${sourceTreeRef}/${detail.artifact.githubSource.path}`
@@ -80,7 +84,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
         <PreviewMedia
           video
           preview={detail.selectedVersion.preview}
-          title={detail.component.displayName}
+          title={displayName}
           className="flex size-full items-center justify-center object-cover text-3xl font-semibold text-muted-foreground"
         />
       </div>
@@ -93,10 +97,10 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
           })}
         </p>
         <h1 className="text-4xl font-semibold tracking-tight">
-          {detail.component.displayName}
+          {displayName}
         </h1>
         <p className="max-w-3xl text-muted-foreground">
-          {detail.component.summary}
+          {summary}
         </p>
         <div className="flex flex-wrap gap-2">
           <Badge>{t(runtimeLabelKey(detail.component.runtime))}</Badge>
