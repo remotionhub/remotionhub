@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "subtitle-fade",
+  "displayName": "Subtitle Fade",
+  "summary": "Elegant subtitle component with fade-in and fade-out transitions for Remotion.",
+  "categories": [
+    "subtitle"
+  ],
+  "tags": [
+    "remotion",
+    "subtitle",
+    "fade"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-fade/fd41b9bd86a2-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-fade/15536407a1f6-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/subtitle-fade"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SubtitleFade.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "subtitle",
+        "fade"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "857807a9f70f03fb6727635ac73ccbf95f8a13ef",
+          "path": "remotion/subtitle-fade"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/subtitle-fade/src/SubtitleFade.tsx` into your Remotion project, import `SubtitleFade` and `subtitleFadeDefaultProps`, then register the `SubtitleFade` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Subtitle Fade Remotion asset from remotionhub/remotionhub-assets at remotion/subtitle-fade to my project. Preserve the exported SubtitleFadeProps API and register the SubtitleFade composition with the default props."
+      }
+    }
+  ]
+}
