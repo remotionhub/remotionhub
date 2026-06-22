@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "map-pin-drop",
+  "displayName": "Map Pin Drop",
+  "summary": "Drop pin and ripple pulse animation map component for Remotion.",
+  "categories": [
+    "map"
+  ],
+  "tags": [
+    "remotion",
+    "map",
+    "pin-drop"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-pin-drop/d8d3524a8033-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-pin-drop/6a3aaab4ace1-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/map-pin-drop"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/MapPinDrop.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "pin-drop",
+        "map"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "90fe7707614a3a78e2231b546c81b645bc033852",
+          "path": "remotion/map-pin-drop"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/map-pin-drop/src/MapPinDrop.tsx` into your Remotion project, import `MapPinDrop` and `mapPinDropDefaultProps`, then register the `MapPinDrop` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Map Pin Drop Remotion asset from remotionhub/remotionhub-assets at remotion/map-pin-drop to my project. Preserve the exported MapPinDropProps API and register the MapPinDrop composition with the default props."
+      }
+    }
+  ]
+}

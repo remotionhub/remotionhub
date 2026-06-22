@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "map-area-reveal",
+  "displayName": "Map Area Reveal",
+  "summary": "Interactive geographic area reveal map component for Remotion.",
+  "categories": [
+    "map"
+  ],
+  "tags": [
+    "remotion",
+    "map",
+    "area-reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-area-reveal/4c9787b19d36-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-area-reveal/4431f3c3ec71-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/map-area-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/MapAreaReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "area-reveal",
+        "map"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "90fe7707614a3a78e2231b546c81b645bc033852",
+          "path": "remotion/map-area-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/map-area-reveal/src/MapAreaReveal.tsx` into your Remotion project, import `MapAreaReveal` and `mapAreaRevealDefaultProps`, then register the `MapAreaReveal` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Map Area Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/map-area-reveal to my project. Preserve the exported MapAreaRevealProps API and register the MapAreaReveal composition with the default props."
+      }
+    }
+  ]
+}

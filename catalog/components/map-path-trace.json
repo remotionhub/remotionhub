@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "map-path-trace",
+  "displayName": "Map Path Trace",
+  "summary": "Route path tracing line animation map component for Remotion.",
+  "categories": [
+    "map"
+  ],
+  "tags": [
+    "remotion",
+    "map",
+    "path-trace"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-path-trace/485081b6e2b7-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-path-trace/b6f702af568d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/map-path-trace"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/MapPathTrace.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "path-trace",
+        "map"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "90fe7707614a3a78e2231b546c81b645bc033852",
+          "path": "remotion/map-path-trace"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/map-path-trace/src/MapPathTrace.tsx` into your Remotion project, import `MapPathTrace` and `mapPathTraceDefaultProps`, then register the `MapPathTrace` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Map Path Trace Remotion asset from remotionhub/remotionhub-assets at remotion/map-path-trace to my project. Preserve the exported MapPathTraceProps API and register the MapPathTrace composition with the default props."
+      }
+    }
+  ]
+}
