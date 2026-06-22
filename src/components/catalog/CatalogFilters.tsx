@@ -38,7 +38,7 @@ export default function CatalogFilters({
             data-active={selectedCategory === category.value}
             onClick={() => onCategoryChange(category.value)}
           >
-            {formatOptionLabel(category)}
+            {formatOptionLabel(category, t)}
           </button>
         ))}
       </div>
@@ -59,8 +59,14 @@ export default function CatalogFilters({
   )
 }
 
-function formatOptionLabel(option: CatalogFilterOption) {
+function formatOptionLabel(
+  option: CatalogFilterOption,
+  t: (key: any) => string,
+) {
+  const labelKey = `category.${option.value}`
+  const translated = t(labelKey)
+  const finalLabel = translated === labelKey ? option.label : translated
   return typeof option.count === 'number'
-    ? `${option.label} (${option.count})`
-    : option.label
+    ? `${finalLabel} (${option.count})`
+    : finalLabel
 }
