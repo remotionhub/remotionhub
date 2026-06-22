@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-glitch-text",
+  "displayName": "Title Glitch Text",
+  "summary": "Cyberpunk/sci-fi style glitch text effect component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "glitch-text"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-glitch-text/b5f171c75133-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-glitch-text/06dce1b4b107-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-glitch-text"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleGlitchText.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "glitch-text"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-glitch-text"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-glitch-text/src/TitleGlitchText.tsx` into your Remotion project, import `TitleGlitchText` and `titleGlitchTextDefaultProps`, then register the `TitleGlitchText` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Glitch Text Remotion asset from remotionhub/remotionhub-assets at remotion/title-glitch-text to my project. Preserve the exported TitleGlitchTextProps API and register the TitleGlitchText composition with the default props."
+      }
+    }
+  ]
+}

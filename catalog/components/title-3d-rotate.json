@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-3d-rotate",
+  "displayName": "Title 3d Rotate",
+  "summary": "3D perspective rotating text animation component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "3d-rotate"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-3d-rotate/3a6b2e27af48-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-3d-rotate/2a6d237efb09-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-3d-rotate"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/Title3dRotate.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "3d-rotate"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-3d-rotate"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-3d-rotate/src/Title3dRotate.tsx` into your Remotion project, import `Title3dRotate` and `title3dRotateDefaultProps`, then register the `Title3dRotate` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title 3d Rotate Remotion asset from remotionhub/remotionhub-assets at remotion/title-3d-rotate to my project. Preserve the exported Title3dRotateProps API and register the Title3dRotate composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-zoom-punch",
+  "displayName": "Title Zoom Punch",
+  "summary": "Impact zoom-punch scale pop text effect component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "zoom-punch"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-zoom-punch/bcbf45ba8baa-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-zoom-punch/3a3abdc593bb-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-zoom-punch"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleZoomPunch.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "zoom-punch"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "fac304d0740df35630ad3d8a554832a989b0c012",
+          "path": "remotion/title-zoom-punch"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-zoom-punch/src/TitleZoomPunch.tsx` into your Remotion project, import `TitleZoomPunch` and `titleZoomPunchDefaultProps`, then register the `TitleZoomPunch` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Zoom Punch Remotion asset from remotionhub/remotionhub-assets at remotion/title-zoom-punch to my project. Preserve the exported TitleZoomPunchProps API and register the TitleZoomPunch composition with the default props."
+      }
+    }
+  ]
+}
