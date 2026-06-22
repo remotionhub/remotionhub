@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "subtitle-slide",
+  "displayName": "Subtitle Slide",
+  "summary": "Subtitle component with sliding transitions and elegant layouts for Remotion.",
+  "categories": [
+    "subtitle"
+  ],
+  "tags": [
+    "remotion",
+    "subtitle",
+    "slide"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-slide/783a17043092-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-slide/256a45f3d20c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/subtitle-slide"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SubtitleSlide.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "subtitle",
+        "slide"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "857807a9f70f03fb6727635ac73ccbf95f8a13ef",
+          "path": "remotion/subtitle-slide"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/subtitle-slide/src/SubtitleSlide.tsx` into your Remotion project, import `SubtitleSlide` and `subtitleSlideDefaultProps`, then register the `SubtitleSlide` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Subtitle Slide Remotion asset from remotionhub/remotionhub-assets at remotion/subtitle-slide to my project. Preserve the exported SubtitleSlideProps API and register the SubtitleSlide composition with the default props."
+      }
+    }
+  ]
+}

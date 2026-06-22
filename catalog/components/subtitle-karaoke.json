@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "subtitle-karaoke",
+  "displayName": "Subtitle Karaoke",
+  "summary": "Karaoke-style subtitle component with word-by-word highlighting animation for Remotion.",
+  "categories": [
+    "subtitle"
+  ],
+  "tags": [
+    "remotion",
+    "subtitle",
+    "karaoke"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-karaoke/93fce6c388c6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-karaoke/e6e03e6cf4c2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/subtitle-karaoke"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SubtitleKaraoke.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "subtitle",
+        "karaoke"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "857807a9f70f03fb6727635ac73ccbf95f8a13ef",
+          "path": "remotion/subtitle-karaoke"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/subtitle-karaoke/src/SubtitleKaraoke.tsx` into your Remotion project, import `SubtitleKaraoke` and `subtitleKaraokeDefaultProps`, then register the `SubtitleKaraoke` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Subtitle Karaoke Remotion asset from remotionhub/remotionhub-assets at remotion/subtitle-karaoke to my project. Preserve the exported SubtitleKaraokeProps API and register the SubtitleKaraoke composition with the default props."
+      }
+    }
+  ]
+}

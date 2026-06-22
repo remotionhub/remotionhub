@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "subtitle-dual-lang",
+  "displayName": "Subtitle Dual Lang",
+  "summary": "Dual language subtitle component with layout styling for Remotion.",
+  "categories": [
+    "subtitle"
+  ],
+  "tags": [
+    "remotion",
+    "subtitle",
+    "dual-lang"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-dual-lang/b87d488b6346-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/subtitle-dual-lang/9ed2c24c5dd5-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/subtitle-dual-lang"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SubtitleDualLang.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "subtitle",
+        "dual-lang"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "857807a9f70f03fb6727635ac73ccbf95f8a13ef",
+          "path": "remotion/subtitle-dual-lang"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/subtitle-dual-lang/src/SubtitleDualLang.tsx` into your Remotion project, import `SubtitleDualLang` and `subtitleDualLangDefaultProps`, then register the `SubtitleDualLang` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Subtitle Dual Lang Remotion asset from remotionhub/remotionhub-assets at remotion/subtitle-dual-lang to my project. Preserve the exported SubtitleDualLangProps API and register the SubtitleDualLang composition with the default props."
+      }
+    }
+  ]
+}
