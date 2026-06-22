@@ -426,3 +426,44 @@ export const getCatalogDetail = query({
     }
   },
 })
+
+export const getCatalogFacets = query({
+  args: {
+    runtime: v.optional(runtime),
+  },
+  handler: async (ctx, args) => {
+    let allItems: CatalogDigest[] = []
+    if (args.runtime) {
+      const runtimeValue = args.runtime
+      allItems = await ctx.db
+        .query('componentSearchDigest')
+        .withIndex('by_active_runtime_updated', (q) =>
+          q.eq('isActive', true).eq('runtime', runtimeValue),
+        )
+        .collect()
+    } else {
+      allItems = await ctx.db
+        .query('componentSearchDigest')
+        .withIndex('by_active_updated', (q) => q.eq('isActive', true))
+        .collect()
+    }
+
+    const categories: Record<string, number> = {}
+    const tags: Record<string, number> = {}
+
+    for (const item of allItems) {
+      for (const cat of item.categories) {
+        categories[cat] = (categories[cat] ?? 0) + 1
+      }
+      for (const tag of item.tags) {
+        tags[tag] = (tags[tag] ?? 0) + 1
+      }
+    }
+
+    return {
+      categories,
+      tags,
+    }
+  },
+})
+

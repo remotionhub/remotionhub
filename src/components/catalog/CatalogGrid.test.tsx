@@ -33,6 +33,19 @@ let queryState: {
 
 vi.mock('convex/react', () => ({
   usePaginatedQuery: vi.fn(() => queryState),
+  useQuery: vi.fn(() => {
+    const categories: Record<string, number> = {}
+    const tags: Record<string, number> = {}
+    for (const item of queryState.results) {
+      for (const cat of item.categories) {
+        categories[cat] = (categories[cat] ?? 0) + 1
+      }
+      for (const tag of item.tags) {
+        tags[tag] = (tags[tag] ?? 0) + 1
+      }
+    }
+    return { categories, tags }
+  }),
 }))
 
 vi.mock('./CatalogCard', () => ({

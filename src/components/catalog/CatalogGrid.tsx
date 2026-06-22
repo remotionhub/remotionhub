@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { usePaginatedQuery } from 'convex/react'
+import { usePaginatedQuery, useQuery } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 import { useI18n } from '#/components/I18nProvider'
 import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert'
@@ -26,22 +26,30 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
       initialNumItems: 12,
     },
   )
-  const [facetItems, setFacetItems] = useState<typeof results>([])
+  const facets = useQuery(api.components.getCatalogFacets, { runtime })
 
-  useEffect(() => {
-    if (!category) {
-      setFacetItems(results)
-    }
-  }, [category, results])
+  const categoryOptions = useMemo(() => {
+    if (!facets) return []
+    return Object.entries(facets.categories)
+      .map(([value, count]) => ({
+        value,
+        label: value,
+        count,
+      }))
+      .sort((a, b) => a.value.localeCompare(b.value))
+  }, [facets])
 
-  const categoryOptions = useMemo(
-    () => buildFacetOptions(facetItems, (item) => item.categories),
-    [facetItems],
-  )
-  const tagOptions = useMemo(
-    () => buildFacetOptions(facetItems, (item) => item.tags).slice(0, 18),
-    [facetItems],
-  )
+  const tagOptions = useMemo(() => {
+    if (!facets) return []
+    return Object.entries(facets.tags)
+      .map(([value, count]) => ({
+        value,
+        label: value,
+        count,
+      }))
+      .sort((a, b) => a.value.localeCompare(b.value))
+      .slice(0, 18)
+  }, [facets])
 
   useEffect(() => {
     const sentinel = sentinelRef.current
@@ -98,23 +106,3 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
   )
 }
 
-function buildFacetOptions<T>(
-  items: T[],
-  selectValues: (item: T) => string[],
-) {
-  const counts = new Map<string, number>()
-
-  for (const item of items) {
-    for (const value of selectValues(item)) {
-      counts.set(value, (counts.get(value) ?? 0) + 1)
-    }
-  }
-
-  return Array.from(counts.entries())
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([value, count]) => ({
-      value,
-      label: value,
-      count,
-    }))
-}
