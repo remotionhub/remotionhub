@@ -5,8 +5,7 @@
   "displayName": "Lower Third News",
   "summary": "News banner with rolling ticker lower-third.",
   "categories": [
-    "card",
-    "lower-third"
+    "card"
   ],
   "tags": [
     "remotion",
