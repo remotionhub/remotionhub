@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "countdown-digital",
+  "displayName": "Countdown Digital",
+  "summary": "Modern digital clock style countdown timer component for Remotion.",
+  "categories": [
+    "countdown"
+  ],
+  "tags": [
+    "remotion",
+    "countdown",
+    "digital"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-digital/2af8cddd4497-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/countdown-digital/4c4a32b41f6d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/countdown-digital"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/CountdownDigital.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "digital",
+        "countdown"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "05a6a826e675ec21ff2724c8d745b9d759ea8ee1",
+          "path": "remotion/countdown-digital"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/countdown-digital/src/CountdownDigital.tsx` into your Remotion project, import `CountdownDigital` and `countdownDigitalDefaultProps`, then register the `CountdownDigital` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Countdown Digital Remotion asset from remotionhub/remotionhub-assets at remotion/countdown-digital to my project. Preserve the exported CountdownDigitalProps API and register the CountdownDigital composition with the default props."
+      }
+    }
+  ]
+}
