@@ -99,11 +99,11 @@ describe('CatalogGrid', () => {
           componentId: 'component-1',
           runtime: 'remotion',
           ownerHandle: 'terence',
-          slug: 'kinetic-title-pack',
-          displayName: 'Kinetic Title Pack',
-          summary: 'Reusable title animations.',
-          tags: ['intro'],
-          categories: ['title'],
+          slug: 'card-avatar',
+          displayName: 'Card Avatar',
+          summary: 'Reusable avatar animations.',
+          tags: ['avatar'],
+          categories: ['card'],
           latestVersionSummary: {
             version: '1.0.0',
             preview: { thumbnailUrl: 'https://example.com/thumb.jpg' },
@@ -134,9 +134,9 @@ describe('CatalogGrid', () => {
       </I18nProvider>,
     )
 
-    expect(await screen.findByRole('button', { name: 'title (1)' })).toBeTruthy()
+    expect(await screen.findByRole('button', { name: 'Card (1)' })).toBeTruthy()
     expect(screen.getByText('Tags')).toBeTruthy()
-    expect(screen.getByText('intro')).toBeTruthy()
+    expect(screen.getByText('avatar')).toBeTruthy()
 
     queryState = {
       results: [],
@@ -151,10 +151,10 @@ describe('CatalogGrid', () => {
     )
 
     await waitFor(() => {
-      expect(screen.queryByRole('button', { name: 'title (1)' })).toBeNull()
+      expect(screen.queryByRole('button', { name: 'Card (1)' })).toBeNull()
     })
     expect(screen.queryByText('Tags')).toBeNull()
-    expect(screen.queryByText('intro')).toBeNull()
+    expect(screen.queryByText('avatar')).toBeNull()
     expect(screen.getByText('No components found')).toBeTruthy()
   })
 })

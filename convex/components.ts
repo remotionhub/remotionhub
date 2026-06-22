@@ -466,4 +466,3 @@ export const getCatalogFacets = query({
     }
   },
 })
-

@@ -25,11 +25,11 @@ const detail = {
   publisher: { handle: 'terence', displayName: 'Terence' },
   component: {
     runtime: 'remotion' as const,
-    slug: 'kinetic-title-pack',
-    displayName: 'Kinetic Title Pack',
-    summary: 'Reusable title animations.',
-    tags: ['remotion', 'text', 'intro'],
-    categories: ['title'],
+    slug: 'card-avatar',
+    displayName: 'Card Avatar',
+    summary: 'Animated avatar lower-third card for Remotion videos.',
+    tags: ['remotion', 'avatar', 'profile'],
+    categories: ['card'],
     latestIsPrerelease: false,
   },
   selectedVersion: {
@@ -41,7 +41,7 @@ const detail = {
     },
     metadata: {
       runtime: 'remotion' as const,
-      entryPoint: 'src/KineticTitlePack.tsx',
+      entryPoint: 'src/CardAvatar.tsx',
       aspectRatios: ['16:9'],
       durationFrames: 180,
       fps: 30,
@@ -54,12 +54,12 @@ const detail = {
       repo: 'tangwz/remotionhub-assets',
       ref: 'v1.0.0',
       commit: 'abc123',
-      path: 'remotion/kinetic-title-pack',
+      path: 'remotion/card-avatar',
       pinned: true,
     },
     license: 'MIT',
     usageMarkdown: 'Copy the component folder into your Remotion project.',
-    agentPrompt: 'Add the Kinetic Title Pack.',
+    agentPrompt: 'Add the Card Avatar.',
   },
 }
 
@@ -79,17 +79,17 @@ describe('DetailPage', () => {
   it('renders preview before title and exposes unchanged catalog data', () => {
     renderDetailPage()
 
-    const video = screen.getByLabelText('Kinetic Title Pack 预览')
-    const title = screen.getByRole('heading', { name: 'Kinetic Title Pack' })
+    const video = screen.getByLabelText('Card Avatar 预览')
+    const title = screen.getByRole('heading', { name: 'Card Avatar' })
 
     expect(
       video.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy()
-    expect(screen.getByDisplayValue(/Add the Kinetic Title Pack/)).toBeTruthy()
+    expect(screen.getByDisplayValue(/Add the Card Avatar/)).toBeTruthy()
     expect(screen.getByText('tangwz/remotionhub-assets')).toBeTruthy()
-    expect(screen.getByText('Reusable title animations.')).toBeTruthy()
-    expect(screen.getByText('text')).toBeTruthy()
-    expect(screen.getByText('intro')).toBeTruthy()
+    expect(screen.getByText('Animated avatar lower-third card for Remotion videos.')).toBeTruthy()
+    expect(screen.getByText('avatar')).toBeTruthy()
+    expect(screen.getByText('profile')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('tab', { name: '使用说明' }))
     expect(
@@ -117,7 +117,7 @@ describe('DetailPage', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'GitHub 源码' }))
     expect(screen.getByText('Ref: v1.0.0')).toBeTruthy()
     expect(screen.getByText('Commit: abc123')).toBeTruthy()
-    expect(screen.getByText('Path: remotion/kinetic-title-pack')).toBeTruthy()
+    expect(screen.getByText('Path: remotion/card-avatar')).toBeTruthy()
     expect(screen.getByRole('link', { name: '打开源码' })).toBeTruthy()
   })
 
@@ -138,7 +138,7 @@ describe('DetailPage', () => {
 
     expect(
       screen.getByRole('img', {
-        name: 'Kinetic Title Pack 预览不可用',
+        name: 'Card Avatar 预览不可用',
       }),
     ).toBeTruthy()
   })

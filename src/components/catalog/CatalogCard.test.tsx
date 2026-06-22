@@ -26,11 +26,11 @@ vi.mock('@tanstack/react-router', () => ({
 const item = {
   runtime: 'remotion' as const,
   ownerHandle: 'terence',
-  slug: 'kinetic-title-pack',
-  displayName: 'Kinetic Title Pack',
-  summary: 'Image-led Remotion title animations.',
-  tags: ['remotion', 'text', 'intro', 'motion'],
-  categories: ['title'],
+  slug: 'card-avatar',
+  displayName: 'Card Avatar',
+  summary: 'Animated avatar lower-third card for Remotion videos.',
+  tags: ['remotion', 'avatar', 'profile', 'motion'],
+  categories: ['card'],
   latestVersionSummary: {
     version: '1.0.0',
     preview: { thumbnailUrl: 'https://example.com/thumb.jpg' },
@@ -46,12 +46,12 @@ describe('CatalogCard', () => {
       </I18nProvider>,
     )
 
-    const link = screen.getByRole('link', { name: /Kinetic Title Pack/ })
-    expect(link.getAttribute('href')).toBe('/remotion/terence/kinetic-title-pack')
-    expect(screen.getByRole('img', { name: /Kinetic Title Pack/ })).toBeTruthy()
-    expect(screen.queryByText('Image-led Remotion title animations.')).toBeNull()
+    const link = screen.getByRole('link', { name: /Card Avatar/ })
+    expect(link.getAttribute('href')).toBe('/remotion/terence/card-avatar')
+    expect(screen.getByRole('img', { name: /Card Avatar/ })).toBeTruthy()
+    expect(screen.queryByText('Animated avatar lower-third card for Remotion videos.')).toBeNull()
     expect(screen.getByText('remotion')).toBeTruthy()
-    expect(screen.getByText('text')).toBeTruthy()
+    expect(screen.getByText('avatar')).toBeTruthy()
     expect(screen.queryByText('motion')).toBeNull()
   })
 })
