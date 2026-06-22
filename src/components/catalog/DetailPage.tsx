@@ -57,7 +57,9 @@ export type CatalogDetail = {
 
 export default function DetailPage({ detail }: { detail: CatalogDetail }) {
   const { t } = useI18n()
-  const sourceUrl = `https://github.com/${detail.artifact.githubSource.repo}/tree/${detail.artifact.githubSource.ref}/${detail.artifact.githubSource.path}`
+  const sourceTreeRef =
+    detail.artifact.githubSource.commit || detail.artifact.githubSource.ref
+  const sourceUrl = `https://github.com/${detail.artifact.githubSource.repo}/tree/${sourceTreeRef}/${detail.artifact.githubSource.path}`
   const backTo =
     detail.component.runtime === 'remotion' ? '/remotion' : '/hyperframes'
   const backLabel =

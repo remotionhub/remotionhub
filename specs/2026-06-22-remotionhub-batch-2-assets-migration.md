@@ -162,7 +162,7 @@ catalog/components/<slug>.json
   ```
 * **OSS Thumbnail URL 路径格式**：
   ```text
-  https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/<slug>/<hash>-thumb.jpg
+  https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/<slug>/<hash>-thumb.(jpg|png)
   ```
 
 执行 Agent 应在注入 `.env.local` 环境变量后，调用 assets 仓库的媒体镜像命令，不允许人工猜测 hash 或手写 OSS 地址：

@@ -121,6 +121,33 @@ describe('DetailPage', () => {
     expect(screen.getByRole('link', { name: '打开源码' })).toBeTruthy()
   })
 
+  it('links to pinned source commits when a catalog entry has a commit', () => {
+    render(
+      <I18nProvider>
+        <DetailPage
+          detail={{
+            ...detail,
+            artifact: {
+              ...detail.artifact,
+              githubSource: {
+                ...detail.artifact.githubSource,
+                ref: 'main',
+                commit: '05a6a826e675ec21ff2724c8d745b9d759ea8ee1',
+                path: 'remotion/countdown-blast',
+              },
+            },
+          }}
+        />
+      </I18nProvider>,
+    )
+
+    fireEvent.click(screen.getByRole('tab', { name: 'GitHub 源码' }))
+
+    expect(screen.getByRole('link', { name: '打开源码' }).getAttribute('href')).toBe(
+      'https://github.com/tangwz/remotionhub-assets/tree/05a6a826e675ec21ff2724c8d745b9d759ea8ee1/remotion/countdown-blast',
+    )
+  })
+
   it('renders localized preview fallback accessible text', () => {
     render(
       <I18nProvider>
