@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "map-radar-scan",
+  "displayName": "Map Radar Scan",
+  "summary": "Sci-Fi radar sweep scanning animation map component for Remotion.",
+  "categories": [
+    "map"
+  ],
+  "tags": [
+    "remotion",
+    "map",
+    "radar-scan"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-radar-scan/cf506e3db31d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/map-radar-scan/861078007280-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/map-radar-scan"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/MapRadarScan.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "radar-scan",
+        "map"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "90fe7707614a3a78e2231b546c81b645bc033852",
+          "path": "remotion/map-radar-scan"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/map-radar-scan/src/MapRadarScan.tsx` into your Remotion project, import `MapRadarScan` and `mapRadarScanDefaultProps`, then register the `MapRadarScan` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Map Radar Scan Remotion asset from remotionhub/remotionhub-assets at remotion/map-radar-scan to my project. Preserve the exported MapRadarScanProps API and register the MapRadarScan composition with the default props."
+      }
+    }
+  ]
+}
