@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-neon-glow",
+  "displayName": "Title Neon Glow",
+  "summary": "Flickering neon glow light text effect component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "neon-glow"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-neon-glow/19e0b8fe137e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-neon-glow/0dff9b427418-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-neon-glow"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleNeonGlow.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "neon-glow"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-neon-glow"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-neon-glow/src/TitleNeonGlow.tsx` into your Remotion project, import `TitleNeonGlow` and `titleNeonGlowDefaultProps`, then register the `TitleNeonGlow` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Neon Glow Remotion asset from remotionhub/remotionhub-assets at remotion/title-neon-glow to my project. Preserve the exported TitleNeonGlowProps API and register the TitleNeonGlow composition with the default props."
+      }
+    }
+  ]
+}

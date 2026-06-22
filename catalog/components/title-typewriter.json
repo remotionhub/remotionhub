@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-typewriter",
+  "displayName": "Title Typewriter",
+  "summary": "Typewriter writing animation text component with cursor blinking for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "typewriter"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-typewriter/d587fd4164b8-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-typewriter/b446aca7d634-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-typewriter"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleTypewriter.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "typewriter"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-typewriter"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-typewriter/src/TitleTypewriter.tsx` into your Remotion project, import `TitleTypewriter` and `titleTypewriterDefaultProps`, then register the `TitleTypewriter` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Typewriter Remotion asset from remotionhub/remotionhub-assets at remotion/title-typewriter to my project. Preserve the exported TitleTypewriterProps API and register the TitleTypewriter composition with the default props."
+      }
+    }
+  ]
+}

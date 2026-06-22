@@ -1,0 +1,52 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "title-word-fade",
+  "displayName": "Title Word Fade",
+  "summary": "Staggered word fade-in transition text card component for Remotion.",
+  "categories": [
+    "text-effect"
+  ],
+  "tags": [
+    "remotion",
+    "text-effect",
+    "word-fade"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migration.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-word-fade/76aa111a8835-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/title-word-fade/682acf63fb71-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/title-word-fade"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TitleWordFade.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "text-effect",
+        "word-fade"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "7d53414a2f8f3dfe315f03795835f6db87bf9959",
+          "path": "remotion/title-word-fade"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/title-word-fade/src/TitleWordFade.tsx` into your Remotion project, import `TitleWordFade` and `titleWordFadeDefaultProps`, then register the `TitleWordFade` composition with duration 120, fps 30, width 1920, and height 1080.",
+        "agentPrompt": "Add the Title Word Fade Remotion asset from remotionhub/remotionhub-assets at remotion/title-word-fade to my project. Preserve the exported TitleWordFadeProps API and register the TitleWordFade composition with the default props."
+      }
+    }
+  ]
+}
