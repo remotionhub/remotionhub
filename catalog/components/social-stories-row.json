@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-stories-row",
   "displayName": "Social Stories Row",
-  "displayNameZh": "限时动态列",
+  "displayNameZh": "快拍列",
   "summary": "Social Stories Row component for Remotion.",
-  "summaryZh": "适用于 Remotion 的限时动态列组件。",
+  "summaryZh": "适用于 Remotion 的快拍列组件。",
   "categories": [
     "social"
   ],

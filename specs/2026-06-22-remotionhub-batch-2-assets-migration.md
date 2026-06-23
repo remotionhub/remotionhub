@@ -2,7 +2,7 @@
 
 ## 1. 目标
 
-本阶段的目标是在新的 worktree 分支中迁移 `/tmp/remotionlab/案例` 中的下一批次共 31 个 Remotion 素材。这 31 个素材涵盖：倒数计时器（5个）、地图与轨迹（5个）、字幕与CC（5个）和文字特效（16个）。
+本阶段的目标是在新的 worktree 分支中迁移 `/tmp/remotionlab/案例` 中的下一批次共 31 个 Remotion 素材。这 31 个素材涵盖：倒计时器（5个）、地图与轨迹（5个）、字幕与CC（5个）和文字特效（16个）。
 
 为了向原作者致敬并清晰标注出处，本阶段所有素材的发布人/所有者（owner/publisher）统一设为 `remotionlab`，且在生成的交付物（LICENSE, README.md, manifest）以及主仓库的 catalog 数据中，均进行明确的出处标注与链接指引。
 
@@ -12,7 +12,7 @@
 
 本阶段仅包含以下 31 个指定的 slug。执行 Agent 不得超出此范围：
 
-### 2.1 倒数计时器 (5个)
+### 2.1 倒计时器 (5个)
 - `countdown-blast`
 - `countdown-circle`
 - `countdown-digital`
@@ -69,12 +69,12 @@
 ### Batch 1: Countdown Timers (5 slugs)
 * **包含素材**：`countdown-blast`, `countdown-circle`, `countdown-digital`, `countdown-firework`, `countdown-flip-clock`
 * **Commit 信息**：`feat: migrate countdown assets`
-* **技术要点**：验证倒数秒数参数化、圆弧 stroke-dashoffset 动画、抖动效果、弹出 spring 效果等。
+* **技术要点**：验证倒计时秒数参数化、圆弧 stroke-dashoffset 动画、抖动效果、弹出 spring 效果等。
 
 ### Batch 2: Maps and Tracks (5 slugs)
 * **包含素材**：`map-area-reveal`, `map-path-trace`, `map-pin-drop`, `map-radar-scan`, `map-route-progress`
 * **Commit 信息**：`feat: migrate map and track assets`
-* **技术要点**：SVG 路径追踪绘制动画、大头针定位弹出、雷达动态扫描渲染。
+* **技术要点**：SVG 路径关注绘制动画、大头针定位弹出、雷达动态扫描渲染。
 
 ### Batch 3: Subtitles & Closed Captions (5 slugs)
 * **包含素材**：`subtitle-cinematic`, `subtitle-dual-lang`, `subtitle-fade`, `subtitle-karaoke`, `subtitle-slide`

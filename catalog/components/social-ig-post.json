@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-ig-post",
   "displayName": "Social Ig Post",
-  "displayNameZh": "Instagram 贴文卡片",
+  "displayNameZh": "Instagram 帖子卡片",
   "summary": "Social Ig Post component for Remotion.",
-  "summaryZh": "适用于 Remotion 的Instagram 贴文卡片组件。",
+  "summaryZh": "适用于 Remotion 的Instagram 帖子卡片组件。",
   "categories": [
     "social"
   ],

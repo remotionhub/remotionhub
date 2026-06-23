@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-linkedin",
   "displayName": "Social Linkedin",
-  "displayNameZh": "LinkedIn 贴文卡片",
+  "displayNameZh": "LinkedIn 帖子卡片",
   "summary": "Social Linkedin component for Remotion.",
-  "summaryZh": "适用于 Remotion 的LinkedIn 贴文卡片组件。",
+  "summaryZh": "适用于 Remotion 的LinkedIn 帖子卡片组件。",
   "categories": [
     "social"
   ],

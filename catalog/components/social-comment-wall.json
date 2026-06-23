@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-comment-wall",
   "displayName": "Social Comment Wall",
-  "displayNameZh": "直播留言板",
+  "displayNameZh": "直播评论板",
   "summary": "Social Comment Wall component for Remotion.",
-  "summaryZh": "适用于 Remotion 的直播留言板组件。",
+  "summaryZh": "适用于 Remotion 的直播评论板组件。",
   "categories": [
     "social"
   ],
