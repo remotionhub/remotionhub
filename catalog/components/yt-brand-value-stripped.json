@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-brand-value-stripped",
+  "displayName": "Yt Brand Value Stripped",
+  "displayNameZh": "品牌装饰剥除：价值还剩什么？",
+  "summary": "Yt Brand Value Stripped component for Remotion.",
+  "summaryZh": "适用于 Remotion 的品牌装饰剥除：价值还剩什么？组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "brand",
+    "value",
+    "stripped"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-brand-value-stripped/8b31e36b940b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-brand-value-stripped/ab41b2be20f3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-brand-value-stripped"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtBrandValueStripped.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "brand",
+        "value",
+        "stripped"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-brand-value-stripped"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-brand-value-stripped/src/YtBrandValueStripped.tsx` into your Remotion project, import `YtBrandValueStripped` and `ytBrandValueStrippedDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Brand Value Stripped Remotion asset from remotionhub/remotionhub-assets at remotion/yt-brand-value-stripped to my project. Preserve the exported YtBrandValueStrippedProps API and register the YtBrandValueStripped composition with the default props."
+      }
+    }
+  ]
+}

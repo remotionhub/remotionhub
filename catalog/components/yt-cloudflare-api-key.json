@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-cloudflare-api-key",
+  "displayName": "Yt Cloudflare Api Key",
+  "displayNameZh": "把 API Key 给 Claude Code",
+  "summary": "Yt Cloudflare Api Key component for Remotion.",
+  "summaryZh": "适用于 Remotion 的把 API Key 给 Claude Code组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "cloudflare",
+    "api",
+    "key"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-cloudflare-api-key/0ed169a434f9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-cloudflare-api-key/ca4370d02cad-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-cloudflare-api-key"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtCloudflareApiKey.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "cloudflare",
+        "api",
+        "key"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-cloudflare-api-key"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-cloudflare-api-key/src/YtCloudflareApiKey.tsx` into your Remotion project, import `YtCloudflareApiKey` and `ytCloudflareApiKeyDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Cloudflare Api Key Remotion asset from remotionhub/remotionhub-assets at remotion/yt-cloudflare-api-key to my project. Preserve the exported YtCloudflareApiKeyProps API and register the YtCloudflareApiKey composition with the default props."
+      }
+    }
+  ]
+}

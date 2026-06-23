@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-narrative-redesign",
+  "displayName": "Yt Narrative Redesign",
+  "displayNameZh": "叙事式网站设计",
+  "summary": "Yt Narrative Redesign component for Remotion.",
+  "summaryZh": "适用于 Remotion 的叙事式网站设计组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "narrative",
+    "redesign"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-narrative-redesign/f3fa3c9cb696-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-narrative-redesign/e4009727c3e3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-narrative-redesign"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtNarrativeRedesign.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "narrative",
+        "redesign"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-narrative-redesign"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-narrative-redesign/src/YtNarrativeRedesign.tsx` into your Remotion project, import `YtNarrativeRedesign` and `ytNarrativeRedesignDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Narrative Redesign Remotion asset from remotionhub/remotionhub-assets at remotion/yt-narrative-redesign to my project. Preserve the exported YtNarrativeRedesignProps API and register the YtNarrativeRedesign composition with the default props."
+      }
+    }
+  ]
+}

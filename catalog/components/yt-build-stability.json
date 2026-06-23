@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-build-stability",
+  "displayName": "Yt Build Stability",
+  "displayNameZh": "提升自己的稳定度",
+  "summary": "Yt Build Stability component for Remotion.",
+  "summaryZh": "适用于 Remotion 的提升自己的稳定度组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "build",
+    "stability"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-build-stability/320d7b3f3315-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-build-stability/ca02d0e64a0d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-build-stability"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtBuildStability.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "build",
+        "stability"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-build-stability"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-build-stability/src/YtBuildStability.tsx` into your Remotion project, import `YtBuildStability` and `ytBuildStabilityDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Build Stability Remotion asset from remotionhub/remotionhub-assets at remotion/yt-build-stability to my project. Preserve the exported YtBuildStabilityProps API and register the YtBuildStability composition with the default props."
+      }
+    }
+  ]
+}

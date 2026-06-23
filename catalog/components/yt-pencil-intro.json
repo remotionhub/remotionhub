@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-pencil-intro",
+  "displayName": "Yt Pencil Intro",
+  "displayNameZh": "Pencil 工具 Logo 动画介绍",
+  "summary": "Yt Pencil Intro component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Pencil 工具 Logo 动画介绍组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "pencil",
+    "intro"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-pencil-intro/7198f32c3577-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-pencil-intro/43a84631cc10-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-pencil-intro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtPencilIntro.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "pencil",
+        "intro"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-pencil-intro"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-pencil-intro/src/YtPencilIntro.tsx` into your Remotion project, import `YtPencilIntro` and `ytPencilIntroDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Pencil Intro Remotion asset from remotionhub/remotionhub-assets at remotion/yt-pencil-intro to my project. Preserve the exported YtPencilIntroProps API and register the YtPencilIntro composition with the default props."
+      }
+    }
+  ]
+}

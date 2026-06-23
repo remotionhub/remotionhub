@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-exclusive-app",
+  "displayName": "Yt Exclusive App",
+  "displayNameZh": "直接为 KOL 粉丝做一个专属 APP",
+  "summary": "Yt Exclusive App component for Remotion.",
+  "summaryZh": "适用于 Remotion 的直接为 KOL 粉丝做一个专属 APP组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "exclusive",
+    "app"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-exclusive-app/206bc5ba4de1-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-exclusive-app/f1ad3367e2ae-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-exclusive-app"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtExclusiveApp.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "exclusive",
+        "app"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-exclusive-app"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-exclusive-app/src/YtExclusiveApp.tsx` into your Remotion project, import `YtExclusiveApp` and `ytExclusiveAppDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Exclusive App Remotion asset from remotionhub/remotionhub-assets at remotion/yt-exclusive-app to my project. Preserve the exported YtExclusiveAppProps API and register the YtExclusiveApp composition with the default props."
+      }
+    }
+  ]
+}

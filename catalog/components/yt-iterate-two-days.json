@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-iterate-two-days",
+  "displayName": "Yt Iterate Two Days",
+  "displayNameZh": "来回调整与测试",
+  "summary": "Yt Iterate Two Days component for Remotion.",
+  "summaryZh": "适用于 Remotion 的来回调整与测试组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "iterate",
+    "two",
+    "days"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-iterate-two-days/3075af1d6bf6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-iterate-two-days/e11530acf9d0-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-iterate-two-days"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtIterateTwoDays.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "iterate",
+        "two",
+        "days"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-iterate-two-days"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-iterate-two-days/src/YtIterateTwoDays.tsx` into your Remotion project, import `YtIterateTwoDays` and `ytIterateTwoDaysDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Iterate Two Days Remotion asset from remotionhub/remotionhub-assets at remotion/yt-iterate-two-days to my project. Preserve the exported YtIterateTwoDaysProps API and register the YtIterateTwoDays composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-tailor-for-audience",
+  "displayName": "Yt Tailor For Audience",
+  "displayNameZh": "针对受众，量身定做",
+  "summary": "Yt Tailor For Audience component for Remotion.",
+  "summaryZh": "适用于 Remotion 的针对受众，量身定做组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "tailor",
+    "for",
+    "audience"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tailor-for-audience/68bb5cf3db6a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tailor-for-audience/eaf97cbe5453-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-tailor-for-audience"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTailorForAudience.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "tailor",
+        "for",
+        "audience"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-tailor-for-audience"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-tailor-for-audience/src/YtTailorForAudience.tsx` into your Remotion project, import `YtTailorForAudience` and `ytTailorForAudienceDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Tailor For Audience Remotion asset from remotionhub/remotionhub-assets at remotion/yt-tailor-for-audience to my project. Preserve the exported YtTailorForAudienceProps API and register the YtTailorForAudience composition with the default props."
+      }
+    }
+  ]
+}

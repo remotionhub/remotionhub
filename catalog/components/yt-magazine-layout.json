@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-magazine-layout",
+  "displayName": "Yt Magazine Layout",
+  "displayNameZh": "杂志／书本式网站排版",
+  "summary": "Yt Magazine Layout component for Remotion.",
+  "summaryZh": "适用于 Remotion 的杂志／书本式网站排版组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "magazine",
+    "layout"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-magazine-layout/f2ce4dd610d9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-magazine-layout/30d663134590-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-magazine-layout"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtMagazineLayout.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "magazine",
+        "layout"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-magazine-layout"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-magazine-layout/src/YtMagazineLayout.tsx` into your Remotion project, import `YtMagazineLayout` and `ytMagazineLayoutDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Magazine Layout Remotion asset from remotionhub/remotionhub-assets at remotion/yt-magazine-layout to my project. Preserve the exported YtMagazineLayoutProps API and register the YtMagazineLayout composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-prompt-spec",
+  "displayName": "Yt Prompt Spec",
+  "displayNameZh": "用一段 Prompt 规划产品规格",
+  "summary": "Yt Prompt Spec component for Remotion.",
+  "summaryZh": "适用于 Remotion 的用一段 Prompt 规划产品规格组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "prompt",
+    "spec"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-prompt-spec/51ead17062f3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-prompt-spec/4ae185b981a1-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-prompt-spec"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtPromptSpec.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "prompt",
+        "spec"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-prompt-spec"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-prompt-spec/src/YtPromptSpec.tsx` into your Remotion project, import `YtPromptSpec` and `ytPromptSpecDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Prompt Spec Remotion asset from remotionhub/remotionhub-assets at remotion/yt-prompt-spec to my project. Preserve the exported YtPromptSpecProps API and register the YtPromptSpec composition with the default props."
+      }
+    }
+  ]
+}

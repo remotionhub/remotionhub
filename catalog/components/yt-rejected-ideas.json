@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-rejected-ideas",
+  "displayName": "Yt Rejected Ideas",
+  "displayNameZh": "那些被投资人拒绝的点子",
+  "summary": "Yt Rejected Ideas component for Remotion.",
+  "summaryZh": "适用于 Remotion 的那些被投资人拒绝的点子组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "rejected",
+    "ideas"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-rejected-ideas/724c1dfc772e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-rejected-ideas/c7a49a4223c9-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-rejected-ideas"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtRejectedIdeas.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "rejected",
+        "ideas"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-rejected-ideas"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-rejected-ideas/src/YtRejectedIdeas.tsx` into your Remotion project, import `YtRejectedIdeas` and `ytRejectedIdeasDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Rejected Ideas Remotion asset from remotionhub/remotionhub-assets at remotion/yt-rejected-ideas to my project. Preserve the exported YtRejectedIdeasProps API and register the YtRejectedIdeas composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ask-ai-tip",
+  "displayName": "Yt Ask Ai Tip",
+  "displayNameZh": "先问 AI 游戏名称的小撇步",
+  "summary": "Yt Ask Ai Tip component for Remotion.",
+  "summaryZh": "适用于 Remotion 的先问 AI 游戏名称的小撇步组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ask",
+    "ai",
+    "tip"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ask-ai-tip/66209a18196c-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ask-ai-tip/3245337dbb2d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ask-ai-tip"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAskAiTip.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ask",
+        "ai",
+        "tip"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ask-ai-tip"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ask-ai-tip/src/YtAskAiTip.tsx` into your Remotion project, import `YtAskAiTip` and `ytAskAiTipDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ask Ai Tip Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ask-ai-tip to my project. Preserve the exported YtAskAiTipProps API and register the YtAskAiTip composition with the default props."
+      }
+    }
+  ]
+}

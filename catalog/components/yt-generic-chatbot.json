@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-generic-chatbot",
+  "displayName": "Yt Generic Chatbot",
+  "displayNameZh": "做出一个通用型的客服机器人",
+  "summary": "Yt Generic Chatbot component for Remotion.",
+  "summaryZh": "适用于 Remotion 的做出一个通用型的客服机器人组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "generic",
+    "chatbot"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-generic-chatbot/95755798bfed-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-generic-chatbot/5dbde2cc9394-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-generic-chatbot"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtGenericChatbot.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "generic",
+        "chatbot"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-generic-chatbot"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-generic-chatbot/src/YtGenericChatbot.tsx` into your Remotion project, import `YtGenericChatbot` and `ytGenericChatbotDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Generic Chatbot Remotion asset from remotionhub/remotionhub-assets at remotion/yt-generic-chatbot to my project. Preserve the exported YtGenericChatbotProps API and register the YtGenericChatbot composition with the default props."
+      }
+    }
+  ]
+}

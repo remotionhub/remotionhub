@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-faster-higher-quality",
+  "displayName": "Yt Faster Higher Quality",
+  "displayNameZh": "更快做出来，品质门槛也跟着提高",
+  "summary": "Yt Faster Higher Quality component for Remotion.",
+  "summaryZh": "适用于 Remotion 的更快做出来，品质门槛也跟着提高组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "faster",
+    "higher",
+    "quality"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-faster-higher-quality/ec93380b478e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-faster-higher-quality/dbfbb5560187-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-faster-higher-quality"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtFasterHigherQuality.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "faster",
+        "higher",
+        "quality"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-faster-higher-quality"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-faster-higher-quality/src/YtFasterHigherQuality.tsx` into your Remotion project, import `YtFasterHigherQuality` and `ytFasterHigherQualityDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Faster Higher Quality Remotion asset from remotionhub/remotionhub-assets at remotion/yt-faster-higher-quality to my project. Preserve the exported YtFasterHigherQualityProps API and register the YtFasterHigherQuality composition with the default props."
+      }
+    }
+  ]
+}

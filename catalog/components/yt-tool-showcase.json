@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-tool-showcase",
+  "displayName": "Yt Tool Showcase",
+  "displayNameZh": "六工具展示：Cloudflare、GitHub、Lemon Squeezy、Resend、Tavily、Gemini",
+  "summary": "Yt Tool Showcase component for Remotion.",
+  "summaryZh": "适用于 Remotion 的六工具展示：Cloudflare、GitHub、Lemon Squeezy、Resend、Tavily、Gemini组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "tool",
+    "showcase"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tool-showcase/edbddcb25b7d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tool-showcase/5afd7e35a78e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-tool-showcase"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtToolShowcase.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "tool",
+        "showcase"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-tool-showcase"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-tool-showcase/src/YtToolShowcase.tsx` into your Remotion project, import `YtToolShowcase` and `ytToolShowcaseDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Tool Showcase Remotion asset from remotionhub/remotionhub-assets at remotion/yt-tool-showcase to my project. Preserve the exported YtToolShowcaseProps API and register the YtToolShowcase composition with the default props."
+      }
+    }
+  ]
+}

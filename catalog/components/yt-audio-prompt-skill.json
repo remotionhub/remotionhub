@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-prompt-skill",
+  "displayName": "Yt Audio Prompt Skill",
+  "displayNameZh": "AI Prompt 生成 Skill 动画",
+  "summary": "Yt Audio Prompt Skill component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI Prompt 生成 Skill 动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "prompt",
+    "skill"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-prompt-skill/bdfc15be5012-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-prompt-skill/f792afb0fa01-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-prompt-skill"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioPromptSkill.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "prompt",
+        "skill"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-audio-prompt-skill"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-prompt-skill/src/YtAudioPromptSkill.tsx` into your Remotion project, import `YtAudioPromptSkill` and `ytAudioPromptSkillDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Prompt Skill Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-prompt-skill to my project. Preserve the exported YtAudioPromptSkillProps API and register the YtAudioPromptSkill composition with the default props."
+      }
+    }
+  ]
+}

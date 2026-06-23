@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-shadcn-prompt",
+  "displayName": "Yt Shadcn Prompt",
+  "displayNameZh": "shadcn-ui Skill Prompt 输入动画",
+  "summary": "Yt Shadcn Prompt component for Remotion.",
+  "summaryZh": "适用于 Remotion 的shadcn-ui Skill Prompt 输入动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "shadcn",
+    "prompt"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-shadcn-prompt/e443264004c9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-shadcn-prompt/9bffc00d8c74-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-shadcn-prompt"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtShadcnPrompt.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "shadcn",
+        "prompt"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-shadcn-prompt"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-shadcn-prompt/src/YtShadcnPrompt.tsx` into your Remotion project, import `YtShadcnPrompt` and `ytShadcnPromptDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Shadcn Prompt Remotion asset from remotionhub/remotionhub-assets at remotion/yt-shadcn-prompt to my project. Preserve the exported YtShadcnPromptProps API and register the YtShadcnPrompt composition with the default props."
+      }
+    }
+  ]
+}

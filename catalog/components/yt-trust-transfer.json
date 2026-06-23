@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-trust-transfer",
+  "displayName": "Yt Trust Transfer",
+  "displayNameZh": "透过粉丝对 KOL 的信任转移到产品",
+  "summary": "Yt Trust Transfer component for Remotion.",
+  "summaryZh": "适用于 Remotion 的透过粉丝对 KOL 的信任转移到产品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "trust",
+    "transfer"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-trust-transfer/e07d01d783ad-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-trust-transfer/2b5f50f62a0b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-trust-transfer"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTrustTransfer.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "trust",
+        "transfer"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-trust-transfer"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-trust-transfer/src/YtTrustTransfer.tsx` into your Remotion project, import `YtTrustTransfer` and `ytTrustTransferDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Trust Transfer Remotion asset from remotionhub/remotionhub-assets at remotion/yt-trust-transfer to my project. Preserve the exported YtTrustTransferProps API and register the YtTrustTransfer composition with the default props."
+      }
+    }
+  ]
+}

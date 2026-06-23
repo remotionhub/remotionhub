@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-from-scratch",
+  "displayName": "Yt From Scratch",
+  "displayNameZh": "空白文件到完整代码的转换动画",
+  "summary": "Yt From Scratch component for Remotion.",
+  "summaryZh": "适用于 Remotion 的空白文件到完整代码的转换动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "from",
+    "scratch"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-from-scratch/19759c2f8634-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-from-scratch/1111d15929fd-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-from-scratch"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtFromScratch.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "from",
+        "scratch"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-from-scratch"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-from-scratch/src/YtFromScratch.tsx` into your Remotion project, import `YtFromScratch` and `ytFromScratchDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt From Scratch Remotion asset from remotionhub/remotionhub-assets at remotion/yt-from-scratch to my project. Preserve the exported YtFromScratchProps API and register the YtFromScratch composition with the default props."
+      }
+    }
+  ]
+}

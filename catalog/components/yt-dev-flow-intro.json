@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-dev-flow-intro",
+  "displayName": "Yt Dev Flow Intro",
+  "displayNameZh": "有了工具和 Skill，开发流程长这样",
+  "summary": "Yt Dev Flow Intro component for Remotion.",
+  "summaryZh": "适用于 Remotion 的有了工具和 Skill，开发流程长这样组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "dev",
+    "flow",
+    "intro"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-dev-flow-intro/ef61409c002f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-dev-flow-intro/3912b60d368a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-dev-flow-intro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtDevFlowIntro.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "dev",
+        "flow",
+        "intro"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-dev-flow-intro"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-dev-flow-intro/src/YtDevFlowIntro.tsx` into your Remotion project, import `YtDevFlowIntro` and `ytDevFlowIntroDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Dev Flow Intro Remotion asset from remotionhub/remotionhub-assets at remotion/yt-dev-flow-intro to my project. Preserve the exported YtDevFlowIntroProps API and register the YtDevFlowIntro composition with the default props."
+      }
+    }
+  ]
+}

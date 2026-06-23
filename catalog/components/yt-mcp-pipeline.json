@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-mcp-pipeline",
+  "displayName": "Yt Mcp Pipeline",
+  "displayNameZh": "MCP 部署流水线 HUD",
+  "summary": "Yt Mcp Pipeline component for Remotion.",
+  "summaryZh": "适用于 Remotion 的MCP 部署流水线 HUD组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "mcp",
+    "pipeline"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mcp-pipeline/f14c013a27ae-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mcp-pipeline/8ea0a8ce3a12-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-mcp-pipeline"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtMcpPipeline.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "mcp",
+        "pipeline"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-mcp-pipeline"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-mcp-pipeline/src/YtMcpPipeline.tsx` into your Remotion project, import `YtMcpPipeline` and `ytMcpPipelineDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Mcp Pipeline Remotion asset from remotionhub/remotionhub-assets at remotion/yt-mcp-pipeline to my project. Preserve the exported YtMcpPipelineProps API and register the YtMcpPipeline composition with the default props."
+      }
+    }
+  ]
+}

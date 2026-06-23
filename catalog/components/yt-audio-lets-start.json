@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-lets-start",
+  "displayName": "Yt Audio Lets Start",
+  "displayNameZh": "我们开始！能量爆发动画",
+  "summary": "Yt Audio Lets Start component for Remotion.",
+  "summaryZh": "适用于 Remotion 的我们开始！能量爆发动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "lets",
+    "start"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-lets-start/8a7c9e664614-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-lets-start/4961967a8ccc-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-lets-start"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioLetsStart.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "lets",
+        "start"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-audio-lets-start"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-lets-start/src/YtAudioLetsStart.tsx` into your Remotion project, import `YtAudioLetsStart` and `ytAudioLetsStartDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Lets Start Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-lets-start to my project. Preserve the exported YtAudioLetsStartProps API and register the YtAudioLetsStart composition with the default props."
+      }
+    }
+  ]
+}

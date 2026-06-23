@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-control",
+  "displayName": "Yt Audio Control",
+  "displayNameZh": "AI 音频控制滑杆",
+  "summary": "Yt Audio Control component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 音频控制滑杆组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "control"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-control/e7c5308aac9f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-control/d11bf1fc3962-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-control"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioControl.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "control"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-audio-control"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-control/src/YtAudioControl.tsx` into your Remotion project, import `YtAudioControl` and `ytAudioControlDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Control Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-control to my project. Preserve the exported YtAudioControlProps API and register the YtAudioControl composition with the default props."
+      }
+    }
+  ]
+}

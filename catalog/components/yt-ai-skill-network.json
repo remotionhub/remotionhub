@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-skill-network",
+  "displayName": "Yt Ai Skill Network",
+  "displayNameZh": "AI 技能节点网路连线动画",
+  "summary": "Yt Ai Skill Network component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 技能节点网路连线动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "skill",
+    "network"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-skill-network/3d820ae75241-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-skill-network/7bb005871c50-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-skill-network"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiSkillNetwork.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "skill",
+        "network"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-skill-network"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-skill-network/src/YtAiSkillNetwork.tsx` into your Remotion project, import `YtAiSkillNetwork` and `ytAiSkillNetworkDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Skill Network Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-skill-network to my project. Preserve the exported YtAiSkillNetworkProps API and register the YtAiSkillNetwork composition with the default props."
+      }
+    }
+  ]
+}

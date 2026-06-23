@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-two-lessons",
+  "displayName": "Yt Two Lessons",
+  "displayNameZh": "使用 AI 工具学到的两件事",
+  "summary": "Yt Two Lessons component for Remotion.",
+  "summaryZh": "适用于 Remotion 的使用 AI 工具学到的两件事组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "two",
+    "lessons"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-lessons/6d33c86bbed4-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-lessons/0f195826272f-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-two-lessons"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTwoLessons.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "two",
+        "lessons"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-two-lessons"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-two-lessons/src/YtTwoLessons.tsx` into your Remotion project, import `YtTwoLessons` and `ytTwoLessonsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Two Lessons Remotion asset from remotionhub/remotionhub-assets at remotion/yt-two-lessons to my project. Preserve the exported YtTwoLessonsProps API and register the YtTwoLessons composition with the default props."
+      }
+    }
+  ]
+}

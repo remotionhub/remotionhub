@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-reach-pain-points",
+  "displayName": "Yt Reach Pain Points",
+  "displayNameZh": "持续触及痛点用户",
+  "summary": "Yt Reach Pain Points component for Remotion.",
+  "summaryZh": "适用于 Remotion 的持续触及痛点用户组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "reach",
+    "pain",
+    "points"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-reach-pain-points/215efa904ea0-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-reach-pain-points/744581cadd49-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-reach-pain-points"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtReachPainPoints.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "reach",
+        "pain",
+        "points"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-reach-pain-points"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-reach-pain-points/src/YtReachPainPoints.tsx` into your Remotion project, import `YtReachPainPoints` and `ytReachPainPointsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Reach Pain Points Remotion asset from remotionhub/remotionhub-assets at remotion/yt-reach-pain-points to my project. Preserve the exported YtReachPainPointsProps API and register the YtReachPainPoints composition with the default props."
+      }
+    }
+  ]
+}

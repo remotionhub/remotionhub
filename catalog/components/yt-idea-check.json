@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-idea-check",
+  "displayName": "Yt Idea Check",
+  "displayNameZh": "用 Claude Code 做了 IdeaCheck 产品",
+  "summary": "Yt Idea Check component for Remotion.",
+  "summaryZh": "适用于 Remotion 的用 Claude Code 做了 IdeaCheck 产品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "idea",
+    "check"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-idea-check/c699bbb8027c-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-idea-check/d68b7dd85bca-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-idea-check"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtIdeaCheck.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "idea",
+        "check"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-idea-check"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-idea-check/src/YtIdeaCheck.tsx` into your Remotion project, import `YtIdeaCheck` and `ytIdeaCheckDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Idea Check Remotion asset from remotionhub/remotionhub-assets at remotion/yt-idea-check to my project. Preserve the exported YtIdeaCheckProps API and register the YtIdeaCheck composition with the default props."
+      }
+    }
+  ]
+}

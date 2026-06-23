@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-prompt-dev",
+  "displayName": "Yt Prompt Dev",
+  "displayNameZh": "根据技术规格做开发",
+  "summary": "Yt Prompt Dev component for Remotion.",
+  "summaryZh": "适用于 Remotion 的根据技术规格做开发组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "prompt",
+    "dev"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-prompt-dev/10fc51a554fa-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-prompt-dev/1976efbbf14c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-prompt-dev"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtPromptDev.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "prompt",
+        "dev"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-prompt-dev"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-prompt-dev/src/YtPromptDev.tsx` into your Remotion project, import `YtPromptDev` and `ytPromptDevDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Prompt Dev Remotion asset from remotionhub/remotionhub-assets at remotion/yt-prompt-dev to my project. Preserve the exported YtPromptDevProps API and register the YtPromptDev composition with the default props."
+      }
+    }
+  ]
+}

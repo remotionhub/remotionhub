@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-simple-ai-product",
+  "displayName": "Yt Simple Ai Product",
+  "displayNameZh": "针对这样一个简单的 AI 产品",
+  "summary": "Yt Simple Ai Product component for Remotion.",
+  "summaryZh": "适用于 Remotion 的针对这样一个简单的 AI 产品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "simple",
+    "ai",
+    "product"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-simple-ai-product/cefe9b407e49-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-simple-ai-product/5e42c1c2d5e3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-simple-ai-product"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtSimpleAiProduct.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "simple",
+        "ai",
+        "product"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-simple-ai-product"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-simple-ai-product/src/YtSimpleAiProduct.tsx` into your Remotion project, import `YtSimpleAiProduct` and `ytSimpleAiProductDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Simple Ai Product Remotion asset from remotionhub/remotionhub-assets at remotion/yt-simple-ai-product to my project. Preserve the exported YtSimpleAiProductProps API and register the YtSimpleAiProduct composition with the default props."
+      }
+    }
+  ]
+}

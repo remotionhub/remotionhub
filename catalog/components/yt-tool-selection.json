@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-tool-selection",
+  "displayName": "Yt Tool Selection",
+  "displayNameZh": "工具选择标准：免费额度多且效果好",
+  "summary": "Yt Tool Selection component for Remotion.",
+  "summaryZh": "适用于 Remotion 的工具选择标准：免费额度多且效果好组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "tool",
+    "selection"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tool-selection/4d63895cd943-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tool-selection/341b36d9c3df-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-tool-selection"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtToolSelection.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "tool",
+        "selection"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-tool-selection"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-tool-selection/src/YtToolSelection.tsx` into your Remotion project, import `YtToolSelection` and `ytToolSelectionDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Tool Selection Remotion asset from remotionhub/remotionhub-assets at remotion/yt-tool-selection to my project. Preserve the exported YtToolSelectionProps API and register the YtToolSelection composition with the default props."
+      }
+    }
+  ]
+}

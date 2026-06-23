@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-use-cases",
+  "displayName": "Yt Ai Use Cases",
+  "displayNameZh": "AI 设计工具三大使用情境动态图解",
+  "summary": "Yt Ai Use Cases component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 设计工具三大使用情境动态图解组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "use",
+    "cases"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-use-cases/b9723cbdb925-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-use-cases/69fd23062d37-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-use-cases"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiUseCases.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "use",
+        "cases"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-use-cases"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-use-cases/src/YtAiUseCases.tsx` into your Remotion project, import `YtAiUseCases` and `ytAiUseCasesDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Use Cases Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-use-cases to my project. Preserve the exported YtAiUseCasesProps API and register the YtAiUseCases composition with the default props."
+      }
+    }
+  ]
+}

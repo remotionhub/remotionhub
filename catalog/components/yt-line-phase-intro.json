@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-line-phase-intro",
+  "displayName": "Yt Line Phase Intro",
+  "displayNameZh": "LINE 整合阶段介绍卡",
+  "summary": "Yt Line Phase Intro component for Remotion.",
+  "summaryZh": "适用于 Remotion 的LINE 整合阶段介绍卡组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "line",
+    "phase",
+    "intro"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-line-phase-intro/ee187c22cc6e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-line-phase-intro/34ad2819b5d6-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-line-phase-intro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtLinePhaseIntro.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "line",
+        "phase",
+        "intro"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-line-phase-intro"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-line-phase-intro/src/YtLinePhaseIntro.tsx` into your Remotion project, import `YtLinePhaseIntro` and `ytLinePhaseIntroDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Line Phase Intro Remotion asset from remotionhub/remotionhub-assets at remotion/yt-line-phase-intro to my project. Preserve the exported YtLinePhaseIntroProps API and register the YtLinePhaseIntro composition with the default props."
+      }
+    }
+  ]
+}

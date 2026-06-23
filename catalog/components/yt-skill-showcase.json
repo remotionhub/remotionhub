@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-skill-showcase",
+  "displayName": "Yt Skill Showcase",
+  "displayNameZh": "四技能展示：Superpowers、shadcn/ui Skills、OWASP、Trail of Bits",
+  "summary": "Yt Skill Showcase component for Remotion.",
+  "summaryZh": "适用于 Remotion 的四技能展示：Superpowers、shadcn/ui Skills、OWASP、Trail of Bits组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "skill",
+    "showcase"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-skill-showcase/671e1acaa2bd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-skill-showcase/c7e01b9124e2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-skill-showcase"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtSkillShowcase.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "skill",
+        "showcase"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-skill-showcase"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-skill-showcase/src/YtSkillShowcase.tsx` into your Remotion project, import `YtSkillShowcase` and `ytSkillShowcaseDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Skill Showcase Remotion asset from remotionhub/remotionhub-assets at remotion/yt-skill-showcase to my project. Preserve the exported YtSkillShowcaseProps API and register the YtSkillShowcase composition with the default props."
+      }
+    }
+  ]
+}

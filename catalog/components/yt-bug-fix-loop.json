@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-bug-fix-loop",
+  "displayName": "Yt Bug Fix Loop",
+  "displayNameZh": "反复修正直到完美",
+  "summary": "Yt Bug Fix Loop component for Remotion.",
+  "summaryZh": "适用于 Remotion 的反复修正直到完美组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "bug",
+    "fix",
+    "loop"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-bug-fix-loop/56864ebf3acb-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-bug-fix-loop/2cd034a39ad7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-bug-fix-loop"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtBugFixLoop.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "bug",
+        "fix",
+        "loop"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-bug-fix-loop"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-bug-fix-loop/src/YtBugFixLoop.tsx` into your Remotion project, import `YtBugFixLoop` and `ytBugFixLoopDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Bug Fix Loop Remotion asset from remotionhub/remotionhub-assets at remotion/yt-bug-fix-loop to my project. Preserve the exported YtBugFixLoopProps API and register the YtBugFixLoop composition with the default props."
+      }
+    }
+  ]
+}

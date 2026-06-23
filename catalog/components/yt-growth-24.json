@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-growth-24",
+  "displayName": "Yt Growth 24",
+  "displayNameZh": "年增长 24% 数据动画卡片",
+  "summary": "Yt Growth 24 component for Remotion.",
+  "summaryZh": "适用于 Remotion 的年增长 24% 数据动画卡片组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "growth",
+    "24"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-growth-24/30eecbeab986-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-growth-24/75a639b501ab-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-growth-24"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtGrowth24.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "growth",
+        "24"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-growth-24"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-growth-24/src/YtGrowth24.tsx` into your Remotion project, import `YtGrowth24` and `ytGrowth24DefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Growth 24 Remotion asset from remotionhub/remotionhub-assets at remotion/yt-growth-24 to my project. Preserve the exported YtGrowth24Props API and register the YtGrowth24 composition with the default props."
+      }
+    }
+  ]
+}

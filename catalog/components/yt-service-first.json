@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-service-first",
+  "displayName": "Yt Service First",
+  "displayNameZh": "先做服务，再做产品",
+  "summary": "Yt Service First component for Remotion.",
+  "summaryZh": "适用于 Remotion 的先做服务，再做产品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "service",
+    "first"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-service-first/225a12b28acd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-service-first/dc5b31e78e85-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-service-first"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtServiceFirst.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "service",
+        "first"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-service-first"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-service-first/src/YtServiceFirst.tsx` into your Remotion project, import `YtServiceFirst` and `ytServiceFirstDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Service First Remotion asset from remotionhub/remotionhub-assets at remotion/yt-service-first to my project. Preserve the exported YtServiceFirstProps API and register the YtServiceFirst composition with the default props."
+      }
+    }
+  ]
+}

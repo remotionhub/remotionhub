@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-like-subscribe-bell",
+  "displayName": "Yt Like Subscribe Bell",
+  "displayNameZh": "YouTube 按赞订阅通知动画",
+  "summary": "Yt Like Subscribe Bell component for Remotion.",
+  "summaryZh": "适用于 Remotion 的YouTube 按赞订阅通知动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "like",
+    "subscribe",
+    "bell"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-like-subscribe-bell/e54a7076f08c-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-like-subscribe-bell/637819b92b9d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-like-subscribe-bell"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtLikeSubscribeBell.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "like",
+        "subscribe",
+        "bell"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-like-subscribe-bell"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-like-subscribe-bell/src/YtLikeSubscribeBell.tsx` into your Remotion project, import `YtLikeSubscribeBell` and `ytLikeSubscribeBellDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Like Subscribe Bell Remotion asset from remotionhub/remotionhub-assets at remotion/yt-like-subscribe-bell to my project. Preserve the exported YtLikeSubscribeBellProps API and register the YtLikeSubscribeBell composition with the default props."
+      }
+    }
+  ]
+}

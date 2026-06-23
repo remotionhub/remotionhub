@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-two-focus",
+  "displayName": "Yt Two Focus",
+  "displayNameZh": "两大核心问题聚焦展示",
+  "summary": "Yt Two Focus component for Remotion.",
+  "summaryZh": "适用于 Remotion 的两大核心问题聚焦展示组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "two",
+    "focus"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-focus/ab4768c2ff50-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-focus/177228e0949d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-two-focus"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTwoFocus.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "two",
+        "focus"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-two-focus"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-two-focus/src/YtTwoFocus.tsx` into your Remotion project, import `YtTwoFocus` and `ytTwoFocusDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Two Focus Remotion asset from remotionhub/remotionhub-assets at remotion/yt-two-focus to my project. Preserve the exported YtTwoFocusProps API and register the YtTwoFocus composition with the default props."
+      }
+    }
+  ]
+}

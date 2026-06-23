@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-software-criteria",
+  "displayName": "Yt Audio Software Criteria",
+  "displayNameZh": "音频软体选择三条件",
+  "summary": "Yt Audio Software Criteria component for Remotion.",
+  "summaryZh": "适用于 Remotion 的音频软体选择三条件组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "software",
+    "criteria"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-software-criteria/6293822e82b6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-software-criteria/13b7681e8a0d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-software-criteria"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioSoftwareCriteria.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "software",
+        "criteria"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-audio-software-criteria"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-software-criteria/src/YtAudioSoftwareCriteria.tsx` into your Remotion project, import `YtAudioSoftwareCriteria` and `ytAudioSoftwareCriteriaDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Software Criteria Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-software-criteria to my project. Preserve the exported YtAudioSoftwareCriteriaProps API and register the YtAudioSoftwareCriteria composition with the default props."
+      }
+    }
+  ]
+}

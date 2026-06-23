@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-first-deal-hard",
+  "displayName": "Yt First Deal Hard",
+  "displayNameZh": "要促成第一笔 KOL 合作不容易",
+  "summary": "Yt First Deal Hard component for Remotion.",
+  "summaryZh": "适用于 Remotion 的要促成第一笔 KOL 合作不容易组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "first",
+    "deal",
+    "hard"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-first-deal-hard/7ac8f3b9d17e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-first-deal-hard/a5b1f7bd9ce8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-first-deal-hard"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtFirstDealHard.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "first",
+        "deal",
+        "hard"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-first-deal-hard"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-first-deal-hard/src/YtFirstDealHard.tsx` into your Remotion project, import `YtFirstDealHard` and `ytFirstDealHardDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt First Deal Hard Remotion asset from remotionhub/remotionhub-assets at remotion/yt-first-deal-hard to my project. Preserve the exported YtFirstDealHardProps API and register the YtFirstDealHard composition with the default props."
+      }
+    }
+  ]
+}

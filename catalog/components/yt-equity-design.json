@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-equity-design",
+  "displayName": "Yt Equity Design",
+  "displayNameZh": "股权设计让 KOL 持续推广",
+  "summary": "Yt Equity Design component for Remotion.",
+  "summaryZh": "适用于 Remotion 的股权设计让 KOL 持续推广组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "equity",
+    "design"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-equity-design/b18c1e942da3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-equity-design/c5a3d373ccc8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-equity-design"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtEquityDesign.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "equity",
+        "design"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-equity-design"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-equity-design/src/YtEquityDesign.tsx` into your Remotion project, import `YtEquityDesign` and `ytEquityDesignDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Equity Design Remotion asset from remotionhub/remotionhub-assets at remotion/yt-equity-design to my project. Preserve the exported YtEquityDesignProps API and register the YtEquityDesign composition with the default props."
+      }
+    }
+  ]
+}
