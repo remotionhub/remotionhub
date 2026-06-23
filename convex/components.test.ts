@@ -1,11 +1,13 @@
 import { convexTest } from 'convex-test'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { api } from './_generated/api'
 import schema from './schema'
 
 const modules = import.meta.glob('./**/*.*s')
+const importSecret = 'test-import-secret'
 
 const component = {
+  importSecret,
   publisher: 'terence',
   publisherDisplayName: 'Terence',
   runtime: 'remotion' as const,
@@ -52,6 +54,25 @@ const component = {
 }
 
 describe('components catalog mutations and queries', () => {
+  beforeEach(() => {
+    process.env.CATALOG_IMPORT_SECRET = importSecret
+  })
+
+  afterEach(() => {
+    delete process.env.CATALOG_IMPORT_SECRET
+  })
+
+  it('rejects catalog imports without a matching server secret', async () => {
+    const t = convexTest(schema, modules)
+
+    await expect(
+      t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        importSecret: 'wrong-secret',
+      }),
+    ).rejects.toThrow(/Invalid catalog import secret/)
+  })
+
   it('imports a published component and exposes it in listCatalog', async () => {
     const t = convexTest(schema, modules)
 
@@ -68,6 +89,31 @@ describe('components catalog mutations and queries', () => {
 
     expect(page.page).toHaveLength(1)
     expect(page.page[0]?.slug).toBe('card-avatar')
+  })
+
+  it('returns localized catalog fields from list and detail queries', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      displayNameZh: '头像卡片',
+      summaryZh: '适用于 Remotion 视频的头像卡片。',
+    })
+
+    const page = await t.query(api.components.listCatalog, {
+      runtime: 'remotion',
+      paginationOpts: { numItems: 10, cursor: null },
+    })
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+
+    expect(page.page[0]?.displayNameZh).toBe('头像卡片')
+    expect(page.page[0]?.summaryZh).toBe('适用于 Remotion 视频的头像卡片。')
+    expect(detail?.component.displayNameZh).toBe('头像卡片')
+    expect(detail?.component.summaryZh).toBe('适用于 Remotion 视频的头像卡片。')
   })
 
   it('is idempotent for identical version fingerprints', async () => {

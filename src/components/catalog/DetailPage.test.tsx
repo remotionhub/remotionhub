@@ -1,9 +1,16 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import type React from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { I18nProvider } from '#/components/I18nProvider'
+import { LOCALE_STORAGE_KEY } from '#/lib/i18n'
 import DetailPage from './DetailPage'
 
 vi.mock('@tanstack/react-router', () => ({
@@ -63,9 +70,43 @@ const detail = {
   },
 }
 
+function installLocalStorage() {
+  const values = new Map<string, string>()
+  const storage = {
+    get length() {
+      return values.size
+    },
+    clear() {
+      values.clear()
+    },
+    getItem(key: string) {
+      return values.get(key) ?? null
+    },
+    key(index: number) {
+      return Array.from(values.keys())[index] ?? null
+    },
+    removeItem(key: string) {
+      values.delete(key)
+    },
+    setItem(key: string, value: string) {
+      values.set(key, value)
+    },
+  } satisfies Storage
+
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    value: storage,
+  })
+}
+
 describe('DetailPage', () => {
+  beforeEach(() => {
+    installLocalStorage()
+  })
+
   afterEach(() => {
     cleanup()
+    window.localStorage.clear()
   })
 
   function renderDetailPage() {
@@ -119,6 +160,58 @@ describe('DetailPage', () => {
     expect(screen.getByText('Commit: abc123')).toBeTruthy()
     expect(screen.getByText('Path: remotion/card-avatar')).toBeTruthy()
     expect(screen.getByRole('link', { name: '打开源码' })).toBeTruthy()
+  })
+
+  it('renders localized component title and summary for Chinese locale', () => {
+    render(
+      <I18nProvider>
+        <DetailPage
+          detail={{
+            ...detail,
+            component: {
+              ...detail.component,
+              displayNameZh: '头像卡片',
+              summaryZh: '适用于 Remotion 视频的头像卡片。',
+            },
+          }}
+        />
+      </I18nProvider>,
+    )
+
+    expect(screen.getByLabelText('头像卡片 预览')).toBeTruthy()
+    expect(screen.getByRole('heading', { name: '头像卡片' })).toBeTruthy()
+    expect(screen.getByText('适用于 Remotion 视频的头像卡片。')).toBeTruthy()
+    expect(screen.queryByText('Card Avatar')).toBeNull()
+    expect(
+      screen.queryByText('Animated avatar lower-third card for Remotion videos.'),
+    ).toBeNull()
+  })
+
+  it('keeps English component title and summary for English locale', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+
+    render(
+      <I18nProvider>
+        <DetailPage
+          detail={{
+            ...detail,
+            component: {
+              ...detail.component,
+              displayNameZh: '头像卡片',
+              summaryZh: '适用于 Remotion 视频的头像卡片。',
+            },
+          }}
+        />
+      </I18nProvider>,
+    )
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Card Avatar preview')).toBeTruthy()
+    })
+    expect(screen.getByRole('heading', { name: 'Card Avatar' })).toBeTruthy()
+    expect(screen.getByText('Animated avatar lower-third card for Remotion videos.')).toBeTruthy()
+    expect(screen.queryByText('头像卡片')).toBeNull()
+    expect(screen.queryByText('适用于 Remotion 视频的头像卡片。')).toBeNull()
   })
 
   it('links to pinned source commits when a catalog entry has a commit', () => {

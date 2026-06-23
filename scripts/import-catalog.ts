@@ -71,8 +71,13 @@ async function readCatalogFiles() {
   )
 }
 
-function toImportPayload(component: CatalogComponent, catalogFile: string) {
+function toImportPayload(
+  component: CatalogComponent,
+  catalogFile: string,
+  importSecret: string,
+) {
   return {
+    importSecret,
     publisher: component.publisher,
     publisherDisplayName: component.publisher,
     runtime: component.runtime,
@@ -105,12 +110,17 @@ async function main() {
   const args = parseArgs(process.argv.slice(2))
   const configuredConvexUrl =
     process.env.CONVEX_URL ?? process.env.VITE_CONVEX_URL
+  const importSecret = process.env.CATALOG_IMPORT_SECRET
+  const willWrite = args.apply && !args.dryRun && !args.localOnly
 
-  if (args.apply && !configuredConvexUrl) {
+  if (willWrite && !configuredConvexUrl) {
     throw new Error('CONVEX_URL or VITE_CONVEX_URL is required for --apply.')
   }
+  if (willWrite && !importSecret) {
+    throw new Error('CATALOG_IMPORT_SECRET is required for --apply.')
+  }
   if (
-    args.apply &&
+    willWrite &&
     args.target === 'production' &&
     !process.env.CONVEX_DEPLOY_KEY
   ) {
@@ -120,7 +130,7 @@ async function main() {
   const files = await readCatalogFiles()
   const payloads = files.map(({ filePath, json }) => {
     const parsed = catalogComponentSchema.parse(json)
-    return toImportPayload(parsed, filePath)
+    return toImportPayload(parsed, filePath, importSecret ?? '')
   })
 
   console.log(`Validated ${payloads.length} catalog component(s).`)

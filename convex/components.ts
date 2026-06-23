@@ -127,6 +127,7 @@ async function syncComponentSearchDigest(
 
 export const importCatalogComponent = mutation({
   args: {
+    importSecret: v.string(),
     publisher: v.string(),
     publisherDisplayName: v.string(),
     runtime,
@@ -142,6 +143,11 @@ export const importCatalogComponent = mutation({
     versions: v.array(importVersion),
   },
   handler: async (ctx, args) => {
+    const expectedSecret = process.env.CATALOG_IMPORT_SECRET
+    if (!expectedSecret || args.importSecret !== expectedSecret) {
+      throw new ConvexError('Invalid catalog import secret.')
+    }
+
     const now = Date.now()
 
     let publisher = await getPublisherByHandle(ctx.db, args.publisher)
@@ -333,7 +339,7 @@ export const listCatalog = query({
       }
       if (
         args.categories?.length &&
-        !args.categories.every((category) => item.categories.includes(category))
+        !args.categories.some((category) => item.categories.includes(category))
       ) {
         return false
       }

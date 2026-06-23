@@ -72,6 +72,7 @@
 * 变动函数 `importCatalogComponent` 的参数校验（`args`）增加可选的 `displayNameZh` 和 `summaryZh` 校验。
 * 在插入组件（`db.insert('components', ...)`）和更新组件（`db.patch(...)`）时，同时写入这二者。
 * 在 `buildDigestDoc` 辅助函数中透传 `displayNameZh` 和 `summaryZh` 至搜索摘要对象中。
+* Catalog 导入是高权限写入口，即使保留为公开 Convex mutation，也必须在服务端校验 `CATALOG_IMPORT_SECRET`。未配置服务端密钥或调用方密钥不匹配时，必须在任何写入前失败关闭。
 
 ### 3.4 导入脚本适配 (`scripts/import-catalog.ts`)
 * `toImportPayload` 处理函数中读取 Catalog JSON 并附加多语言数据：
@@ -79,6 +80,7 @@
   displayNameZh: component.displayNameZh,
   summaryZh: component.summaryZh,
   ```
+* `--apply` 实际写入 Convex 时，脚本必须从环境变量读取 `CATALOG_IMPORT_SECRET` 并随 payload 发送。Dry-run 和 local-only 校验不能要求该密钥。
 
 ### 3.5 前端多语言展示 (`src/components/catalog/`)
 * **`CatalogCard.tsx`**: 引入 `useI18n()`，判断 `locale`。

@@ -66,7 +66,7 @@ describe('CatalogFilters', () => {
       </I18nProvider>,
     )
 
-    fireEvent.click(await screen.findByRole('button', { name: 'transition (17)' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Transition (17)' }))
 
     expect(onCategoryChange).toHaveBeenCalledWith('transition')
     expect(screen.getByText('Tags')).toBeTruthy()
