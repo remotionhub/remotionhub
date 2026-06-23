@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-negative-reveal",
+  "displayName": "Logo Negative Reveal",
+  "displayNameZh": "负空间圆形 Logo 揭幕",
+  "summary": "Logo Negative Reveal component for Remotion.",
+  "summaryZh": "适用于 Remotion 的负空间圆形 Logo 揭幕组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "negative",
+    "reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-negative-reveal/ced836e94710-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-negative-reveal/44c0c3de4736-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-negative-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoNegativeReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "negative",
+        "reveal"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-negative-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-negative-reveal/src/LogoNegativeReveal.tsx` into your Remotion project, import `LogoNegativeReveal` and `logoNegativeRevealDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Negative Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/logo-negative-reveal to my project. Preserve the exported LogoNegativeRevealProps API and register the LogoNegativeReveal composition with the default props."
+      }
+    }
+  ]
+}

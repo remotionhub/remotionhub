@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-twitter-feed",
+  "displayName": "Social Twitter Feed",
+  "displayNameZh": "X / Twitter 动态时间轴",
+  "summary": "Social Twitter Feed component for Remotion.",
+  "summaryZh": "适用于 Remotion 的X / Twitter 动态时间轴组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "twitter",
+    "feed"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-twitter-feed/a7b1e2304e72-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-twitter-feed/60672ce2936e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-twitter-feed"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialTwitterFeed.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "twitter",
+        "feed"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-twitter-feed"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-twitter-feed/src/SocialTwitterFeed.tsx` into your Remotion project, import `SocialTwitterFeed` and `socialTwitterFeedDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Twitter Feed Remotion asset from remotionhub/remotionhub-assets at remotion/social-twitter-feed to my project. Preserve the exported SocialTwitterFeedProps API and register the SocialTwitterFeed composition with the default props."
+      }
+    }
+  ]
+}

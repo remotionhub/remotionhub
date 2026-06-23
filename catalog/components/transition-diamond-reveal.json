@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-diamond-reveal",
+  "displayName": "Transition Diamond Reveal",
+  "displayNameZh": "菱形展开转场",
+  "summary": "Transition Diamond Reveal component for Remotion.",
+  "summaryZh": "适用于 Remotion 的菱形展开转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "diamond",
+    "reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-diamond-reveal/cf5c0703126e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-diamond-reveal/4c04ad4cc46c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-diamond-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionDiamondReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "diamond",
+        "reveal"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-diamond-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-diamond-reveal/src/TransitionDiamondReveal.tsx` into your Remotion project, import `TransitionDiamondReveal` and `transitionDiamondRevealDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Diamond Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/transition-diamond-reveal to my project. Preserve the exported TransitionDiamondRevealProps API and register the TransitionDiamondReveal composition with the default props."
+      }
+    }
+  ]
+}

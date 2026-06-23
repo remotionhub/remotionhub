@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-yt-video",
+  "displayName": "Social Yt Video",
+  "displayNameZh": "YouTube 视频推荐卡",
+  "summary": "Social Yt Video component for Remotion.",
+  "summaryZh": "适用于 Remotion 的YouTube 视频推荐卡组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "yt",
+    "video"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-yt-video/f4162fbb2cf0-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-yt-video/377833c61327-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-yt-video"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialYtVideo.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "yt",
+        "video"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-yt-video"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-yt-video/src/SocialYtVideo.tsx` into your Remotion project, import `SocialYtVideo` and `socialYtVideoDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Yt Video Remotion asset from remotionhub/remotionhub-assets at remotion/social-yt-video to my project. Preserve the exported SocialYtVideoProps API and register the SocialYtVideo composition with the default props."
+      }
+    }
+  ]
+}

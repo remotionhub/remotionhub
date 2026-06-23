@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-zoom-through",
+  "displayName": "Transition Zoom Through",
+  "displayNameZh": "缩放穿越转场",
+  "summary": "Transition Zoom Through component for Remotion.",
+  "summaryZh": "适用于 Remotion 的缩放穿越转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "zoom",
+    "through"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-zoom-through/40e6af606e9d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-zoom-through/e5b7578d1143-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-zoom-through"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionZoomThrough.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "zoom",
+        "through"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-zoom-through"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-zoom-through/src/TransitionZoomThrough.tsx` into your Remotion project, import `TransitionZoomThrough` and `transitionZoomThroughDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Zoom Through Remotion asset from remotionhub/remotionhub-assets at remotion/transition-zoom-through to my project. Preserve the exported TransitionZoomThroughProps API and register the TransitionZoomThrough composition with the default props."
+      }
+    }
+  ]
+}

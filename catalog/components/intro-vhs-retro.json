@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-vhs-retro",
+  "displayName": "Intro Vhs Retro",
+  "displayNameZh": "VHS 复古片头",
+  "summary": "Intro Vhs Retro component for Remotion.",
+  "summaryZh": "适用于 Remotion 的VHS 复古片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "vhs",
+    "retro"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-vhs-retro/d4edd597ef32-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-vhs-retro/23f39c2ae810-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-vhs-retro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroVhsRetro.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "vhs",
+        "retro"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-vhs-retro"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-vhs-retro/src/IntroVhsRetro.tsx` into your Remotion project, import `IntroVhsRetro` and `introVhsRetroDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Vhs Retro Remotion asset from remotionhub/remotionhub-assets at remotion/intro-vhs-retro to my project. Preserve the exported IntroVhsRetroProps API and register the IntroVhsRetro composition with the default props."
+      }
+    }
+  ]
+}

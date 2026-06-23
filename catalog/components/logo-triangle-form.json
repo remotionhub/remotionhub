@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-triangle-form",
+  "displayName": "Logo Triangle Form",
+  "displayNameZh": "三角碎片拼合抽象 Logo",
+  "summary": "Logo Triangle Form component for Remotion.",
+  "summaryZh": "适用于 Remotion 的三角碎片拼合抽象 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "triangle",
+    "form"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-triangle-form/fa13ecd063cd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-triangle-form/41dcc6513cf7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-triangle-form"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoTriangleForm.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "triangle",
+        "form"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-triangle-form"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-triangle-form/src/LogoTriangleForm.tsx` into your Remotion project, import `LogoTriangleForm` and `logoTriangleFormDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Triangle Form Remotion asset from remotionhub/remotionhub-assets at remotion/logo-triangle-form to my project. Preserve the exported LogoTriangleFormProps API and register the LogoTriangleForm composition with the default props."
+      }
+    }
+  ]
+}

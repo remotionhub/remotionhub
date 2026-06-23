@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-horizontal-bar",
+  "displayName": "Dataviz Horizontal Bar",
+  "displayNameZh": "水平长条竞赛图",
+  "summary": "Dataviz Horizontal Bar component for Remotion.",
+  "summaryZh": "适用于 Remotion 的水平长条竞赛图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "horizontal",
+    "bar"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-horizontal-bar/496760796315-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-horizontal-bar/3b7e0bc99655-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-horizontal-bar"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizHorizontalBar.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "horizontal",
+        "bar"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-horizontal-bar"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-horizontal-bar/src/DatavizHorizontalBar.tsx` into your Remotion project, import `DatavizHorizontalBar` and `datavizHorizontalBarDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Horizontal Bar Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-horizontal-bar to my project. Preserve the exported DatavizHorizontalBarProps API and register the DatavizHorizontalBar composition with the default props."
+      }
+    }
+  ]
+}

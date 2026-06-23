@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-morph-circle",
+  "displayName": "Transition Morph Circle",
+  "displayNameZh": "圆形遮罩转场",
+  "summary": "Transition Morph Circle component for Remotion.",
+  "summaryZh": "适用于 Remotion 的圆形遮罩转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "morph",
+    "circle"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-morph-circle/ecb0bc36ccdd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-morph-circle/33fc442cfe7d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-morph-circle"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionMorphCircle.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "morph",
+        "circle"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-morph-circle"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-morph-circle/src/TransitionMorphCircle.tsx` into your Remotion project, import `TransitionMorphCircle` and `transitionMorphCircleDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Morph Circle Remotion asset from remotionhub/remotionhub-assets at remotion/transition-morph-circle to my project. Preserve the exported TransitionMorphCircleProps API and register the TransitionMorphCircle composition with the default props."
+      }
+    }
+  ]
+}

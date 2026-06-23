@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-ig-masonry",
+  "displayName": "Social Ig Masonry",
+  "displayNameZh": "Instagram 九宫格瀑布墙",
+  "summary": "Social Ig Masonry component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Instagram 九宫格瀑布墙组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "ig",
+    "masonry"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-ig-masonry/698b049bcd9e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-ig-masonry/1f16e4e64508-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-ig-masonry"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialIgMasonry.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "ig",
+        "masonry"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-ig-masonry"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-ig-masonry/src/SocialIgMasonry.tsx` into your Remotion project, import `SocialIgMasonry` and `socialIgMasonryDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Ig Masonry Remotion asset from remotionhub/remotionhub-assets at remotion/social-ig-masonry to my project. Preserve the exported SocialIgMasonryProps API and register the SocialIgMasonry composition with the default props."
+      }
+    }
+  ]
+}

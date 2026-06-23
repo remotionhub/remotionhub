@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-orbit-reveal",
+  "displayName": "Logo Orbit Reveal",
+  "displayNameZh": "轨道聚合 Logo 揭示",
+  "summary": "Logo Orbit Reveal component for Remotion.",
+  "summaryZh": "适用于 Remotion 的轨道聚合 Logo 揭示组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "orbit",
+    "reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-orbit-reveal/b21662ec1541-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-orbit-reveal/e4f69902c4aa-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-orbit-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoOrbitReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "orbit",
+        "reveal"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-orbit-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-orbit-reveal/src/LogoOrbitReveal.tsx` into your Remotion project, import `LogoOrbitReveal` and `logoOrbitRevealDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Orbit Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/logo-orbit-reveal to my project. Preserve the exported LogoOrbitRevealProps API and register the LogoOrbitReveal composition with the default props."
+      }
+    }
+  ]
+}

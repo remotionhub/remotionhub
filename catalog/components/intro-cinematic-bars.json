@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-cinematic-bars",
+  "displayName": "Intro Cinematic Bars",
+  "displayNameZh": "电影感黑边片头",
+  "summary": "Intro Cinematic Bars component for Remotion.",
+  "summaryZh": "适用于 Remotion 的电影感黑边片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "cinematic",
+    "bars"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-cinematic-bars/b359274751af-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-cinematic-bars/2aad6b87d621-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-cinematic-bars"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroCinematicBars.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "cinematic",
+        "bars"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-cinematic-bars"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-cinematic-bars/src/IntroCinematicBars.tsx` into your Remotion project, import `IntroCinematicBars` and `introCinematicBarsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Cinematic Bars Remotion asset from remotionhub/remotionhub-assets at remotion/intro-cinematic-bars to my project. Preserve the exported IntroCinematicBarsProps API and register the IntroCinematicBars composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-stamp-reveal",
+  "displayName": "Logo Stamp Reveal",
+  "displayNameZh": "品牌印章盖下",
+  "summary": "Logo Stamp Reveal component for Remotion.",
+  "summaryZh": "适用于 Remotion 的品牌印章盖下组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "stamp",
+    "reveal"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-stamp-reveal/5574f94ec865-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-stamp-reveal/b1be58fe359c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-stamp-reveal"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoStampReveal.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "stamp",
+        "reveal"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-stamp-reveal"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-stamp-reveal/src/LogoStampReveal.tsx` into your Remotion project, import `LogoStampReveal` and `logoStampRevealDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Stamp Reveal Remotion asset from remotionhub/remotionhub-assets at remotion/logo-stamp-reveal to my project. Preserve the exported LogoStampRevealProps API and register the LogoStampReveal composition with the default props."
+      }
+    }
+  ]
+}

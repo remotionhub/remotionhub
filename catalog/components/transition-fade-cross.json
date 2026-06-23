@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-fade-cross",
+  "displayName": "Transition Fade Cross",
+  "displayNameZh": "交叉淡化转场",
+  "summary": "Transition Fade Cross component for Remotion.",
+  "summaryZh": "适用于 Remotion 的交叉淡化转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "fade",
+    "cross"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-fade-cross/6322548392fb-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-fade-cross/fb95fddc33b6-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-fade-cross"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionFadeCross.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "fade",
+        "cross"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-fade-cross"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-fade-cross/src/TransitionFadeCross.tsx` into your Remotion project, import `TransitionFadeCross` and `transitionFadeCrossDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Fade Cross Remotion asset from remotionhub/remotionhub-assets at remotion/transition-fade-cross to my project. Preserve the exported TransitionFadeCrossProps API and register the TransitionFadeCross composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-page-flip",
+  "displayName": "Transition Page Flip",
+  "displayNameZh": "翻页转场",
+  "summary": "Transition Page Flip component for Remotion.",
+  "summaryZh": "适用于 Remotion 的翻页转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "page",
+    "flip"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-page-flip/3f1db4745fee-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-page-flip/edd38c27317e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-page-flip"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionPageFlip.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "page",
+        "flip"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-page-flip"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-page-flip/src/TransitionPageFlip.tsx` into your Remotion project, import `TransitionPageFlip` and `transitionPageFlipDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Page Flip Remotion asset from remotionhub/remotionhub-assets at remotion/transition-page-flip to my project. Preserve the exported TransitionPageFlipProps API and register the TransitionPageFlip composition with the default props."
+      }
+    }
+  ]
+}

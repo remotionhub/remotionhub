@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-shield-crest",
+  "displayName": "Logo Shield Crest",
+  "displayNameZh": "盾牌徽章逐层创建 Logo",
+  "summary": "Logo Shield Crest component for Remotion.",
+  "summaryZh": "适用于 Remotion 的盾牌徽章逐层创建 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "shield",
+    "crest"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-shield-crest/75a5c3d5aebc-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-shield-crest/1bca87b173a2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-shield-crest"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoShieldCrest.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "shield",
+        "crest"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-shield-crest"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-shield-crest/src/LogoShieldCrest.tsx` into your Remotion project, import `LogoShieldCrest` and `logoShieldCrestDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Shield Crest Remotion asset from remotionhub/remotionhub-assets at remotion/logo-shield-crest to my project. Preserve the exported LogoShieldCrestProps API and register the LogoShieldCrest composition with the default props."
+      }
+    }
+  ]
+}

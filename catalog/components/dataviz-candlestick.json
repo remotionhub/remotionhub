@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-candlestick",
+  "displayName": "Dataviz Candlestick",
+  "displayNameZh": "股票走势图",
+  "summary": "Dataviz Candlestick component for Remotion.",
+  "summaryZh": "适用于 Remotion 的股票走势图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "candlestick"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-candlestick/f5175c18ba1e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-candlestick/1a2547651ca2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-candlestick"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizCandlestick.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "candlestick"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-candlestick"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-candlestick/src/DatavizCandlestick.tsx` into your Remotion project, import `DatavizCandlestick` and `datavizCandlestickDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Candlestick Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-candlestick to my project. Preserve the exported DatavizCandlestickProps API and register the DatavizCandlestick composition with the default props."
+      }
+    }
+  ]
+}

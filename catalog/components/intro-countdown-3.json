@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-countdown-3",
+  "displayName": "Intro Countdown 3",
+  "displayNameZh": "三秒倒数片头",
+  "summary": "Intro Countdown 3 component for Remotion.",
+  "summaryZh": "适用于 Remotion 的三秒倒数片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "countdown",
+    "3"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-countdown-3/c33ac99079ce-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-countdown-3/fede21ab3d2c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-countdown-3"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroCountdown3.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "countdown",
+        "3"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-countdown-3"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-countdown-3/src/IntroCountdown3.tsx` into your Remotion project, import `IntroCountdown3` and `introCountdown3DefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Countdown 3 Remotion asset from remotionhub/remotionhub-assets at remotion/intro-countdown-3 to my project. Preserve the exported IntroCountdown3Props API and register the IntroCountdown3 composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "audio-bar-spectrum",
+  "displayName": "Audio Bar Spectrum",
+  "displayNameZh": "频谱长条视觉化",
+  "summary": "Audio Bar Spectrum component for Remotion.",
+  "summaryZh": "适用于 Remotion 的频谱长条视觉化组件。",
+  "categories": [
+    "audio"
+  ],
+  "tags": [
+    "remotion",
+    "audio",
+    "bar",
+    "spectrum"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-bar-spectrum/0c805baf034d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-bar-spectrum/9f81b70fb8a1-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/audio-bar-spectrum"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/AudioBarSpectrum.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "audio",
+        "bar",
+        "spectrum"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/audio-bar-spectrum"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/audio-bar-spectrum/src/AudioBarSpectrum.tsx` into your Remotion project, import `AudioBarSpectrum` and `audioBarSpectrumDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Audio Bar Spectrum Remotion asset from remotionhub/remotionhub-assets at remotion/audio-bar-spectrum to my project. Preserve the exported AudioBarSpectrumProps API and register the AudioBarSpectrum composition with the default props."
+      }
+    }
+  ]
+}

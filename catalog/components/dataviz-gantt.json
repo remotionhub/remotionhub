@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-gantt",
+  "displayName": "Dataviz Gantt",
+  "displayNameZh": "项目时程甘特图",
+  "summary": "Dataviz Gantt component for Remotion.",
+  "summaryZh": "适用于 Remotion 的项目时程甘特图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "gantt"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-gantt/822ad5fb6214-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-gantt/cc5d567f8470-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-gantt"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizGantt.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "gantt"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-gantt"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-gantt/src/DatavizGantt.tsx` into your Remotion project, import `DatavizGantt` and `datavizGanttDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Gantt Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-gantt to my project. Preserve the exported DatavizGanttProps API and register the DatavizGantt composition with the default props."
+      }
+    }
+  ]
+}

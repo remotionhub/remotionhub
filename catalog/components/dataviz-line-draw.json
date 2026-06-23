@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-line-draw",
+  "displayName": "Dataviz Line Draw",
+  "displayNameZh": "月度趋势折线图",
+  "summary": "Dataviz Line Draw component for Remotion.",
+  "summaryZh": "适用于 Remotion 的月度趋势折线图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "line",
+    "draw"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-line-draw/32594bf555e6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-line-draw/62e4b1ab9a33-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-line-draw"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizLineDraw.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "line",
+        "draw"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-line-draw"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-line-draw/src/DatavizLineDraw.tsx` into your Remotion project, import `DatavizLineDraw` and `datavizLineDrawDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Line Draw Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-line-draw to my project. Preserve the exported DatavizLineDrawProps API and register the DatavizLineDraw composition with the default props."
+      }
+    }
+  ]
+}

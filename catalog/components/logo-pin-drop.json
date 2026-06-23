@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-pin-drop",
+  "displayName": "Logo Pin Drop",
+  "displayNameZh": "定位针落下 Logo",
+  "summary": "Logo Pin Drop component for Remotion.",
+  "summaryZh": "适用于 Remotion 的定位针落下 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "pin",
+    "drop"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-pin-drop/bc3dff54c282-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-pin-drop/63050fc92654-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-pin-drop"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoPinDrop.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "pin",
+        "drop"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-pin-drop"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-pin-drop/src/LogoPinDrop.tsx` into your Remotion project, import `LogoPinDrop` and `logoPinDropDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Pin Drop Remotion asset from remotionhub/remotionhub-assets at remotion/logo-pin-drop to my project. Preserve the exported LogoPinDropProps API and register the LogoPinDrop composition with the default props."
+      }
+    }
+  ]
+}

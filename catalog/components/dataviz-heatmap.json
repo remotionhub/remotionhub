@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-heatmap",
+  "displayName": "Dataviz Heatmap",
+  "displayNameZh": "月度活动热力图",
+  "summary": "Dataviz Heatmap component for Remotion.",
+  "summaryZh": "适用于 Remotion 的月度活动热力图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "heatmap"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-heatmap/59ab14318829-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-heatmap/ed873e75f0fc-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-heatmap"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizHeatmap.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "heatmap"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-heatmap"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-heatmap/src/DatavizHeatmap.tsx` into your Remotion project, import `DatavizHeatmap` and `datavizHeatmapDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Heatmap Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-heatmap to my project. Preserve the exported DatavizHeatmapProps API and register the DatavizHeatmap composition with the default props."
+      }
+    }
+  ]
+}

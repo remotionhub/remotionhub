@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-geometric",
+  "displayName": "Intro Geometric",
+  "displayNameZh": "几何图形片头",
+  "summary": "Intro Geometric component for Remotion.",
+  "summaryZh": "适用于 Remotion 的几何图形片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "geometric"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-geometric/ac493da5078a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-geometric/be8191857a8f-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-geometric"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroGeometric.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "geometric"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-geometric"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-geometric/src/IntroGeometric.tsx` into your Remotion project, import `IntroGeometric` and `introGeometricDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Geometric Remotion asset from remotionhub/remotionhub-assets at remotion/intro-geometric to my project. Preserve the exported IntroGeometricProps API and register the IntroGeometric composition with the default props."
+      }
+    }
+  ]
+}

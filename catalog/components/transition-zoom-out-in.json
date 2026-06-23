@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-zoom-out-in",
+  "displayName": "Transition Zoom Out In",
+  "displayNameZh": "缩小放大转场",
+  "summary": "Transition Zoom Out In component for Remotion.",
+  "summaryZh": "适用于 Remotion 的缩小放大转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "zoom",
+    "out",
+    "in"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-zoom-out-in/f70b838844e3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-zoom-out-in/2c6eea664dac-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-zoom-out-in"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionZoomOutIn.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "zoom",
+        "out",
+        "in"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-zoom-out-in"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-zoom-out-in/src/TransitionZoomOutIn.tsx` into your Remotion project, import `TransitionZoomOutIn` and `transitionZoomOutInDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Zoom Out In Remotion asset from remotionhub/remotionhub-assets at remotion/transition-zoom-out-in to my project. Preserve the exported TransitionZoomOutInProps API and register the TransitionZoomOutIn composition with the default props."
+      }
+    }
+  ]
+}

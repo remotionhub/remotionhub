@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-ig-post",
+  "displayName": "Social Ig Post",
+  "displayNameZh": "Instagram 贴文卡片",
+  "summary": "Social Ig Post component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Instagram 贴文卡片组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "ig",
+    "post"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-ig-post/f04af0e5bcaa-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-ig-post/2c9bddd28d79-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-ig-post"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialIgPost.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "ig",
+        "post"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-ig-post"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-ig-post/src/SocialIgPost.tsx` into your Remotion project, import `SocialIgPost` and `socialIgPostDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Ig Post Remotion asset from remotionhub/remotionhub-assets at remotion/social-ig-post to my project. Preserve the exported SocialIgPostProps API and register the SocialIgPost composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-film-burn",
+  "displayName": "Transition Film Burn",
+  "displayNameZh": "底片漏光转场",
+  "summary": "Transition Film Burn component for Remotion.",
+  "summaryZh": "适用于 Remotion 的底片漏光转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "film",
+    "burn"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-film-burn/41a1706a5c18-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-film-burn/55b7d1709807-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-film-burn"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionFilmBurn.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "film",
+        "burn"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-film-burn"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-film-burn/src/TransitionFilmBurn.tsx` into your Remotion project, import `TransitionFilmBurn` and `transitionFilmBurnDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Film Burn Remotion asset from remotionhub/remotionhub-assets at remotion/transition-film-burn to my project. Preserve the exported TransitionFilmBurnProps API and register the TransitionFilmBurn composition with the default props."
+      }
+    }
+  ]
+}

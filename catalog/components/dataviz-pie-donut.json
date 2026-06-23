@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-pie-donut",
+  "displayName": "Dataviz Pie Donut",
+  "displayNameZh": "收入结构甜甜圈图",
+  "summary": "Dataviz Pie Donut component for Remotion.",
+  "summaryZh": "适用于 Remotion 的收入结构甜甜圈图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "pie",
+    "donut"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-pie-donut/dc3d3a67aa3f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-pie-donut/10d1721c3274-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-pie-donut"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizPieDonut.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "pie",
+        "donut"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-pie-donut"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-pie-donut/src/DatavizPieDonut.tsx` into your Remotion project, import `DatavizPieDonut` and `datavizPieDonutDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Pie Donut Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-pie-donut to my project. Preserve the exported DatavizPieDonutProps API and register the DatavizPieDonut composition with the default props."
+      }
+    }
+  ]
+}

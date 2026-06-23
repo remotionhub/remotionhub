@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "outro-social-links",
+  "displayName": "Outro Social Links",
+  "displayNameZh": "社群连结片尾",
+  "summary": "Outro Social Links component for Remotion.",
+  "summaryZh": "适用于 Remotion 的社群连结片尾组件。",
+  "categories": [
+    "outro"
+  ],
+  "tags": [
+    "remotion",
+    "outro",
+    "social",
+    "links"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-social-links/e52459a1a844-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-social-links/250ddf6f95c7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/outro-social-links"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/OutroSocialLinks.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "outro",
+        "social",
+        "links"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/outro-social-links"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/outro-social-links/src/OutroSocialLinks.tsx` into your Remotion project, import `OutroSocialLinks` and `outroSocialLinksDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Outro Social Links Remotion asset from remotionhub/remotionhub-assets at remotion/outro-social-links to my project. Preserve the exported OutroSocialLinksProps API and register the OutroSocialLinks composition with the default props."
+      }
+    }
+  ]
+}

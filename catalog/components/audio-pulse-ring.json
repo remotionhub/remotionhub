@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "audio-pulse-ring",
+  "displayName": "Audio Pulse Ring",
+  "displayNameZh": "脉冲光环视觉化",
+  "summary": "Audio Pulse Ring component for Remotion.",
+  "summaryZh": "适用于 Remotion 的脉冲光环视觉化组件。",
+  "categories": [
+    "audio"
+  ],
+  "tags": [
+    "remotion",
+    "audio",
+    "pulse",
+    "ring"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-pulse-ring/cbe8bfbbde9f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-pulse-ring/ff853ec415e5-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/audio-pulse-ring"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/AudioPulseRing.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "audio",
+        "pulse",
+        "ring"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/audio-pulse-ring"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/audio-pulse-ring/src/AudioPulseRing.tsx` into your Remotion project, import `AudioPulseRing` and `audioPulseRingDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Audio Pulse Ring Remotion asset from remotionhub/remotionhub-assets at remotion/audio-pulse-ring to my project. Preserve the exported AudioPulseRingProps API and register the AudioPulseRing composition with the default props."
+      }
+    }
+  ]
+}

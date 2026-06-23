@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-app-store",
+  "displayName": "Social App Store",
+  "displayNameZh": "App Store 上架卡片",
+  "summary": "Social App Store component for Remotion.",
+  "summaryZh": "适用于 Remotion 的App Store 上架卡片组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "app",
+    "store"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-app-store/ff86c1a0ec23-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-app-store/e938f1255f04-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-app-store"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialAppStore.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "app",
+        "store"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-app-store"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-app-store/src/SocialAppStore.tsx` into your Remotion project, import `SocialAppStore` and `socialAppStoreDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social App Store Remotion asset from remotionhub/remotionhub-assets at remotion/social-app-store to my project. Preserve the exported SocialAppStoreProps API and register the SocialAppStore composition with the default props."
+      }
+    }
+  ]
+}

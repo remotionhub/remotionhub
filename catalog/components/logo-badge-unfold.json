@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-badge-unfold",
+  "displayName": "Logo Badge Unfold",
+  "displayNameZh": "徽章展开 Logo",
+  "summary": "Logo Badge Unfold component for Remotion.",
+  "summaryZh": "适用于 Remotion 的徽章展开 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "badge",
+    "unfold"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-badge-unfold/9ca8ecd8c073-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-badge-unfold/d38e7e65bf91-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-badge-unfold"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoBadgeUnfold.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "badge",
+        "unfold"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-badge-unfold"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-badge-unfold/src/LogoBadgeUnfold.tsx` into your Remotion project, import `LogoBadgeUnfold` and `logoBadgeUnfoldDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Badge Unfold Remotion asset from remotionhub/remotionhub-assets at remotion/logo-badge-unfold to my project. Preserve the exported LogoBadgeUnfoldProps API and register the LogoBadgeUnfold composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-split-screen",
+  "displayName": "Intro Split Screen",
+  "displayNameZh": "分割萤幕片头",
+  "summary": "Intro Split Screen component for Remotion.",
+  "summaryZh": "适用于 Remotion 的分割萤幕片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "split",
+    "screen"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-split-screen/bda8fca3e26a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-split-screen/16ee8a7ad04c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-split-screen"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroSplitScreen.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "split",
+        "screen"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-split-screen"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-split-screen/src/IntroSplitScreen.tsx` into your Remotion project, import `IntroSplitScreen` and `introSplitScreenDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Split Screen Remotion asset from remotionhub/remotionhub-assets at remotion/intro-split-screen to my project. Preserve the exported IntroSplitScreenProps API and register the IntroSplitScreen composition with the default props."
+      }
+    }
+  ]
+}

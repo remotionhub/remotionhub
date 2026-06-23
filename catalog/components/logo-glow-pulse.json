@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-glow-pulse",
+  "displayName": "Logo Glow Pulse",
+  "displayNameZh": "光晕脉冲 Logo",
+  "summary": "Logo Glow Pulse component for Remotion.",
+  "summaryZh": "适用于 Remotion 的光晕脉冲 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "glow",
+    "pulse"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-glow-pulse/e36d74b99bb9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-glow-pulse/200ddbe45d0c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-glow-pulse"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoGlowPulse.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "glow",
+        "pulse"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-glow-pulse"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-glow-pulse/src/LogoGlowPulse.tsx` into your Remotion project, import `LogoGlowPulse` and `logoGlowPulseDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Glow Pulse Remotion asset from remotionhub/remotionhub-assets at remotion/logo-glow-pulse to my project. Preserve the exported LogoGlowPulseProps API and register the LogoGlowPulse composition with the default props."
+      }
+    }
+  ]
+}

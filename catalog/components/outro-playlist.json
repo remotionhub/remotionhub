@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "outro-playlist",
+  "displayName": "Outro Playlist",
+  "displayNameZh": "播放清单推荐片尾",
+  "summary": "Outro Playlist component for Remotion.",
+  "summaryZh": "适用于 Remotion 的播放清单推荐片尾组件。",
+  "categories": [
+    "outro"
+  ],
+  "tags": [
+    "remotion",
+    "outro",
+    "playlist"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-playlist/91305c585c84-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-playlist/a149856265ca-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/outro-playlist"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/OutroPlaylist.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "outro",
+        "playlist"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/outro-playlist"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/outro-playlist/src/OutroPlaylist.tsx` into your Remotion project, import `OutroPlaylist` and `outroPlaylistDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Outro Playlist Remotion asset from remotionhub/remotionhub-assets at remotion/outro-playlist to my project. Preserve the exported OutroPlaylistProps API and register the OutroPlaylist composition with the default props."
+      }
+    }
+  ]
+}
