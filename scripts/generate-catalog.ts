@@ -47,6 +47,7 @@ function getCategory(slug: string): string {
   if (slug.startsWith('outro-')) return 'outro'
   if (slug.startsWith('dataviz-')) return 'dataviz'
   if (slug.startsWith('social-')) return 'social'
+  if (slug.startsWith('yt-')) return 'animation'
   return 'other'
 }
 
@@ -63,7 +64,7 @@ async function readMarkdownTitle(slug: string): Promise<string> {
 async function generate(slug: string, commit: string) {
   const manifestPath = path.join(assetRepo, 'remotion', slug, 'remotionhub.asset.json')
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
-  const titleZh = await readMarkdownTitle(slug)
+  const titleZh = manifest.displayNameZh ?? (await readMarkdownTitle(slug))
   const category = getCategory(slug)
 
   const catalog = {
@@ -73,7 +74,7 @@ async function generate(slug: string, commit: string) {
     displayName: toDisplayName(slug),
     displayNameZh: titleZh,
     summary: `${toDisplayName(slug)} component for Remotion.`,
-    summaryZh: `适用于 Remotion 的${titleZh}组件。`,
+    summaryZh: manifest.summaryZh ?? `适用于 Remotion 的${titleZh}组件。`,
     categories: [category],
     tags: ['remotion', category, ...slug.split('-').slice(1)],
     status: 'published',
