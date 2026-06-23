@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-scatter-shot",
+  "displayName": "Yt Scatter Shot",
+  "displayNameZh": "乱枪打鸟：管道多但受众痛点不符",
+  "summary": "Yt Scatter Shot component for Remotion.",
+  "summaryZh": "适用于 Remotion 的乱枪打鸟：管道多但受众痛点不符组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "scatter",
+    "shot"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-scatter-shot/b72c09bd9d5b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-scatter-shot/024921f34166-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-scatter-shot"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtScatterShot.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "scatter",
+        "shot"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-scatter-shot"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-scatter-shot/src/YtScatterShot.tsx` into your Remotion project, import `YtScatterShot` and `ytScatterShotDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Scatter Shot Remotion asset from remotionhub/remotionhub-assets at remotion/yt-scatter-shot to my project. Preserve the exported YtScatterShotProps API and register the YtScatterShot composition with the default props."
+      }
+    }
+  ]
+}

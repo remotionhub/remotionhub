@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-shortest-path",
+  "displayName": "Yt Shortest Path",
+  "displayNameZh": "资讯架构最短路径",
+  "summary": "Yt Shortest Path component for Remotion.",
+  "summaryZh": "适用于 Remotion 的资讯架构最短路径组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "shortest",
+    "path"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-shortest-path/3b066969bed5-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-shortest-path/529bf133e5c5-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-shortest-path"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtShortestPath.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "shortest",
+        "path"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-shortest-path"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-shortest-path/src/YtShortestPath.tsx` into your Remotion project, import `YtShortestPath` and `ytShortestPathDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Shortest Path Remotion asset from remotionhub/remotionhub-assets at remotion/yt-shortest-path to my project. Preserve the exported YtShortestPathProps API and register the YtShortestPath composition with the default props."
+      }
+    }
+  ]
+}

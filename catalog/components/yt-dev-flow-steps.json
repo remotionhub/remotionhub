@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-dev-flow-steps",
+  "displayName": "Yt Dev Flow Steps",
+  "displayNameZh": "开发流程四步骤动画卡片",
+  "summary": "Yt Dev Flow Steps component for Remotion.",
+  "summaryZh": "适用于 Remotion 的开发流程四步骤动画卡片组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "dev",
+    "flow",
+    "steps"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-dev-flow-steps/481909b5cf34-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-dev-flow-steps/7664ae9f01a2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-dev-flow-steps"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtDevFlowSteps.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "dev",
+        "flow",
+        "steps"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-dev-flow-steps"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-dev-flow-steps/src/YtDevFlowSteps.tsx` into your Remotion project, import `YtDevFlowSteps` and `ytDevFlowStepsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Dev Flow Steps Remotion asset from remotionhub/remotionhub-assets at remotion/yt-dev-flow-steps to my project. Preserve the exported YtDevFlowStepsProps API and register the YtDevFlowSteps composition with the default props."
+      }
+    }
+  ]
+}

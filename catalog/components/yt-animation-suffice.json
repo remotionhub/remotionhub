@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-animation-suffice",
+  "displayName": "Yt Animation Suffice",
+  "displayNameZh": "用户不转模型，做动画就可以",
+  "summary": "Yt Animation Suffice component for Remotion.",
+  "summaryZh": "适用于 Remotion 的用户不转模型，做动画就可以组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "animation",
+    "suffice"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-animation-suffice/26bab50553a2-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-animation-suffice/8aa90bde0f85-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-animation-suffice"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAnimationSuffice.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "animation",
+        "suffice"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-animation-suffice"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-animation-suffice/src/YtAnimationSuffice.tsx` into your Remotion project, import `YtAnimationSuffice` and `ytAnimationSufficeDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Animation Suffice Remotion asset from remotionhub/remotionhub-assets at remotion/yt-animation-suffice to my project. Preserve the exported YtAnimationSufficeProps API and register the YtAnimationSuffice composition with the default props."
+      }
+    }
+  ]
+}

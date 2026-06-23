@@ -1,0 +1,60 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-easy-channel-hard-dist",
+  "displayName": "Yt Easy Channel Hard Dist",
+  "displayNameZh": "题目管道多，但 Distribution 很有挑战",
+  "summary": "Yt Easy Channel Hard Dist component for Remotion.",
+  "summaryZh": "适用于 Remotion 的题目管道多，但 Distribution 很有挑战组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "easy",
+    "channel",
+    "hard",
+    "dist"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-easy-channel-hard-dist/5de1d99d7a3f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-easy-channel-hard-dist/e056962b62ae-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-easy-channel-hard-dist"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtEasyChannelHardDist.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "easy",
+        "channel",
+        "hard",
+        "dist"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-easy-channel-hard-dist"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-easy-channel-hard-dist/src/YtEasyChannelHardDist.tsx` into your Remotion project, import `YtEasyChannelHardDist` and `ytEasyChannelHardDistDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Easy Channel Hard Dist Remotion asset from remotionhub/remotionhub-assets at remotion/yt-easy-channel-hard-dist to my project. Preserve the exported YtEasyChannelHardDistProps API and register the YtEasyChannelHardDist composition with the default props."
+      }
+    }
+  ]
+}

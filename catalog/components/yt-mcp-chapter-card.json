@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-mcp-chapter-card",
+  "displayName": "Yt Mcp Chapter Card",
+  "displayNameZh": "MCP 章节卡片",
+  "summary": "Yt Mcp Chapter Card component for Remotion.",
+  "summaryZh": "适用于 Remotion 的MCP 章节卡片组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "mcp",
+    "chapter",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mcp-chapter-card/02a45fc12b65-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mcp-chapter-card/5e4cb8dd5c3a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-mcp-chapter-card"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtMcpChapterCard.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "mcp",
+        "chapter",
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-mcp-chapter-card"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-mcp-chapter-card/src/YtMcpChapterCard.tsx` into your Remotion project, import `YtMcpChapterCard` and `ytMcpChapterCardDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Mcp Chapter Card Remotion asset from remotionhub/remotionhub-assets at remotion/yt-mcp-chapter-card to my project. Preserve the exported YtMcpChapterCardProps API and register the YtMcpChapterCard composition with the default props."
+      }
+    }
+  ]
+}

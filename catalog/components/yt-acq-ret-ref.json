@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-acq-ret-ref",
+  "displayName": "Yt Acq Ret Ref",
+  "displayNameZh": "Acquisition / Retention / Referral",
+  "summary": "Yt Acq Ret Ref component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Acquisition / Retention / Referral组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "acq",
+    "ret",
+    "ref"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-acq-ret-ref/2946cc9b4177-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-acq-ret-ref/c6740f1031cf-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-acq-ret-ref"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAcqRetRef.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "acq",
+        "ret",
+        "ref"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-acq-ret-ref"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-acq-ret-ref/src/YtAcqRetRef.tsx` into your Remotion project, import `YtAcqRetRef` and `ytAcqRetRefDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Acq Ret Ref Remotion asset from remotionhub/remotionhub-assets at remotion/yt-acq-ret-ref to my project. Preserve the exported YtAcqRetRefProps API and register the YtAcqRetRef composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-consistent-output",
+  "displayName": "Yt Consistent Output",
+  "displayNameZh": "让大家知道你正在持续稳定输出",
+  "summary": "Yt Consistent Output component for Remotion.",
+  "summaryZh": "适用于 Remotion 的让大家知道你正在持续稳定输出组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "consistent",
+    "output"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-consistent-output/fdff4a3ac2d3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-consistent-output/df81c9b00437-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-consistent-output"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtConsistentOutput.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "consistent",
+        "output"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-consistent-output"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-consistent-output/src/YtConsistentOutput.tsx` into your Remotion project, import `YtConsistentOutput` and `ytConsistentOutputDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Consistent Output Remotion asset from remotionhub/remotionhub-assets at remotion/yt-consistent-output to my project. Preserve the exported YtConsistentOutputProps API and register the YtConsistentOutput composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-engine-criteria",
+  "displayName": "Yt Engine Criteria",
+  "displayNameZh": "挑选游戏引擎的两个条件",
+  "summary": "Yt Engine Criteria component for Remotion.",
+  "summaryZh": "适用于 Remotion 的挑选游戏引擎的两个条件组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "engine",
+    "criteria"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-engine-criteria/5841ebe2e19b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-engine-criteria/181ed340bd3e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-engine-criteria"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtEngineCriteria.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "engine",
+        "criteria"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-engine-criteria"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-engine-criteria/src/YtEngineCriteria.tsx` into your Remotion project, import `YtEngineCriteria` and `ytEngineCriteriaDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Engine Criteria Remotion asset from remotionhub/remotionhub-assets at remotion/yt-engine-criteria to my project. Preserve the exported YtEngineCriteriaProps API and register the YtEngineCriteria composition with the default props."
+      }
+    }
+  ]
+}

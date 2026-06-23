@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-experiment-conclusion",
+  "displayName": "Yt Experiment Conclusion",
+  "displayNameZh": "实验结论三点总结动画",
+  "summary": "Yt Experiment Conclusion component for Remotion.",
+  "summaryZh": "适用于 Remotion 的实验结论三点总结动画组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "experiment",
+    "conclusion"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-experiment-conclusion/8ac35481103d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-experiment-conclusion/eba3b248bd38-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-experiment-conclusion"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtExperimentConclusion.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "experiment",
+        "conclusion"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-experiment-conclusion"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-experiment-conclusion/src/YtExperimentConclusion.tsx` into your Remotion project, import `YtExperimentConclusion` and `ytExperimentConclusionDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Experiment Conclusion Remotion asset from remotionhub/remotionhub-assets at remotion/yt-experiment-conclusion to my project. Preserve the exported YtExperimentConclusionProps API and register the YtExperimentConclusion composition with the default props."
+      }
+    }
+  ]
+}

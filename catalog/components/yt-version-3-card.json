@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-version-3-card",
+  "displayName": "Yt Version 3 Card",
+  "displayNameZh": "第三版转场卡片",
+  "summary": "Yt Version 3 Card component for Remotion.",
+  "summaryZh": "适用于 Remotion 的第三版转场卡片组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "version",
+    "3",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-version-3-card/e5ee0fb6b9a6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-version-3-card/8f1d3307f441-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-version-3-card"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtVersion3Card.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "version",
+        "3",
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-version-3-card"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-version-3-card/src/YtVersion3Card.tsx` into your Remotion project, import `YtVersion3Card` and `ytVersion3CardDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Version 3 Card Remotion asset from remotionhub/remotionhub-assets at remotion/yt-version-3-card to my project. Preserve the exported YtVersion3CardProps API and register the YtVersion3Card composition with the default props."
+      }
+    }
+  ]
+}

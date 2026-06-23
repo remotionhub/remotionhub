@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-mobile-patience",
+  "displayName": "Yt Mobile Patience",
+  "displayNameZh": "手机耐心只有五秒",
+  "summary": "Yt Mobile Patience component for Remotion.",
+  "summaryZh": "适用于 Remotion 的手机耐心只有五秒组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "mobile",
+    "patience"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mobile-patience/f3e081675b16-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-mobile-patience/72116b4881e8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-mobile-patience"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtMobilePatience.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "mobile",
+        "patience"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-mobile-patience"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-mobile-patience/src/YtMobilePatience.tsx` into your Remotion project, import `YtMobilePatience` and `ytMobilePatienceDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Mobile Patience Remotion asset from remotionhub/remotionhub-assets at remotion/yt-mobile-patience to my project. Preserve the exported YtMobilePatienceProps API and register the YtMobilePatience composition with the default props."
+      }
+    }
+  ]
+}

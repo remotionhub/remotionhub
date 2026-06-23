@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-core-dist-card",
+  "displayName": "Yt Core Dist Card",
+  "displayNameZh": "持续触及核心字卡",
+  "summary": "Yt Core Dist Card component for Remotion.",
+  "summaryZh": "适用于 Remotion 的持续触及核心字卡组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "core",
+    "dist",
+    "card"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-core-dist-card/eea1b76b220d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-core-dist-card/8642327c633a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-core-dist-card"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtCoreDistCard.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "core",
+        "dist",
+        "card"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-core-dist-card"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-core-dist-card/src/YtCoreDistCard.tsx` into your Remotion project, import `YtCoreDistCard` and `ytCoreDistCardDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Core Dist Card Remotion asset from remotionhub/remotionhub-assets at remotion/yt-core-dist-card to my project. Preserve the exported YtCoreDistCardProps API and register the YtCoreDistCard composition with the default props."
+      }
+    }
+  ]
+}

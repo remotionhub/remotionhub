@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-user-iterate",
+  "displayName": "Yt User Iterate",
+  "displayNameZh": "透过使用者互动不断优化调整",
+  "summary": "Yt User Iterate component for Remotion.",
+  "summaryZh": "适用于 Remotion 的透过使用者互动不断优化调整组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "user",
+    "iterate"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-user-iterate/12681663fa41-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-user-iterate/d4628b27fbbf-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-user-iterate"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtUserIterate.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "user",
+        "iterate"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-user-iterate"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-user-iterate/src/YtUserIterate.tsx` into your Remotion project, import `YtUserIterate` and `ytUserIterateDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt User Iterate Remotion asset from remotionhub/remotionhub-assets at remotion/yt-user-iterate to my project. Preserve the exported YtUserIterateProps API and register the YtUserIterate composition with the default props."
+      }
+    }
+  ]
+}

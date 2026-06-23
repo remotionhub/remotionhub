@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-far-to-near",
+  "displayName": "Yt Far To Near",
+  "displayNameZh": "从远到近的受众分层",
+  "summary": "Yt Far To Near component for Remotion.",
+  "summaryZh": "适用于 Remotion 的从远到近的受众分层组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "far",
+    "to",
+    "near"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-far-to-near/76538e53b0f9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-far-to-near/fa35cd832775-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-far-to-near"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtFarToNear.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "far",
+        "to",
+        "near"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-far-to-near"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-far-to-near/src/YtFarToNear.tsx` into your Remotion project, import `YtFarToNear` and `ytFarToNearDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Far To Near Remotion asset from remotionhub/remotionhub-assets at remotion/yt-far-to-near to my project. Preserve the exported YtFarToNearProps API and register the YtFarToNear composition with the default props."
+      }
+    }
+  ]
+}

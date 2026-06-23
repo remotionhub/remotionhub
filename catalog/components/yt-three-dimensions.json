@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-three-dimensions",
+  "displayName": "Yt Three Dimensions",
+  "displayNameZh": "三个面向拆解：Skill、工具、流程",
+  "summary": "Yt Three Dimensions component for Remotion.",
+  "summaryZh": "适用于 Remotion 的三个面向拆解：Skill、工具、流程组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "three",
+    "dimensions"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-three-dimensions/ade93e36314d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-three-dimensions/741a43b2e805-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-three-dimensions"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtThreeDimensions.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "three",
+        "dimensions"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-three-dimensions"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-three-dimensions/src/YtThreeDimensions.tsx` into your Remotion project, import `YtThreeDimensions` and `ytThreeDimensionsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Three Dimensions Remotion asset from remotionhub/remotionhub-assets at remotion/yt-three-dimensions to my project. Preserve the exported YtThreeDimensionsProps API and register the YtThreeDimensions composition with the default props."
+      }
+    }
+  ]
+}

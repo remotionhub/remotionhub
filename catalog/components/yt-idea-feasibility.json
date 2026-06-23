@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-idea-feasibility",
+  "displayName": "Yt Idea Feasibility",
+  "displayNameZh": "点子是否可行，很困难",
+  "summary": "Yt Idea Feasibility component for Remotion.",
+  "summaryZh": "适用于 Remotion 的点子是否可行，很困难组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "idea",
+    "feasibility"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-idea-feasibility/dad8991ace99-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-idea-feasibility/2ceccbf93909-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-idea-feasibility"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtIdeaFeasibility.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "idea",
+        "feasibility"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-idea-feasibility"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-idea-feasibility/src/YtIdeaFeasibility.tsx` into your Remotion project, import `YtIdeaFeasibility` and `ytIdeaFeasibilityDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Idea Feasibility Remotion asset from remotionhub/remotionhub-assets at remotion/yt-idea-feasibility to my project. Preserve the exported YtIdeaFeasibilityProps API and register the YtIdeaFeasibility composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-reads-only",
+  "displayName": "Yt Ai Reads Only",
+  "displayNameZh": "AI 只能读取线条、颜色、文字",
+  "summary": "Yt Ai Reads Only component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 只能读取线条、颜色、文字组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "reads",
+    "only"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-reads-only/53210e9e896d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-reads-only/74e82b02e6d6-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-reads-only"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiReadsOnly.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "reads",
+        "only"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-reads-only"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-reads-only/src/YtAiReadsOnly.tsx` into your Remotion project, import `YtAiReadsOnly` and `ytAiReadsOnlyDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Reads Only Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-reads-only to my project. Preserve the exported YtAiReadsOnlyProps API and register the YtAiReadsOnly composition with the default props."
+      }
+    }
+  ]
+}

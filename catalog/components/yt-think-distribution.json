@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-think-distribution",
+  "displayName": "Yt Think Distribution",
+  "displayNameZh": "怎么持续触及有痛点的人群",
+  "summary": "Yt Think Distribution component for Remotion.",
+  "summaryZh": "适用于 Remotion 的怎么持续触及有痛点的人群组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "think",
+    "distribution"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-think-distribution/bab7eaebfdc1-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-think-distribution/8fd285f3c090-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-think-distribution"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtThinkDistribution.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "think",
+        "distribution"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-think-distribution"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-think-distribution/src/YtThinkDistribution.tsx` into your Remotion project, import `YtThinkDistribution` and `ytThinkDistributionDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Think Distribution Remotion asset from remotionhub/remotionhub-assets at remotion/yt-think-distribution to my project. Preserve the exported YtThinkDistributionProps API and register the YtThinkDistribution composition with the default props."
+      }
+    }
+  ]
+}

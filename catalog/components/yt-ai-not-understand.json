@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-not-understand",
+  "displayName": "Yt Ai Not Understand",
+  "displayNameZh": "AI 看图不理解语意的视觉解说",
+  "summary": "Yt Ai Not Understand component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 看图不理解语意的视觉解说组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "not",
+    "understand"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-not-understand/76db1da1bc14-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-not-understand/e23ae0c42413-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-not-understand"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiNotUnderstand.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "not",
+        "understand"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-not-understand"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-not-understand/src/YtAiNotUnderstand.tsx` into your Remotion project, import `YtAiNotUnderstand` and `ytAiNotUnderstandDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Not Understand Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-not-understand to my project. Preserve the exported YtAiNotUnderstandProps API and register the YtAiNotUnderstand composition with the default props."
+      }
+    }
+  ]
+}

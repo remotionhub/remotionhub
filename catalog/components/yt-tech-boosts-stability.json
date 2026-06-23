@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-tech-boosts-stability",
+  "displayName": "Yt Tech Boosts Stability",
+  "displayNameZh": "产品稳定度可以透过提升技术力增加",
+  "summary": "Yt Tech Boosts Stability component for Remotion.",
+  "summaryZh": "适用于 Remotion 的产品稳定度可以透过提升技术力增加组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "tech",
+    "boosts",
+    "stability"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tech-boosts-stability/dfa9ab423f39-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-tech-boosts-stability/f42d067b5b8d-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-tech-boosts-stability"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTechBoostsStability.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "tech",
+        "boosts",
+        "stability"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-tech-boosts-stability"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-tech-boosts-stability/src/YtTechBoostsStability.tsx` into your Remotion project, import `YtTechBoostsStability` and `ytTechBoostsStabilityDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Tech Boosts Stability Remotion asset from remotionhub/remotionhub-assets at remotion/yt-tech-boosts-stability to my project. Preserve the exported YtTechBoostsStabilityProps API and register the YtTechBoostsStability composition with the default props."
+      }
+    }
+  ]
+}

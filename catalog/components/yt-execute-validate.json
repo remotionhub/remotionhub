@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-execute-validate",
+  "displayName": "Yt Execute Validate",
+  "displayNameZh": "怎么运行与验证点子",
+  "summary": "Yt Execute Validate component for Remotion.",
+  "summaryZh": "适用于 Remotion 的怎么运行与验证点子组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "execute",
+    "validate"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-execute-validate/96cc910cfb34-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-execute-validate/e70c4a63c956-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-execute-validate"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtExecuteValidate.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "execute",
+        "validate"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-execute-validate"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-execute-validate/src/YtExecuteValidate.tsx` into your Remotion project, import `YtExecuteValidate` and `ytExecuteValidateDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Execute Validate Remotion asset from remotionhub/remotionhub-assets at remotion/yt-execute-validate to my project. Preserve the exported YtExecuteValidateProps API and register the YtExecuteValidate composition with the default props."
+      }
+    }
+  ]
+}

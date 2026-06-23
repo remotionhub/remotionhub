@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-core-flow",
+  "displayName": "Yt Core Flow",
+  "displayNameZh": "AI 产品核心流程：输入→搜寻→AI 分析",
+  "summary": "Yt Core Flow component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 产品核心流程：输入→搜寻→AI 分析组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "core",
+    "flow"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-core-flow/39ff59a2ed96-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-core-flow/d694e81bca2a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-core-flow"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtCoreFlow.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "core",
+        "flow"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-core-flow"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-core-flow/src/YtCoreFlow.tsx` into your Remotion project, import `YtCoreFlow` and `ytCoreFlowDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Core Flow Remotion asset from remotionhub/remotionhub-assets at remotion/yt-core-flow to my project. Preserve the exported YtCoreFlowProps API and register the YtCoreFlow composition with the default props."
+      }
+    }
+  ]
+}

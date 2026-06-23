@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-influencer-dms",
+  "displayName": "Yt Influencer Dms",
+  "displayNameZh": "网红私讯里充满粉丝问题",
+  "summary": "Yt Influencer Dms component for Remotion.",
+  "summaryZh": "适用于 Remotion 的网红私讯里充满粉丝问题组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "influencer",
+    "dms"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-influencer-dms/a91b9129ad72-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-influencer-dms/33314b8fb447-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-influencer-dms"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtInfluencerDms.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "influencer",
+        "dms"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-influencer-dms"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-influencer-dms/src/YtInfluencerDms.tsx` into your Remotion project, import `YtInfluencerDms` and `ytInfluencerDmsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Influencer Dms Remotion asset from remotionhub/remotionhub-assets at remotion/yt-influencer-dms to my project. Preserve the exported YtInfluencerDmsProps API and register the YtInfluencerDms composition with the default props."
+      }
+    }
+  ]
+}

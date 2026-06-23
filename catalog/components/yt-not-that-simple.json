@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-not-that-simple",
+  "displayName": "Yt Not That Simple",
+  "displayNameZh": "做产品真的不容易，不是做出来发出去这么简单",
+  "summary": "Yt Not That Simple component for Remotion.",
+  "summaryZh": "适用于 Remotion 的做产品真的不容易，不是做出来发出去这么简单组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "not",
+    "that",
+    "simple"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-not-that-simple/1685e39cd4a7-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-not-that-simple/3c353712d250-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-not-that-simple"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtNotThatSimple.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "not",
+        "that",
+        "simple"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-not-that-simple"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-not-that-simple/src/YtNotThatSimple.tsx` into your Remotion project, import `YtNotThatSimple` and `ytNotThatSimpleDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Not That Simple Remotion asset from remotionhub/remotionhub-assets at remotion/yt-not-that-simple to my project. Preserve the exported YtNotThatSimpleProps API and register the YtNotThatSimple composition with the default props."
+      }
+    }
+  ]
+}

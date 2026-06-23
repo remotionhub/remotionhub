@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-page-scroll-metrics",
+  "displayName": "Yt Page Scroll Metrics",
+  "displayNameZh": "页面卷动完成率漏斗",
+  "summary": "Yt Page Scroll Metrics component for Remotion.",
+  "summaryZh": "适用于 Remotion 的页面卷动完成率漏斗组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "page",
+    "scroll",
+    "metrics"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-page-scroll-metrics/72f746775154-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-page-scroll-metrics/5dfe4ab48a33-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-page-scroll-metrics"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtPageScrollMetrics.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "page",
+        "scroll",
+        "metrics"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-page-scroll-metrics"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-page-scroll-metrics/src/YtPageScrollMetrics.tsx` into your Remotion project, import `YtPageScrollMetrics` and `ytPageScrollMetricsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Page Scroll Metrics Remotion asset from remotionhub/remotionhub-assets at remotion/yt-page-scroll-metrics to my project. Preserve the exported YtPageScrollMetricsProps API and register the YtPageScrollMetrics composition with the default props."
+      }
+    }
+  ]
+}

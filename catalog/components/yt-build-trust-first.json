@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-build-trust-first",
+  "displayName": "Yt Build Trust First",
+  "displayNameZh": "做产品之前先累积信任感",
+  "summary": "Yt Build Trust First component for Remotion.",
+  "summaryZh": "适用于 Remotion 的做产品之前先累积信任感组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "build",
+    "trust",
+    "first"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-build-trust-first/549a2db22e2f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-build-trust-first/248278666c41-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-build-trust-first"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtBuildTrustFirst.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "build",
+        "trust",
+        "first"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-build-trust-first"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-build-trust-first/src/YtBuildTrustFirst.tsx` into your Remotion project, import `YtBuildTrustFirst` and `ytBuildTrustFirstDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Build Trust First Remotion asset from remotionhub/remotionhub-assets at remotion/yt-build-trust-first to my project. Preserve the exported YtBuildTrustFirstProps API and register the YtBuildTrustFirst composition with the default props."
+      }
+    }
+  ]
+}

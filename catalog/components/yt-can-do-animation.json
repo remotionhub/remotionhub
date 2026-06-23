@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-can-do-animation",
+  "displayName": "Yt Can Do Animation",
+  "displayNameZh": "静态网站能做动画特效吗？",
+  "summary": "Yt Can Do Animation component for Remotion.",
+  "summaryZh": "适用于 Remotion 的静态网站能做动画特效吗？组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "can",
+    "do",
+    "animation"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-can-do-animation/bc762dcc59d1-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-can-do-animation/0bcad06f80c3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-can-do-animation"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtCanDoAnimation.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "can",
+        "do",
+        "animation"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-can-do-animation"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-can-do-animation/src/YtCanDoAnimation.tsx` into your Remotion project, import `YtCanDoAnimation` and `ytCanDoAnimationDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Can Do Animation Remotion asset from remotionhub/remotionhub-assets at remotion/yt-can-do-animation to my project. Preserve the exported YtCanDoAnimationProps API and register the YtCanDoAnimation composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-game-mashup",
+  "displayName": "Yt Game Mashup",
+  "displayNameZh": "三款游戏机制大融合",
+  "summary": "Yt Game Mashup component for Remotion.",
+  "summaryZh": "适用于 Remotion 的三款游戏机制大融合组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "game",
+    "mashup"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-game-mashup/2857bef522d6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-game-mashup/2618e6c7390b-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-game-mashup"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtGameMashup.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "game",
+        "mashup"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-game-mashup"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-game-mashup/src/YtGameMashup.tsx` into your Remotion project, import `YtGameMashup` and `ytGameMashupDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Game Mashup Remotion asset from remotionhub/remotionhub-assets at remotion/yt-game-mashup to my project. Preserve the exported YtGameMashupProps API and register the YtGameMashup composition with the default props."
+      }
+    }
+  ]
+}

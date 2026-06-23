@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-inside-the-problem",
+  "displayName": "Yt Inside The Problem",
+  "displayNameZh": "要在问题的圈子里",
+  "summary": "Yt Inside The Problem component for Remotion.",
+  "summaryZh": "适用于 Remotion 的要在问题的圈子里组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "inside",
+    "the",
+    "problem"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-inside-the-problem/b22cf8096720-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-inside-the-problem/3466114f0eee-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-inside-the-problem"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtInsideTheProblem.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "inside",
+        "the",
+        "problem"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-inside-the-problem"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-inside-the-problem/src/YtInsideTheProblem.tsx` into your Remotion project, import `YtInsideTheProblem` and `ytInsideTheProblemDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Inside The Problem Remotion asset from remotionhub/remotionhub-assets at remotion/yt-inside-the-problem to my project. Preserve the exported YtInsideTheProblemProps API and register the YtInsideTheProblem composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-deploy-cloudflare",
+  "displayName": "Yt Deploy Cloudflare",
+  "displayNameZh": "部署到 Cloudflare",
+  "summary": "Yt Deploy Cloudflare component for Remotion.",
+  "summaryZh": "适用于 Remotion 的部署到 Cloudflare组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "deploy",
+    "cloudflare"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-deploy-cloudflare/68d290450a73-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-deploy-cloudflare/e9edb2e9e285-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-deploy-cloudflare"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtDeployCloudflare.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "deploy",
+        "cloudflare"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-deploy-cloudflare"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-deploy-cloudflare/src/YtDeployCloudflare.tsx` into your Remotion project, import `YtDeployCloudflare` and `ytDeployCloudflareDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Deploy Cloudflare Remotion asset from remotionhub/remotionhub-assets at remotion/yt-deploy-cloudflare to my project. Preserve the exported YtDeployCloudflareProps API and register the YtDeployCloudflare composition with the default props."
+      }
+    }
+  ]
+}

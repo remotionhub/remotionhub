@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-two-errors-detail",
+  "displayName": "Yt Two Errors Detail",
+  "displayNameZh": "致命的两个错误详解",
+  "summary": "Yt Two Errors Detail component for Remotion.",
+  "summaryZh": "适用于 Remotion 的致命的两个错误详解组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "two",
+    "errors",
+    "detail"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-errors-detail/34d665a06cf9-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-two-errors-detail/e2742949a170-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-two-errors-detail"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTwoErrorsDetail.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "two",
+        "errors",
+        "detail"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-two-errors-detail"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-two-errors-detail/src/YtTwoErrorsDetail.tsx` into your Remotion project, import `YtTwoErrorsDetail` and `ytTwoErrorsDetailDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Two Errors Detail Remotion asset from remotionhub/remotionhub-assets at remotion/yt-two-errors-detail to my project. Preserve the exported YtTwoErrorsDetailProps API and register the YtTwoErrorsDetail composition with the default props."
+      }
+    }
+  ]
+}

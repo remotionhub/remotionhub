@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-start-with-service",
+  "displayName": "Yt Start With Service",
+  "displayNameZh": "先从服务做起，累积经验和作品",
+  "summary": "Yt Start With Service component for Remotion.",
+  "summaryZh": "适用于 Remotion 的先从服务做起，累积经验和作品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "start",
+    "with",
+    "service"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-start-with-service/89c6d290d779-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-start-with-service/ae2644d70b34-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-start-with-service"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtStartWithService.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "start",
+        "with",
+        "service"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-start-with-service"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-start-with-service/src/YtStartWithService.tsx` into your Remotion project, import `YtStartWithService` and `ytStartWithServiceDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Start With Service Remotion asset from remotionhub/remotionhub-assets at remotion/yt-start-with-service to my project. Preserve the exported YtStartWithServiceProps API and register the YtStartWithService composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-distribution-first",
+  "displayName": "Yt Distribution First",
+  "displayNameZh": "先想通路再做产品",
+  "summary": "Yt Distribution First component for Remotion.",
+  "summaryZh": "适用于 Remotion 的先想通路再做产品组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "distribution",
+    "first"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-distribution-first/c3a4da3ae82d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-distribution-first/867046c0e1fe-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-distribution-first"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtDistributionFirst.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "distribution",
+        "first"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-distribution-first"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-distribution-first/src/YtDistributionFirst.tsx` into your Remotion project, import `YtDistributionFirst` and `ytDistributionFirstDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Distribution First Remotion asset from remotionhub/remotionhub-assets at remotion/yt-distribution-first to my project. Preserve the exported YtDistributionFirstProps API and register the YtDistributionFirst composition with the default props."
+      }
+    }
+  ]
+}

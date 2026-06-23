@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-wrappers-dead",
+  "displayName": "Yt Ai Wrappers Dead",
+  "displayNameZh": "AI 套壳产品为什么死光？",
+  "summary": "Yt Ai Wrappers Dead component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 套壳产品为什么死光？组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "wrappers",
+    "dead"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-wrappers-dead/c1dd02ae55ea-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-wrappers-dead/d149e024c8c0-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-wrappers-dead"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiWrappersDead.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "wrappers",
+        "dead"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-wrappers-dead"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-wrappers-dead/src/YtAiWrappersDead.tsx` into your Remotion project, import `YtAiWrappersDead` and `ytAiWrappersDeadDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Wrappers Dead Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-wrappers-dead to my project. Preserve the exported YtAiWrappersDeadProps API and register the YtAiWrappersDead composition with the default props."
+      }
+    }
+  ]
+}

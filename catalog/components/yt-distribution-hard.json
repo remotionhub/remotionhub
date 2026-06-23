@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-distribution-hard",
+  "displayName": "Yt Distribution Hard",
+  "displayNameZh": "Distribution 怎么解决？真正困难的地方",
+  "summary": "Yt Distribution Hard component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Distribution 怎么解决？真正困难的地方组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "distribution",
+    "hard"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-distribution-hard/e3c8712e7eb6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-distribution-hard/b5164b398535-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-distribution-hard"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtDistributionHard.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "distribution",
+        "hard"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-distribution-hard"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-distribution-hard/src/YtDistributionHard.tsx` into your Remotion project, import `YtDistributionHard` and `ytDistributionHardDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Distribution Hard Remotion asset from remotionhub/remotionhub-assets at remotion/yt-distribution-hard to my project. Preserve the exported YtDistributionHardProps API and register the YtDistributionHard composition with the default props."
+      }
+    }
+  ]
+}

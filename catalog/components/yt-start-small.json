@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-start-small",
+  "displayName": "Yt Start Small",
+  "displayNameZh": "不要一口气做平台，先从小工具开始",
+  "summary": "Yt Start Small component for Remotion.",
+  "summaryZh": "适用于 Remotion 的不要一口气做平台，先从小工具开始组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "start",
+    "small"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-start-small/6bcee35d0908-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-start-small/173ea6e7d5a3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-start-small"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtStartSmall.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "start",
+        "small"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-start-small"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-start-small/src/YtStartSmall.tsx` into your Remotion project, import `YtStartSmall` and `ytStartSmallDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Start Small Remotion asset from remotionhub/remotionhub-assets at remotion/yt-start-small to my project. Preserve the exported YtStartSmallProps API and register the YtStartSmall composition with the default props."
+      }
+    }
+  ]
+}

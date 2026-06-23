@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-trust-is-currency",
+  "displayName": "Yt Trust Is Currency",
+  "displayNameZh": "信任就是商业上最基础的货币",
+  "summary": "Yt Trust Is Currency component for Remotion.",
+  "summaryZh": "适用于 Remotion 的信任就是商业上最基础的货币组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "trust",
+    "is",
+    "currency"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-trust-is-currency/2688d7fa1488-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-trust-is-currency/52530c8361b2-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-trust-is-currency"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtTrustIsCurrency.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "trust",
+        "is",
+        "currency"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-trust-is-currency"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-trust-is-currency/src/YtTrustIsCurrency.tsx` into your Remotion project, import `YtTrustIsCurrency` and `ytTrustIsCurrencyDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Trust Is Currency Remotion asset from remotionhub/remotionhub-assets at remotion/yt-trust-is-currency to my project. Preserve the exported YtTrustIsCurrencyProps API and register the YtTrustIsCurrency composition with the default props."
+      }
+    }
+  ]
+}

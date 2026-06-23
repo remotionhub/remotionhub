@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-far-strangers",
+  "displayName": "Yt Far Strangers",
+  "displayNameZh": "远：痛点来源于网路上的陌生人",
+  "summary": "Yt Far Strangers component for Remotion.",
+  "summaryZh": "适用于 Remotion 的远：痛点来源于网路上的陌生人组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "far",
+    "strangers"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-far-strangers/150c87be5dd3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-far-strangers/e59f13e537de-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-far-strangers"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtFarStrangers.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "far",
+        "strangers"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-far-strangers"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-far-strangers/src/YtFarStrangers.tsx` into your Remotion project, import `YtFarStrangers` and `ytFarStrangersDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Far Strangers Remotion asset from remotionhub/remotionhub-assets at remotion/yt-far-strangers to my project. Preserve the exported YtFarStrangersProps API and register the YtFarStrangers composition with the default props."
+      }
+    }
+  ]
+}

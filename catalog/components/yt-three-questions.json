@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-three-questions",
+  "displayName": "Yt Three Questions",
+  "displayNameZh": "三大 AI 设计情境逐步揭示",
+  "summary": "Yt Three Questions component for Remotion.",
+  "summaryZh": "适用于 Remotion 的三大 AI 设计情境逐步揭示组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "three",
+    "questions"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-three-questions/80780295a37d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-three-questions/915d7991e5b1-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-three-questions"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtThreeQuestions.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "three",
+        "questions"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-three-questions"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-three-questions/src/YtThreeQuestions.tsx` into your Remotion project, import `YtThreeQuestions` and `ytThreeQuestionsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Three Questions Remotion asset from remotionhub/remotionhub-assets at remotion/yt-three-questions to my project. Preserve the exported YtThreeQuestionsProps API and register the YtThreeQuestions composition with the default props."
+      }
+    }
+  ]
+}

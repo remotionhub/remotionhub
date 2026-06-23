@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-customize-own",
+  "displayName": "Yt Customize Own",
+  "displayNameZh": "客制化调整打造专属网站",
+  "summary": "Yt Customize Own component for Remotion.",
+  "summaryZh": "适用于 Remotion 的客制化调整打造专属网站组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "customize",
+    "own"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-customize-own/f728e4856bda-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-customize-own/fbdc2fc4620c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-customize-own"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtCustomizeOwn.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "customize",
+        "own"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-customize-own"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-customize-own/src/YtCustomizeOwn.tsx` into your Remotion project, import `YtCustomizeOwn` and `ytCustomizeOwnDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Customize Own Remotion asset from remotionhub/remotionhub-assets at remotion/yt-customize-own to my project. Preserve the exported YtCustomizeOwnProps API and register the YtCustomizeOwn composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-ai-report-doubt",
+  "displayName": "Yt Ai Report Doubt",
+  "displayNameZh": "AI 报告未必有用",
+  "summary": "Yt Ai Report Doubt component for Remotion.",
+  "summaryZh": "适用于 Remotion 的AI 报告未必有用组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "ai",
+    "report",
+    "doubt"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-report-doubt/b74c7ae47d6b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-ai-report-doubt/d47e6525c1a3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-ai-report-doubt"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAiReportDoubt.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "ai",
+        "report",
+        "doubt"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "path": "remotion/yt-ai-report-doubt"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-ai-report-doubt/src/YtAiReportDoubt.tsx` into your Remotion project, import `YtAiReportDoubt` and `ytAiReportDoubtDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Report Doubt Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-report-doubt to my project. Preserve the exported YtAiReportDoubtProps API and register the YtAiReportDoubt composition with the default props."
+      }
+    }
+  ]
+}
