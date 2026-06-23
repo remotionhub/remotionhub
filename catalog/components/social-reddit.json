@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-reddit",
   "displayName": "Social Reddit",
-  "displayNameZh": "Reddit 贴文卡片",
+  "displayNameZh": "Reddit 帖子卡片",
   "summary": "Social Reddit component for Remotion.",
-  "summaryZh": "适用于 Remotion 的Reddit 贴文卡片组件。",
+  "summaryZh": "适用于 Remotion 的Reddit 帖子卡片组件。",
   "categories": [
     "social"
   ],

@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-facebook",
   "displayName": "Social Facebook",
-  "displayNameZh": "Facebook 贴文卡片",
+  "displayNameZh": "Facebook 帖子卡片",
   "summary": "Social Facebook component for Remotion.",
-  "summaryZh": "适用于 Remotion 的Facebook 贴文卡片组件。",
+  "summaryZh": "适用于 Remotion 的Facebook 帖子卡片组件。",
   "categories": [
     "social"
   ],

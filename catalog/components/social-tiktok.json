@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "social-tiktok",
   "displayName": "Social Tiktok",
-  "displayNameZh": "TikTok 视频贴文卡",
+  "displayNameZh": "TikTok 视频帖子卡",
   "summary": "Social Tiktok component for Remotion.",
-  "summaryZh": "适用于 Remotion 的TikTok 视频贴文卡组件。",
+  "summaryZh": "适用于 Remotion 的TikTok 视频帖子卡组件。",
   "categories": [
     "social"
   ],

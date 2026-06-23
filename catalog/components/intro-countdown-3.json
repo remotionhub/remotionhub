@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "intro-countdown-3",
   "displayName": "Intro Countdown 3",
-  "displayNameZh": "三秒倒数片头",
+  "displayNameZh": "三秒倒计时片头",
   "summary": "Intro Countdown 3 component for Remotion.",
-  "summaryZh": "适用于 Remotion 的三秒倒数片头组件。",
+  "summaryZh": "适用于 Remotion 的三秒倒计时片头组件。",
   "categories": [
     "intro"
   ],

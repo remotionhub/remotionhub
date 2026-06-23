@@ -3,9 +3,9 @@
   "runtime": "remotion",
   "slug": "outro-comment-cta",
   "displayName": "Outro Comment Cta",
-  "displayNameZh": "留言互动片尾",
+  "displayNameZh": "评论互动片尾",
   "summary": "Outro Comment Cta component for Remotion.",
-  "summaryZh": "适用于 Remotion 的留言互动片尾组件。",
+  "summaryZh": "适用于 Remotion 的评论互动片尾组件。",
   "categories": [
     "outro"
   ],

@@ -145,7 +145,7 @@ describe('DetailPage', () => {
     expect(screen.getByText('版本 1.0.0，作者 Terence')).toBeTruthy()
     expect(screen.getByText('Remotion')).toBeTruthy()
     expect(screen.getByText('入口')).toBeTruthy()
-    expect(screen.getByText('画幅')).toBeTruthy()
+    expect(screen.getByText('画面比例')).toBeTruthy()
     expect(screen.getByText('时长')).toBeTruthy()
     expect(screen.getByText('180 帧 / 30 帧每秒')).toBeTruthy()
     expect(screen.getByText('许可证')).toBeTruthy()

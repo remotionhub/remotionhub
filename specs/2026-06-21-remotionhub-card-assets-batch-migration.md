@@ -215,7 +215,7 @@ animationStiffness
 - 使用 English camelCase。
 - 颜色字段使用 CSS color string。
 - 数值动画参数使用 number。
-- 字段描述使用 English，面向素材使用者说明效果。
+- 字段描述使用 English，面向素材用户说明效果。
 - 默认值必须与迁移后组件的默认视觉一致。
 
 如果某个素材需要数组配置，例如多行文字、社交帐号或新闻 ticker，可以使用 array/object props，但必须在 README 中说明结构，并保证默认值可 render。

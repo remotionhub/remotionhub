@@ -26,7 +26,7 @@ RemotionHub 当前已经有 catalog 数据模型和页面能力：
 - 为该案例生成可运行 Remotion 项目或可独立复制的组件包。
 - 为该案例生成 RemotionHub catalog JSON。
 - 设计并验证轻量媒体镜像脚本，避免 preview 和 thumbnail 长期依赖来源站点。
-- 设计源码清理与校验管道，把抓取源码的语法错误、缺失依赖和 Remotion 兼容性问题转化为可追踪状态。
+- 设计源码清理与校验管道，把抓取源码的语法错误、缺失依赖和 Remotion 兼容性问题转化为可关注状态。
 - 在 RemotionHub 网页中验证详情页 preview、thumbnail、source、usage 和 prompt。
 - 写入完整迁移策略，保证后续 264 个案例不会漏迁。
 
@@ -106,7 +106,7 @@ manifest/
 
 ## 全量迁移保证
 
-后续批量迁移必须先生成完整 inventory，而不是人工逐个追踪。inventory 以 `/tmp/remotionlab/案例/README.md` 和实际 `*.md` 文件为输入，排除 `README.md` 与 `index.md` 这类索引页后，每个案例都有唯一 slug。
+后续批量迁移必须先生成完整 inventory，而不是人工逐个关注。inventory 以 `/tmp/remotionlab/案例/README.md` 和实际 `*.md` 文件为输入，排除 `README.md` 与 `index.md` 这类索引页后，每个案例都有唯一 slug。
 
 每个 slug 必须处于下列状态之一：
 
