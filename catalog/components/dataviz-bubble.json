@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-bubble",
+  "displayName": "Dataviz Bubble",
+  "displayNameZh": "市场分析气泡图",
+  "summary": "Dataviz Bubble component for Remotion.",
+  "summaryZh": "适用于 Remotion 的市场分析气泡图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "bubble"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bubble/94c1791a5623-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bubble/281841778507-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-bubble"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizBubble.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "bubble"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-bubble"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-bubble/src/DatavizBubble.tsx` into your Remotion project, import `DatavizBubble` and `datavizBubbleDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Bubble Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-bubble to my project. Preserve the exported DatavizBubbleProps API and register the DatavizBubble composition with the default props."
+      }
+    }
+  ]
+}

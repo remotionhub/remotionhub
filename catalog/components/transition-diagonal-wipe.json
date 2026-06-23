@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-diagonal-wipe",
+  "displayName": "Transition Diagonal Wipe",
+  "displayNameZh": "对角线擦除转场",
+  "summary": "Transition Diagonal Wipe component for Remotion.",
+  "summaryZh": "适用于 Remotion 的对角线擦除转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "diagonal",
+    "wipe"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-diagonal-wipe/2c0ba6e4fe2e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-diagonal-wipe/6e356bc3d3fa-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-diagonal-wipe"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionDiagonalWipe.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "diagonal",
+        "wipe"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-diagonal-wipe"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-diagonal-wipe/src/TransitionDiagonalWipe.tsx` into your Remotion project, import `TransitionDiagonalWipe` and `transitionDiagonalWipeDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Diagonal Wipe Remotion asset from remotionhub/remotionhub-assets at remotion/transition-diagonal-wipe to my project. Preserve the exported TransitionDiagonalWipeProps API and register the TransitionDiagonalWipe composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-stats-wall",
+  "displayName": "Social Stats Wall",
+  "displayNameZh": "社群数据墙",
+  "summary": "Social Stats Wall component for Remotion.",
+  "summaryZh": "适用于 Remotion 的社群数据墙组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "stats",
+    "wall"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-stats-wall/1947153b25d3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-stats-wall/da66d5bbb5e8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-stats-wall"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialStatsWall.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "stats",
+        "wall"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-stats-wall"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-stats-wall/src/SocialStatsWall.tsx` into your Remotion project, import `SocialStatsWall` and `socialStatsWallDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Stats Wall Remotion asset from remotionhub/remotionhub-assets at remotion/social-stats-wall to my project. Preserve the exported SocialStatsWallProps API and register the SocialStatsWall composition with the default props."
+      }
+    }
+  ]
+}

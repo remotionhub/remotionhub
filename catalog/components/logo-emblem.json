@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-emblem",
+  "displayName": "Logo Emblem",
+  "displayNameZh": "古典奖章 Logo",
+  "summary": "Logo Emblem component for Remotion.",
+  "summaryZh": "适用于 Remotion 的古典奖章 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "emblem"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-emblem/9c0176958a79-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-emblem/c5f2235a2db8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-emblem"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoEmblem.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "emblem"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-emblem"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-emblem/src/LogoEmblem.tsx` into your Remotion project, import `LogoEmblem` and `logoEmblemDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Emblem Remotion asset from remotionhub/remotionhub-assets at remotion/logo-emblem to my project. Preserve the exported LogoEmblemProps API and register the LogoEmblem composition with the default props."
+      }
+    }
+  ]
+}

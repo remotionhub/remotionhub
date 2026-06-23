@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-area-chart",
+  "displayName": "Dataviz Area Chart",
+  "displayNameZh": "面积折线图",
+  "summary": "Dataviz Area Chart component for Remotion.",
+  "summaryZh": "适用于 Remotion 的面积折线图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "area",
+    "chart"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-area-chart/c19cf06546cf-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-area-chart/091bbaf5a96f-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-area-chart"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizAreaChart.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "area",
+        "chart"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-area-chart"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-area-chart/src/DatavizAreaChart.tsx` into your Remotion project, import `DatavizAreaChart` and `datavizAreaChartDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Area Chart Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-area-chart to my project. Preserve the exported DatavizAreaChartProps API and register the DatavizAreaChart composition with the default props."
+      }
+    }
+  ]
+}

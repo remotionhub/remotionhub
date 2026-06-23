@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-line-draw",
+  "displayName": "Logo Line Draw",
+  "displayNameZh": "六边形线条描绘 Logo",
+  "summary": "Logo Line Draw component for Remotion.",
+  "summaryZh": "适用于 Remotion 的六边形线条描绘 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "line",
+    "draw"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-line-draw/c90c812b02c2-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-line-draw/08ae994cebe7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-line-draw"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoLineDraw.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "line",
+        "draw"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-line-draw"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-line-draw/src/LogoLineDraw.tsx` into your Remotion project, import `LogoLineDraw` and `logoLineDrawDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Line Draw Remotion asset from remotionhub/remotionhub-assets at remotion/logo-line-draw to my project. Preserve the exported LogoLineDrawProps API and register the LogoLineDraw composition with the default props."
+      }
+    }
+  ]
+}

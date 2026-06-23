@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-slide-push",
+  "displayName": "Transition Slide Push",
+  "displayNameZh": "滑动推移转场",
+  "summary": "Transition Slide Push component for Remotion.",
+  "summaryZh": "适用于 Remotion 的滑动推移转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "slide",
+    "push"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-slide-push/061297e07faa-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-slide-push/9949a1c1a1c7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-slide-push"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionSlidePush.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "slide",
+        "push"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-slide-push"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-slide-push/src/TransitionSlidePush.tsx` into your Remotion project, import `TransitionSlidePush` and `transitionSlidePushDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Slide Push Remotion asset from remotionhub/remotionhub-assets at remotion/transition-slide-push to my project. Preserve the exported TransitionSlidePushProps API and register the TransitionSlidePush composition with the default props."
+      }
+    }
+  ]
+}

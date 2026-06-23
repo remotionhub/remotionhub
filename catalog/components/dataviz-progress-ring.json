@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-progress-ring",
+  "displayName": "Dataviz Progress Ring",
+  "displayNameZh": "环形进度图",
+  "summary": "Dataviz Progress Ring component for Remotion.",
+  "summaryZh": "适用于 Remotion 的环形进度图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "progress",
+    "ring"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-progress-ring/8f3b6caebd84-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-progress-ring/3b2424964d5c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-progress-ring"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizProgressRing.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "progress",
+        "ring"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-progress-ring"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-progress-ring/src/DatavizProgressRing.tsx` into your Remotion project, import `DatavizProgressRing` and `datavizProgressRingDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Progress Ring Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-progress-ring to my project. Preserve the exported DatavizProgressRingProps API and register the DatavizProgressRing composition with the default props."
+      }
+    }
+  ]
+}

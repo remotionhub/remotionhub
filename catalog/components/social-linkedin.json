@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-linkedin",
+  "displayName": "Social Linkedin",
+  "displayNameZh": "LinkedIn 贴文卡片",
+  "summary": "Social Linkedin component for Remotion.",
+  "summaryZh": "适用于 Remotion 的LinkedIn 贴文卡片组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "linkedin"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-linkedin/7bdc250ca1b6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-linkedin/2327c04a86ab-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-linkedin"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialLinkedin.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "linkedin"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-linkedin"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-linkedin/src/SocialLinkedin.tsx` into your Remotion project, import `SocialLinkedin` and `socialLinkedinDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Linkedin Remotion asset from remotionhub/remotionhub-assets at remotion/social-linkedin to my project. Preserve the exported SocialLinkedinProps API and register the SocialLinkedin composition with the default props."
+      }
+    }
+  ]
+}

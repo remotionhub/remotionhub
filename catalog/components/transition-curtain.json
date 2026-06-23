@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-curtain",
+  "displayName": "Transition Curtain",
+  "displayNameZh": "幕帘转场",
+  "summary": "Transition Curtain component for Remotion.",
+  "summaryZh": "适用于 Remotion 的幕帘转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "curtain"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-curtain/b3fdbb9b32d1-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-curtain/c30bad728776-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-curtain"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionCurtain.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "curtain"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-curtain"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-curtain/src/TransitionCurtain.tsx` into your Remotion project, import `TransitionCurtain` and `transitionCurtainDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Curtain Remotion asset from remotionhub/remotionhub-assets at remotion/transition-curtain to my project. Preserve the exported TransitionCurtainProps API and register the TransitionCurtain composition with the default props."
+      }
+    }
+  ]
+}

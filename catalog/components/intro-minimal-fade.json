@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-minimal-fade",
+  "displayName": "Intro Minimal Fade",
+  "displayNameZh": "极简淡入片头",
+  "summary": "Intro Minimal Fade component for Remotion.",
+  "summaryZh": "适用于 Remotion 的极简淡入片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "minimal",
+    "fade"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-minimal-fade/db0c61d5e293-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-minimal-fade/2af32e05fbd4-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-minimal-fade"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroMinimalFade.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "minimal",
+        "fade"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-minimal-fade"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-minimal-fade/src/IntroMinimalFade.tsx` into your Remotion project, import `IntroMinimalFade` and `introMinimalFadeDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Minimal Fade Remotion asset from remotionhub/remotionhub-assets at remotion/intro-minimal-fade to my project. Preserve the exported IntroMinimalFadeProps API and register the IntroMinimalFade composition with the default props."
+      }
+    }
+  ]
+}

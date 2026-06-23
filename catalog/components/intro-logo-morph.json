@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-logo-morph",
+  "displayName": "Intro Logo Morph",
+  "displayNameZh": "Logo 变形片头",
+  "summary": "Intro Logo Morph component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Logo 变形片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "logo",
+    "morph"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-logo-morph/07ebeede1167-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-logo-morph/4cf2151b2fa3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-logo-morph"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroLogoMorph.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "logo",
+        "morph"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-logo-morph"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-logo-morph/src/IntroLogoMorph.tsx` into your Remotion project, import `IntroLogoMorph` and `introLogoMorphDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Logo Morph Remotion asset from remotionhub/remotionhub-assets at remotion/intro-logo-morph to my project. Preserve the exported IntroLogoMorphProps API and register the IntroLogoMorph composition with the default props."
+      }
+    }
+  ]
+}

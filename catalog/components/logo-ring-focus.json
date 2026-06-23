@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-ring-focus",
+  "displayName": "Logo Ring Focus",
+  "displayNameZh": "光圈聚焦 Logo",
+  "summary": "Logo Ring Focus component for Remotion.",
+  "summaryZh": "适用于 Remotion 的光圈聚焦 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "ring",
+    "focus"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-ring-focus/40e834c1c2f5-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-ring-focus/8aa9153f9da5-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-ring-focus"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoRingFocus.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "ring",
+        "focus"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-ring-focus"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-ring-focus/src/LogoRingFocus.tsx` into your Remotion project, import `LogoRingFocus` and `logoRingFocusDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Ring Focus Remotion asset from remotionhub/remotionhub-assets at remotion/logo-ring-focus to my project. Preserve the exported LogoRingFocusProps API and register the LogoRingFocus composition with the default props."
+      }
+    }
+  ]
+}

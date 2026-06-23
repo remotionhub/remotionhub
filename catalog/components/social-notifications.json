@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-notifications",
+  "displayName": "Social Notifications",
+  "displayNameZh": "社群通知中心",
+  "summary": "Social Notifications component for Remotion.",
+  "summaryZh": "适用于 Remotion 的社群通知中心组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "notifications"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-notifications/8d9f837aedf8-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-notifications/dbaf2f09da19-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-notifications"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialNotifications.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "notifications"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-notifications"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-notifications/src/SocialNotifications.tsx` into your Remotion project, import `SocialNotifications` and `socialNotificationsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Notifications Remotion asset from remotionhub/remotionhub-assets at remotion/social-notifications to my project. Preserve the exported SocialNotificationsProps API and register the SocialNotifications composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "outro-comment-cta",
+  "displayName": "Outro Comment Cta",
+  "displayNameZh": "留言互动片尾",
+  "summary": "Outro Comment Cta component for Remotion.",
+  "summaryZh": "适用于 Remotion 的留言互动片尾组件。",
+  "categories": [
+    "outro"
+  ],
+  "tags": [
+    "remotion",
+    "outro",
+    "comment",
+    "cta"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-comment-cta/935e9116b671-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-comment-cta/0f38b78f109a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/outro-comment-cta"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/OutroCommentCta.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "outro",
+        "comment",
+        "cta"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/outro-comment-cta"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/outro-comment-cta/src/OutroCommentCta.tsx` into your Remotion project, import `OutroCommentCta` and `outroCommentCtaDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Outro Comment Cta Remotion asset from remotionhub/remotionhub-assets at remotion/outro-comment-cta to my project. Preserve the exported OutroCommentCtaProps API and register the OutroCommentCta composition with the default props."
+      }
+    }
+  ]
+}

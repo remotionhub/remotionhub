@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-youtube-feed",
+  "displayName": "Social Youtube Feed",
+  "displayNameZh": "YouTube 视频墙首页",
+  "summary": "Social Youtube Feed component for Remotion.",
+  "summaryZh": "适用于 Remotion 的YouTube 视频墙首页组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "youtube",
+    "feed"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-youtube-feed/571e17fc16e4-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-youtube-feed/f54b315f24c0-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-youtube-feed"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialYoutubeFeed.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "youtube",
+        "feed"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-youtube-feed"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-youtube-feed/src/SocialYoutubeFeed.tsx` into your Remotion project, import `SocialYoutubeFeed` and `socialYoutubeFeedDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Youtube Feed Remotion asset from remotionhub/remotionhub-assets at remotion/social-youtube-feed to my project. Preserve the exported SocialYoutubeFeedProps API and register the SocialYoutubeFeed composition with the default props."
+      }
+    }
+  ]
+}

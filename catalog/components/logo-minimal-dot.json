@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-minimal-dot",
+  "displayName": "Logo Minimal Dot",
+  "displayNameZh": "极简圆点 Logo",
+  "summary": "Logo Minimal Dot component for Remotion.",
+  "summaryZh": "适用于 Remotion 的极简圆点 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "minimal",
+    "dot"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-minimal-dot/a82aea9cb858-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-minimal-dot/c60ee48ff8f0-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-minimal-dot"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoMinimalDot.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "minimal",
+        "dot"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-minimal-dot"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-minimal-dot/src/LogoMinimalDot.tsx` into your Remotion project, import `LogoMinimalDot` and `logoMinimalDotDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Minimal Dot Remotion asset from remotionhub/remotionhub-assets at remotion/logo-minimal-dot to my project. Preserve the exported LogoMinimalDotProps API and register the LogoMinimalDot composition with the default props."
+      }
+    }
+  ]
+}

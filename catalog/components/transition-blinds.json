@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-blinds",
+  "displayName": "Transition Blinds",
+  "displayNameZh": "百叶窗转场",
+  "summary": "Transition Blinds component for Remotion.",
+  "summaryZh": "适用于 Remotion 的百叶窗转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "blinds"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-blinds/93f54d62d7b4-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-blinds/b028fa49a061-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-blinds"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionBlinds.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "blinds"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-blinds"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-blinds/src/TransitionBlinds.tsx` into your Remotion project, import `TransitionBlinds` and `transitionBlindsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Blinds Remotion asset from remotionhub/remotionhub-assets at remotion/transition-blinds to my project. Preserve the exported TransitionBlindsProps API and register the TransitionBlinds composition with the default props."
+      }
+    }
+  ]
+}

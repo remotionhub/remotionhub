@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-radar",
+  "displayName": "Dataviz Radar",
+  "displayNameZh": "能力雷达图",
+  "summary": "Dataviz Radar component for Remotion.",
+  "summaryZh": "适用于 Remotion 的能力雷达图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "radar"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-radar/e58140dde33e-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-radar/9d2ab7319868-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-radar"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizRadar.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "radar"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-radar"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-radar/src/DatavizRadar.tsx` into your Remotion project, import `DatavizRadar` and `datavizRadarDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Radar Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-radar to my project. Preserve the exported DatavizRadarProps API and register the DatavizRadar composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-stories-row",
+  "displayName": "Social Stories Row",
+  "displayNameZh": "限时动态列",
+  "summary": "Social Stories Row component for Remotion.",
+  "summaryZh": "适用于 Remotion 的限时动态列组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "stories",
+    "row"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-stories-row/0c08ebb9c082-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-stories-row/62a699bc58fe-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-stories-row"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialStoriesRow.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "stories",
+        "row"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-stories-row"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-stories-row/src/SocialStoriesRow.tsx` into your Remotion project, import `SocialStoriesRow` and `socialStoriesRowDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Stories Row Remotion asset from remotionhub/remotionhub-assets at remotion/social-stories-row to my project. Preserve the exported SocialStoriesRowProps API and register the SocialStoriesRow composition with the default props."
+      }
+    }
+  ]
+}

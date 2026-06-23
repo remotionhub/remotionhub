@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-github",
+  "displayName": "Social Github",
+  "displayNameZh": "GitHub Repo 卡片",
+  "summary": "Social Github component for Remotion.",
+  "summaryZh": "适用于 Remotion 的GitHub Repo 卡片组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "github"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-github/1d17236bb5d3-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-github/ff7bacfa46d0-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-github"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialGithub.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "github"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-github"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-github/src/SocialGithub.tsx` into your Remotion project, import `SocialGithub` and `socialGithubDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Github Remotion asset from remotionhub/remotionhub-assets at remotion/social-github to my project. Preserve the exported SocialGithubProps API and register the SocialGithub composition with the default props."
+      }
+    }
+  ]
+}

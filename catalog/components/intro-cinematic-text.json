@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-cinematic-text",
+  "displayName": "Intro Cinematic Text",
+  "displayNameZh": "电影感字幕片头",
+  "summary": "Intro Cinematic Text component for Remotion.",
+  "summaryZh": "适用于 Remotion 的电影感字幕片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "cinematic",
+    "text"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-cinematic-text/ede91a906541-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-cinematic-text/01ad8f875911-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-cinematic-text"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroCinematicText.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "cinematic",
+        "text"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-cinematic-text"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-cinematic-text/src/IntroCinematicText.tsx` into your Remotion project, import `IntroCinematicText` and `introCinematicTextDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Cinematic Text Remotion asset from remotionhub/remotionhub-assets at remotion/intro-cinematic-text to my project. Preserve the exported IntroCinematicTextProps API and register the IntroCinematicText composition with the default props."
+      }
+    }
+  ]
+}

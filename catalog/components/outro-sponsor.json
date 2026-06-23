@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "outro-sponsor",
+  "displayName": "Outro Sponsor",
+  "displayNameZh": "赞助感谢片尾",
+  "summary": "Outro Sponsor component for Remotion.",
+  "summaryZh": "适用于 Remotion 的赞助感谢片尾组件。",
+  "categories": [
+    "outro"
+  ],
+  "tags": [
+    "remotion",
+    "outro",
+    "sponsor"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-sponsor/17483b65ad9a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-sponsor/aac5a4cf77ee-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/outro-sponsor"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/OutroSponsor.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "outro",
+        "sponsor"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/outro-sponsor"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/outro-sponsor/src/OutroSponsor.tsx` into your Remotion project, import `OutroSponsor` and `outroSponsorDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Outro Sponsor Remotion asset from remotionhub/remotionhub-assets at remotion/outro-sponsor to my project. Preserve the exported OutroSponsorProps API and register the OutroSponsor composition with the default props."
+      }
+    }
+  ]
+}

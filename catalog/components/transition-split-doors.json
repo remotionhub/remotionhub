@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-split-doors",
+  "displayName": "Transition Split Doors",
+  "displayNameZh": "对开门转场",
+  "summary": "Transition Split Doors component for Remotion.",
+  "summaryZh": "适用于 Remotion 的对开门转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "split",
+    "doors"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-split-doors/ecb0bc36ccdd-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-split-doors/498b621a47be-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-split-doors"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionSplitDoors.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "split",
+        "doors"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-split-doors"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-split-doors/src/TransitionSplitDoors.tsx` into your Remotion project, import `TransitionSplitDoors` and `transitionSplitDoorsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Split Doors Remotion asset from remotionhub/remotionhub-assets at remotion/transition-split-doors to my project. Preserve the exported TransitionSplitDoorsProps API and register the TransitionSplitDoors composition with the default props."
+      }
+    }
+  ]
+}

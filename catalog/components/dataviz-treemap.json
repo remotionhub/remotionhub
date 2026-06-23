@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-treemap",
+  "displayName": "Dataviz Treemap",
+  "displayNameZh": "市场份额树状图",
+  "summary": "Dataviz Treemap component for Remotion.",
+  "summaryZh": "适用于 Remotion 的市场份额树状图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "treemap"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-treemap/54e777e0ab35-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-treemap/b1b589ad486c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-treemap"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizTreemap.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "treemap"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-treemap"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-treemap/src/DatavizTreemap.tsx` into your Remotion project, import `DatavizTreemap` and `datavizTreemapDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Treemap Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-treemap to my project. Preserve the exported DatavizTreemapProps API and register the DatavizTreemap composition with the default props."
+      }
+    }
+  ]
+}

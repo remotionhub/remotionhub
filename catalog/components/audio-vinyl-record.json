@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "audio-vinyl-record",
+  "displayName": "Audio Vinyl Record",
+  "displayNameZh": "黑胶唱片视觉化",
+  "summary": "Audio Vinyl Record component for Remotion.",
+  "summaryZh": "适用于 Remotion 的黑胶唱片视觉化组件。",
+  "categories": [
+    "audio"
+  ],
+  "tags": [
+    "remotion",
+    "audio",
+    "vinyl",
+    "record"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-vinyl-record/edd6a463dfa8-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-vinyl-record/0fd2ff0e2bf4-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/audio-vinyl-record"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/AudioVinylRecord.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "audio",
+        "vinyl",
+        "record"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/audio-vinyl-record"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/audio-vinyl-record/src/AudioVinylRecord.tsx` into your Remotion project, import `AudioVinylRecord` and `audioVinylRecordDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Audio Vinyl Record Remotion asset from remotionhub/remotionhub-assets at remotion/audio-vinyl-record to my project. Preserve the exported AudioVinylRecordProps API and register the AudioVinylRecord composition with the default props."
+      }
+    }
+  ]
+}

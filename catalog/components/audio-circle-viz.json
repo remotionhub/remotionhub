@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "audio-circle-viz",
+  "displayName": "Audio Circle Viz",
+  "displayNameZh": "圆形频谱视觉化",
+  "summary": "Audio Circle Viz component for Remotion.",
+  "summaryZh": "适用于 Remotion 的圆形频谱视觉化组件。",
+  "categories": [
+    "audio"
+  ],
+  "tags": [
+    "remotion",
+    "audio",
+    "circle",
+    "viz"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-circle-viz/6c5b33e40fc4-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/audio-circle-viz/ac883b501ae3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/audio-circle-viz"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/AudioCircleViz.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "audio",
+        "circle",
+        "viz"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/audio-circle-viz"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/audio-circle-viz/src/AudioCircleViz.tsx` into your Remotion project, import `AudioCircleViz` and `audioCircleVizDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Audio Circle Viz Remotion asset from remotionhub/remotionhub-assets at remotion/audio-circle-viz to my project. Preserve the exported AudioCircleVizProps API and register the AudioCircleViz composition with the default props."
+      }
+    }
+  ]
+}

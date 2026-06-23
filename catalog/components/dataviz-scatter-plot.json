@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-scatter-plot",
+  "displayName": "Dataviz Scatter Plot",
+  "displayNameZh": "散布图",
+  "summary": "Dataviz Scatter Plot component for Remotion.",
+  "summaryZh": "适用于 Remotion 的散布图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "scatter",
+    "plot"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-scatter-plot/dc94e491c650-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-scatter-plot/4d80d39d6bbd-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-scatter-plot"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizScatterPlot.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "scatter",
+        "plot"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-scatter-plot"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-scatter-plot/src/DatavizScatterPlot.tsx` into your Remotion project, import `DatavizScatterPlot` and `datavizScatterPlotDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Scatter Plot Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-scatter-plot to my project. Preserve the exported DatavizScatterPlotProps API and register the DatavizScatterPlot composition with the default props."
+      }
+    }
+  ]
+}

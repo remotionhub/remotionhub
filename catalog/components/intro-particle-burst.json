@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-particle-burst",
+  "displayName": "Intro Particle Burst",
+  "displayNameZh": "粒子爆发片头",
+  "summary": "Intro Particle Burst component for Remotion.",
+  "summaryZh": "适用于 Remotion 的粒子爆发片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "particle",
+    "burst"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-particle-burst/c48ab520655d-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-particle-burst/8efb2b429bfb-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-particle-burst"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroParticleBurst.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "particle",
+        "burst"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-particle-burst"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-particle-burst/src/IntroParticleBurst.tsx` into your Remotion project, import `IntroParticleBurst` and `introParticleBurstDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Particle Burst Remotion asset from remotionhub/remotionhub-assets at remotion/intro-particle-burst to my project. Preserve the exported IntroParticleBurstProps API and register the IntroParticleBurst composition with the default props."
+      }
+    }
+  ]
+}

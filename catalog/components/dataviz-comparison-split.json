@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-comparison-split",
+  "displayName": "Dataviz Comparison Split",
+  "displayNameZh": "左右分割对比图",
+  "summary": "Dataviz Comparison Split component for Remotion.",
+  "summaryZh": "适用于 Remotion 的左右分割对比图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "comparison",
+    "split"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-comparison-split/a71f2529cb3a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-comparison-split/7827fb8ba87a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-comparison-split"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizComparisonSplit.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "comparison",
+        "split"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-comparison-split"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-comparison-split/src/DatavizComparisonSplit.tsx` into your Remotion project, import `DatavizComparisonSplit` and `datavizComparisonSplitDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Comparison Split Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-comparison-split to my project. Preserve the exported DatavizComparisonSplitProps API and register the DatavizComparisonSplit composition with the default props."
+      }
+    }
+  ]
+}

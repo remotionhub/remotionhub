@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-ink-spread",
+  "displayName": "Transition Ink Spread",
+  "displayNameZh": "墨水晕染转场",
+  "summary": "Transition Ink Spread component for Remotion.",
+  "summaryZh": "适用于 Remotion 的墨水晕染转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "ink",
+    "spread"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-ink-spread/63f68ac5b2a5-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-ink-spread/e19cbe55051a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-ink-spread"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionInkSpread.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "ink",
+        "spread"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-ink-spread"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-ink-spread/src/TransitionInkSpread.tsx` into your Remotion project, import `TransitionInkSpread` and `transitionInkSpreadDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Ink Spread Remotion asset from remotionhub/remotionhub-assets at remotion/transition-ink-spread to my project. Preserve the exported TransitionInkSpreadProps API and register the TransitionInkSpread composition with the default props."
+      }
+    }
+  ]
+}

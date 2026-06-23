@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-twitter-quote",
+  "displayName": "Social Twitter Quote",
+  "displayNameZh": "X / Twitter 语录卡",
+  "summary": "Social Twitter Quote component for Remotion.",
+  "summaryZh": "适用于 Remotion 的X / Twitter 语录卡组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "twitter",
+    "quote"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-twitter-quote/b7e23dacf71b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-twitter-quote/d37384a90ce4-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-twitter-quote"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialTwitterQuote.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "twitter",
+        "quote"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-twitter-quote"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-twitter-quote/src/SocialTwitterQuote.tsx` into your Remotion project, import `SocialTwitterQuote` and `socialTwitterQuoteDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Twitter Quote Remotion asset from remotionhub/remotionhub-assets at remotion/social-twitter-quote to my project. Preserve the exported SocialTwitterQuoteProps API and register the SocialTwitterQuote composition with the default props."
+      }
+    }
+  ]
+}

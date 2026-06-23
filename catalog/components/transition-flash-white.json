@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-flash-white",
+  "displayName": "Transition Flash White",
+  "displayNameZh": "白闪转场",
+  "summary": "Transition Flash White component for Remotion.",
+  "summaryZh": "适用于 Remotion 的白闪转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "flash",
+    "white"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-flash-white/29d88d30dc4f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-flash-white/94cc8b8e7bd8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-flash-white"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionFlashWhite.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "flash",
+        "white"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-flash-white"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-flash-white/src/TransitionFlashWhite.tsx` into your Remotion project, import `TransitionFlashWhite` and `transitionFlashWhiteDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Flash White Remotion asset from remotionhub/remotionhub-assets at remotion/transition-flash-white to my project. Preserve the exported TransitionFlashWhiteProps API and register the TransitionFlashWhite composition with the default props."
+      }
+    }
+  ]
+}

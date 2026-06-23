@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-bullet",
+  "displayName": "Dataviz Bullet",
+  "displayNameZh": "KPI 达成率子弹图",
+  "summary": "Dataviz Bullet component for Remotion.",
+  "summaryZh": "适用于 Remotion 的KPI 达成率子弹图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "bullet"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bullet/d70d3411d590-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bullet/506e214ecbc8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-bullet"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizBullet.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "bullet"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-bullet"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-bullet/src/DatavizBullet.tsx` into your Remotion project, import `DatavizBullet` and `datavizBulletDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Bullet Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-bullet to my project. Preserve the exported DatavizBulletProps API and register the DatavizBullet composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-pixelate",
+  "displayName": "Transition Pixelate",
+  "displayNameZh": "像素化转场",
+  "summary": "Transition Pixelate component for Remotion.",
+  "summaryZh": "适用于 Remotion 的像素化转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "pixelate"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-pixelate/bdaa40a64314-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-pixelate/8b2804a3007f-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-pixelate"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionPixelate.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "pixelate"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-pixelate"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-pixelate/src/TransitionPixelate.tsx` into your Remotion project, import `TransitionPixelate` and `transitionPixelateDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Pixelate Remotion asset from remotionhub/remotionhub-assets at remotion/transition-pixelate to my project. Preserve the exported TransitionPixelateProps API and register the TransitionPixelate composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "dataviz-bar-chart",
+  "displayName": "Dataviz Bar Chart",
+  "displayNameZh": "季度业绩长条图",
+  "summary": "Dataviz Bar Chart component for Remotion.",
+  "summaryZh": "适用于 Remotion 的季度业绩长条图组件。",
+  "categories": [
+    "dataviz"
+  ],
+  "tags": [
+    "remotion",
+    "dataviz",
+    "bar",
+    "chart"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bar-chart/edca650c997b-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/dataviz-bar-chart/a1f2985acce8-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/dataviz-bar-chart"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/DatavizBarChart.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "dataviz",
+        "bar",
+        "chart"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/dataviz-bar-chart"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/dataviz-bar-chart/src/DatavizBarChart.tsx` into your Remotion project, import `DatavizBarChart` and `datavizBarChartDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Dataviz Bar Chart Remotion asset from remotionhub/remotionhub-assets at remotion/dataviz-bar-chart to my project. Preserve the exported DatavizBarChartProps API and register the DatavizBarChart composition with the default props."
+      }
+    }
+  ]
+}

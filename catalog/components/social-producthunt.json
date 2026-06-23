@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-producthunt",
+  "displayName": "Social Producthunt",
+  "displayNameZh": "Product Hunt 产品发布卡",
+  "summary": "Social Producthunt component for Remotion.",
+  "summaryZh": "适用于 Remotion 的Product Hunt 产品发布卡组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "producthunt"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-producthunt/2e130c187eae-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-producthunt/259f3bea0edc-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-producthunt"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialProducthunt.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "producthunt"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-producthunt"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-producthunt/src/SocialProducthunt.tsx` into your Remotion project, import `SocialProducthunt` and `socialProducthuntDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Producthunt Remotion asset from remotionhub/remotionhub-assets at remotion/social-producthunt to my project. Preserve the exported SocialProducthuntProps API and register the SocialProducthunt composition with the default props."
+      }
+    }
+  ]
+}

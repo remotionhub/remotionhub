@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "social-comment-wall",
+  "displayName": "Social Comment Wall",
+  "displayNameZh": "直播留言板",
+  "summary": "Social Comment Wall component for Remotion.",
+  "summaryZh": "适用于 Remotion 的直播留言板组件。",
+  "categories": [
+    "social"
+  ],
+  "tags": [
+    "remotion",
+    "social",
+    "comment",
+    "wall"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-comment-wall/c9bcf9bb26a6-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/social-comment-wall/4b4f672d6e48-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/social-comment-wall"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/SocialCommentWall.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "social",
+        "comment",
+        "wall"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/social-comment-wall"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/social-comment-wall/src/SocialCommentWall.tsx` into your Remotion project, import `SocialCommentWall` and `socialCommentWallDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Social Comment Wall Remotion asset from remotionhub/remotionhub-assets at remotion/social-comment-wall to my project. Preserve the exported SocialCommentWallProps API and register the SocialCommentWall composition with the default props."
+      }
+    }
+  ]
+}

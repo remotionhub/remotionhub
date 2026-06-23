@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "outro-credits-roll",
+  "displayName": "Outro Credits Roll",
+  "displayNameZh": "卷动字幕片尾",
+  "summary": "Outro Credits Roll component for Remotion.",
+  "summaryZh": "适用于 Remotion 的卷动字幕片尾组件。",
+  "categories": [
+    "outro"
+  ],
+  "tags": [
+    "remotion",
+    "outro",
+    "credits",
+    "roll"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-credits-roll/de438265c5fc-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/outro-credits-roll/cf38d8e14d5a-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/outro-credits-roll"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/OutroCreditsRoll.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "outro",
+        "credits",
+        "roll"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/outro-credits-roll"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/outro-credits-roll/src/OutroCreditsRoll.tsx` into your Remotion project, import `OutroCreditsRoll` and `outroCreditsRollDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Outro Credits Roll Remotion asset from remotionhub/remotionhub-assets at remotion/outro-credits-roll to my project. Preserve the exported OutroCreditsRollProps API and register the OutroCreditsRoll composition with the default props."
+      }
+    }
+  ]
+}

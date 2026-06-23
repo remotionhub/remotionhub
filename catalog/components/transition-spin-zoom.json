@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "transition-spin-zoom",
+  "displayName": "Transition Spin Zoom",
+  "displayNameZh": "旋转缩放转场",
+  "summary": "Transition Spin Zoom component for Remotion.",
+  "summaryZh": "适用于 Remotion 的旋转缩放转场组件。",
+  "categories": [
+    "transition"
+  ],
+  "tags": [
+    "remotion",
+    "transition",
+    "spin",
+    "zoom"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-spin-zoom/74a8b0757818-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/transition-spin-zoom/7369cd487b44-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/transition-spin-zoom"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/TransitionSpinZoom.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "transition",
+        "spin",
+        "zoom"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/transition-spin-zoom"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/transition-spin-zoom/src/TransitionSpinZoom.tsx` into your Remotion project, import `TransitionSpinZoom` and `transitionSpinZoomDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Transition Spin Zoom Remotion asset from remotionhub/remotionhub-assets at remotion/transition-spin-zoom to my project. Preserve the exported TransitionSpinZoomProps API and register the TransitionSpinZoom composition with the default props."
+      }
+    }
+  ]
+}

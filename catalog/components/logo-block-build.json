@@ -1,0 +1,56 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "logo-block-build",
+  "displayName": "Logo Block Build",
+  "displayNameZh": "积木拼合 Logo",
+  "summary": "Logo Block Build component for Remotion.",
+  "summaryZh": "适用于 Remotion 的积木拼合 Logo组件。",
+  "categories": [
+    "logo"
+  ],
+  "tags": [
+    "remotion",
+    "logo",
+    "block",
+    "build"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-block-build/3c6ae847146a-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/logo-block-build/1fd07ec0c8db-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/logo-block-build"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/LogoBlockBuild.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "logo",
+        "block",
+        "build"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/logo-block-build"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/logo-block-build/src/LogoBlockBuild.tsx` into your Remotion project, import `LogoBlockBuild` and `logoBlockBuildDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Logo Block Build Remotion asset from remotionhub/remotionhub-assets at remotion/logo-block-build to my project. Preserve the exported LogoBlockBuildProps API and register the LogoBlockBuild composition with the default props."
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "intro-typewriter",
+  "displayName": "Intro Typewriter",
+  "displayNameZh": "打字机片头",
+  "summary": "Intro Typewriter component for Remotion.",
+  "summaryZh": "适用于 Remotion 的打字机片头组件。",
+  "categories": [
+    "intro"
+  ],
+  "tags": [
+    "remotion",
+    "intro",
+    "typewriter"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-typewriter/11c530efbb21-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/intro-typewriter/bdc9f0574e2e-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/intro-typewriter"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/IntroTypewriter.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 120,
+        "fps": 30
+      },
+      "tags": [
+        "intro",
+        "typewriter"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "8731f30e62a5973afc393494d5430648d5fbf7c7",
+          "path": "remotion/intro-typewriter"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/intro-typewriter/src/IntroTypewriter.tsx` into your Remotion project, import `IntroTypewriter` and `introTypewriterDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Intro Typewriter Remotion asset from remotionhub/remotionhub-assets at remotion/intro-typewriter to my project. Preserve the exported IntroTypewriterProps API and register the IntroTypewriter composition with the default props."
+      }
+    }
+  ]
+}
