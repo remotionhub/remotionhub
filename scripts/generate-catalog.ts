@@ -2,8 +2,22 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
-const assetRepo = '/Users/tangwz/workspace/git/remotionhub-assets'
 const targetDir = 'catalog/components'
+
+function getArgValue(name: string) {
+  return process.argv
+    .find((arg) => arg.startsWith(`--${name}=`))
+    ?.slice(name.length + 3)
+}
+
+const assetRepo =
+  getArgValue('asset-repo') ??
+  process.env.REMOTIONHUB_ASSET_REPO ??
+  '/Users/tangwz/workspace/git/remotionhub-assets'
+const sourceMdDir =
+  getArgValue('source-md-dir') ??
+  process.env.REMOTIONLAB_SOURCE_MD_DIR ??
+  '/tmp/remotionlab/案例'
 
 async function getAssetCommit() {
   return execFileSync('git', ['-C', assetRepo, 'rev-parse', 'HEAD'], {
@@ -37,7 +51,7 @@ function getCategory(slug: string): string {
 }
 
 async function readMarkdownTitle(slug: string): Promise<string> {
-  const mdPath = `/tmp/remotionlab/案例/${slug}.md`
+  const mdPath = path.join(sourceMdDir, `${slug}.md`)
   const content = await fs.readFile(mdPath, 'utf8')
   const match = content.match(/^title:\s+"?([^"\n]+)"?$/m)
   if (!match?.[1]) {
@@ -51,7 +65,7 @@ async function generate(slug: string, commit: string) {
   const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
   const titleZh = await readMarkdownTitle(slug)
   const category = getCategory(slug)
-  
+
   const catalog = {
     publisher: 'remotionlab',
     runtime: 'remotion',
@@ -95,7 +109,7 @@ async function generate(slug: string, commit: string) {
       },
     ],
   }
-  
+
   const outputPath = path.join(targetDir, `${slug}.json`)
   await fs.writeFile(outputPath, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8')
   console.log(`Generated ${outputPath} at commit ${commit}`)
@@ -103,15 +117,18 @@ async function generate(slug: string, commit: string) {
 
 async function main() {
   const commit = await getAssetCommit()
-  const slugs = process.argv.slice(2)
+  const slugs = process.argv.slice(2).filter((arg) => !arg.startsWith('--'))
   if (slugs.length === 0) {
     console.error('Please specify slugs to generate.')
     process.exit(1)
   }
-  
+
   for (const slug of slugs) {
     await generate(slug, commit)
   }
 }
 
-main().catch(console.error)
+main().catch((error: unknown) => {
+  console.error(error)
+  process.exitCode = 1
+})

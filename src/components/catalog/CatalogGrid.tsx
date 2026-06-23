@@ -15,7 +15,11 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
   const args = useMemo(
     () => ({
       runtime,
-      categories: category ? [category] : undefined,
+      categories: category
+        ? category === 'intro-outro'
+          ? ['intro', 'outro']
+          : [category]
+        : undefined,
     }),
     [category, runtime],
   )
@@ -30,13 +34,27 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
 
   const categoryOptions = useMemo(() => {
     if (!facets) return []
-    return Object.entries(facets.categories)
-      .map(([value, count]) => ({
-        value,
-        label: value,
-        count,
-      }))
-      .sort((a, b) => a.value.localeCompare(b.value))
+    const rawCategories = Object.entries(facets.categories)
+    const introEntry = rawCategories.find(([k]) => k === 'intro')
+    const outroEntry = rawCategories.find(([k]) => k === 'outro')
+    const combinedCount = (introEntry?.[1] ?? 0) + (outroEntry?.[1] ?? 0)
+
+    const filtered = rawCategories.filter(([k]) => k !== 'intro' && k !== 'outro')
+    const options = filtered.map(([value, count]) => ({
+      value,
+      label: value,
+      count,
+    }))
+
+    if (combinedCount > 0) {
+      options.push({
+        value: 'intro-outro',
+        label: 'intro-outro',
+        count: combinedCount,
+      })
+    }
+
+    return options.sort((a, b) => a.value.localeCompare(b.value))
   }, [facets])
 
   const tagOptions = useMemo(() => {
