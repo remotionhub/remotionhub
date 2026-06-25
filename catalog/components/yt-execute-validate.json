@@ -5,7 +5,7 @@
   "displayName": "Yt Execute Validate",
   "displayNameZh": "怎么运行与验证点子",
   "summary": "Yt Execute Validate component for Remotion.",
-  "summaryZh": "适用于 Remotion 的怎么运行与验证点子组件。",
+  "summaryZh": "适用于 Remotion 的「怎么运行与验证点子」组件。",
   "categories": [
     "animation"
   ],
@@ -44,7 +44,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-execute-validate"
         },
         "license": "MIT",

@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-fast-results",
+  "displayName": "Yt Audio Fast Results",
+  "displayNameZh": "AI 快速产出多版本成果",
+  "summary": "Yt Audio Fast Results component for Remotion.",
+  "summaryZh": "适用于 Remotion 的「AI 快速产出多版本成果」组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "fast",
+    "results"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-fast-results/7c13cb649114-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-fast-results/3338808bdaa7-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-fast-results"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioFastResults.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 240,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "fast",
+        "results"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "path": "remotion/yt-audio-fast-results"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-fast-results/src/YtAudioFastResults.tsx` into your Remotion project, import `YtAudioFastResults` and `ytAudioFastResultsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Fast Results Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-fast-results to my project. Preserve the exported YtAudioFastResultsProps API and register the YtAudioFastResults composition with the default props."
+      }
+    }
+  ]
+}

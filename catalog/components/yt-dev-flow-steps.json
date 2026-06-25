@@ -5,7 +5,7 @@
   "displayName": "Yt Dev Flow Steps",
   "displayNameZh": "开发流程四步骤动画卡片",
   "summary": "Yt Dev Flow Steps component for Remotion.",
-  "summaryZh": "适用于 Remotion 的开发流程四步骤动画卡片组件。",
+  "summaryZh": "适用于 Remotion 的「开发流程四步骤动画卡片」组件。",
   "categories": [
     "animation"
   ],
@@ -32,7 +32,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 120,
+        "durationFrames": 240,
         "fps": 30
       },
       "tags": [
@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-dev-flow-steps"
         },
         "license": "MIT",

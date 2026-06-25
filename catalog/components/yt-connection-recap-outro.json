@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-connection-recap-outro",
+  "displayName": "Yt Connection Recap Outro",
+  "displayNameZh": "Connection 系列总结片尾",
+  "summary": "Yt Connection Recap Outro component for Remotion.",
+  "summaryZh": "适用于 Remotion 的「Connection 系列总结片尾」组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "connection",
+    "recap",
+    "outro"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-connection-recap-outro/ed2a71c5b891-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-connection-recap-outro/7bd023a9c4d3-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-connection-recap-outro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtConnectionRecapOutro.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 480,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "connection",
+        "recap",
+        "outro"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "path": "remotion/yt-connection-recap-outro"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-connection-recap-outro/src/YtConnectionRecapOutro.tsx` into your Remotion project, import `YtConnectionRecapOutro` and `ytConnectionRecapOutroDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Connection Recap Outro Remotion asset from remotionhub/remotionhub-assets at remotion/yt-connection-recap-outro to my project. Preserve the exported YtConnectionRecapOutroProps API and register the YtConnectionRecapOutro composition with the default props."
+      }
+    }
+  ]
+}

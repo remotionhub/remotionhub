@@ -5,7 +5,7 @@
   "displayName": "Yt Ai Wrappers Dead",
   "displayNameZh": "AI 套壳产品为什么死光？",
   "summary": "Yt Ai Wrappers Dead component for Remotion.",
-  "summaryZh": "适用于 Remotion 的AI 套壳产品为什么死光？组件。",
+  "summaryZh": "适用于 Remotion 的「AI 套壳产品为什么死光？」组件。",
   "categories": [
     "animation"
   ],
@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-ai-wrappers-dead"
         },
         "license": "MIT",

@@ -1,0 +1,60 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-complex-pop-question",
+  "displayName": "Yt Audio Complex Pop Question",
+  "displayNameZh": "复杂流行音乐能改编吗？",
+  "summary": "Yt Audio Complex Pop Question component for Remotion.",
+  "summaryZh": "适用于 Remotion 的「复杂流行音乐能改编吗？」组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "complex",
+    "pop",
+    "question"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-complex-pop-question/8634ded6a55f-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-complex-pop-question/2cbf410fb9bf-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-complex-pop-question"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioComplexPopQuestion.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 240,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "complex",
+        "pop",
+        "question"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "path": "remotion/yt-audio-complex-pop-question"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-complex-pop-question/src/YtAudioComplexPopQuestion.tsx` into your Remotion project, import `YtAudioComplexPopQuestion` and `ytAudioComplexPopQuestionDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Complex Pop Question Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-complex-pop-question to my project. Preserve the exported YtAudioComplexPopQuestionProps API and register the YtAudioComplexPopQuestion composition with the default props."
+      }
+    }
+  ]
+}

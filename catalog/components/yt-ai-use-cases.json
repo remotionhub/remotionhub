@@ -5,7 +5,7 @@
   "displayName": "Yt Ai Use Cases",
   "displayNameZh": "AI 设计工具三大使用情境动态图解",
   "summary": "Yt Ai Use Cases component for Remotion.",
-  "summaryZh": "适用于 Remotion 的AI 设计工具三大使用情境动态图解组件。",
+  "summaryZh": "适用于 Remotion 的「AI 设计工具三大使用情境动态图解」组件。",
   "categories": [
     "animation"
   ],
@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-ai-use-cases"
         },
         "license": "MIT",
