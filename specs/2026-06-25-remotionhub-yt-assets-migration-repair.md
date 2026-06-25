@@ -240,7 +240,8 @@ runtimeAsset('audio/connection/woosh.wav')
 - `Root.tsx` 的 `durationInFrames` 必须与 manifest 相等。
 - README 示例必须使用 manifest 时长。
 - catalog `metadata.durationFrames` 必须来自 manifest。
-- 如果组件仍导出 `*_DURATION_FRAMES`，校验器必须确认其值与 manifest 相等。
+- 每个 `yt-*` 组件必须导出 `*_DURATION_FRAMES` 常量（SCREAMING_SNAKE_CASE，值为正整数帧数）。校验器必须确认该常量存在且值与 manifest 相等。
+- `Root.tsx` 必须导入并使用该常量作为 `durationInFrames` prop，不得使用硬编码数字。
 
 若某资产没有唯一可判定的 duration 常量，自动脚本不得猜测，必须报告该 slug 并要求人工确认。
 
