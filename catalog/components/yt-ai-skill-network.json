@@ -46,12 +46,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "commit": "793d2c24542c445fe5f488db18943abcaef9d1a1",
           "path": "remotion/yt-ai-skill-network"
         },
         "license": "MIT",
-        "usageMarkdown": "Copy `remotion/yt-ai-skill-network/src/YtAiSkillNetwork.tsx` into your Remotion project, import `YtAiSkillNetwork` and `ytAiSkillNetworkDefaultProps`, then register the composition.",
-        "agentPrompt": "Add the Yt Ai Skill Network Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-skill-network to my project. Preserve the exported YtAiSkillNetworkProps API and register the YtAiSkillNetwork composition with the default props."
+        "usageMarkdown": "Copy `remotion/yt-ai-skill-network/src/YtAiSkillNetwork.tsx` and `remotion/yt-ai-skill-network/src/runtime-assets.ts` into your Remotion project, import `YtAiSkillNetwork` and `ytAiSkillNetworkDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Ai Skill Network Remotion asset from remotionhub/remotionhub-assets at remotion/yt-ai-skill-network to my project. Copy both the component file and runtime-assets.ts. Preserve the exported YtAiSkillNetworkProps API and register the YtAiSkillNetwork composition with the default props."
       }
     }
   ]

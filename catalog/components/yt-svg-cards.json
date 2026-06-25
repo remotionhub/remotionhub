@@ -44,12 +44,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "commit": "793d2c24542c445fe5f488db18943abcaef9d1a1",
           "path": "remotion/yt-svg-cards"
         },
         "license": "MIT",
-        "usageMarkdown": "Copy `remotion/yt-svg-cards/src/YtSvgCards.tsx` into your Remotion project, import `YtSvgCards` and `ytSvgCardsDefaultProps`, then register the composition.",
-        "agentPrompt": "Add the Yt Svg Cards Remotion asset from remotionhub/remotionhub-assets at remotion/yt-svg-cards to my project. Preserve the exported YtSvgCardsProps API and register the YtSvgCards composition with the default props."
+        "usageMarkdown": "Copy `remotion/yt-svg-cards/src/YtSvgCards.tsx` and `remotion/yt-svg-cards/src/runtime-assets.ts` into your Remotion project, import `YtSvgCards` and `ytSvgCardsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Svg Cards Remotion asset from remotionhub/remotionhub-assets at remotion/yt-svg-cards to my project. Copy both the component file and runtime-assets.ts. Preserve the exported YtSvgCardsProps API and register the YtSvgCards composition with the default props."
       }
     }
   ]

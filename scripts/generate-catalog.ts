@@ -90,6 +90,16 @@ function verifyAssetPath(commit: string, slug: string) {
   }
 }
 
+function hasRuntimeAssets(commit: string, slug: string): boolean {
+  const relPath = `remotion/${slug}/src/runtime-assets.ts`
+  try {
+    execFileSync('git', ['-C', assetRepo, 'cat-file', '-e', `${commit}:${relPath}`], { stdio: 'pipe' })
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function generate(slug: string, commit: string) {
   verifyAssetPath(commit, slug)
   const manifest = assetCommitFlag
@@ -103,6 +113,10 @@ async function generate(slug: string, commit: string) {
   const titleZh =
     manifest.displayNameZh?.trim() || (await readMarkdownTitle(slug))
   const category = getCategory(slug)
+
+  const componentFile = `\`remotion/${slug}/src/${toPascalCase(slug)}.tsx\``
+  const runtimeFile = `\`remotion/${slug}/src/runtime-assets.ts\``
+  const hasRuntime = hasRuntimeAssets(commit, slug)
 
   const catalog = {
     publisher: 'remotionlab',
@@ -142,8 +156,12 @@ async function generate(slug: string, commit: string) {
             path: `remotion/${slug}`,
           },
           license: manifest.license,
-          usageMarkdown: `Copy \`remotion/${slug}/src/${toPascalCase(slug)}.tsx\` into your Remotion project, import \`${toPascalCase(slug)}\` and \`${toPascalCase(slug).charAt(0).toLowerCase() + toPascalCase(slug).slice(1)}DefaultProps\`, then register the composition.`,
-          agentPrompt: `Add the ${toDisplayName(slug)} Remotion asset from remotionhub/remotionhub-assets at remotion/${slug} to my project. Preserve the exported ${toPascalCase(slug)}Props API and register the ${toPascalCase(slug)} composition with the default props.`,
+          usageMarkdown: hasRuntime
+            ? `Copy ${componentFile} and ${runtimeFile} into your Remotion project, import \`${toPascalCase(slug)}\` and \`${toPascalCase(slug).charAt(0).toLowerCase() + toPascalCase(slug).slice(1)}DefaultProps\`, then register the composition.`
+            : `Copy ${componentFile} into your Remotion project, import \`${toPascalCase(slug)}\` and \`${toPascalCase(slug).charAt(0).toLowerCase() + toPascalCase(slug).slice(1)}DefaultProps\`, then register the composition.`,
+          agentPrompt: hasRuntime
+            ? `Add the ${toDisplayName(slug)} Remotion asset from remotionhub/remotionhub-assets at remotion/${slug} to my project. Copy both the component file and runtime-assets.ts. Preserve the exported ${toPascalCase(slug)}Props API and register the ${toPascalCase(slug)} composition with the default props.`
+            : `Add the ${toDisplayName(slug)} Remotion asset from remotionhub/remotionhub-assets at remotion/${slug} to my project. Preserve the exported ${toPascalCase(slug)}Props API and register the ${toPascalCase(slug)} composition with the default props.`,
         },
       },
     ],
