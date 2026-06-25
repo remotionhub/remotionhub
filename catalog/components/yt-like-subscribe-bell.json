@@ -46,12 +46,12 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "commit": "793d2c24542c445fe5f488db18943abcaef9d1a1",
           "path": "remotion/yt-like-subscribe-bell"
         },
         "license": "MIT",
-        "usageMarkdown": "Copy `remotion/yt-like-subscribe-bell/src/YtLikeSubscribeBell.tsx` into your Remotion project, import `YtLikeSubscribeBell` and `ytLikeSubscribeBellDefaultProps`, then register the composition.",
-        "agentPrompt": "Add the Yt Like Subscribe Bell Remotion asset from remotionhub/remotionhub-assets at remotion/yt-like-subscribe-bell to my project. Preserve the exported YtLikeSubscribeBellProps API and register the YtLikeSubscribeBell composition with the default props."
+        "usageMarkdown": "Copy `remotion/yt-like-subscribe-bell/src/YtLikeSubscribeBell.tsx` and `remotion/yt-like-subscribe-bell/src/runtime-assets.ts` into your Remotion project, import `YtLikeSubscribeBell` and `ytLikeSubscribeBellDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Like Subscribe Bell Remotion asset from remotionhub/remotionhub-assets at remotion/yt-like-subscribe-bell to my project. Copy both the component file and runtime-assets.ts. Preserve the exported YtLikeSubscribeBellProps API and register the YtLikeSubscribeBell composition with the default props."
       }
     }
   ]

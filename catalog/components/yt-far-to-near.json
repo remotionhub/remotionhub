@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "commit": "793d2c24542c445fe5f488db18943abcaef9d1a1",
           "path": "remotion/yt-far-to-near"
         },
         "license": "MIT",
