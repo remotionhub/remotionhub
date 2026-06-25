@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-add-vocals",
+  "displayName": "Yt Audio Add Vocals",
+  "displayNameZh": "为乐曲加入人声动画",
+  "summary": "Yt Audio Add Vocals component for Remotion.",
+  "summaryZh": "适用于 Remotion 的「为乐曲加入人声动画」组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "add",
+    "vocals"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-add-vocals/30f3b6e62795-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-add-vocals/56eebb5c64d1-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-add-vocals"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioAddVocals.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 240,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "add",
+        "vocals"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "path": "remotion/yt-audio-add-vocals"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-add-vocals/src/YtAudioAddVocals.tsx` into your Remotion project, import `YtAudioAddVocals` and `ytAudioAddVocalsDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Add Vocals Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-add-vocals to my project. Preserve the exported YtAudioAddVocalsProps API and register the YtAudioAddVocals composition with the default props."
+      }
+    }
+  ]
+}

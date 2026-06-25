@@ -5,7 +5,7 @@
   "displayName": "Yt Not About Analysis",
   "displayNameZh": "重点不是分析报告",
   "summary": "Yt Not About Analysis component for Remotion.",
-  "summaryZh": "适用于 Remotion 的重点不是分析报告组件。",
+  "summaryZh": "适用于 Remotion 的「重点不是分析报告」组件。",
   "categories": [
     "animation"
   ],
@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-not-about-analysis"
         },
         "license": "MIT",

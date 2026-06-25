@@ -18,8 +18,10 @@ const sourceMdDir =
   getArgValue('source-md-dir') ??
   process.env.REMOTIONLAB_SOURCE_MD_DIR ??
   '/tmp/remotionlab/案例'
+const assetCommitFlag = getArgValue('asset-commit')
 
 async function getAssetCommit() {
+  if (assetCommitFlag) return assetCommitFlag
   return execFileSync('git', ['-C', assetRepo, 'rev-parse', 'HEAD'], {
     encoding: 'utf8',
   }).trim()
@@ -61,10 +63,37 @@ async function readMarkdownTitle(slug: string): Promise<string> {
   return match[1]
 }
 
+function readManifestFromCommit(commit: string, slug: string) {
+  const manifestRelPath = `remotion/${slug}/remotionhub.asset.json`
+  const raw = execFileSync(
+    'git',
+    ['-C', assetRepo, 'show', `${commit}:${manifestRelPath}`],
+    { encoding: 'utf8' },
+  )
+  return JSON.parse(raw)
+}
+
+function verifyAssetPath(commit: string, slug: string) {
+  const relPath = `remotion/${slug}`
+  try {
+    execFileSync('git', ['-C', assetRepo, 'cat-file', '-e', `${commit}:${relPath}`])
+  } catch {
+    throw new Error(`Asset path not found at commit ${commit}: ${relPath}`)
+  }
+}
+
 async function generate(slug: string, commit: string) {
-  const manifestPath = path.join(assetRepo, 'remotion', slug, 'remotionhub.asset.json')
-  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'))
-  const titleZh = manifest.displayNameZh ?? (await readMarkdownTitle(slug))
+  verifyAssetPath(commit, slug)
+  const manifest = assetCommitFlag
+    ? readManifestFromCommit(commit, slug)
+    : JSON.parse(
+        await fs.readFile(
+          path.join(assetRepo, 'remotion', slug, 'remotionhub.asset.json'),
+          'utf8',
+        ),
+      )
+  const titleZh =
+    manifest.displayNameZh?.trim() || (await readMarkdownTitle(slug))
   const category = getCategory(slug)
 
   const catalog = {
@@ -74,7 +103,8 @@ async function generate(slug: string, commit: string) {
     displayName: toDisplayName(slug),
     displayNameZh: titleZh,
     summary: `${toDisplayName(slug)} component for Remotion.`,
-    summaryZh: manifest.summaryZh ?? `适用于 Remotion 的${titleZh}组件。`,
+    summaryZh:
+          manifest.summaryZh?.trim() || `适用于 Remotion 的「${titleZh}」组件。`,
     categories: [category],
     tags: ['remotion', category, ...slug.split('-').slice(1)],
     status: 'published',

@@ -5,7 +5,7 @@
   "displayName": "Yt Zero Revenue",
   "displayNameZh": "10 人注册 0 人付费",
   "summary": "Yt Zero Revenue component for Remotion.",
-  "summaryZh": "适用于 Remotion 的10 人注册 0 人付费组件。",
+  "summaryZh": "适用于 Remotion 的「10 人注册 0 人付费」组件。",
   "categories": [
     "animation"
   ],
@@ -44,7 +44,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "bb0f0020bbbe7da9ec0060dae3d1ccce4206dc38",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
           "path": "remotion/yt-zero-revenue"
         },
         "license": "MIT",

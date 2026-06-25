@@ -1,0 +1,58 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "yt-audio-rock-remix",
+  "displayName": "Yt Audio Rock Remix",
+  "displayNameZh": "Rock 曲风混音轨道动画",
+  "summary": "Yt Audio Rock Remix component for Remotion.",
+  "summaryZh": "适用于 Remotion 的「Rock 曲风混音轨道动画」组件。",
+  "categories": [
+    "animation"
+  ],
+  "tags": [
+    "remotion",
+    "animation",
+    "audio",
+    "rock",
+    "remix"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-rock-remix/af6f2aaf2234-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/yt-audio-rock-remix/615f32ae7c5c-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/yt-audio-rock-remix"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "entryPoint": "src/YtAudioRockRemix.tsx",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 300,
+        "fps": 30
+      },
+      "tags": [
+        "animation",
+        "audio",
+        "rock",
+        "remix"
+      ],
+      "artifact": {
+        "kind": "github-source",
+        "githubSource": {
+          "repo": "remotionhub/remotionhub-assets",
+          "ref": "main",
+          "commit": "d799f336e718f6ec2e4457d8e2e6386048995c0c",
+          "path": "remotion/yt-audio-rock-remix"
+        },
+        "license": "MIT",
+        "usageMarkdown": "Copy `remotion/yt-audio-rock-remix/src/YtAudioRockRemix.tsx` into your Remotion project, import `YtAudioRockRemix` and `ytAudioRockRemixDefaultProps`, then register the composition.",
+        "agentPrompt": "Add the Yt Audio Rock Remix Remotion asset from remotionhub/remotionhub-assets at remotion/yt-audio-rock-remix to my project. Preserve the exported YtAudioRockRemixProps API and register the YtAudioRockRemix composition with the default props."
+      }
+    }
+  ]
+}
