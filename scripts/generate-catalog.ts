@@ -22,6 +22,14 @@ const assetCommitFlag = getArgValue('asset-commit')
 
 async function getAssetCommit() {
   if (assetCommitFlag) return assetCommitFlag
+
+  const status = execFileSync('git', ['-C', assetRepo, 'status', '--porcelain'], { encoding: 'utf8' })
+  if (status.trim()) {
+    throw new Error(
+      `Asset repo has uncommitted changes. Use --asset-commit=<sha> to pin to a clean commit, or commit changes first.\n${status}`
+    )
+  }
+
   return execFileSync('git', ['-C', assetRepo, 'rev-parse', 'HEAD'], {
     encoding: 'utf8',
   }).trim()
