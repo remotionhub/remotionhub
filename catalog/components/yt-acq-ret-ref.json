@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "66d2c5df69d3ddc30d28ce61e94e3c3a052599fd",
+          "commit": "d25ac1b790a7217f923b98caa66592ea9537e486",
           "path": "remotion/yt-acq-ret-ref"
         },
         "license": "MIT",

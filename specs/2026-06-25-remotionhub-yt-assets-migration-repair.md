@@ -417,7 +417,7 @@ const summaryZh =
 
 同时要求：
 
-- 生成前确认 assets worktree 干净，或显式传入 `--asset-commit=<sha>`。
+- 生成前必须确认 assets worktree 干净；`--asset-commit=<sha>` 只用于选择并解析 immutable commit，不能绕过 dirty worktree rejection。
 - 如果传入 commit，必须从该 commit tree 读取 manifest，而不是从 dirty filesystem 读取 manifest 后只写入旧 SHA。
 - 生成每个 catalog 前执行：
 
