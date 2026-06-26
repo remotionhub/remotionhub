@@ -1073,7 +1073,7 @@ ASSET_COMMIT=$(git -C /Users/tangwz/workspace/git/remotionhub-assets/.worktrees/
 
 ```bash
 cd /Users/tangwz/workspace/git/remotionhub/.worktrees/feat-animation-category-i18n
-npx tsx scripts/generate-catalog.ts --asset-repo=/Users/tangwz/workspace/git/remotionhub-assets/.worktrees/feat-migrate-yt-animation-assets <all 113 slugs>
+npx tsx scripts/generate-catalog.ts --asset-repo=/Users/tangwz/workspace/git/remotionhub-assets/.worktrees/feat-migrate-yt-animation-assets --asset-commit="$ASSET_COMMIT" <all 113 slugs>
 ```
 
 - [ ] **Step 5: Verify catalogs**

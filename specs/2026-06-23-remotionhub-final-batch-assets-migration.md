@@ -13,27 +13,14 @@
 
 ## 2. 范围 (Scope)
 
-本阶段共包含 113 个以 `yt-` 开头的 slug，分为 5 个执行 Batch 进行划分与 Commit：
+本阶段共包含 113 个以 `yt-` 开头的 slug。
 
-### Batch 1: AI & Developer Workflow (23 slugs)
-* `yt-ai-not-understand`, `yt-ai-reads-only`, `yt-ai-report-doubt`, `yt-ai-skill-network`, `yt-ai-use-cases`, `yt-ai-wrappers-dead`, `yt-dev-flow-intro`, `yt-dev-flow-steps`, `yt-cloudflare-api-key`, `yt-deploy-cloudflare`, `yt-mcp-chapter-card`, `yt-mcp-pipeline`, `yt-prompt-dev`, `yt-prompt-spec`, `yt-shadcn-prompt`, `yt-shadcn-results`, `yt-code-controls`, `yt-from-scratch`, `yt-extract-tool`, `yt-four-ai-tools`, `yt-idea-check`, `yt-idea-feasibility`, `yt-generic-chatbot`
-* **Commit 信息**: `feat: migrate AI and developer workflow assets`
+这份早期 spec 的批次划分仅保留为迁移背景，不再作为可执行清单使用。后续修复发现旧批次列表存在重复与遗漏，因此 canonical 清单必须以当前修复 spec 中的 113 slug 集合以及 `catalog/components/yt-*.json` 为准：
 
-### Batch 2: Audio, Game & Card Animations (23 slugs)
-* `yt-audio-add-vocals`, `yt-audio-complex-pop-question`, `yt-audio-control`, `yt-audio-fast-results`, `yt-audio-lets-start`, `yt-audio-prompt-skill`, `yt-audio-rock-remix`, `yt-audio-software-criteria`, `yt-arcade-beat-em-up`, `yt-char-animations`, `yt-game-mashup`, `yt-bug-fix-loop`, `yt-build-stability`, `yt-can-do-animation`, `yt-execute-validate`, `yt-iterate-two-days`, `yt-no-3d-needed`, `yt-not-just-effects`, `yt-solve-first-point`, `yt-start-small`, `yt-three-dimensions`, `yt-tool-selection`, `yt-tool-showcase`
-* **Commit 信息**: `feat: migrate audio, game, and card animation assets`
+- `specs/2026-06-25-remotionhub-yt-assets-migration-repair.md`
+- `catalog/components/yt-*.json`
 
-### Batch 3: Growth, Distribution & Marketing (23 slugs)
-* `yt-acq-ret-ref`, `yt-brand-value-stripped`, `yt-build-trust-first`, `yt-distribution-first`, `yt-distribution-hard`, `yt-easy-channel-hard-dist`, `yt-equity-design`, `yt-first-deal-hard`, `yt-focus-one-topic`, `yt-reach-pain-points`, `yt-rejected-ideas`, `yt-service-first`, `yt-start-with-service`, `yt-success-path`, `yt-think-distribution`, `yt-trust-is-currency`, `yt-trust-transfer`, `yt-zero-revenue`, `yt-influencer-dms`, `yt-inside-the-problem`, `yt-manual-first`, `yt-not-about-analysis`, `yt-not-that-simple`
-* **Commit 信息**: `feat: migrate growth and marketing assets`
-
-### Batch 4: Web Layout & Analytics (22 slugs)
-* `yt-magazine-layout`, `yt-mobile-patience`, `yt-narrative-redesign`, `yt-page-scroll-metrics`, `yt-shortest-path`, `yt-svg-cards`, `yt-growth-24`, `yt-simple-ai-product`, `yt-solve-first-point`, `yt-tailor-for-audience`, `yt-tech-boosts-stability`, `yt-three-questions`, `yt-too-many-coincidences`, `yt-two-errors-detail`, `yt-two-focus`, `yt-two-lessons`, `yt-user-iterate`, `yt-version-2-card`, `yt-version-3-card`, `yt-generic-means-lacking`, `yt-consistent-output`, `yt-core-dist-card`
-* **Commit 信息**: `feat: migrate web layout and analytics assets`
-
-### Batch 5: Outros & Interactive Elements (22 slugs)
-* `yt-connection-recap-outro`, `yt-like-subscribe-bell`, `yt-pencil-intro`, `yt-core-flow`, `yt-first-version`, `yt-line-phase-intro`, `yt-near-self-friends`, `yt-mid-ask-experts`, `yt-far-strangers`, `yt-far-stranger-pains`, `yt-far-to-near`, `yt-four-ai-tools`, `yt-game-mashup`, `yt-generic-chatbot`, `yt-generic-means-lacking`, `yt-growth-24`, `yt-idea-check`, `yt-idea-feasibility`, `yt-influencer-dms`, `yt-inside-the-problem`, `yt-iterate-two-days`, `yt-skill-showcase`
-* **Commit 信息**: `feat: migrate outro and interactive notification assets`
+执行新的生成、校验或回滚时，不要从本文件重建 slug 列表；应从 canonical 清单或已生成 catalog 文件派生。
 
 ---
 

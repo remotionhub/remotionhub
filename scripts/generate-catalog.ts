@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
+import { pathToFileURL } from 'node:url'
 
 const targetDir = 'catalog/components'
 
@@ -20,19 +21,51 @@ const sourceMdDir =
   '/tmp/remotionlab/案例'
 const assetCommitFlag = getArgValue('asset-commit')
 
-async function getAssetCommit() {
-  if (assetCommitFlag) return assetCommitFlag
-
-  const status = execFileSync('git', ['-C', assetRepo, 'status', '--porcelain'], { encoding: 'utf8' })
+export function resolveAssetCommit(repo: string, ref = 'HEAD') {
+  const status = execFileSync('git', ['-C', repo, 'status', '--porcelain'], {
+    encoding: 'utf8',
+  })
   if (status.trim()) {
     throw new Error(
-      `Asset repo has uncommitted changes. Use --asset-commit=<sha> to pin to a clean commit, or commit changes first.\n${status}`
+      `Asset repo has uncommitted changes. Commit or discard them before generating catalog pins.\n${status}`,
     )
   }
 
-  return execFileSync('git', ['-C', assetRepo, 'rev-parse', 'HEAD'], {
-    encoding: 'utf8',
-  }).trim()
+  const commit = execFileSync(
+    'git',
+    ['-C', repo, 'rev-parse', '--verify', `${ref}^{commit}`],
+    {
+      encoding: 'utf8',
+    },
+  ).trim()
+
+  if (!/^[0-9a-f]{40}$/.test(commit)) {
+    throw new Error(`Asset commit ref did not resolve to a full SHA: ${ref}`)
+  }
+
+  return commit
+}
+
+async function getAssetCommit() {
+  return resolveAssetCommit(assetRepo, assetCommitFlag ?? 'HEAD')
+}
+
+function readManifestFromWorktree(slug: string) {
+  return fs
+    .readFile(path.join(assetRepo, 'remotion', slug, 'remotionhub.asset.json'), {
+      encoding: 'utf8',
+    })
+    .then((raw) => JSON.parse(raw))
+}
+
+function readManifestFromCommit(commit: string, slug: string) {
+  const manifestRelPath = `remotion/${slug}/remotionhub.asset.json`
+  const raw = execFileSync(
+    'git',
+    ['-C', assetRepo, 'show', `${commit}:${manifestRelPath}`],
+    { encoding: 'utf8' },
+  )
+  return JSON.parse(raw)
 }
 
 function toPascalCase(slug: string) {
@@ -71,16 +104,6 @@ async function readMarkdownTitle(slug: string): Promise<string> {
   return match[1]
 }
 
-function readManifestFromCommit(commit: string, slug: string) {
-  const manifestRelPath = `remotion/${slug}/remotionhub.asset.json`
-  const raw = execFileSync(
-    'git',
-    ['-C', assetRepo, 'show', `${commit}:${manifestRelPath}`],
-    { encoding: 'utf8' },
-  )
-  return JSON.parse(raw)
-}
-
 function verifyAssetPath(commit: string, slug: string) {
   const relPath = `remotion/${slug}`
   try {
@@ -104,12 +127,7 @@ async function generate(slug: string, commit: string) {
   verifyAssetPath(commit, slug)
   const manifest = assetCommitFlag
     ? readManifestFromCommit(commit, slug)
-    : JSON.parse(
-        await fs.readFile(
-          path.join(assetRepo, 'remotion', slug, 'remotionhub.asset.json'),
-          'utf8',
-        ),
-      )
+    : await readManifestFromWorktree(slug)
   const titleZh =
     manifest.displayNameZh?.trim() || (await readMarkdownTitle(slug))
   const category = getCategory(slug)
@@ -185,7 +203,9 @@ async function main() {
   }
 }
 
-main().catch((error: unknown) => {
-  console.error(error)
-  process.exitCode = 1
-})
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((error: unknown) => {
+    console.error(error)
+    process.exitCode = 1
+  })
+}
