@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "0e59474d5517610f3215d8ffb6c58aa4376ce7a9",
+          "commit": "e5668b55b5ca992d905e8d7fcd2cb1e53a0a7691",
           "path": "remotion/yt-tech-boosts-stability"
         },
         "license": "MIT",
