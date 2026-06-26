@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "d25ac1b790a7217f923b98caa66592ea9537e486",
+          "commit": "8ca9f33a2fd1d7dc60d485409b5aeae30202c84e",
           "path": "remotion/yt-ai-skill-network"
         },
         "license": "MIT",
