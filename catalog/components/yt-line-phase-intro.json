@@ -46,7 +46,7 @@
         "githubSource": {
           "repo": "remotionhub/remotionhub-assets",
           "ref": "main",
-          "commit": "5edfd31cd704e91679cda1a4a2b24a11fe810b5d",
+          "commit": "66d2c5df69d3ddc30d28ce61e94e3c3a052599fd",
           "path": "remotion/yt-line-phase-intro"
         },
         "license": "MIT",
