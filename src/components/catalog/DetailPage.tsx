@@ -35,7 +35,7 @@ export type CatalogDetail = {
     preview: { thumbnailUrl?: string; previewVideoUrl?: string }
     metadata: {
       runtime: 'remotion' | 'hyperframes'
-      entryPoint: string
+      entryPoint?: string
       aspectRatios: string[]
       durationFrames?: number
       fps?: number
@@ -44,7 +44,8 @@ export type CatalogDetail = {
   }
   versions: Array<{ version: string }>
   artifact: {
-    githubSource: {
+    kind: 'github-source' | 'none'
+    githubSource?: {
       repo: string
       ref: string
       commit: string
@@ -61,9 +62,13 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
   const { locale, t } = useI18n()
   const displayName = locale === 'zh' ? (detail.component.displayNameZh ?? detail.component.displayName) : detail.component.displayName
   const summary = locale === 'zh' ? (detail.component.summaryZh ?? detail.component.summary) : detail.component.summary
-  const sourceTreeRef =
-    detail.artifact.githubSource.commit || detail.artifact.githubSource.ref
-  const sourceUrl = `https://github.com/${detail.artifact.githubSource.repo}/tree/${sourceTreeRef}/${detail.artifact.githubSource.path}`
+  const hasSource = detail.artifact.kind === 'github-source' && !!detail.artifact.githubSource
+  const sourceTreeRef = detail.artifact.githubSource
+    ? (detail.artifact.githubSource.commit || detail.artifact.githubSource.ref)
+    : ''
+  const sourceUrl = detail.artifact.githubSource
+    ? `https://github.com/${detail.artifact.githubSource.repo}/tree/${sourceTreeRef}/${detail.artifact.githubSource.path}`
+    : ''
   const backTo =
     detail.component.runtime === 'remotion' ? '/remotion' : '/hyperframes'
   const backLabel =
@@ -113,14 +118,16 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
       </header>
 
       <section className="grid gap-4 md:grid-cols-5">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">{t('detail.entry')}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            {detail.selectedVersion.metadata.entryPoint}
-          </CardContent>
-        </Card>
+        {detail.selectedVersion.metadata.entryPoint && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">{t('detail.entry')}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+              {detail.selectedVersion.metadata.entryPoint}
+            </CardContent>
+          </Card>
+        )}
         <Card>
           <CardHeader>
             <CardTitle className="text-sm">{t('detail.aspect')}</CardTitle>
@@ -148,21 +155,27 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
             {detail.artifact.license}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">{t('detail.source')}</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            {detail.artifact.githubSource.repo}
-          </CardContent>
-        </Card>
+        {hasSource && detail.artifact.githubSource && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">{t('detail.source')}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+              {detail.artifact.githubSource.repo}
+            </CardContent>
+          </Card>
+        )}
       </section>
 
       <Tabs defaultValue="prompt">
         <TabsList>
           <TabsTrigger value="prompt">{t('detail.agentPrompt')}</TabsTrigger>
-          <TabsTrigger value="source">{t('detail.githubSource')}</TabsTrigger>
-          <TabsTrigger value="usage">{t('detail.usage')}</TabsTrigger>
+          {hasSource && (
+            <TabsTrigger value="source">{t('detail.githubSource')}</TabsTrigger>
+          )}
+          {hasSource && (
+            <TabsTrigger value="usage">{t('detail.usage')}</TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="prompt" className="flex flex-col gap-3">
           <div className="flex justify-end">
@@ -170,37 +183,41 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
           </div>
           <Textarea value={detail.artifact.agentPrompt} readOnly rows={8} />
         </TabsContent>
-        <TabsContent value="source">
-          <Card>
-            <CardHeader>
-              <CardTitle>{detail.artifact.githubSource.repo}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
-              <p>
-                {t('detail.ref')}: {detail.artifact.githubSource.ref}
-              </p>
-              <p>
-                {t('detail.commit')}: {detail.artifact.githubSource.commit}
-              </p>
-              <p>
-                {t('detail.path')}: {detail.artifact.githubSource.path}
-              </p>
-              <a
-                href={sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className={buttonVariants({ className: 'w-fit' })}
-              >
-                {t('detail.openSource')}
-              </a>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="usage" className="prose max-w-none dark:prose-invert">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {detail.artifact.usageMarkdown}
-          </ReactMarkdown>
-        </TabsContent>
+        {hasSource && detail.artifact.githubSource && (
+          <TabsContent value="source">
+            <Card>
+              <CardHeader>
+                <CardTitle>{detail.artifact.githubSource.repo}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
+                <p>
+                  {t('detail.ref')}: {detail.artifact.githubSource.ref}
+                </p>
+                <p>
+                  {t('detail.commit')}: {detail.artifact.githubSource.commit}
+                </p>
+                <p>
+                  {t('detail.path')}: {detail.artifact.githubSource.path}
+                </p>
+                <a
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={buttonVariants({ className: 'w-fit' })}
+                >
+                  {t('detail.openSource')}
+                </a>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
+        {hasSource && (
+          <TabsContent value="usage" className="prose max-w-none dark:prose-invert">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {detail.artifact.usageMarkdown}
+            </ReactMarkdown>
+          </TabsContent>
+        )}
       </Tabs>
     </main>
   )

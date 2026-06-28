@@ -95,10 +95,12 @@ function toImportPayload(
       fingerprint: buildVersionFingerprint(version),
       artifact: {
         ...version.artifact,
-        githubSource: {
-          ...version.artifact.githubSource,
-          pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
-        },
+        githubSource: version.artifact.githubSource
+          ? {
+              ...version.artifact.githubSource,
+              pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
+            }
+          : undefined,
       },
     })),
   }

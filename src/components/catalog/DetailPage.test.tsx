@@ -57,6 +57,7 @@ const detail = {
   },
   versions: [{ version: '1.0.0' }],
   artifact: {
+    kind: 'github-source' as const,
     githubSource: {
       repo: 'tangwz/remotionhub-assets',
       ref: 'v1.0.0',

@@ -79,7 +79,7 @@ describe('catalog validation', () => {
       ],
     })
 
-    expect(parsed.versions[0]?.artifact.githubSource.repo).toBe(
+    expect(parsed.versions[0]?.artifact.githubSource?.repo).toBe(
       'remotionhub/remotionhub-assets',
     )
     expect(() =>
@@ -103,6 +103,60 @@ describe('catalog validation', () => {
                 commit: 'abc123def456',
                 path: 'remotion/card-avatar',
               },
+            },
+          },
+        ],
+      }),
+    ).toThrow()
+  })
+
+  it('accepts optional entryPoint and kind none artifacts', () => {
+    const parsed = catalogComponentSchema.parse({
+      publisher: 'terence',
+      runtime: 'remotion',
+      slug: 'prompt-only',
+      displayName: 'Prompt Only',
+      summary: 'A component with no github source.',
+      categories: ['card'],
+      versions: [
+        {
+          ...baseVersion,
+          metadata: {
+            ...baseVersion.metadata,
+            entryPoint: undefined,
+          },
+          artifact: {
+            kind: 'none',
+            license: 'MIT',
+            usageMarkdown: 'Use directly.',
+            agentPrompt: 'Helpful prompt.',
+          },
+        },
+      ],
+    })
+
+    expect(parsed.versions[0]?.metadata.entryPoint).toBeUndefined()
+    expect(parsed.versions[0]?.artifact.kind).toBe('none')
+    expect(parsed.versions[0]?.artifact.githubSource).toBeUndefined()
+  })
+
+  it('rejects kind github-source if githubSource is missing', () => {
+    expect(() =>
+      catalogComponentSchema.parse({
+        publisher: 'terence',
+        runtime: 'remotion',
+        slug: 'prompt-only',
+        displayName: 'Prompt Only',
+        summary: 'A component with missing githubSource.',
+        categories: ['card'],
+        versions: [
+          {
+            ...baseVersion,
+            artifact: {
+              kind: 'github-source',
+              license: 'MIT',
+              usageMarkdown: 'Use directly.',
+              agentPrompt: 'Helpful prompt.',
             },
           },
         ],

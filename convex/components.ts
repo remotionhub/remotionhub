@@ -28,21 +28,23 @@ const preview = v.object({
 
 const metadata = v.object({
   runtime,
-  entryPoint: v.string(),
+  entryPoint: v.optional(v.string()),
   aspectRatios: v.array(v.string()),
   durationFrames: v.optional(v.number()),
   fps: v.optional(v.number()),
 })
 
 const artifact = v.object({
-  kind: v.literal('github-source'),
-  githubSource: v.object({
-    repo: v.string(),
-    ref: v.string(),
-    commit: v.string(),
-    path: v.string(),
-    pinned: v.boolean(),
-  }),
+  kind: v.union(v.literal('github-source'), v.literal('none')),
+  githubSource: v.optional(
+    v.object({
+      repo: v.string(),
+      ref: v.string(),
+      commit: v.string(),
+      path: v.string(),
+      pinned: v.boolean(),
+    }),
+  ),
   license: v.string(),
   usageMarkdown: v.string(),
   agentPrompt: v.string(),
