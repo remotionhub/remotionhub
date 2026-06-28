@@ -75,6 +75,87 @@ async function downloadThumbnail(url: string, destPath: string): Promise<void> {
   }
 }
 
+// Download HLS manifest and segments locally, then transcode using ffmpeg.
+// This avoids TLS handshake errors that ffmpeg's OpenSSL stack experiences with Fastly CDN.
+async function downloadAndTranscodeHLS(m3u8Url: string, destMp4Path: string, slug: string): Promise<void> {
+  const tempDir = path.join(os.tmpdir(), `hls-${slug}-${Date.now()}`);
+  fs.mkdirSync(tempDir, { recursive: true });
+
+  try {
+    // 1. Fetch main manifest
+    const mainRes = await fetch(m3u8Url);
+    if (!mainRes.ok) throw new Error(`Failed to fetch main manifest: ${mainRes.statusText}`);
+    const mainContent = await mainRes.text();
+
+    // 2. Find the highest bandwidth rendition URL
+    let renditionUrl = '';
+    let maxBandwidth = 0;
+    const lines = mainContent.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('#EXT-X-STREAM-INF:')) {
+        const match = /BANDWIDTH=(\d+)/.exec(line);
+        const bandwidth = match ? parseInt(match[1], 10) : 0;
+        const nextLine = lines[i + 1]?.trim();
+        if (nextLine && nextLine.startsWith('http') && bandwidth > maxBandwidth) {
+          maxBandwidth = bandwidth;
+          renditionUrl = nextLine;
+        }
+      }
+    }
+
+    // Fallback if no explicit bandwidth stream is found
+    if (!renditionUrl) {
+      const firstHttp = lines.find(l => l.trim().startsWith('http'));
+      if (firstHttp) renditionUrl = firstHttp.trim();
+    }
+
+    if (!renditionUrl) {
+      throw new Error('Could not find rendition URL in main manifest');
+    }
+
+    // 3. Fetch rendition manifest
+    const renditionRes = await fetch(renditionUrl);
+    if (!renditionRes.ok) throw new Error(`Failed to fetch rendition manifest: ${renditionRes.statusText}`);
+    const renditionContent = await renditionRes.text();
+
+    // 4. Parse rendition and download chunks
+    const renditionLines = renditionContent.split('\n');
+    const localRenditionLines: string[] = [];
+    let chunkIndex = 0;
+
+    for (const line of renditionLines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('http')) {
+        const chunkFileName = `${chunkIndex}.ts`;
+        const chunkPath = path.join(tempDir, chunkFileName);
+        
+        // Download chunk using fetch
+        const chunkRes = await fetch(trimmed);
+        if (!chunkRes.ok) throw new Error(`Failed to fetch chunk ${chunkIndex}: ${chunkRes.statusText}`);
+        fs.writeFileSync(chunkPath, Buffer.from(await chunkRes.arrayBuffer()));
+
+        localRenditionLines.push(chunkFileName);
+        chunkIndex++;
+      } else {
+        localRenditionLines.push(trimmed);
+      }
+    }
+
+    // 5. Write local manifest
+    const localM3u8Path = path.join(tempDir, 'local.m3u8');
+    fs.writeFileSync(localM3u8Path, localRenditionLines.join('\n'), 'utf8');
+
+    // 6. Run ffmpeg on local manifest
+    child_process.execFileSync('ffmpeg', ['-y', '-i', localM3u8Path, '-c', 'copy', destMp4Path], { stdio: 'pipe' });
+  } finally {
+    // Clean up temp directory
+    if (fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  }
+}
+
 async function main() {
   await loadLocalEnv();
 
@@ -83,10 +164,10 @@ async function main() {
   const limit = limitArg ? parseInt(limitArg.split('=')[1], 10) : null;
   const overwrite = args.includes('--overwrite');
   
-  const ossAccessKeyId = process.env.ASSETS_OSS_ACCESS_KEY_ID;
-  const ossAccessKeySecret = process.env.ASSETS_OSS_ACCESS_KEY_SECRET;
-  const ossRegion = process.env.ASSETS_OSS_REGION || 'oss-cn-shenzhen';
-  const ossBucket = process.env.ASSETS_OSS_BUCKET || 'remotionhub';
+  const ossAccessKeyId = process.env.ASSETS_OSS_ACCESS_KEY_ID || process.env.OSS_ACCESS_KEY_ID;
+  const ossAccessKeySecret = process.env.ASSETS_OSS_ACCESS_KEY_SECRET || process.env.OSS_ACCESS_KEY_SECRET;
+  const ossRegion = process.env.ASSETS_OSS_REGION || process.env.OSS_REGION || 'oss-cn-shenzhen';
+  const ossBucket = process.env.ASSETS_OSS_BUCKET || process.env.OSS_BUCKET || 'remotionhub';
   
   const isDryRun = args.includes('--dry-run') || !ossAccessKeyId || !ossAccessKeySecret;
 
@@ -216,14 +297,12 @@ async function main() {
         continue;
       }
 
-      // 1. Transcode using ffmpeg (Shell safety: execFileSync)
-      console.log(`Transcoding HLS to MP4: ${m3u8Url} -> ${tempMp4Path}`);
+      // 1. Transcode HLS to MP4 locally
+      console.log(`Downloading and transcoding HLS to MP4: ${m3u8Url} -> ${tempMp4Path}`);
       try {
-        child_process.execFileSync('ffmpeg', ['-y', '-i', m3u8Url, '-c', 'copy', tempMp4Path], { stdio: 'pipe' });
-      } catch (err: any) {
-        console.error(`FFmpeg transcoding failed for ${slug}:`, err);
-        if (err.stderr) console.error(`FFmpeg stderr:\n${err.stderr.toString()}`);
-        if (err.stdout) console.error(`FFmpeg stdout:\n${err.stdout.toString()}`);
+        await downloadAndTranscodeHLS(m3u8Url, tempMp4Path, slug);
+      } catch (err) {
+        console.error(`Transcoding failed for ${slug}:`, err);
         continue;
       }
 
