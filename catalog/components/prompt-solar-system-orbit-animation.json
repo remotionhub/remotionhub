@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-solar-system-orbit-animation",
+  "displayName": "Solar System Orbit Animation",
+  "displayNameZh": "Solar System Orbit Animation",
+  "summary": "AI Video Prompt: Solar System Orbit Animation",
+  "summaryZh": "AI 视频提示词：Solar System Orbit Animation",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-solar-system-orbit-animation/c9e655d66676-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-solar-system-orbit-animation/a077520e34dc-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/solar-system-orbit-animation"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "# Remotion Animation Prompt: Solar System Orbital Motion\n\n## Prompt\n\nBuild me a solar system planet orbital animation video using Remotion with the following requirements:\n\n### Basic Parameters\n- Resolution 1920x1080, 30fps, 30 seconds total duration\n- Simulate one full year of planetary motion in 30 seconds (starting from 2025-01-01)\n- Output format: MP4\n\n### Scene Content\n- **Dark space background** (near-black #08090d) with 500 randomly scattered stars. Star positions must be deterministic across frames (use seeded pseudo-random like `Math.sin(i * 127.1 + 42)`, NOT `Math.random()`)\n- **Sun at center** with radial gradient (bright white core → golden yellow → orange), surrounded by a large semi-transparent glow halo\n- **8 planets** (Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune) orbiting the Sun in circular motion\n- Each planet has its own color, size, and orbital period based on real astronomical data (J2000 epoch mean longitude)\n- Orbit paths shown as very faint white circles (rgba 255,255,255, 0.08)\n\n### Visual Details\n- Each planet is a **radial gradient circle** (highlight offset upper-left, shadow lower-right), not a flat color circle\n- Each planet has a **same-color semi-transparent glow halo** around it for presence\n- **Saturn has rings** — rendered as a tilted ellipse stroke\n- **Earth has a moon** — small white dot orbiting Earth with a 27.32-day period\n- Each planet has a **name label** displayed above it (e.g. \"Mercury\", \"Earth\")\n\n### Orbit Scaling Logic\n- Inner planets (Mercury to Mars) use linear scaling, outer planets use **logarithmic compression**\n- This ensures inner planets are clearly visible while outer planets stay within frame\n- Formula: when au ≤ 1.6, radius = (40 + au × 70) × zoom; when au > 1.6, use log2 compression: radius = (40 + 1.6 × 70 + log2(au / 1.6) × 58) × zoom\n\n### Animation & Overlays\n- **No fade-in** — the very first frame should show the complete scene immediately, no gradual opacity transition\n- **Title always visible**: Display \"Solar System Orbital Motion\" and a subtitle at the top center of the screen. The title must remain visible for the entire duration of the video, no fade-out, no entrance animation\n- **Date display at bottom**: Show the current simulated date in real-time (e.g. \"March 15, 2025\"), displayed in a rounded pill with semi-transparent frosted-glass background, golden yellow text\n\n### Technical Implementation Notes\n- Use **Canvas 2D** to draw the sun, planets, stars, and orbit lines (not DOM elements). Redraw every frame inside a `useEffect` keyed on the frame number\n- Title and date overlays use **HTML absolutely positioned on top of the Canvas** (for crisper text rendering)\n- Use `useCurrentFrame()` + `interpolate()` to map frame number to day offset\n- Font: system sans-serif or any clean sans-serif font\n\n### Additional Requirements\n- Register a second Composition called \"InnerPlanets\" with zoom set to 2.5, showing only 3 months of motion, for a close-up view of the inner planets\n- Keep the project structure clean: planet data, math utilities, drawing functions, and overlay components should each be in separate files\n\n---\n\n## Expected Result\n\nWhen scrubbing the timeline, you should see:\n1. Mercury zipping around the Sun multiple times\n2. Earth completing exactly one full orbit (one year)\n3. Jupiter and Saturn barely moving (their orbital periods are measured in years/decades)\n4. The Moon rapidly circling Earth\n5. The title staying visible at the top throughout the entire video\n6. The date at the bottom progressing from January 1 to December 31\n\nThe rendered MP4 can be used directly for science explainer videos, social media content, or as a background for digital avatar courses."
+      }
+    }
+  ]
+}

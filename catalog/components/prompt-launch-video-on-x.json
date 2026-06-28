@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-launch-video-on-x",
+  "displayName": "Launch Video on X",
+  "displayNameZh": "Launch Video on X",
+  "summary": "AI Video Prompt: Launch Video on X",
+  "summaryZh": "AI 视频提示词：Launch Video on X",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-launch-video-on-x/09b4c5fb7dee-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-launch-video-on-x/97feb8328035-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/launch-video-on-x"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a Remotion video (1080x700, 30fps, ~37s) for OpenClawd — an open source AI desktop agent. Dark theme (#0c0a09\n  background, #fbbf24 amber accent). Background music: \"Walen - HEADPHONK\" with 1s fade-in and 2s fade-out at 40% volume. 8\n  scenes in series:\n\n  Scene 1 — Terminal Install (120 frames / 4s)\n  Mac-style terminal window with traffic light dots. Types npx openclawd-cli character by character (1 frame/char). After\n  typing, shows ASCII art logo \"OPENCLAWD\" in amber, then server output lines appearing progressively: version banner, SDK\n  backends, 20+ providers/80+ models loaded, model names (Opus 4.6, GPT-5.3, Gemini 3, etc.), MCP servers connected, \"Opening\n  desktop app on :3001\". Terminal slides in from bottom with 3D perspective (rotateX 20deg, slight rotateY oscillation).\n\n  Scene 2 — Home Screen (150 frames / 5s)\n  Desktop app window with centered \"OpenClawd\" title (Georgia serif), tagline \"Open Source Alternative to Claude Cowork\",\n  rounded chat input with send button, and provider/model selector chips (Claude Code + Opus 4.6 + Attach). Spring-animated\n  fade-in with staggered delays (title → tagline → input → controls).\n\n  Scene 3 — Chat Interface (160 frames / 5.3s)\n  Three-column layout: left sidebar with chat history (MCP Integration, Code Review, etc.), center with user message \"Review my\n   API code\" and streaming assistant response about security findings (rate limiting, SQL injection, input validation), right\n  panel showing progress steps (Reading → Security analysis → Applying fixes → Creating PR) and tool calls (filesystem.read,\n  bash.exec, github.create_pr) with green checkmarks.\n\n  Scene 4 — Provider Switch (130 frames / 4.3s)\n  Two dropdown panels side by side. Left: 8 providers (Claude Code, OpenCode, OpenAI, Gemini, DeepSeek, Llama 4, MiniMax,\n  Ollama) with colored dots and selection indicator. Right: 7 models (Opus 4.6, Sonnet 4.5, GPT-5.3 Codex, etc.) with\n  descriptions. Bottom tagline: \"Claude Code + OpenCode SDK — 20+ providers · Open Source models\". Staggered item reveals.\n\n  Scene 5 — MCP Catalog (140 frames / 4.7s)\n  Modal overlay with \"MCP Server Catalog — 20+ servers available\". Category filter pills (All, Core, Database, Developer,\n  Communication). 6 server cards with icons: Filesystem, Git, GitHub (installed), PostgreSQL, Slack, Puppeteer. Auth badges\n  (green \"No Auth\" / amber \"Requires Auth\"). Install/Installed buttons with checkmarks.\n\n  Scene 6 — Messaging Bots (120 frames / 4s)\n  Full-screen \"Your AI, everywhere you chat\" with subtitle \"Full tool access · Memory · Scheduling\". 4 platform cards\n  (WhatsApp, Telegram, Signal, iMessage) with SVG icons, green \"Connected\" status dots, and feature tags (Memory, Scheduling,\n  Tools). Cards scale up with spring animation.\n\n  Scene 7 — Logo Combo (180 frames / 6s)\n  Three sub-scenes: (a) Intro with converging amber lines, center burst ring, floating particles, grid background. (b) \"✦\n  Introducing ✦\" with word-by-word reveal: \"Open Source AI Desktop\" in 56px white text, model names below in gray monospace.\n  (c) 8 provider icons in two rows with colored dots and labels, tagline \"Claude Code + OpenCode SDK · 80+ models | Desktop ·\n  Messaging · API\".\n\n  Scene 8 — GitHub CTA (120 frames / 4s)\n  \"100% OPEN SOURCE\" label, spinning GitHub logo (rotates in from -180deg), orbiting amber star icons, \"Star us on GitHub\" in\n  36px white, pulsing scale animation, \"github.com/rohitg00/openclawd\" in monospace with dark card background. Floating\n  particles and subtle grid.\n\n  All transitions use spring animations with fade + scale (0.95→1 in, 1→0.95 out). Each scene inside an AppWindow component\n  (mac chrome with traffic lights). Color palette: #0c0a09 bg, #1c1917 surfaces, #292524 borders, #fbbf24 amber accent, #fafaf9\n   white text, #a8a29e muted text, #78716c dim text. Fonts: Inter for UI, SF Mono for code, Georgia for branding."
+      }
+    }
+  ]
+}

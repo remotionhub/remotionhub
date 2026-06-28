@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-vintage-screen-effect-html-in-canvas",
+  "displayName": "Vintage screen effect (HTML-in-canvas)",
+  "displayNameZh": "Vintage screen effect (HTML-in-canvas)",
+  "summary": "AI Video Prompt: Vintage screen effect (HTML-in-canvas)",
+  "summaryZh": "AI 视频提示词：Vintage screen effect (HTML-in-canvas)",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-vintage-screen-effect-html-in-canvas/726b001db1c8-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-vintage-screen-effect-html-in-canvas/6371422439ba-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/vintage-screen-effect-html-in-canvas"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "https://www.remotion.dev/docs/remotion/html-in-canvas                                             \n\nmake a new composition and implement a subtle CRT convex shape shader on top of a HTML element.   \ncontent: terminal and remotion themed. the command and output of \"npx create-video@latest --yes --blank my-video\"                                                                                 \n\nshould be animated.                                                                               \n\nthen \"claude\" should be invoked and the prompt \"Add a CRT effect using HTML-in-canvas \" should be shown"
+      }
+    }
+  ]
+}

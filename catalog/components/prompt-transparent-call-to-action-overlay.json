@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-transparent-call-to-action-overlay",
+  "displayName": "Transparent Call-To-Action overlay",
+  "displayNameZh": "Transparent Call-To-Action overlay",
+  "summary": "AI Video Prompt: Transparent Call-To-Action overlay",
+  "summaryZh": "AI 视频提示词：Transparent Call-To-Action overlay",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-transparent-call-to-action-overlay/9d48a690603a-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-transparent-call-to-action-overlay/da6ace196dc5-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/transparent-call-to-action-overlay"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "use remotion best practices. this is our youtube channel: https://www.⁠youtube.⁠com/@⁠remotion_dev. use curl scrape youtube to find the avatar and the subscriber count. multiple subscriber counts appear on the page, find the right one. make a white lower third that slides in from the bottom center. show the name, subscriber count and avatar.  display a typical fixed width black youtube subscribe button that changes from \"Subscribe\" to \"Subscribed\". use a ease-out animation and for pressing in the button and a spring animation with a slight bounce once the button is released. fade out the lower third. render it as a transparent prores video."
+      }
+    }
+  ]
+}

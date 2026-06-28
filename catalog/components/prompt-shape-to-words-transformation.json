@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-shape-to-words-transformation",
+  "displayName": "Shape to words transformation",
+  "displayNameZh": "Shape to words transformation",
+  "summary": "AI Video Prompt: Shape to words transformation",
+  "summaryZh": "AI 视频提示词：Shape to words transformation",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-shape-to-words-transformation/6455ec838076-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-shape-to-words-transformation/c9beebbbd11f-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/shape-to-words-transformation"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a premium 10-second motion graphics intro using Remotion and React.\n\nBackground: Clean white canvas with a subtle light-gray grid pattern.\n\nSequence of Events:\n\nScene 1 (The Setup): precise row of 8 colorful, filled geometric shapes (Pentagon, Triangle, Square, Circle, Hexagon, Diamond, Circle, Triangle) centered on screen with even spacing (90px). They should have a gentle, organic \"breathing\" idle animation.\nScene 2 (The Morph): Trigger a dynamic sequence where the shapes jump up, spin 180 degrees in mid-air, and smoothly morph (using flubber) into the bold block letters \"R-E-M-O-T-I-O-N\". Add a ghost-trail effect behind them during the jump for speed.\nScene 3 (The Arrival): Fly in the Remotion Logo from the left side to hover near the 'R'. Have it snap into place with a spring animation and immediately perform a full 360-degree rotation.\nScene 4 (The Wipe): Execute a slow, cinematic exit. The logo should slide smoothly across the entire screen from left to right. Implement a \"Wipe Logic\" where each letter of \"REMOTION\" vanishes (scales down/fades out) exactly in sync as the logo passes over it, creating an erasing effect.\nTechnical Requirements: Use remotion springs for all physics (damping: 14 for jumps, damping: 300 for the slow wipe). No strokes on shapes, only filled vibrant colors."
+      }
+    }
+  ]
+}

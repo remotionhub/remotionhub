@@ -157,7 +157,15 @@ async function main() {
   console.log(`Prompts to process: ${targetSlugs.length}`);
 
   for (const slug of targetSlugs) {
-    const fullSlug = `prompt-${slug}`;
+    let fullSlug = `prompt-${slug}`;
+    if (fullSlug.length > 80) {
+      const allowedLength = 80 - 'prompt-'.length;
+      let truncated = slug.substring(0, allowedLength);
+      if (truncated.endsWith('-')) {
+        truncated = truncated.substring(0, truncated.length - 1);
+      }
+      fullSlug = `prompt-${truncated}`;
+    }
     const jsonPath = path.resolve(`catalog/components/${fullSlug}.json`);
 
     if (fs.existsSync(jsonPath) && !overwrite) {

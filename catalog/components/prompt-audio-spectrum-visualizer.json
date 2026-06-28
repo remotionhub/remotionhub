@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-audio-spectrum-visualizer",
+  "displayName": "Audio Spectrum Visualizer",
+  "displayNameZh": "Audio Spectrum Visualizer",
+  "summary": "AI Video Prompt: Audio Spectrum Visualizer",
+  "summaryZh": "AI 视频提示词：Audio Spectrum Visualizer",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-audio-spectrum-visualizer/db68176a509b-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-audio-spectrum-visualizer/a96139d8ada1-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/audio-spectrum-visualizer"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a 1920x1080 dark-themed composition called 'AudioSpectrum' featuring an audio spectrum visualizer synced to funk.mp3 from the public folder, displaying 32 vertical frequency bars that bounce and pulse reactively to the bass, mids, and highs, with a vibrant gradient from magenta to cyan across the bars, each bar having a subtle glow effect and smooth rounded tops, the bars reflecting faintly on a glossy dark surface below, centered horizontally with gentle horizontal padding, the whole visualization fading in smoothly at the start, duration matching the full audio length at 30fps — allow changing the bar count, gradient colors, bar width, and glow intensity — use remotion-best-practices skill.\""
+      }
+    }
+  ]
+}

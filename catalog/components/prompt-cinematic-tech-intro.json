@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-cinematic-tech-intro",
+  "displayName": "Cinematic Tech Intro",
+  "displayNameZh": "Cinematic Tech Intro",
+  "summary": "AI Video Prompt: Cinematic Tech Intro",
+  "summaryZh": "AI 视频提示词：Cinematic Tech Intro",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-cinematic-tech-intro/ba680b73a43f-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-cinematic-tech-intro/5a7f7cd42c23-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/cinematic-tech-intro"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a high-energy Remotion video component (1920x1080, 30fps) for a cinematic \"CEO Introduction\" featuring Jensen Huang, styled with a Cyberpunk/Tech-Corporate aesthetic. The scene should use a clean white background with a subtle radial noise texture and feature masssive, centered \"JENSEN HUANG\" text in the \"Knewave\" font (NVIDIA Green #76B900) that animates with a dramatic \"pop-in\" effect (scaling down from 3x to 1x). At frame 40, introduce a cutout image of Jensen on the right side with an explosive spring entrance, continuous floating motion, and occasional digital glitch distortion (skew/hue-rotate), layered above rotating dashed tech rings and falling Matrix-style data streams. Simultaneously, slide in a Glassmorphism HUD panel from the left (dark semi-transparent green with a cut-corner clip-path) that displays \"CEO & Co-Founder\" and bio details using a Monospace font; ensure the text slides in from the far left (-600px) for a dynamic reveal. Enhance the visual depth with a vertical green scanner line, animated corner brackets, and floating geometric particles (triangles/hexagons), using spring and interpolate for all smooth physics-based transitions."
+      }
+    }
+  ]
+}

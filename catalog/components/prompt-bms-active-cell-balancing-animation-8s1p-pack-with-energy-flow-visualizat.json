@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-bms-active-cell-balancing-animation-8s1p-pack-with-energy-flow-visualizat",
+  "displayName": "BMS Active Cell Balancing Animation - 8S1P Pack with Energy Flow Visualization",
+  "displayNameZh": "BMS Active Cell Balancing Animation - 8S1P Pack with Energy Flow Visualization",
+  "summary": "AI Video Prompt: BMS Active Cell Balancing Animation - 8S1P Pack with Energy Flow Visualization",
+  "summaryZh": "AI 视频提示词：BMS Active Cell Balancing Animation - 8S1P Pack with Energy Flow Visualization",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-bms-active-cell-balancing-animation-8s1p-pack-with-energy-flow-visualizat/e59b4c568470-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-bms-active-cell-balancing-animation-8s1p-pack-with-energy-flow-visualizat/3997ebfece67-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/bms-active-cell-balancing-animation-8s1p-pack-with-energy-flow-visualization"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a Remotion project that renders a BMS Active Cell Balancing animation. 10 seconds, 30fps, 1280x720, output as MP4.                                                                                   \n                                         \n  Setup:                                                                                                                                                                                                      \n  mkdir remotion-bms && cd remotion-bms                                                                                                                                                                       \n  npm init -y                                                                                                                                                                                                 \n  npm i remotion react react-dom                            \n  npm i -D @remotion/cli typescript\n  tsconfig.json: ES2022, jsx: react-jsx, moduleResolution: bundler, module: ESNext\n\n  Project structure: src/index.ts, src/Root.tsx, src/BmsCellBalancing.tsx\n\n  Animation (BmsCellBalancing.tsx):\n  8 cells (8S1P) in a pack, dark theme (#0b1120), Courier New font. Initial voltages unbalanced between 3.3V and 4.05V. Background with subtle grid lines.\n\n  Phases (at 300 frames total):\n  - Frame 0..60: IDLE, show unbalanced cells\n  - Frame 60..90: MEASURING CELLS... (yellow status dot)\n  - Frame 90..240: BALANCING (green pulsing dot), voltages converge via smoothstep to average\n  - Frame 240..300: BALANCED (blue)\n\n  Each cell shows:\n  - Color-coded SOC fill level (green when high, orange when medium, red when low) with gradient\n  - Terminal nub on top, bus bars top/bottom connecting all cells\n  - Voltage display (3 decimal places), cell label (C1..C8), SOC in %, temperature\n  - During balancing: green border + arrow down for cells below avg (Charging), orange border + arrow up for cells above avg (Discharging)\n  - Particle animation visualizing energy flow\n  - Shimmer effect on the fill level\n\n  Info panel at bottom with spring animation: Pack Voltage, Max Delta (color-coded: green below 10mV, orange below 50mV, red above), Avg Cell, Config (8S1P), Pack SOC, Method: Active\n\n  Legend at bottom: \"▲ Discharging (high cell)\" orange, \"▼ Charging (low cell)\" green\n\n  Render: npx remotion render src/index.ts BmsCellBalancing out/bms-cell-balancing.mp4"
+      }
+    }
+  ]
+}

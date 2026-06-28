@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-the-kinetic-marketing",
+  "displayName": "The Kinetic Marketing",
+  "displayNameZh": "The Kinetic Marketing",
+  "summary": "AI Video Prompt: The Kinetic Marketing",
+  "summaryZh": "AI 视频提示词：The Kinetic Marketing",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-the-kinetic-marketing/b82b19796eeb-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-the-kinetic-marketing/363ed1f664c4-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/the-kinetic-marketing"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "A high-velocity kinetic typography promo for a modern developer tool.\n\nVisual Style: Premium \"Aurora Glassmorphism\" aesthetic. Backgrounds are seamless, breathing radial gradients in Pastel Pink, Lavender, and Soft Blue. Key Elements: Dozens of 3D Floating React Logos drift through the scene with heavy depth-of-field blur. Rotating dashed \"Radar Rings\" and \"Pulse Circles\" add technical texture behind the text. Color Palette: Electric Azure Blue (#0b84f3) for primary accents against Deep Black bold typography (Poppins Black). Motion Physics: Elastic \"Layout Smoothing\" – new words crash in and physically push existing text aside. Transitions: Elements rotate -15° and shrink to zero to vanish. Scenes switch via massive Blue Iris Wipes and Ring Tunnels. Matches a 140 BPM fast-paced beat."
+      }
+    }
+  ]
+}

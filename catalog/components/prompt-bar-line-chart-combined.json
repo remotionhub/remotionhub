@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-bar-line-chart-combined",
+  "displayName": "Bar + Line Chart (combined)",
+  "displayNameZh": "Bar + Line Chart (combined)",
+  "summary": "AI Video Prompt: Bar + Line Chart (combined)",
+  "summaryZh": "AI 视频提示词：Bar + Line Chart (combined)",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-bar-line-chart-combined/0786ccabdcea-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-bar-line-chart-combined/30e4b79d8392-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/bar-line-chart-combined"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a 1920x1080 dark-themed (#1A1A2E) composition called 'BarLineChart' with a combination chart showing monthly sales data — bars for revenue ($8K, $12K, $15K, $11K, $18K, $22K for Jan-Jun) that grow upward from the baseline, overlaid with a blue (#0B84F3) line tracking conversion rate (2.1%, 2.8%, 3.2%, 2.9%, 3.8%, 4.2%) that draws progressively with a glowing effect, bars animate sequentially with slight overlap while the line follows behind, include axis labels and a pulsing dot marker at the line tip, smooth spring-based timing over 120 frames at 30fps — use remotion-best-practices skill."
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "publisher": "remotionlab",
+  "runtime": "remotion",
+  "slug": "prompt-threejs-top-20-games-sold-ranking-1",
+  "displayName": "Three.js \"Top 20 Games Sold\" Ranking",
+  "displayNameZh": "Three.js \"Top 20 Games Sold\" Ranking",
+  "summary": "AI Video Prompt: Three.js \"Top 20 Games Sold\" Ranking",
+  "summaryZh": "AI 视频提示词：Three.js \"Top 20 Games Sold\" Ranking",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-threejs-top-20-games-sold-ranking-1/b952e88346c8-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-threejs-top-20-games-sold-ranking-1/122c399e6911-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/threejs-top-20-games-sold-ranking-1"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "here is an empty remotion project with the default react three fiber example.\n\nI want to create a 3D video to visualize top 20 videos games by copies of all time.Create a Remotion video that visualizes the top 20 best-selling video games as a vertical \"tower\", use boxes as towers with height representing the amount of copies.\n\nremove the default example from this project and create a remotion + react three fiber example to do this visualization.\nResolution: 1920x1080\nFPS:60\n\nanimate the camera from the bottom of the last rank to the top of the first rank. stop the camera on the top of each rank for a few miliseconds.\n\nhere is the game ranking data you need\n\n# [data as a JSON string]\n# More instructions: https://x.com/DilumSanjaya/status/2018367621381620142"
+      }
+    }
+  ]
+}
