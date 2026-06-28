@@ -61,6 +61,7 @@ export const artifactSchema = z
         ref: z.string().min(1),
         commit: z.string().min(6),
         path: z.string().min(1),
+        pinned: z.boolean().optional(),
       })
       .optional(),
     license: z.string().min(1),

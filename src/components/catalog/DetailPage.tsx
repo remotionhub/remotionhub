@@ -173,7 +173,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
           {hasSource && (
             <TabsTrigger value="source">{t('detail.githubSource')}</TabsTrigger>
           )}
-          {hasSource && (
+          {detail.artifact.usageMarkdown && (
             <TabsTrigger value="usage">{t('detail.usage')}</TabsTrigger>
           )}
         </TabsList>
@@ -211,7 +211,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
             </Card>
           </TabsContent>
         )}
-        {hasSource && (
+        {detail.artifact.usageMarkdown && (
           <TabsContent value="usage" className="prose max-w-none dark:prose-invert">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {detail.artifact.usageMarkdown}

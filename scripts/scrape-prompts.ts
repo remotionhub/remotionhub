@@ -146,8 +146,8 @@ async function downloadAndTranscodeHLS(m3u8Url: string, destMp4Path: string, slu
     const localM3u8Path = path.join(tempDir, 'local.m3u8');
     fs.writeFileSync(localM3u8Path, localRenditionLines.join('\n'), 'utf8');
 
-    // 6. Run ffmpeg on local manifest
-    child_process.execFileSync('ffmpeg', ['-y', '-i', localM3u8Path, '-c', 'copy', destMp4Path], { stdio: 'pipe' });
+    // 6. Run ffmpeg on local manifest with +faststart for progressive web playback
+    child_process.execFileSync('ffmpeg', ['-y', '-i', localM3u8Path, '-c', 'copy', '-movflags', '+faststart', destMp4Path], { stdio: 'pipe' });
   } finally {
     // Clean up temp directory
     if (fs.existsSync(tempDir)) {
@@ -168,6 +168,7 @@ async function main() {
   const ossAccessKeySecret = process.env.ASSETS_OSS_ACCESS_KEY_SECRET || process.env.OSS_ACCESS_KEY_SECRET;
   const ossRegion = process.env.ASSETS_OSS_REGION || process.env.OSS_REGION || 'oss-cn-shenzhen';
   const ossBucket = process.env.ASSETS_OSS_BUCKET || process.env.OSS_BUCKET || 'remotionhub';
+  const ossPublicBaseUrl = process.env.ASSETS_OSS_PUBLIC_BASE_URL || process.env.OSS_PUBLIC_BASE_URL;
   
   const isDryRun = args.includes('--dry-run') || !ossAccessKeyId || !ossAccessKeySecret;
 
@@ -338,8 +339,12 @@ async function main() {
       const ossVideoPath = `showcase/${fullSlug}/${videoHash}-preview.mp4`;
       const ossThumbPath = `showcase/${fullSlug}/${thumbHash}-thumb.png`;
 
-      let previewVideoUrl = `https://${ossBucket}.${ossRegion}.aliyuncs.com/${ossVideoPath}`;
-      let thumbnailUrl = `https://${ossBucket}.${ossRegion}.aliyuncs.com/${ossThumbPath}`;
+      let previewVideoUrl = ossPublicBaseUrl
+        ? `${ossPublicBaseUrl}/${ossVideoPath}`
+        : `https://${ossBucket}.${ossRegion}.aliyuncs.com/${ossVideoPath}`;
+      let thumbnailUrl = ossPublicBaseUrl
+        ? `${ossPublicBaseUrl}/${ossThumbPath}`
+        : `https://${ossBucket}.${ossRegion}.aliyuncs.com/${ossThumbPath}`;
 
       if (ossClient) {
         try {
