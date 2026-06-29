@@ -32,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "audio",
-        "waveform"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

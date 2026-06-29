@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "progress",
-        "ring"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "generic",
-        "chatbot"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

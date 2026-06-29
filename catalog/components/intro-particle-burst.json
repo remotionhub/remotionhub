@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "particle",
-        "burst"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

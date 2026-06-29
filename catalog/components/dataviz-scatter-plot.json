@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "scatter",
-        "plot"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

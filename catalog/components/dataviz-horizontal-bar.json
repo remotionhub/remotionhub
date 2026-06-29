@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "horizontal",
-        "bar"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

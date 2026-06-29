@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "logo",
-        "badge",
-        "unfold"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

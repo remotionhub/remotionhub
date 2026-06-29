@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "social",
-        "ig",
-        "masonry"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

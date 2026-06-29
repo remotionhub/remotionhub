@@ -221,9 +221,40 @@ export const importCatalogComponent = mutation({
       )
       if (existing) {
         if (existing.fingerprint !== versionInput.fingerprint) {
-          throw new ConvexError(
-            `Immutable version conflict for ${versionInput.version}.`,
-          )
+          const existingArtifact = await ctx.db
+            .query('artifacts')
+            .withIndex('by_version', (q) =>
+              q.eq('componentVersionId', existing._id),
+            )
+            .unique()
+
+          const isCompatible =
+            existingArtifact &&
+            existing.changelog === versionInput.changelog &&
+            JSON.stringify(existing.preview) === JSON.stringify(versionInput.preview) &&
+            JSON.stringify(existing.metadata) === JSON.stringify(versionInput.metadata) &&
+            JSON.stringify(existingArtifact.githubSource) === JSON.stringify(versionInput.artifact.githubSource) &&
+            existingArtifact.license === versionInput.artifact.license &&
+            existingArtifact.usageMarkdown === versionInput.artifact.usageMarkdown &&
+            existingArtifact.agentPrompt === versionInput.artifact.agentPrompt
+
+          if (isCompatible) {
+            await ctx.db.patch(existing._id, {
+              tags: versionInput.tags,
+              fingerprint: versionInput.fingerprint,
+              sourceProvenance: existing.sourceProvenance
+                ? {
+                    ...existing.sourceProvenance,
+                    fingerprint: versionInput.fingerprint,
+                  }
+                : undefined,
+              updatedAt: now,
+            })
+          } else {
+            throw new ConvexError(
+              `Immutable version conflict for ${versionInput.version}.`,
+            )
+          }
         }
         skippedVersions += 1
         continue

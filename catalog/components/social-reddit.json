@@ -32,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "social",
-        "reddit"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

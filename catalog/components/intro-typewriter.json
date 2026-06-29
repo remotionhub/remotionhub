@@ -32,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "typewriter"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "audio",
-        "circle",
-        "viz"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

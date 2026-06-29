@@ -97,13 +97,54 @@ function getCategory(slug: string): string {
 
 function mapSlugToTags(slug: string): TagKey[] {
   const tags: Set<TagKey> = new Set()
-  if (/vhs|retro|arcade|pixel/.test(slug)) tags.add('retro')
-  if (/chart|dataviz|stats|gantt|candlestick|comparison|counter|report|dashboard|finance/.test(slug)) tags.add('business')
-  if (/youtube|yt|social|facebook|tiktok|ig|twitter|reddit|linkedin|social-media/.test(slug)) tags.add('social')
-  if (/avatar|profile|testimonial/.test(slug)) tags.add('personal')
-  if (/glitch|neon|cinematic|blast|firework|3d|hologram|glow|pulse|morph|creative/.test(slug)) tags.add('creative')
-  if (/minimal|fade|slide|wipe|simple|clean/.test(slug)) tags.add('minimal')
-  if (tags.size === 0) tags.add('minimal')
+  const tokens = new Set(slug.split('-'))
+
+  // retro
+  if (tokens.has('vhs') || tokens.has('retro') || tokens.has('arcade') || tokens.has('pixel')) {
+    tags.add('retro')
+  }
+  // business
+  if (
+    tokens.has('chart') || tokens.has('dataviz') || tokens.has('stats') ||
+    tokens.has('gantt') || tokens.has('candlestick') || tokens.has('comparison') ||
+    tokens.has('counter') || tokens.has('report') || tokens.has('dashboard') || tokens.has('finance')
+  ) {
+    tags.add('business')
+  }
+  // social
+  if (
+    tokens.has('youtube') || tokens.has('yt') || tokens.has('social') ||
+    tokens.has('facebook') || tokens.has('tiktok') || tokens.has('ig') ||
+    tokens.has('twitter') || tokens.has('reddit') || tokens.has('linkedin') ||
+    tokens.has('social-media')
+  ) {
+    tags.add('social')
+  }
+  // personal
+  if (tokens.has('avatar') || tokens.has('profile') || tokens.has('testimonial')) {
+    tags.add('personal')
+  }
+  // creative
+  if (
+    tokens.has('glitch') || tokens.has('neon') || tokens.has('cinematic') ||
+    tokens.has('blast') || tokens.has('firework') || tokens.has('3d') ||
+    tokens.has('hologram') || tokens.has('glow') || tokens.has('pulse') ||
+    tokens.has('morph') || tokens.has('creative')
+  ) {
+    tags.add('creative')
+  }
+  // minimal
+  if (
+    tokens.has('minimal') || tokens.has('fade') || tokens.has('slide') ||
+    tokens.has('wipe') || tokens.has('simple') || tokens.has('clean')
+  ) {
+    tags.add('minimal')
+  }
+
+  if (tags.size === 0) {
+    tags.add('minimal')
+  }
+
   return Array.from(tags)
 }
 

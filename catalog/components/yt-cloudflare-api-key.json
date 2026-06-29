@@ -32,10 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "cloudflare",
-        "api",
-        "key"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

@@ -30,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "subtitle",
-        "karaoke"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "audio",
-        "vinyl",
-        "record"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",
