@@ -15,7 +15,7 @@ export const TAG_DICTIONARY: Record<TagKey, TagInfo> = {
 }
 
 export function isValidTag(tag: string): tag is TagKey {
-  return tag in TAG_DICTIONARY
+  return Object.hasOwn(TAG_DICTIONARY, tag)
 }
 
 export function getLocalizedTag(tag: string, locale: 'zh' | 'en'): string {

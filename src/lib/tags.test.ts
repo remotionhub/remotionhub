@@ -6,6 +6,8 @@ describe('Tag Taxonomy', () => {
     expect(isValidTag('minimal')).toBe(true)
     expect(isValidTag('retro')).toBe(true)
     expect(isValidTag('invalid-tag')).toBe(false)
+    expect(isValidTag('constructor')).toBe(false)
+    expect(isValidTag('toString')).toBe(false)
   })
 
   it('translates tags correctly based on locale', () => {
