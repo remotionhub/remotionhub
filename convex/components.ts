@@ -231,9 +231,19 @@ export const importCatalogComponent = mutation({
           const isCompatible =
             existingArtifact &&
             existing.changelog === versionInput.changelog &&
-            JSON.stringify(existing.preview) === JSON.stringify(versionInput.preview) &&
-            JSON.stringify(existing.metadata) === JSON.stringify(versionInput.metadata) &&
-            JSON.stringify(existingArtifact.githubSource) === JSON.stringify(versionInput.artifact.githubSource) &&
+            existing.preview.thumbnailUrl === versionInput.preview.thumbnailUrl &&
+            existing.preview.previewVideoUrl === versionInput.preview.previewVideoUrl &&
+            existing.preview.demoUrl === versionInput.preview.demoUrl &&
+            existing.metadata.runtime === versionInput.metadata.runtime &&
+            existing.metadata.entryPoint === versionInput.metadata.entryPoint &&
+            JSON.stringify(existing.metadata.aspectRatios) === JSON.stringify(versionInput.metadata.aspectRatios) &&
+            existing.metadata.durationFrames === versionInput.metadata.durationFrames &&
+            existing.metadata.fps === versionInput.metadata.fps &&
+            existingArtifact.kind === versionInput.artifact.kind &&
+            existingArtifact.githubSource.repo === versionInput.artifact.githubSource.repo &&
+            existingArtifact.githubSource.ref === versionInput.artifact.githubSource.ref &&
+            existingArtifact.githubSource.commit === versionInput.artifact.githubSource.commit &&
+            existingArtifact.githubSource.path === versionInput.artifact.githubSource.path &&
             existingArtifact.license === versionInput.artifact.license &&
             existingArtifact.usageMarkdown === versionInput.artifact.usageMarkdown &&
             existingArtifact.agentPrompt === versionInput.artifact.agentPrompt
