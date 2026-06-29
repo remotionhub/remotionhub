@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-product-demo-for-presscut/5c0515c7996b-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-product-demo-for-presscut/5b5bc2c65ac2-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-product-demo-for-presscut/50635c94ab3f-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/product-demo-for-presscut"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 2523,
         "fps": 30
       },
       "tags": [

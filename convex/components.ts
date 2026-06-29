@@ -212,6 +212,10 @@ export const importCatalogComponent = mutation({
     let skippedVersions = 0
 
     for (const versionInput of args.versions) {
+      if (versionInput.artifact.kind === 'github-source' && !versionInput.artifact.githubSource) {
+        throw new ConvexError('githubSource is required when kind is github-source')
+      }
+
       if (!semver.valid(versionInput.version)) {
         throw new ConvexError(`Invalid semver version ${versionInput.version}.`)
       }

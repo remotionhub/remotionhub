@@ -29,8 +29,8 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
-        "fps": 30
+        "durationFrames": 1211,
+        "fps": 60
       },
       "tags": [
         "prompt",

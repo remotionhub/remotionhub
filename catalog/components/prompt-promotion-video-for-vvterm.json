@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-promotion-video-for-vvterm/286179790b96-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-promotion-video-for-vvterm/6a155f0c20d6-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-promotion-video-for-vvterm/d2b80c0a4426-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/promotion-video-for-vvterm"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 601,
         "fps": 30
       },
       "tags": [

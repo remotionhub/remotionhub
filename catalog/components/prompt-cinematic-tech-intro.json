@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-cinematic-tech-intro/ba680b73a43f-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-cinematic-tech-intro/5a7f7cd42c23-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-cinematic-tech-intro/12a8d864cd46-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/cinematic-tech-intro"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 179,
         "fps": 30
       },
       "tags": [

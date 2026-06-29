@@ -21,15 +21,15 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-3d-retro-pixel-font/8f3ebc35a02c-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-3d-retro-pixel-font/5e1e59ddc50d-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-3d-retro-pixel-font/70dd3a826593-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/3d-retro-pixel-font"
       },
       "metadata": {
         "runtime": "remotion",
         "aspectRatios": [
-          "16:9"
+          "1:1"
         ],
-        "durationFrames": 150,
+        "durationFrames": 301,
         "fps": 30
       },
       "tags": [

@@ -81,16 +81,29 @@ export const artifactSchema = z
     },
   )
 
-export const catalogVersionSchema = z.object({
-  version: z.string().refine((value) => semver.valid(value) !== null, {
-    message: 'Version must be valid semver.',
-  }),
-  changelog: z.string().min(1),
-  preview: previewSchema,
-  metadata: metadataSchema,
-  tags: z.array(z.string().min(1)).default([]),
-  artifact: artifactSchema,
-})
+export const catalogVersionSchema = z
+  .object({
+    version: z.string().refine((value) => semver.valid(value) !== null, {
+      message: 'Version must be valid semver.',
+    }),
+    changelog: z.string().min(1),
+    preview: previewSchema,
+    metadata: metadataSchema,
+    tags: z.array(z.string().min(1)).default([]),
+    artifact: artifactSchema,
+  })
+  .refine(
+    (data) => {
+      if (data.artifact.kind === 'github-source') {
+        return data.metadata.entryPoint !== undefined
+      }
+      return true
+    },
+    {
+      message: 'entryPoint is required when artifact.kind is github-source',
+      path: ['metadata', 'entryPoint'],
+    },
+  )
 export type CatalogVersion = z.infer<typeof catalogVersionSchema>
 
 export const catalogComponentSchema = z

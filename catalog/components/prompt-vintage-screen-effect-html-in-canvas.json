@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-vintage-screen-effect-html-in-canvas/726b001db1c8-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-vintage-screen-effect-html-in-canvas/6371422439ba-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-vintage-screen-effect-html-in-canvas/d216e5170f4d-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/vintage-screen-effect-html-in-canvas"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 541,
         "fps": 30
       },
       "tags": [

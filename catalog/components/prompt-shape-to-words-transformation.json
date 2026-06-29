@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-shape-to-words-transformation/6455ec838076-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-shape-to-words-transformation/c9beebbbd11f-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-shape-to-words-transformation/d22a8417bd71-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/shape-to-words-transformation"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 197,
         "fps": 30
       },
       "tags": [

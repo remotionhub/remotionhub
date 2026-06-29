@@ -21,7 +21,7 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-spinning-glitching-svg-logo-turned-3d/89502f5e1352-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-spinning-glitching-svg-logo-turned-3d/11296a54add2-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-spinning-glitching-svg-logo-turned-3d/58fb184ea939-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/spinning-glitching-svg-logo-turned-3d"
       },
       "metadata": {
@@ -29,7 +29,7 @@
         "aspectRatios": [
           "16:9"
         ],
-        "durationFrames": 150,
+        "durationFrames": 301,
         "fps": 30
       },
       "tags": [

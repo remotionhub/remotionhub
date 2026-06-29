@@ -27,9 +27,9 @@
       "metadata": {
         "runtime": "remotion",
         "aspectRatios": [
-          "16:9"
+          "9:16"
         ],
-        "durationFrames": 150,
+        "durationFrames": 481,
         "fps": 30
       },
       "tags": [

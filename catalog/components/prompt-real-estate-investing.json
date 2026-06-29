@@ -21,15 +21,15 @@
       "changelog": "Initial migrated release.",
       "preview": {
         "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-real-estate-investing/614c4d3dc9dd-thumb.png",
-        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-real-estate-investing/e11c8cd341af-preview.mp4",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-real-estate-investing/92ba84c209b4-preview.mp4",
         "demoUrl": "https://www.remotion.dev/prompts/real-estate-investing"
       },
       "metadata": {
         "runtime": "remotion",
         "aspectRatios": [
-          "16:9"
+          "9:16"
         ],
-        "durationFrames": 150,
+        "durationFrames": 457,
         "fps": 30
       },
       "tags": [

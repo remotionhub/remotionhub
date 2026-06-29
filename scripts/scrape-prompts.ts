@@ -119,20 +119,23 @@ async function downloadAndTranscodeHLS(m3u8Url: string, destMp4Path: string, slu
     if (!renditionRes.ok) throw new Error(`Failed to fetch rendition manifest: ${renditionRes.statusText}`);
     const renditionContent = await renditionRes.text();
 
-    // 4. Parse rendition and download chunks
+    // 4. Parse rendition and download chunks (supporting both relative and absolute URLs)
     const renditionLines = renditionContent.split('\n');
     const localRenditionLines: string[] = [];
     let chunkIndex = 0;
 
     for (const line of renditionLines) {
       const trimmed = line.trim();
-      if (trimmed.startsWith('http')) {
+      if (trimmed && !trimmed.startsWith('#')) {
         const chunkFileName = `${chunkIndex}.ts`;
         const chunkPath = path.join(tempDir, chunkFileName);
         
+        // Resolve absolute URL (handles both relative and absolute URLs)
+        const chunkUrl = new URL(trimmed, renditionUrl).toString();
+        
         // Download chunk using fetch
-        const chunkRes = await fetch(trimmed);
-        if (!chunkRes.ok) throw new Error(`Failed to fetch chunk ${chunkIndex}: ${chunkRes.statusText}`);
+        const chunkRes = await fetch(chunkUrl);
+        if (!chunkRes.ok) throw new Error(`Failed to fetch chunk ${chunkIndex} from ${chunkUrl}: ${chunkRes.statusText}`);
         fs.writeFileSync(chunkPath, Buffer.from(await chunkRes.arrayBuffer()));
 
         localRenditionLines.push(chunkFileName);
@@ -154,6 +157,47 @@ async function downloadAndTranscodeHLS(m3u8Url: string, destMp4Path: string, slu
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
   }
+}
+
+// Probe video metadata (width, height, duration, fps) using ffprobe
+function probeVideoMetadata(mp4Path: string): { aspectRatios: string[], durationFrames: number, fps: number } {
+  try {
+    const ffprobeOutput = child_process.execFileSync('ffprobe', [
+      '-v', 'error',
+      '-select_streams', 'v:0',
+      '-show_entries', 'stream=width,height,r_frame_rate,duration',
+      '-of', 'json',
+      mp4Path
+    ], { encoding: 'utf8' });
+    const data = JSON.parse(ffprobeOutput);
+    const stream = data.streams?.[0];
+    if (stream) {
+      const width = parseInt(stream.width, 10);
+      const height = parseInt(stream.height, 10);
+      const duration = parseFloat(stream.duration);
+      
+      const fpsParts = stream.r_frame_rate.split('/');
+      const fps = fpsParts.length === 2 ? Math.round(parseInt(fpsParts[0], 10) / parseInt(fpsParts[1], 10)) : 30;
+      
+      const durationFrames = Math.round(duration * fps);
+      
+      let aspect = '16:9';
+      if (width === height) {
+        aspect = '1:1';
+      } else if (width < height) {
+        aspect = '9:16';
+      }
+      
+      return {
+        aspectRatios: [aspect],
+        durationFrames: durationFrames || 150,
+        fps: fps || 30
+      };
+    }
+  } catch (err) {
+    console.warn(`Failed to probe video metadata for ${mp4Path}, using defaults:`, err);
+  }
+  return { aspectRatios: ['16:9'], durationFrames: 150, fps: 30 };
 }
 
 async function main() {
@@ -307,6 +351,9 @@ async function main() {
         continue;
       }
 
+      // Probe video metadata (duration, aspect ratio, fps) using ffprobe
+      const videoMeta = probeVideoMetadata(tempMp4Path);
+
       // 2. Download thumbnail
       const ogImage = $('meta[property="og:image"]').attr('content');
       let thumbUrl = ogImage;
@@ -385,9 +432,9 @@ async function main() {
             },
             metadata: {
               runtime: 'remotion',
-              aspectRatios: ['16:9'],
-              durationFrames: 150,
-              fps: 30,
+              aspectRatios: videoMeta.aspectRatios,
+              durationFrames: videoMeta.durationFrames,
+              fps: videoMeta.fps,
             },
             tags: ['prompt', 'ai'],
             artifact: {
@@ -400,9 +447,13 @@ async function main() {
         ],
       };
 
-      console.log(`Writing catalog JSON to ${jsonPath}...`);
-      fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
-      fs.writeFileSync(jsonPath, JSON.stringify(catalogJson, null, 2), 'utf8');
+      if (isDryRun) {
+        console.log(`[DRY-RUN] Would write catalog JSON to ${jsonPath} but skipping in dry-run mode.`);
+      } else {
+        console.log(`Writing catalog JSON to ${jsonPath}...`);
+        fs.mkdirSync(path.dirname(jsonPath), { recursive: true });
+        fs.writeFileSync(jsonPath, JSON.stringify(catalogJson, null, 2), 'utf8');
+      }
 
       console.log(`Successfully processed [${slug}]`);
     } catch (err) {
