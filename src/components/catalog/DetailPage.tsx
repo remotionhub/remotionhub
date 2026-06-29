@@ -32,7 +32,7 @@ export type CatalogDetail = {
   selectedVersion: {
     version: string
     changelog: string
-    preview: { thumbnailUrl?: string; previewVideoUrl?: string }
+    preview: { thumbnailUrl?: string; previewVideoUrl?: string; demoUrl?: string }
     metadata: {
       runtime: 'remotion' | 'hyperframes'
       entryPoint?: string

@@ -327,14 +327,12 @@ async function main() {
       }
 
       // Parse original author
-      let authorName = 'remotionlab';
       let authorHandle = 'remotionlab';
       const promptedByText = $('div:contains("Prompted by")').first();
       if (promptedByText.length > 0) {
         const link = promptedByText.find('a').first();
         if (link.length > 0) {
           const rawText = link.text().trim();
-          authorName = rawText;
           authorHandle = rawText.startsWith('@') ? rawText.substring(1) : rawText;
           authorHandle = authorHandle
             .toLowerCase()
@@ -345,7 +343,6 @@ async function main() {
           
           if (!authorHandle) {
             authorHandle = 'remotionlab';
-            authorName = 'remotionlab';
           }
         }
       }
