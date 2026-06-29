@@ -10,10 +10,7 @@
     "logo"
   ],
   "tags": [
-    "remotion",
-    "logo",
-    "brand",
-    "kit"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "logo",
-        "brand",
-        "kit"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

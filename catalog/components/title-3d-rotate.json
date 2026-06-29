@@ -8,9 +8,7 @@
     "text-effect"
   ],
   "tags": [
-    "remotion",
-    "text-effect",
-    "3d-rotate"
+    "creative"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "text-effect",
-        "3d-rotate"
+        "creative"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,10 +10,7 @@
     "intro"
   ],
   "tags": [
-    "remotion",
-    "intro",
-    "cinematic",
-    "bars"
+    "creative"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "cinematic",
-        "bars"
+        "creative"
       ],
       "artifact": {
         "kind": "github-source",

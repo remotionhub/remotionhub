@@ -8,9 +8,7 @@
     "countdown"
   ],
   "tags": [
-    "remotion",
-    "countdown",
-    "digital"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "digital",
-        "countdown"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

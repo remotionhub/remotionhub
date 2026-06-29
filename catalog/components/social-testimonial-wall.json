@@ -10,10 +10,8 @@
     "social"
   ],
   "tags": [
-    "remotion",
     "social",
-    "testimonial",
-    "wall"
+    "personal"
   ],
   "status": "published",
   "versions": [
@@ -36,8 +34,7 @@
       },
       "tags": [
         "social",
-        "testimonial",
-        "wall"
+        "personal"
       ],
       "artifact": {
         "kind": "github-source",

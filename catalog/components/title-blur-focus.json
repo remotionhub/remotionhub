@@ -8,9 +8,7 @@
     "text-effect"
   ],
   "tags": [
-    "remotion",
-    "text-effect",
-    "blur-focus"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "text-effect",
-        "blur-focus"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

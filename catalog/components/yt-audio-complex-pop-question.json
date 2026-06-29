@@ -10,12 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "audio",
-    "complex",
-    "pop",
-    "question"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -37,11 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "audio",
-        "complex",
-        "pop",
-        "question"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,11 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "audio",
-    "lets",
-    "start"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -36,10 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "audio",
-        "lets",
-        "start"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

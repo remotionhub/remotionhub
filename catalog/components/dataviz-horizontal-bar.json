@@ -10,10 +10,7 @@
     "dataviz"
   ],
   "tags": [
-    "remotion",
-    "dataviz",
-    "horizontal",
-    "bar"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "horizontal",
-        "bar"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

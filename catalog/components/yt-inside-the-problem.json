@@ -10,11 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "inside",
-    "the",
-    "problem"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -36,10 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "inside",
-        "the",
-        "problem"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

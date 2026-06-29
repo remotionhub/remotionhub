@@ -8,9 +8,7 @@
     "text-effect"
   ],
   "tags": [
-    "remotion",
-    "text-effect",
-    "zoom-punch"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "text-effect",
-        "zoom-punch"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

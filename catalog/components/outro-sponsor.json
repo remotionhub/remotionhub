@@ -10,9 +10,7 @@
     "outro"
   ],
   "tags": [
-    "remotion",
-    "outro",
-    "sponsor"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "outro",
-        "sponsor"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

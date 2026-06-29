@@ -10,10 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "split",
-    "doors"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "split",
-        "doors"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

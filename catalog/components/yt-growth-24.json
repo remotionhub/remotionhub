@@ -10,10 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "growth",
-    "24"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "growth",
-        "24"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

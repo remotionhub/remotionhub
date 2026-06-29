@@ -10,10 +10,7 @@
     "intro"
   ],
   "tags": [
-    "remotion",
-    "intro",
-    "news",
-    "broadcast"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "news",
-        "broadcast"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

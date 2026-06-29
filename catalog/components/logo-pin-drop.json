@@ -10,10 +10,7 @@
     "logo"
   ],
   "tags": [
-    "remotion",
-    "logo",
-    "pin",
-    "drop"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "logo",
-        "pin",
-        "drop"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

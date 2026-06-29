@@ -10,12 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "easy",
-    "channel",
-    "hard",
-    "dist"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -37,11 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "easy",
-        "channel",
-        "hard",
-        "dist"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,11 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "core",
-    "dist",
-    "card"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -36,10 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "core",
-        "dist",
-        "card"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

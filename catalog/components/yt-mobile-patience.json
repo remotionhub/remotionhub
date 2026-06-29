@@ -10,10 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "mobile",
-    "patience"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "mobile",
-        "patience"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

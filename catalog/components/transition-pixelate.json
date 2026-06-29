@@ -10,9 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "pixelate"
+    "retro"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "pixelate"
+        "retro"
       ],
       "artifact": {
         "kind": "github-source",

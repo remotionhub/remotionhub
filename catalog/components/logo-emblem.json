@@ -10,9 +10,7 @@
     "logo"
   ],
   "tags": [
-    "remotion",
-    "logo",
-    "emblem"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "logo",
-        "emblem"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

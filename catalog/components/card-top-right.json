@@ -8,9 +8,7 @@
     "card"
   ],
   "tags": [
-    "remotion",
-    "slide-in",
-    "top-right"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "slide-in",
-        "top-right"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,10 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "film",
-    "burn"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "film",
-        "burn"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",
