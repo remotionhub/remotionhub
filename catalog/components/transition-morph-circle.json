@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "transition",
+        "morph",
+        "circle"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "wipe",
+        "clock"
       ],
       "artifact": {
         "kind": "github-source",

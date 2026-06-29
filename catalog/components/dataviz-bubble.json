@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "business"
+        "dataviz",
+        "bubble"
       ],
       "artifact": {
         "kind": "github-source",

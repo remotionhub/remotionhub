@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "mcp",
+        "pipeline"
       ],
       "artifact": {
         "kind": "github-source",

@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "text-effect",
+        "slot-reel"
       ],
       "artifact": {
         "kind": "github-source",

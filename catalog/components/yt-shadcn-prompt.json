@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "shadcn",
+        "prompt"
       ],
       "artifact": {
         "kind": "github-source",

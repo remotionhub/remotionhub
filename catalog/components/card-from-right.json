@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "slide-in",
+        "right"
       ],
       "artifact": {
         "kind": "github-source",

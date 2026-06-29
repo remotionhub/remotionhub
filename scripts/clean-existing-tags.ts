@@ -47,11 +47,7 @@ async function migrate() {
     const newTags = mapSlugToTags(data.slug)
     data.tags = newTags
 
-    if (data.versions && Array.isArray(data.versions)) {
-      for (const ver of data.versions) {
-        ver.tags = newTags
-      }
-    }
+
 
     await fs.writeFile(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8')
     migratedCount++

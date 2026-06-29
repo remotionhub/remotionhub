@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "focus",
+        "one",
+        "topic"
       ],
       "artifact": {
         "kind": "github-source",

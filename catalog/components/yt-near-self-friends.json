@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "near",
+        "self",
+        "friends"
       ],
       "artifact": {
         "kind": "github-source",

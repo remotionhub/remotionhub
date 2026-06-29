@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "intro",
+        "minimal",
+        "fade"
       ],
       "artifact": {
         "kind": "github-source",

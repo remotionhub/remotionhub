@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "intro",
+        "news",
+        "broadcast"
       ],
       "artifact": {
         "kind": "github-source",

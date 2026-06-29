@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "logo",
+        "hologram"
       ],
       "artifact": {
         "kind": "github-source",

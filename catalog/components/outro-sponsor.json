@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "outro",
+        "sponsor"
       ],
       "artifact": {
         "kind": "github-source",

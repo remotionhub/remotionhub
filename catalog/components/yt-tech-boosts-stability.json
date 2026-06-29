@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "tech",
+        "boosts",
+        "stability"
       ],
       "artifact": {
         "kind": "github-source",

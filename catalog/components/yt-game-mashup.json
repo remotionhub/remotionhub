@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "game",
+        "mashup"
       ],
       "artifact": {
         "kind": "github-source",

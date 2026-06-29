@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "generic",
+        "means",
+        "lacking"
       ],
       "artifact": {
         "kind": "github-source",

@@ -33,8 +33,10 @@
         "fps": 30
       },
       "tags": [
-        "business",
-        "social"
+        "animation",
+        "ai",
+        "report",
+        "doubt"
       ],
       "artifact": {
         "kind": "github-source",

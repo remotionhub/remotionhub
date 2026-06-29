@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "blinds"
       ],
       "artifact": {
         "kind": "github-source",

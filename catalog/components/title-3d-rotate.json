@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "text-effect",
+        "3d-rotate"
       ],
       "artifact": {
         "kind": "github-source",

@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "text-effect",
+        "neon-glow"
       ],
       "artifact": {
         "kind": "github-source",

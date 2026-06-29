@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "circle",
+        "countdown"
       ],
       "artifact": {
         "kind": "github-source",

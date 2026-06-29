@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "radar-scan",
+        "map"
       ],
       "artifact": {
         "kind": "github-source",

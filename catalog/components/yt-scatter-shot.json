@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "scatter",
+        "shot"
       ],
       "artifact": {
         "kind": "github-source",

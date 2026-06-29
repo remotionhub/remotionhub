@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "magazine",
+        "layout"
       ],
       "artifact": {
         "kind": "github-source",

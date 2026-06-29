@@ -34,7 +34,8 @@
       },
       "tags": [
         "social",
-        "personal"
+        "testimonial",
+        "wall"
       ],
       "artifact": {
         "kind": "github-source",

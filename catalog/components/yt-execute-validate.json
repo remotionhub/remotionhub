@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "execute",
+        "validate"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "intro",
+        "cinematic",
+        "text"
       ],
       "artifact": {
         "kind": "github-source",

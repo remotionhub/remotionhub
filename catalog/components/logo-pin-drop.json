@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "logo",
+        "pin",
+        "drop"
       ],
       "artifact": {
         "kind": "github-source",

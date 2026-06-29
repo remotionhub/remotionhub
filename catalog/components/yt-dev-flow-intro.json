@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "dev",
+        "flow",
+        "intro"
       ],
       "artifact": {
         "kind": "github-source",

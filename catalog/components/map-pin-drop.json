@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "pin-drop",
+        "map"
       ],
       "artifact": {
         "kind": "github-source",

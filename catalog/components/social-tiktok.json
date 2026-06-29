@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "social",
+        "tiktok"
       ],
       "artifact": {
         "kind": "github-source",

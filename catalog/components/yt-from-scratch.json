@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "from",
+        "scratch"
       ],
       "artifact": {
         "kind": "github-source",

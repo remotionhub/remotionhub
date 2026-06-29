@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "split",
+        "doors"
       ],
       "artifact": {
         "kind": "github-source",

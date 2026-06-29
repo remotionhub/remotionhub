@@ -33,8 +33,10 @@
         "fps": 30
       },
       "tags": [
-        "social",
-        "minimal"
+        "animation",
+        "simple",
+        "ai",
+        "product"
       ],
       "artifact": {
         "kind": "github-source",

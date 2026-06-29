@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "logo",
+        "stamp",
+        "reveal"
       ],
       "artifact": {
         "kind": "github-source",

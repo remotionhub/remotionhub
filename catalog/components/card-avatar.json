@@ -30,7 +30,9 @@
         "fps": 30
       },
       "tags": [
-        "personal"
+        "avatar",
+        "profile",
+        "lower-third"
       ],
       "artifact": {
         "kind": "github-source",

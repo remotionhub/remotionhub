@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "text-effect",
+        "glitch-text"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "logo",
+        "glow",
+        "pulse"
       ],
       "artifact": {
         "kind": "github-source",

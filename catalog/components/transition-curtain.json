@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "curtain"
       ],
       "artifact": {
         "kind": "github-source",

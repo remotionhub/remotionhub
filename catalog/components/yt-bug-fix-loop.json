@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "bug",
+        "fix",
+        "loop"
       ],
       "artifact": {
         "kind": "github-source",

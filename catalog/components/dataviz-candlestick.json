@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "business"
+        "dataviz",
+        "candlestick"
       ],
       "artifact": {
         "kind": "github-source",

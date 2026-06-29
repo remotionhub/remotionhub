@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "logo",
+        "shield",
+        "crest"
       ],
       "artifact": {
         "kind": "github-source",

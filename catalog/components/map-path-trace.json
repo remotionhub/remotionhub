@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "path-trace",
+        "map"
       ],
       "artifact": {
         "kind": "github-source",

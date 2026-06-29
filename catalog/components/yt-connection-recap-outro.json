@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "connection",
+        "recap",
+        "outro"
       ],
       "artifact": {
         "kind": "github-source",

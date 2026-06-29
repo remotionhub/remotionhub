@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "film",
+        "burn"
       ],
       "artifact": {
         "kind": "github-source",

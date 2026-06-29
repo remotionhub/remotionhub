@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "creative"
+        "firework",
+        "countdown"
       ],
       "artifact": {
         "kind": "github-source",

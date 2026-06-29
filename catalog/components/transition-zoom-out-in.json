@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "zoom",
+        "out",
+        "in"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "svg",
+        "cards"
       ],
       "artifact": {
         "kind": "github-source",

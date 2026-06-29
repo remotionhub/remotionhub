@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "narrative",
+        "redesign"
       ],
       "artifact": {
         "kind": "github-source",

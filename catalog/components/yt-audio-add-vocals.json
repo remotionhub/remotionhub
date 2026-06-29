@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "audio",
+        "add",
+        "vocals"
       ],
       "artifact": {
         "kind": "github-source",

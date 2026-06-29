@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "page",
+        "scroll",
+        "metrics"
       ],
       "artifact": {
         "kind": "github-source",

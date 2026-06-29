@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "audio",
+        "bar",
+        "spectrum"
       ],
       "artifact": {
         "kind": "github-source",

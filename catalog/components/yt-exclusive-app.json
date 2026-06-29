@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "exclusive",
+        "app"
       ],
       "artifact": {
         "kind": "github-source",

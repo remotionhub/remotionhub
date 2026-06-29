@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "business"
+        "dataviz",
+        "treemap"
       ],
       "artifact": {
         "kind": "github-source",

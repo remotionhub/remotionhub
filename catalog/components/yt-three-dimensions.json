@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "three",
+        "dimensions"
       ],
       "artifact": {
         "kind": "github-source",

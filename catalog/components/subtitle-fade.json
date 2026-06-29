@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "subtitle",
+        "fade"
       ],
       "artifact": {
         "kind": "github-source",

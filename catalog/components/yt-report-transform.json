@@ -33,8 +33,9 @@
         "fps": 30
       },
       "tags": [
-        "business",
-        "social"
+        "animation",
+        "report",
+        "transform"
       ],
       "artifact": {
         "kind": "github-source",

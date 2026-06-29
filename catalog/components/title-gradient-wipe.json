@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "text-effect",
+        "gradient-wipe"
       ],
       "artifact": {
         "kind": "github-source",

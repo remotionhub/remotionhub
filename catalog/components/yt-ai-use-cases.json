@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "ai",
+        "use",
+        "cases"
       ],
       "artifact": {
         "kind": "github-source",

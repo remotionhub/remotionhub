@@ -32,7 +32,10 @@
         "fps": 30
       },
       "tags": [
-        "social"
+        "animation",
+        "four",
+        "ai",
+        "tools"
       ],
       "artifact": {
         "kind": "github-source",

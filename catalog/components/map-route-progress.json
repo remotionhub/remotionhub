@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "route-progress",
+        "map"
       ],
       "artifact": {
         "kind": "github-source",

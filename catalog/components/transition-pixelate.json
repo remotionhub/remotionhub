@@ -32,7 +32,8 @@
         "fps": 30
       },
       "tags": [
-        "retro"
+        "transition",
+        "pixelate"
       ],
       "artifact": {
         "kind": "github-source",

@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "outro",
+        "comment",
+        "cta"
       ],
       "artifact": {
         "kind": "github-source",

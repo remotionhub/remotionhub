@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "text-effect",
+        "wave-text"
       ],
       "artifact": {
         "kind": "github-source",

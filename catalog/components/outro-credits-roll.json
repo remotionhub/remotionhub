@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "outro",
+        "credits",
+        "roll"
       ],
       "artifact": {
         "kind": "github-source",

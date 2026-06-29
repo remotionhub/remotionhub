@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "flip-clock",
+        "countdown"
       ],
       "artifact": {
         "kind": "github-source",

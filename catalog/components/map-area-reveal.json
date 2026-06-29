@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "area-reveal",
+        "map"
       ],
       "artifact": {
         "kind": "github-source",

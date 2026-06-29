@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "transition",
+        "ink",
+        "spread"
       ],
       "artifact": {
         "kind": "github-source",

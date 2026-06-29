@@ -32,7 +32,9 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "logo",
+        "orbit",
+        "reveal"
       ],
       "artifact": {
         "kind": "github-source",

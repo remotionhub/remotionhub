@@ -30,7 +30,8 @@
         "fps": 30
       },
       "tags": [
-        "minimal"
+        "text-effect",
+        "stagger-lines"
       ],
       "artifact": {
         "kind": "github-source",
