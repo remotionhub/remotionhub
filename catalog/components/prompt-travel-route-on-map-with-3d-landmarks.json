@@ -38,7 +38,7 @@
       ],
       "artifact": {
         "kind": "none",
-        "license": "MIT",
+        "license": "Custom (See Source)",
         "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
         "agentPrompt": "use remotion best practices. make a new composition and add a map and zoom out of LA while staying focused on it. once done, animate a line from LA to NY and make the camera follow it.\n\nadd another stop to the trip, this time we go to paris. animate the eiffel tower and show it in 3D!"
       }

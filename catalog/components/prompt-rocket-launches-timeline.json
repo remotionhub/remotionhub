@@ -38,7 +38,7 @@
       ],
       "artifact": {
         "kind": "none",
-        "license": "MIT",
+        "license": "Custom (See Source)",
         "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
         "agentPrompt": "Animate every SpaceX rocket launch from 2015–2025 in chronological order. Show the launch parabolas with trajectory fading. Use an abstract, minimalist aesthetic. Give me three versions first, then I’ll pick one and refine it via feedback."
       }

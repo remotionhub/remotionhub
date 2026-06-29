@@ -38,7 +38,7 @@
       ],
       "artifact": {
         "kind": "none",
-        "license": "MIT",
+        "license": "Custom (See Source)",
         "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
         "agentPrompt": "Create a video project announcing Agent Skills, following Cursor brand rules. 1920×1080, 60fps. Typewriter text effect at about 1 character per frame, then hold for 3 seconds after typing on every title card. Line 1 types first, then line 2.\n\nCard 1: “Agent Skills are now available” on line 1 and “in Cursor” on line 2\nCard 2: “Skills let agents discover and run” and line 2 “specialized prompts and code.”\nThen play the skills.mp4 recording full-screen, framed top-aligned for first 2 seconds, then zoom in (with easing) to the top-left by about 125%. Should be continuous zoom!\nFinal card: “This video was made entirely in Cursor\" on line 1 and \"with Remotion skills.” on line 2, then hold;\nEnd with the existing end.mp4 animation full-screen.\n\nRender and open the file inside Cursor’s browser tool to let me see it here!\n\n# Notes:\n# 1. Uses an existing screen recording @ericzakariasson made.\n# 2. Uses our existing end card animation.\n# 3. Had a Cursor rule with our brand guidelines and colors."
       }

@@ -79,20 +79,28 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
     (tag) => tag !== detail.component.runtime,
   )
 
-  return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-8">
-      <Link to={backTo} className="text-sm text-muted-foreground">
-        {backLabel}
-      </Link>
+      const firstAspect = detail.selectedVersion.metadata.aspectRatios?.[0]
+      const aspectClass =
+        firstAspect === '9:16'
+          ? 'aspect-[9/16] max-w-sm mx-auto'
+          : firstAspect === '1:1'
+            ? 'aspect-square max-w-xl mx-auto'
+            : 'aspect-video'
 
-      <div className="aspect-video overflow-hidden rounded-lg bg-muted">
-        <PreviewMedia
-          video
-          preview={detail.selectedVersion.preview}
-          title={displayName}
-          className="flex size-full items-center justify-center object-cover text-3xl font-semibold text-muted-foreground"
-        />
-      </div>
+      return (
+        <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-8">
+          <Link to={backTo} className="text-sm text-muted-foreground">
+            {backLabel}
+          </Link>
+    
+          <div className={`${aspectClass} overflow-hidden rounded-lg bg-muted`}>
+            <PreviewMedia
+              video
+              preview={detail.selectedVersion.preview}
+              title={displayName}
+              className="flex size-full items-center justify-center object-cover text-3xl font-semibold text-muted-foreground"
+            />
+          </div>
 
       <header className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">
@@ -173,7 +181,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
           {hasSource && (
             <TabsTrigger value="source">{t('detail.githubSource')}</TabsTrigger>
           )}
-          {detail.artifact.usageMarkdown && (
+          {hasSource && detail.artifact.usageMarkdown && (
             <TabsTrigger value="usage">{t('detail.usage')}</TabsTrigger>
           )}
         </TabsList>
@@ -211,7 +219,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
             </Card>
           </TabsContent>
         )}
-        {detail.artifact.usageMarkdown && (
+        {hasSource && detail.artifact.usageMarkdown && (
           <TabsContent value="usage" className="prose max-w-none dark:prose-invert">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {detail.artifact.usageMarkdown}

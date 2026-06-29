@@ -38,7 +38,7 @@
       ],
       "artifact": {
         "kind": "none",
-        "license": "MIT",
+        "license": "Custom (See Source)",
         "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
         "agentPrompt": "here is an empty remotion project with the default react three fiber example.\n\nI want to create a 3D video to visualize top 20 videos games by copies of all time.Create a Remotion video that visualizes the top 20 best-selling video games as a vertical \"tower\", use boxes as towers with height representing the amount of copies.\n\nremove the default example from this project and create a remotion + react three fiber example to do this visualization.\nResolution: 1920x1080\nFPS:60\n\nanimate the camera from the bottom of the last rank to the top of the first rank. stop the camera on the top of each rank for a few miliseconds.\n\nhere is the game ranking data you need\n\n# [data as a JSON string]\n# More instructions: https://x.com/DilumSanjaya/status/2018367621381620142"
       }

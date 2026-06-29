@@ -439,7 +439,7 @@ async function main() {
             tags: ['prompt', 'ai'],
             artifact: {
               kind: 'none',
-              license: 'MIT',
+              license: 'Custom (See Source)',
               usageMarkdown: '这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。',
               agentPrompt: agentPrompt,
             },
