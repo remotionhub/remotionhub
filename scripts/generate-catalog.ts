@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
+import { type TagKey } from '../src/lib/tags'
 
 const targetDir = 'catalog/components'
 
@@ -94,6 +95,18 @@ function getCategory(slug: string): string {
   return 'other'
 }
 
+function mapSlugToTags(slug: string): TagKey[] {
+  const tags: Set<TagKey> = new Set()
+  if (/vhs|retro|arcade|pixel/.test(slug)) tags.add('retro')
+  if (/chart|dataviz|stats|gantt|candlestick|comparison|counter|report|dashboard|finance/.test(slug)) tags.add('business')
+  if (/youtube|yt|social|facebook|tiktok|ig|twitter|reddit|linkedin|social-media/.test(slug)) tags.add('social')
+  if (/avatar|profile|testimonial/.test(slug)) tags.add('personal')
+  if (/glitch|neon|cinematic|blast|firework|3d|hologram|glow|pulse|morph|creative/.test(slug)) tags.add('creative')
+  if (/minimal|fade|slide|wipe|simple|clean/.test(slug)) tags.add('minimal')
+  if (tags.size === 0) tags.add('minimal')
+  return Array.from(tags)
+}
+
 async function readMarkdownTitle(slug: string): Promise<string> {
   const mdPath = path.join(sourceMdDir, `${slug}.md`)
   const content = await fs.readFile(mdPath, 'utf8')
@@ -146,7 +159,7 @@ async function generate(slug: string, commit: string) {
     summaryZh:
           manifest.summaryZh?.trim() || `适用于 Remotion 的「${titleZh}」组件。`,
     categories: [category],
-    tags: ['remotion', category, ...slug.split('-').slice(1)],
+    tags: mapSlugToTags(slug),
     status: 'published',
     versions: [
       {
@@ -164,7 +177,7 @@ async function generate(slug: string, commit: string) {
           durationFrames: manifest.durationFrames,
           fps: manifest.fps,
         },
-        tags: [category, ...slug.split('-').slice(1)],
+        tags: mapSlugToTags(slug),
         artifact: {
           kind: 'github-source',
           githubSource: {
