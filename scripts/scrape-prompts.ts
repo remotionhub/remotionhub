@@ -97,17 +97,20 @@ async function downloadAndTranscodeHLS(m3u8Url: string, destMp4Path: string, slu
         const match = /BANDWIDTH=(\d+)/.exec(line);
         const bandwidth = match ? parseInt(match[1], 10) : 0;
         const nextLine = lines[i + 1]?.trim();
-        if (nextLine && nextLine.startsWith('http') && bandwidth > maxBandwidth) {
+        if (nextLine && !nextLine.startsWith('#') && bandwidth > maxBandwidth) {
           maxBandwidth = bandwidth;
-          renditionUrl = nextLine;
+          renditionUrl = new URL(nextLine, m3u8Url).toString();
         }
       }
     }
 
     // Fallback if no explicit bandwidth stream is found
     if (!renditionUrl) {
-      const firstHttp = lines.find(l => l.trim().startsWith('http'));
-      if (firstHttp) renditionUrl = firstHttp.trim();
+      const firstUri = lines.find(l => {
+        const trimmed = l.trim();
+        return trimmed && !trimmed.startsWith('#');
+      });
+      if (firstUri) renditionUrl = new URL(firstUri.trim(), m3u8Url).toString();
     }
 
     if (!renditionUrl) {
