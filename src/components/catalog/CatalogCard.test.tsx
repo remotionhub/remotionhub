@@ -30,7 +30,7 @@ const item = {
   slug: 'card-avatar',
   displayName: 'Card Avatar',
   summary: 'Animated avatar lower-third card for Remotion videos.',
-  tags: ['remotion', 'avatar', 'profile', 'motion'],
+  tags: ['personal', 'minimal'],
   categories: ['card'],
   latestVersionSummary: {
     version: '1.0.0',
@@ -90,8 +90,8 @@ describe('CatalogCard', () => {
     expect(screen.getByRole('img', { name: /Card Avatar/ })).toBeTruthy()
     expect(screen.queryByText('Animated avatar lower-third card for Remotion videos.')).toBeNull()
     expect(screen.getByText('remotion')).toBeTruthy()
-    expect(screen.getByText('avatar')).toBeTruthy()
-    expect(screen.queryByText('motion')).toBeNull()
+    expect(screen.getByText('个人')).toBeTruthy()
+    expect(screen.getByText('极简')).toBeTruthy()
   })
 
   it('renders localized display names for Chinese locale', () => {

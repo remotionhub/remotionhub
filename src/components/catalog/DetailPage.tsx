@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import { Textarea } from '#/components/ui/textarea'
 import { useI18n } from '#/components/I18nProvider'
 import { runtimeLabelKey } from '#/lib/catalog'
+import { getLocalizedTag } from '#/lib/tags'
 import CopyButton from './CopyButton'
 import PreviewMedia from './PreviewMedia'
 
@@ -106,7 +107,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
           <Badge>{t(runtimeLabelKey(detail.component.runtime))}</Badge>
           {visibleTags.map((tag) => (
             <Badge key={tag} variant="secondary">
-              {tag}
+              {getLocalizedTag(tag, locale as 'zh' | 'en')}
             </Badge>
           ))}
         </div>
