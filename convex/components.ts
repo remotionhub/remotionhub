@@ -244,6 +244,7 @@ export const importCatalogComponent = mutation({
             existingArtifact.githubSource.ref === versionInput.artifact.githubSource.ref &&
             existingArtifact.githubSource.commit === versionInput.artifact.githubSource.commit &&
             existingArtifact.githubSource.path === versionInput.artifact.githubSource.path &&
+            existingArtifact.githubSource.pinned === versionInput.artifact.githubSource.pinned &&
             existingArtifact.license === versionInput.artifact.license &&
             existingArtifact.usageMarkdown === versionInput.artifact.usageMarkdown &&
             existingArtifact.agentPrompt === versionInput.artifact.agentPrompt
