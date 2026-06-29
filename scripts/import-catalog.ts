@@ -79,7 +79,7 @@ function toImportPayload(
   return {
     importSecret,
     publisher: component.publisher,
-    publisherDisplayName: component.publisher,
+    publisherDisplayName: component.publisher === 'remotionlab' ? 'RemotionLab' : `@${component.publisher}`,
     runtime: component.runtime,
     slug: component.slug,
     displayName: component.displayName,

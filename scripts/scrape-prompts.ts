@@ -285,12 +285,14 @@ async function main() {
   for (const slug of targetSlugs) {
     let fullSlug = `prompt-${slug}`;
     if (fullSlug.length > 80) {
-      const allowedLength = 80 - 'prompt-'.length;
-      let truncated = slug.substring(0, allowedLength);
+      const allowedLength = 80 - 'prompt-'.length; // 73
+      // To prevent collision when truncating, append a 5-character hash of the original slug
+      const hash = crypto.createHash('md5').update(slug).digest('hex').substring(0, 5);
+      let truncated = slug.substring(0, allowedLength - 6); // 67
       if (truncated.endsWith('-')) {
         truncated = truncated.substring(0, truncated.length - 1);
       }
-      fullSlug = `prompt-${truncated}`;
+      fullSlug = `prompt-${truncated}-${hash}`;
     }
     const jsonPath = path.resolve(`catalog/components/${fullSlug}.json`);
 
@@ -319,6 +321,30 @@ async function main() {
       if (!displayName) {
         console.error(`Could not find title for ${slug}`);
         continue;
+      }
+
+      // Parse original author
+      let authorName = 'remotionlab';
+      let authorHandle = 'remotionlab';
+      const promptedByText = $('div:contains("Prompted by")').first();
+      if (promptedByText.length > 0) {
+        const link = promptedByText.find('a').first();
+        if (link.length > 0) {
+          const rawText = link.text().trim();
+          authorName = rawText;
+          authorHandle = rawText.startsWith('@') ? rawText.substring(1) : rawText;
+          authorHandle = authorHandle
+            .toLowerCase()
+            .replace(/[^a-z0-9-]/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+            .substring(0, 40);
+          
+          if (!authorHandle) {
+            authorHandle = 'remotionlab';
+            authorName = 'remotionlab';
+          }
+        }
       }
 
       const m3u8Url = $('video source[type="application/x-mpegurl"]').attr('src') || $('video source').attr('src');
@@ -411,7 +437,7 @@ async function main() {
 
       // 5. Generate catalog JSON file
       const catalogJson = {
-        publisher: 'remotionlab',
+        publisher: authorHandle,
         runtime: 'remotion',
         slug: fullSlug,
         displayName: displayName,

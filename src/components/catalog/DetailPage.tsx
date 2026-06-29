@@ -163,15 +163,35 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
             {detail.artifact.license}
           </CardContent>
         </Card>
-        {hasSource && detail.artifact.githubSource && (
+        {hasSource && detail.artifact.githubSource ? (
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">{t('detail.source')}</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
+            <CardContent className="text-sm text-muted-foreground truncate">
               {detail.artifact.githubSource.repo}
             </CardContent>
           </Card>
+        ) : (
+          detail.selectedVersion.preview.demoUrl && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">{t('detail.source')}</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground truncate">
+                <a
+                  href={detail.selectedVersion.preview.demoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:underline text-primary"
+                >
+                  {new URL(detail.selectedVersion.preview.demoUrl).hostname === 'www.remotion.dev'
+                    ? 'Remotion Prompts'
+                    : 'Original Source'}
+                </a>
+              </CardContent>
+            </Card>
+          )
         )}
       </section>
 
