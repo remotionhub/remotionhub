@@ -1,0 +1,47 @@
+{
+  "publisher": "gaucho-booleano",
+  "runtime": "remotion",
+  "slug": "prompt-apple-style-device-rise-animation",
+  "displayName": "Apple-Style Device Rise Animation",
+  "displayNameZh": "Apple-Style Device Rise Animation",
+  "summary": "AI Video Prompt: Apple-Style Device Rise Animation",
+  "summaryZh": "AI 视频提示词：Apple-Style Device Rise Animation",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-apple-style-device-rise-animation/eb183149dc90-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-apple-style-device-rise-animation/44c6584bf37c-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/apple-style-device-rise-animation"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 121,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a 1280x720 (720p) video with a LARGE iPhone mockup that rises dramatically from the bottom of the screen \n  with an Apple keynote-style animation. The device should be massive and cinematic - taking up approximately 60-70%\n   of the frame height.\n\n  Video setup:\n  - Width: 1280px\n  - Height: 720px\n  - FPS: 30\n  - Duration: 4 seconds\n\n  The animation should:\n  1. Start positioned below the visible area (translateY: 400px down)\n  2. Rise upward with a smooth deceleration (ease-out cubic)\n  3. Include a perspective tilt that starts at ~35 degrees and settles to ~8 degrees\n  4. Scale from 0.8 to 1.0 during the animation\n  5. Total animation duration: 1.5 seconds\n\n  Device specifications:\n  - Width: 320px, Height: 650px (proportioned for 720p)\n  - Realistic iPhone frame with dark bezel (#1a1a1a)\n  - Border radius: 45px for the outer frame, 35px for the inner screen\n  - Dynamic Island: 90px wide, 28px tall, centered at top\n  - Status bar with \"9:41\" time and battery icon\n  - Gradient wallpaper (light green tones: #e8f5e9 to #a5d6a7)\n  - Large dramatic shadow: \"0 60px 120px rgba(0,0,0,0.4)\"\n  - Subtle inner glow: \"0 0 0 1px rgba(255,255,255,0.1) inset\"\n\n  IMPORTANT - Centering the device:\n  - Position: absolute\n  - bottom: -250px\n  - left: \"50%\"\n  - transformOrigin: \"center bottom\"\n  - Transform must include translateX(-50%) FIRST to center horizontally, then the other transforms\n\n  Transform order: translateX(-50%) → translateY() → rotateX() → scale()\n\n  After the device settles, animate iOS-style notification cards sliding down from above with staggered timing (0.3s\n   apart), each with blur backdrop and rounded corners.\n\n  Use Remotion's interpolate() with Easing.out(Easing.cubic) for all animations. Background should be a clean light\n  gray (#f5f5f7)."
+      }
+    }
+  ]
+}

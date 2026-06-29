@@ -1,0 +1,47 @@
+{
+  "publisher": "shpigford",
+  "runtime": "remotion",
+  "slug": "prompt-product-demo-for-presscut",
+  "displayName": "Product Demo for Presscut",
+  "displayNameZh": "Product Demo for Presscut",
+  "summary": "AI Video Prompt: Product Demo for Presscut",
+  "summaryZh": "AI 视频提示词：Product Demo for Presscut",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-product-demo-for-presscut/5c0515c7996b-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-product-demo-for-presscut/50635c94ab3f-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/product-demo-for-presscut"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 2523,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "Create a demo video of the Presscut app/product using remotion. Use react componenents to replicate VI elements and replicate the UI of the app as closely as possible. The app has a LOT of features/ functionality, so take guidance from the marketing home page/index for what to highlight, while keeping language simple and to-thepoint. Really grill me with questions to nail down exactly how the final video should look/feel and what content should be there. The ultimate goal of this is to replicate what me, the founder, would be showing/doing with a product demo with a customer."
+      }
+    }
+  ]
+}

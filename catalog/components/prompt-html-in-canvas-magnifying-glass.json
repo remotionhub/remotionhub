@@ -1,0 +1,47 @@
+{
+  "publisher": "jnybgr",
+  "runtime": "remotion",
+  "slug": "prompt-html-in-canvas-magnifying-glass",
+  "displayName": "HTML-in-canvas magnifying glass",
+  "displayNameZh": "HTML-in-canvas magnifying glass",
+  "summary": "AI Video Prompt: HTML-in-canvas magnifying glass",
+  "summaryZh": "AI 视频提示词：HTML-in-canvas magnifying glass",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-html-in-canvas-magnifying-glass/5adfbdcd6fc8-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-html-in-canvas-magnifying-glass/6414bf53ecd8-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/html-in-canvas-magnifying-glass"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 121,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "use remotion best practices, especially html in canvas. make a new composition and write a simple one line text. then implement a round magnifying glass that animates from left to right. there should be slight glass refraction"
+      }
+    }
+  ]
+}

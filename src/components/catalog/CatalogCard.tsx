@@ -34,6 +34,14 @@ export default function CatalogCard({ item }: { item: CatalogCardItem }) {
       ? '/remotion/$owner/$slug'
       : '/hyperframes/$owner/$slug'
 
+  const firstAspect = item.latestVersionSummary.metadata.aspectRatios?.[0]
+  const aspectClass =
+    firstAspect === '9:16'
+      ? 'aspect-[9/16]'
+      : firstAspect === '1:1'
+        ? 'aspect-square'
+        : 'aspect-video'
+
   return (
     <Link
       to={to}
@@ -41,7 +49,7 @@ export default function CatalogCard({ item }: { item: CatalogCardItem }) {
       className="group block no-underline"
     >
       <Card className="h-full overflow-hidden rounded-lg border-[var(--line)] bg-[var(--card)] transition group-hover:-translate-y-0.5 group-hover:shadow-md">
-        <div className="aspect-video overflow-hidden bg-muted">
+        <div className={`${aspectClass} overflow-hidden bg-muted`}>
           <PreviewMedia
             preview={item.latestVersionSummary.preview}
             title={displayName}

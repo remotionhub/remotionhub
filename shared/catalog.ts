@@ -46,41 +46,70 @@ export const previewSchema = z.object({
 
 export const metadataSchema = z.object({
   runtime: runtimeSchema,
-  entryPoint: z.string().min(1),
+  entryPoint: z.string().min(1).optional(),
   aspectRatios: z.array(z.string().min(1)).min(1),
   durationFrames: z.number().int().positive().optional(),
   fps: z.number().int().positive().optional(),
 })
 
-export const artifactSchema = z.object({
-  kind: z.literal('github-source'),
-  githubSource: z.object({
-    repo: z
-      .string()
-      .regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/)
-      .refine((value) => value === 'remotionhub/remotionhub-assets', {
-        message:
-          'RemotionHub catalog source must use remotionhub/remotionhub-assets.',
-      }),
-    ref: z.string().min(1),
-    commit: z.string().min(6),
-    path: z.string().min(1),
-  }),
-  license: z.string().min(1),
-  usageMarkdown: z.string().min(1),
-  agentPrompt: z.string().min(1),
-})
+export const artifactSchema = z
+  .object({
+    kind: z.union([z.literal('github-source'), z.literal('none')]),
+    githubSource: z
+      .object({
+        repo: z
+          .string()
+          .regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/)
+          .refine((value) => value === 'remotionhub/remotionhub-assets', {
+            message:
+              'RemotionHub catalog source must use remotionhub/remotionhub-assets.',
+          }),
+        ref: z.string().min(1),
+        commit: z.string().min(6),
+        path: z.string().min(1),
+        pinned: z.boolean().optional(),
+      })
+      .optional(),
+    license: z.string().min(1),
+    usageMarkdown: z.string().min(1),
+    agentPrompt: z.string().min(1),
+  })
+  .refine(
+    (data) => {
+      if (data.kind === 'github-source') {
+        return data.githubSource !== undefined
+      }
+      return true
+    },
+    {
+      message: 'githubSource is required when kind is github-source',
+      path: ['githubSource'],
+    },
+  )
 
-export const catalogVersionSchema = z.object({
-  version: z.string().refine((value) => semver.valid(value) !== null, {
-    message: 'Version must be valid semver.',
-  }),
-  changelog: z.string().min(1),
-  preview: previewSchema,
-  metadata: metadataSchema,
-  tags: z.array(tagSchema).default([]),
-  artifact: artifactSchema,
-})
+export const catalogVersionSchema = z
+  .object({
+    version: z.string().refine((value) => semver.valid(value) !== null, {
+      message: 'Version must be valid semver.',
+    }),
+    changelog: z.string().min(1),
+    preview: previewSchema,
+    metadata: metadataSchema,
+    tags: z.array(tagSchema).default([]),
+    artifact: artifactSchema,
+  })
+  .refine(
+    (data) => {
+      if (data.artifact.kind === 'github-source') {
+        return data.metadata.entryPoint !== undefined
+      }
+      return true
+    },
+    {
+      message: 'entryPoint is required when artifact.kind is github-source',
+      path: ['metadata', 'entryPoint'],
+    },
+  )
 export type CatalogVersion = z.infer<typeof catalogVersionSchema>
 
 export const catalogComponentSchema = z

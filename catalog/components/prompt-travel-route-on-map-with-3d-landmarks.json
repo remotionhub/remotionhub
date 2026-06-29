@@ -1,0 +1,47 @@
+{
+  "publisher": "jnybgr",
+  "runtime": "remotion",
+  "slug": "prompt-travel-route-on-map-with-3d-landmarks",
+  "displayName": "Travel Route on Map with 3D landmarks",
+  "displayNameZh": "Travel Route on Map with 3D landmarks",
+  "summary": "AI Video Prompt: Travel Route on Map with 3D landmarks",
+  "summaryZh": "AI 视频提示词：Travel Route on Map with 3D landmarks",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-travel-route-on-map-with-3d-landmarks/ca852600b7fd-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-travel-route-on-map-with-3d-landmarks/3e0802ab5cb3-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/travel-route-on-map-with-3d-landmarks"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 298,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "use remotion best practices. make a new composition and add a map and zoom out of LA while staying focused on it. once done, animate a line from LA to NY and make the camera follow it.\n\nadd another stop to the trip, this time we go to paris. animate the eiffel tower and show it in 3D!"
+      }
+    }
+  ]
+}

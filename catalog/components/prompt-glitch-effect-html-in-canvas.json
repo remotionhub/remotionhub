@@ -1,0 +1,47 @@
+{
+  "publisher": "remotion",
+  "runtime": "remotion",
+  "slug": "prompt-glitch-effect-html-in-canvas",
+  "displayName": "Glitch effect (HTML-in-canvas)",
+  "displayNameZh": "Glitch effect (HTML-in-canvas)",
+  "summary": "AI Video Prompt: Glitch effect (HTML-in-canvas)",
+  "summaryZh": "AI 视频提示词：Glitch effect (HTML-in-canvas)",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-glitch-effect-html-in-canvas/6a33f08da0c6-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-glitch-effect-html-in-canvas/f6af878ec234-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/glitch-effect-html-in-canvas"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "16:9"
+        ],
+        "durationFrames": 181,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "use remotion html-in-canvas best practices.                                                                                                                                               \ncreate a sample composition and apply a glitch effect to it!"
+      }
+    }
+  ]
+}

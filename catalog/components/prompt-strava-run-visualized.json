@@ -1,0 +1,47 @@
+{
+  "publisher": "jnybgr",
+  "runtime": "remotion",
+  "slug": "prompt-strava-run-visualized",
+  "displayName": "Strava Run visualized",
+  "displayNameZh": "Strava Run visualized",
+  "summary": "AI Video Prompt: Strava Run visualized",
+  "summaryZh": "AI 视频提示词：Strava Run visualized",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-strava-run-visualized/d20cb52ffdd0-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-strava-run-visualized/8ee5a085dd1c-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/strava-run-visualized"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "9:16"
+        ],
+        "durationFrames": 481,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "[download GPX from strava website]\n\nuse remotion best practices. turn my run today into an animated instagram story: ~/Downloads/Afternoon_Run.gpx\n\nshow a map, the route and live metrics for my run. use font sizes that will be legible when user watches as a story"
+      }
+    }
+  ]
+}

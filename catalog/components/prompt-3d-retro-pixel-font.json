@@ -1,0 +1,47 @@
+{
+  "publisher": "gogheng",
+  "runtime": "remotion",
+  "slug": "prompt-3d-retro-pixel-font",
+  "displayName": "3D Retro Pixel Font",
+  "displayNameZh": "3D Retro Pixel Font",
+  "summary": "AI Video Prompt: 3D Retro Pixel Font",
+  "summaryZh": "AI 视频提示词：3D Retro Pixel Font",
+  "categories": [
+    "prompt"
+  ],
+  "tags": [
+    "remotion",
+    "prompt",
+    "ai"
+  ],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "changelog": "Initial migrated release.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-3d-retro-pixel-font/8f3ebc35a02c-thumb.png",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/prompt-3d-retro-pixel-font/70dd3a826593-preview.mp4",
+        "demoUrl": "https://www.remotion.dev/prompts/3d-retro-pixel-font"
+      },
+      "metadata": {
+        "runtime": "remotion",
+        "aspectRatios": [
+          "1:1"
+        ],
+        "durationFrames": 301,
+        "fps": 30
+      },
+      "tags": [
+        "prompt",
+        "ai"
+      ],
+      "artifact": {
+        "kind": "none",
+        "license": "Custom (See Source)",
+        "usageMarkdown": "这是一个 AI 视频 Prompt 资产。你可以直接复制 **Agent 提示词** 选项卡中的内容，在本地使用支持 Remotion 技能的 AI 编码助手（如 Claude Code、Cursor 或 Codex）来一键生成视频源码。",
+        "agentPrompt": "use remotion skills Create a 1080×1080 brand animation video, 8 seconds, black background.                                                              \n                                                                                                                                    \n  Core effect: Pixel block text-building animation. 4 colored cursors (purple, blue, pink, indigo) fly in from off-screen, scatter to \n  four corners, line up on the left side, then each cursor \"builds\" its assigned section of pixel text — blocks light up one by one as\n   the cursor passes over them, like multiple people collaboratively editing code in real-time.                                       \n                                                                                                                                    \n  Text: Line 1 \"SHILIU\", Line 2 \"VIBEKNOW\" \n\n  Block style: 20px squares with 3D layered depth effect — dark purple base with concentric inset borders creating an\n  embossed/recessed look.\n\n  Timeline:\n  - 0–0.4s: First cursor enters from top-left\n  - 0.4–0.9s: 4 cursors scatter to different positions\n  - 0.9–1.6s: Cursors line up on the left side\n  - 1.6–5.0s: Cursors split up and build the pixel text simultaneously\n  - 5.0–5.8s: Subtitle \"coming soon\" types in at the bottom\n  - 5.5–8.0s: Cursors float away to the top, gently bobbing\n\n  Color variant: Red edition (replace purple block palette with red tones)"
+      }
+    }
+  ]
+}

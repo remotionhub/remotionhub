@@ -79,7 +79,7 @@ function toImportPayload(
   return {
     importSecret,
     publisher: component.publisher,
-    publisherDisplayName: component.publisher,
+    publisherDisplayName: component.publisher === 'remotionlab' ? 'RemotionLab' : `@${component.publisher}`,
     runtime: component.runtime,
     slug: component.slug,
     displayName: component.displayName,
@@ -95,10 +95,12 @@ function toImportPayload(
       fingerprint: buildVersionFingerprint(version),
       artifact: {
         ...version.artifact,
-        githubSource: {
-          ...version.artifact.githubSource,
-          pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
-        },
+        githubSource: version.artifact.githubSource
+          ? {
+              ...version.artifact.githubSource,
+              pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
+            }
+          : undefined,
       },
     })),
   }

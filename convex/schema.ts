@@ -17,7 +17,7 @@ const preview = v.object({
 
 const metadata = v.object({
   runtime,
-  entryPoint: v.string(),
+  entryPoint: v.optional(v.string()),
   aspectRatios: v.array(v.string()),
   durationFrames: v.optional(v.number()),
   fps: v.optional(v.number()),
@@ -97,8 +97,8 @@ export default defineSchema({
 
   artifacts: defineTable({
     componentVersionId: v.id('componentVersions'),
-    kind: v.literal('github-source'),
-    githubSource,
+    kind: v.union(v.literal('github-source'), v.literal('none')),
+    githubSource: v.optional(githubSource),
     license: v.string(),
     usageMarkdown: v.string(),
     agentPrompt: v.string(),

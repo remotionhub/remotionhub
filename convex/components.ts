@@ -28,21 +28,23 @@ const preview = v.object({
 
 const metadata = v.object({
   runtime,
-  entryPoint: v.string(),
+  entryPoint: v.optional(v.string()),
   aspectRatios: v.array(v.string()),
   durationFrames: v.optional(v.number()),
   fps: v.optional(v.number()),
 })
 
 const artifact = v.object({
-  kind: v.literal('github-source'),
-  githubSource: v.object({
-    repo: v.string(),
-    ref: v.string(),
-    commit: v.string(),
-    path: v.string(),
-    pinned: v.boolean(),
-  }),
+  kind: v.union(v.literal('github-source'), v.literal('none')),
+  githubSource: v.optional(
+    v.object({
+      repo: v.string(),
+      ref: v.string(),
+      commit: v.string(),
+      path: v.string(),
+      pinned: v.boolean(),
+    }),
+  ),
   license: v.string(),
   usageMarkdown: v.string(),
   agentPrompt: v.string(),
@@ -210,6 +212,13 @@ export const importCatalogComponent = mutation({
     let skippedVersions = 0
 
     for (const versionInput of args.versions) {
+      if (versionInput.artifact.kind === 'github-source' && !versionInput.artifact.githubSource) {
+        throw new ConvexError('githubSource is required when kind is github-source')
+      }
+      if (versionInput.artifact.kind === 'github-source' && !versionInput.metadata.entryPoint) {
+        throw new ConvexError('entryPoint is required when kind is github-source')
+      }
+
       if (!semver.valid(versionInput.version)) {
         throw new ConvexError(`Invalid semver version ${versionInput.version}.`)
       }
