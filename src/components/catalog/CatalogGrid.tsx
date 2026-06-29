@@ -5,11 +5,12 @@ import { useI18n } from '#/components/I18nProvider'
 import { Alert, AlertDescription, AlertTitle } from '#/components/ui/alert'
 import { Skeleton } from '#/components/ui/skeleton'
 import type { Runtime } from '#/lib/catalog'
+import { getLocalizedTag } from '#/lib/tags'
 import CatalogCard from './CatalogCard'
 import CatalogFilters from './CatalogFilters'
 
 export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [category, setCategory] = useState<string | undefined>()
   const sentinelRef = useRef<HTMLDivElement | null>(null)
   const args = useMemo(
@@ -62,12 +63,11 @@ export default function CatalogGrid({ runtime }: { runtime?: Runtime }) {
     return Object.entries(facets.tags)
       .map(([value, count]) => ({
         value,
-        label: value,
+        label: getLocalizedTag(value, locale as 'zh' | 'en'),
         count,
       }))
-      .sort((a, b) => a.value.localeCompare(b.value))
-      .slice(0, 18)
-  }, [facets])
+      .sort((a, b) => a.label.localeCompare(b.label, locale))
+  }, [facets, locale])
 
   useEffect(() => {
     const sentinel = sentinelRef.current

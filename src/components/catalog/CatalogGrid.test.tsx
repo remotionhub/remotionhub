@@ -102,7 +102,7 @@ describe('CatalogGrid', () => {
           slug: 'card-avatar',
           displayName: 'Card Avatar',
           summary: 'Reusable avatar animations.',
-          tags: ['avatar'],
+          tags: ['personal'],
           categories: ['card'],
           latestVersionSummary: {
             version: '1.0.0',
@@ -136,7 +136,7 @@ describe('CatalogGrid', () => {
 
     expect(await screen.findByRole('button', { name: 'Card (1)' })).toBeTruthy()
     expect(screen.getByText('Tags')).toBeTruthy()
-    expect(screen.getByText('avatar')).toBeTruthy()
+    expect(screen.getByText('Personal')).toBeTruthy()
 
     queryState = {
       results: [],
@@ -154,7 +154,7 @@ describe('CatalogGrid', () => {
       expect(screen.queryByRole('button', { name: 'Card (1)' })).toBeNull()
     })
     expect(screen.queryByText('Tags')).toBeNull()
-    expect(screen.queryByText('avatar')).toBeNull()
+    expect(screen.queryByText('Personal')).toBeNull()
     expect(screen.getByText('No components found')).toBeTruthy()
   })
 })
