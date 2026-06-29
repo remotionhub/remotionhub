@@ -84,4 +84,7 @@ async function migrate() {
   console.log(`Successfully migrated ${migratedCount} catalog components.`)
 }
 
-migrate().catch(console.error)
+migrate().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})
