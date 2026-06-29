@@ -1,6 +1,12 @@
 import crypto from 'node:crypto'
 import semver from 'semver'
 import { z } from 'zod'
+import { isValidTag } from '../src/lib/tags'
+
+export const tagSchema = z.string().min(1).refine(isValidTag, {
+  message: 'Tag must be a valid core tag from the taxonomy.',
+})
+
 
 export const runtimeSchema = z.union([
   z.literal('remotion'),
@@ -89,7 +95,7 @@ export const catalogVersionSchema = z
     changelog: z.string().min(1),
     preview: previewSchema,
     metadata: metadataSchema,
-    tags: z.array(z.string().min(1)).default([]),
+    tags: z.array(tagSchema).default([]),
     artifact: artifactSchema,
   })
   .refine(
@@ -116,7 +122,7 @@ export const catalogComponentSchema = z
     summary: z.string().min(1),
     summaryZh: z.string().min(1).optional(),
     categories: z.array(z.string().min(1)).min(1),
-    tags: z.array(z.string().min(1)).default([]),
+    tags: z.array(tagSchema).default([]),
     status: componentStatusSchema.default('published'),
     versions: z.array(catalogVersionSchema).min(1),
   })

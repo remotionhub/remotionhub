@@ -10,10 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "morph",
-    "circle"
+    "creative"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "morph",
-        "circle"
+        "creative"
       ],
       "artifact": {
         "kind": "github-source",

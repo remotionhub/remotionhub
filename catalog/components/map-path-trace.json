@@ -8,9 +8,7 @@
     "map"
   ],
   "tags": [
-    "remotion",
-    "map",
-    "path-trace"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "path-trace",
-        "map"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

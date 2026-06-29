@@ -10,10 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "idea",
-    "check"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "idea",
-        "check"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,10 +10,7 @@
     "outro"
   ],
   "tags": [
-    "remotion",
-    "outro",
-    "end",
-    "screen"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "outro",
-        "end",
-        "screen"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

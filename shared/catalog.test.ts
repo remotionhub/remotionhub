@@ -45,7 +45,7 @@ describe('catalog validation', () => {
       displayName: 'Card Avatar',
       summary: 'Animated avatar lower-third card for Remotion videos.',
       categories: ['card'],
-      tags: ['remotion', 'avatar', 'profile'],
+      tags: ['personal', 'minimal'],
       status: 'published',
       versions: [baseVersion],
     })
@@ -61,7 +61,7 @@ describe('catalog validation', () => {
       displayName: 'Card Avatar',
       summary: 'Animated avatar lower-third card for Remotion videos.',
       categories: ['card', 'lower-third'],
-      tags: ['remotion', 'avatar', 'profile'],
+      tags: ['personal', 'minimal'],
       status: 'published',
       versions: [
         {
@@ -90,7 +90,7 @@ describe('catalog validation', () => {
         displayName: 'Card Avatar',
         summary: 'Animated avatar lower-third card for Remotion videos.',
         categories: ['card', 'lower-third'],
-        tags: ['remotion', 'avatar', 'profile'],
+        tags: ['personal', 'minimal'],
         status: 'published',
         versions: [
           {
@@ -180,7 +180,7 @@ describe('catalog validation', () => {
         displayName: 'Bad Preview',
         summary: 'Invalid preview URL.',
         categories: ['title'],
-        tags: ['remotion'],
+        tags: ['minimal'],
         status: 'published',
         versions: [
           {

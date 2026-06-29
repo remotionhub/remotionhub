@@ -10,10 +10,7 @@
     "social"
   ],
   "tags": [
-    "remotion",
-    "social",
-    "ig",
-    "post"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "social",
-        "ig",
-        "post"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

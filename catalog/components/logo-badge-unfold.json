@@ -10,10 +10,7 @@
     "logo"
   ],
   "tags": [
-    "remotion",
-    "logo",
-    "badge",
-    "unfold"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "logo",
-        "badge",
-        "unfold"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

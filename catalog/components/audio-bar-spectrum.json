@@ -10,10 +10,7 @@
     "audio"
   ],
   "tags": [
-    "remotion",
-    "audio",
-    "bar",
-    "spectrum"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "audio",
-        "bar",
-        "spectrum"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

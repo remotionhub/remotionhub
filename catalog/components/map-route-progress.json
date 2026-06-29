@@ -8,9 +8,7 @@
     "map"
   ],
   "tags": [
-    "remotion",
-    "map",
-    "route-progress"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "route-progress",
-        "map"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

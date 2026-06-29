@@ -3,6 +3,7 @@ import { Badge } from '#/components/ui/badge'
 import { Card, CardContent, CardTitle } from '#/components/ui/card'
 import type { Runtime } from '#/lib/catalog'
 import { useI18n } from '#/components/I18nProvider'
+import { getLocalizedTag } from '#/lib/tags'
 import PreviewMedia from './PreviewMedia'
 
 export type CatalogCardItem = {
@@ -60,7 +61,7 @@ export default function CatalogCard({ item }: { item: CatalogCardItem }) {
           <div className="flex flex-wrap gap-2">
             {visibleBadges.map((badge) => (
               <Badge key={badge} variant="secondary">
-                {badge}
+                {getLocalizedTag(badge, locale as 'zh' | 'en')}
               </Badge>
             ))}
           </div>

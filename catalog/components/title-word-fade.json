@@ -8,9 +8,7 @@
     "text-effect"
   ],
   "tags": [
-    "remotion",
-    "text-effect",
-    "word-fade"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "text-effect",
-        "word-fade"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

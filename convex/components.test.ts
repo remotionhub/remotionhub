@@ -138,10 +138,34 @@ describe('components catalog mutations and queries', () => {
       t.mutation(api.components.importCatalogComponent, {
         ...component,
         versions: [
-          { ...component.versions[0], fingerprint: 'changed-fingerprint' },
+          {
+            ...component.versions[0],
+            changelog: 'changed-changelog',
+            fingerprint: 'changed-fingerprint',
+          },
         ],
       }),
     ).rejects.toThrow(/Immutable version conflict/)
+  })
+
+  it('allows tag-only updates for immutable versions', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, component)
+
+    const result = await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [
+        {
+          ...component.versions[0],
+          tags: ['new-tag'],
+          fingerprint: 'new-fingerprint',
+        },
+      ],
+    })
+
+    expect(result.createdVersions).toBe(0)
+    expect(result.skippedVersions).toBe(1)
   })
 
   it('keeps prerelease from replacing stable latest', async () => {

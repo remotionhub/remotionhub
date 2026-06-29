@@ -10,10 +10,7 @@
     "social"
   ],
   "tags": [
-    "remotion",
-    "social",
-    "reddit",
-    "feed"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "social",
-        "reddit",
-        "feed"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

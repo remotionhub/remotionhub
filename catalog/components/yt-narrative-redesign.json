@@ -10,10 +10,7 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "narrative",
-    "redesign"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "narrative",
-        "redesign"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

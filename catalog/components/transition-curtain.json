@@ -10,9 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "curtain"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "curtain"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

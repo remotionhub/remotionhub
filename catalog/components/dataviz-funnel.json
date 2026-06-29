@@ -10,9 +10,7 @@
     "dataviz"
   ],
   "tags": [
-    "remotion",
-    "dataviz",
-    "funnel"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "funnel"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

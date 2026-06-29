@@ -10,10 +10,7 @@
     "outro"
   ],
   "tags": [
-    "remotion",
-    "outro",
-    "credits",
-    "roll"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "outro",
-        "credits",
-        "roll"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

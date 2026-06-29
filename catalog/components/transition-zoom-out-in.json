@@ -10,11 +10,7 @@
     "transition"
   ],
   "tags": [
-    "remotion",
-    "transition",
-    "zoom",
-    "out",
-    "in"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -36,10 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "transition",
-        "zoom",
-        "out",
-        "in"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

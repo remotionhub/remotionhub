@@ -10,10 +10,7 @@
     "dataviz"
   ],
   "tags": [
-    "remotion",
-    "dataviz",
-    "counter",
-    "card"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "counter",
-        "card"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

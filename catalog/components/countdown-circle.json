@@ -8,9 +8,7 @@
     "countdown"
   ],
   "tags": [
-    "remotion",
-    "countdown",
-    "circle"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "circle",
-        "countdown"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

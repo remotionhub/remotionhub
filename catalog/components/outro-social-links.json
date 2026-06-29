@@ -10,10 +10,7 @@
     "outro"
   ],
   "tags": [
-    "remotion",
-    "outro",
-    "social",
-    "links"
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "outro",
-        "social",
-        "links"
+        "social"
       ],
       "artifact": {
         "kind": "github-source",

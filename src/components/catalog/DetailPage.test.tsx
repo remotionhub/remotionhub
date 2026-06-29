@@ -35,7 +35,7 @@ const detail = {
     slug: 'card-avatar',
     displayName: 'Card Avatar',
     summary: 'Animated avatar lower-third card for Remotion videos.',
-    tags: ['remotion', 'avatar', 'profile'],
+    tags: ['personal', 'minimal'],
     categories: ['card'],
     latestIsPrerelease: false,
   },
@@ -130,8 +130,8 @@ describe('DetailPage', () => {
     expect(screen.getByDisplayValue(/Add the Card Avatar/)).toBeTruthy()
     expect(screen.getByText('tangwz/remotionhub-assets')).toBeTruthy()
     expect(screen.getByText('Animated avatar lower-third card for Remotion videos.')).toBeTruthy()
-    expect(screen.getByText('avatar')).toBeTruthy()
-    expect(screen.getByText('profile')).toBeTruthy()
+    expect(screen.getByText('个人')).toBeTruthy()
+    expect(screen.getByText('极简')).toBeTruthy()
 
     fireEvent.click(screen.getByRole('tab', { name: '使用说明' }))
     expect(

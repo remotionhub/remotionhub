@@ -10,10 +10,7 @@
     "intro"
   ],
   "tags": [
-    "remotion",
-    "intro",
-    "minimal",
-    "fade"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "minimal",
-        "fade"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

@@ -8,9 +8,7 @@
     "countdown"
   ],
   "tags": [
-    "remotion",
-    "countdown",
-    "blast"
+    "creative"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "blast",
-        "countdown"
+        "creative"
       ],
       "artifact": {
         "kind": "github-source",

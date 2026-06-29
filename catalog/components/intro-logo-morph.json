@@ -10,10 +10,7 @@
     "intro"
   ],
   "tags": [
-    "remotion",
-    "intro",
-    "logo",
-    "morph"
+    "creative"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "logo",
-        "morph"
+        "creative"
       ],
       "artifact": {
         "kind": "github-source",

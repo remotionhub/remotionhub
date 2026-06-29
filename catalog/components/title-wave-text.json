@@ -8,9 +8,7 @@
     "text-effect"
   ],
   "tags": [
-    "remotion",
-    "text-effect",
-    "wave-text"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -32,8 +30,7 @@
         "fps": 30
       },
       "tags": [
-        "text-effect",
-        "wave-text"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

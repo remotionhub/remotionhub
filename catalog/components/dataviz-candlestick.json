@@ -10,9 +10,7 @@
     "dataviz"
   ],
   "tags": [
-    "remotion",
-    "dataviz",
-    "candlestick"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "candlestick"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

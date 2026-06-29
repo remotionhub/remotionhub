@@ -10,9 +10,7 @@
     "intro"
   ],
   "tags": [
-    "remotion",
-    "intro",
-    "typewriter"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -34,8 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "intro",
-        "typewriter"
+        "minimal"
       ],
       "artifact": {
         "kind": "github-source",

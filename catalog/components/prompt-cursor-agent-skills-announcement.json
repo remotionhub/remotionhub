@@ -10,9 +10,7 @@
     "prompt"
   ],
   "tags": [
-    "remotion",
-    "prompt",
-    "ai"
+    "minimal"
   ],
   "status": "published",
   "versions": [
@@ -33,8 +31,7 @@
         "fps": 60
       },
       "tags": [
-        "prompt",
-        "ai"
+        "minimal"
       ],
       "artifact": {
         "kind": "none",

@@ -10,10 +10,7 @@
     "dataviz"
   ],
   "tags": [
-    "remotion",
-    "dataviz",
-    "pie",
-    "donut"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +32,7 @@
         "fps": 30
       },
       "tags": [
-        "dataviz",
-        "pie",
-        "donut"
+        "business"
       ],
       "artifact": {
         "kind": "github-source",

@@ -10,10 +10,8 @@
     "animation"
   ],
   "tags": [
-    "remotion",
-    "animation",
-    "report",
-    "transform"
+    "business",
+    "social"
   ],
   "status": "published",
   "versions": [
@@ -35,9 +33,8 @@
         "fps": 30
       },
       "tags": [
-        "animation",
-        "report",
-        "transform"
+        "business",
+        "social"
       ],
       "artifact": {
         "kind": "github-source",
