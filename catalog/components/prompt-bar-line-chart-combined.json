@@ -10,9 +10,7 @@
     "prompt"
   ],
   "tags": [
-    "remotion",
-    "prompt",
-    "ai"
+    "business"
   ],
   "status": "published",
   "versions": [
@@ -33,8 +31,7 @@
         "fps": 30
       },
       "tags": [
-        "prompt",
-        "ai"
+        "business"
       ],
       "artifact": {
         "kind": "none",
