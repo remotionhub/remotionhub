@@ -113,5 +113,12 @@ test.describe('catalog smoke', () => {
 
     const link = page.getByRole('link', { name: TEST_REMOTION_NAME })
     await scrollToElement(page, link)
+
+    // Verify no horizontal overflow on mobile
+    const viewportWidth = page.viewportSize()?.width ?? 412
+    const overflow = await page.evaluate((width) => {
+      return document.documentElement.scrollWidth > width || window.innerWidth > width
+    }, viewportWidth)
+    expect(overflow).toBe(false)
   })
 })

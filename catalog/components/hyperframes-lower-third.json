@@ -1,0 +1,35 @@
+{
+  "publisher": "terence",
+  "runtime": "hyperframes",
+  "slug": "lower-third-pack",
+  "displayName": "Lower Third Pack",
+  "summary": "HyperFrames lower thirds for tutorial and launch videos.",
+  "categories": ["lower-third", "social"],
+  "tags": ["hyperframes", "caption", "social"],
+  "status": "published",
+  "versions": [
+    {
+      "version": "1.0.1",
+      "changelog": "Update source repository owner to the canonical RemotionHub assets repository.",
+      "preview": {
+        "thumbnailUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-minimal/9a9a7d83da91-thumb.jpg",
+        "previewVideoUrl": "https://remotionhub.oss-cn-shenzhen.aliyuncs.com/showcase/lower-third-minimal/f4d8ec46c694-preview.mp4",
+        "demoUrl": "https://remotionlab.com/showcase/lower-third-minimal"
+      },
+      "metadata": {
+        "runtime": "hyperframes",
+        "entryPoint": "src/lower-third.html",
+        "aspectRatios": ["16:9"],
+        "durationFrames": 150,
+        "fps": 30
+      },
+      "tags": ["caption", "social"],
+      "artifact": {
+        "kind": "none",
+        "license": "MIT",
+        "usageMarkdown": "Copy the HyperFrames composition folder and register the HTML entry in your HyperFrames project.",
+        "agentPrompt": "Add the Lower Third Pack to my HyperFrames project. Keep the timing and editable text slots intact."
+      }
+    }
+  ]
+}
