@@ -100,4 +100,11 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
   })
+
+  it('points to the correct GitHub repository', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+    const githubLink = screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })
+    expect(githubLink.getAttribute('href')).toBe('https://github.com/remotionhub/remotionhub')
+  })
 })
