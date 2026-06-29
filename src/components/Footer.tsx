@@ -17,7 +17,7 @@ export default function Footer() {
             {t('nav.hyperframes')}
           </Link>
           <a
-            href="https://github.com/tangwz/remotionhub"
+            href="https://github.com/remotionhub/remotionhub"
             target="_blank"
             rel="noreferrer"
             className="hover:text-foreground"
