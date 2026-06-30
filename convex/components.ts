@@ -1,6 +1,7 @@
 import semver from 'semver'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
+import type { Infer } from 'convex/values'
 import type { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 import type { DatabaseReader, DatabaseWriter } from './_generated/server'
@@ -63,6 +64,33 @@ const importVersion = v.object({
 type Runtime = 'remotion' | 'hyperframes'
 type DbReader = DatabaseReader | DatabaseWriter
 type CatalogDigest = Doc<'componentSearchDigest'>
+type ArtifactSource = Pick<Infer<typeof artifact>, 'kind' | 'githubSource'>
+
+function hasCompatibleArtifactSource(
+  existingArtifact: ArtifactSource,
+  importedArtifact: ArtifactSource,
+) {
+  if (existingArtifact.kind !== importedArtifact.kind) {
+    return false
+  }
+  if (existingArtifact.kind === 'none') {
+    return true
+  }
+
+  const existingSource = existingArtifact.githubSource
+  const importedSource = importedArtifact.githubSource
+  if (!existingSource || !importedSource) {
+    return false
+  }
+
+  return (
+    existingSource.repo === importedSource.repo &&
+    existingSource.ref === importedSource.ref &&
+    existingSource.commit === importedSource.commit &&
+    existingSource.path === importedSource.path &&
+    existingSource.pinned === importedSource.pinned
+  )
+}
 
 async function getPublisherByHandle(db: DbReader, handle: string) {
   return await db
@@ -248,12 +276,7 @@ export const importCatalogComponent = mutation({
             JSON.stringify(existing.metadata.aspectRatios) === JSON.stringify(versionInput.metadata.aspectRatios) &&
             existing.metadata.durationFrames === versionInput.metadata.durationFrames &&
             existing.metadata.fps === versionInput.metadata.fps &&
-            existingArtifact.kind === versionInput.artifact.kind &&
-            existingArtifact.githubSource.repo === versionInput.artifact.githubSource.repo &&
-            existingArtifact.githubSource.ref === versionInput.artifact.githubSource.ref &&
-            existingArtifact.githubSource.commit === versionInput.artifact.githubSource.commit &&
-            existingArtifact.githubSource.path === versionInput.artifact.githubSource.path &&
-            existingArtifact.githubSource.pinned === versionInput.artifact.githubSource.pinned &&
+            hasCompatibleArtifactSource(existingArtifact, versionInput.artifact) &&
             existingArtifact.license === versionInput.artifact.license &&
             existingArtifact.usageMarkdown === versionInput.artifact.usageMarkdown &&
             existingArtifact.agentPrompt === versionInput.artifact.agentPrompt
