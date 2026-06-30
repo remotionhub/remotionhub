@@ -204,6 +204,33 @@ describe('components catalog mutations and queries', () => {
     expect(result.skippedVersions).toBe(1)
   })
 
+  it('updates the version and source-provenance fingerprints for compatible tag changes', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, component)
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [
+        {
+          ...component.versions[0],
+          tags: ['updated-tag'],
+          fingerprint: 'updated-fingerprint',
+        },
+      ],
+    })
+
+    const storedVersion = await t.run(async (ctx) => {
+      const versions = await ctx.db.query('componentVersions').collect()
+      return versions.find((version) => version.version === '1.0.2')
+    })
+
+    expect(storedVersion?.tags).toEqual(['updated-tag'])
+    expect(storedVersion?.fingerprint).toBe('updated-fingerprint')
+    expect(storedVersion?.sourceProvenance.fingerprint).toBe(
+      'updated-fingerprint',
+    )
+  })
+
   it('keeps prerelease from replacing stable latest', async () => {
     const t = convexTest(schema, modules)
 
@@ -249,6 +276,101 @@ describe('components catalog mutations and queries', () => {
 
     expect(page.page).toHaveLength(0)
     expect(detail?.component.slug).toBe('card-avatar')
+  })
+
+  it.each(['removed', 'draft'] as const)(
+    'returns null detail for %s components',
+    async (status) => {
+      const t = convexTest(schema, modules)
+
+      await t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        status,
+      })
+
+      const detail = await t.query(api.components.getCatalogDetail, {
+        runtime: 'remotion',
+        owner: 'terence',
+        slug: 'card-avatar',
+      })
+
+      expect(detail).toBeNull()
+    },
+  )
+
+  it('returns null for an explicitly requested missing version', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, component)
+
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+      version: '9.9.9',
+    })
+
+    expect(detail).toBeNull()
+  })
+
+  it('counts active facets across all runtimes and within one runtime', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      categories: ['card', 'intro'],
+      tags: ['shared', 'remotion-only'],
+    })
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      runtime: 'hyperframes',
+      slug: 'hyperframes-card',
+      categories: ['card', 'outro'],
+      tags: ['shared', 'hyperframes-only'],
+      versions: [
+        {
+          ...component.versions[0],
+          metadata: {
+            ...component.versions[0].metadata,
+            runtime: 'hyperframes',
+          },
+          fingerprint: 'hyperframes-fingerprint',
+        },
+      ],
+    })
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      slug: 'inactive-draft',
+      categories: ['inactive-only'],
+      tags: ['inactive-only'],
+      status: 'draft',
+      versions: [
+        {
+          ...component.versions[0],
+          fingerprint: 'inactive-draft-fingerprint',
+        },
+      ],
+    })
+
+    const allFacets = await t.query(api.components.getCatalogFacets, {})
+    const remotionFacets = await t.query(api.components.getCatalogFacets, {
+      runtime: 'remotion',
+    })
+
+    expect(allFacets).toEqual({
+      categories: { card: 2, intro: 1, outro: 1 },
+      tags: {
+        shared: 2,
+        'remotion-only': 1,
+        'hyperframes-only': 1,
+      },
+    })
+    expect(remotionFacets).toEqual({
+      categories: { card: 1, intro: 1 },
+      tags: { shared: 1, 'remotion-only': 1 },
+    })
+    expect(allFacets.categories).not.toHaveProperty('inactive-only')
+    expect(allFacets.tags).not.toHaveProperty('inactive-only')
   })
 
   it('correctly filters sparsely matched items across multiple DB pagination pages', async () => {
@@ -300,9 +422,7 @@ describe('components catalog mutations and queries', () => {
         ...component,
         slug: `cap-comp-${i}`,
         displayName: `Cap Component ${i}`,
-        tags: [2, 3, 5].includes(i)
-          ? ['special', 'remotion']
-          : ['remotion'],
+        tags: [2, 3, 5].includes(i) ? ['special', 'remotion'] : ['remotion'],
         versions: [
           {
             ...component.versions[0],
