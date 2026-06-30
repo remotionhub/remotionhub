@@ -168,6 +168,42 @@ describe('components catalog mutations and queries', () => {
     expect(result.skippedVersions).toBe(1)
   })
 
+  it('allows tag-only updates for immutable versions without source artifacts', async () => {
+    const t = convexTest(schema, modules)
+    const sourceLessVersion = {
+      ...component.versions[0],
+      metadata: {
+        ...component.versions[0].metadata,
+        entryPoint: undefined,
+      },
+      artifact: {
+        kind: 'none' as const,
+        license: 'MIT',
+        usageMarkdown: 'Use directly.',
+        agentPrompt: 'Add the prompt-only component.',
+      },
+    }
+
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [sourceLessVersion],
+    })
+
+    const result = await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [
+        {
+          ...sourceLessVersion,
+          tags: ['new-tag'],
+          fingerprint: 'new-source-less-fingerprint',
+        },
+      ],
+    })
+
+    expect(result.createdVersions).toBe(0)
+    expect(result.skippedVersions).toBe(1)
+  })
+
   it('keeps prerelease from replacing stable latest', async () => {
     const t = convexTest(schema, modules)
 
