@@ -18,3 +18,4 @@ test-results/
 .superpowers/
 .worktrees/
 .playwright-mcp/
+coverage/

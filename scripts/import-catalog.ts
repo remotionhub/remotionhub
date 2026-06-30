@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
+import { pathToFileURL } from 'node:url'
 import { ConvexHttpClient } from 'convex/browser'
+import type { FunctionArgs, FunctionReturnType } from 'convex/server'
 import { api } from '../convex/_generated/api'
 import {
   buildVersionFingerprint,
@@ -9,14 +11,31 @@ import {
   type CatalogComponent,
 } from '../shared/catalog'
 
-type Args = {
+export type Args = {
   apply: boolean
   dryRun: boolean
   localOnly: boolean
   target: string
 }
 
-function parseArgs(argv: string[]): Args {
+export type ImportCatalogDependencies = {
+  env: NodeJS.ProcessEnv
+  loadEnv: () => Promise<void>
+  readFiles: () => Promise<Array<{ filePath: string; json: unknown }>>
+  createClient: (url: string) => ImportCatalogClient
+  log: (message: string) => void
+}
+
+type ImportCatalogMutation = typeof api.components.importCatalogComponent
+
+export interface ImportCatalogClient {
+  mutation(
+    mutation: ImportCatalogMutation,
+    args: FunctionArgs<ImportCatalogMutation>,
+  ): Promise<FunctionReturnType<ImportCatalogMutation>>
+}
+
+export function parseArgs(argv: string[]): Args {
   const apply = argv.includes('--apply')
 
   return {
@@ -30,8 +49,10 @@ function parseArgs(argv: string[]): Args {
   }
 }
 
-async function loadLocalEnv() {
-  const envPath = path.resolve('.env.local')
+export async function loadLocalEnv(
+  env = process.env,
+  envPath = path.resolve('.env.local'),
+): Promise<void> {
   try {
     const raw = await fs.readFile(envPath, 'utf8')
     for (const line of raw.split('\n')) {
@@ -47,7 +68,7 @@ async function loadLocalEnv() {
 
       const key = trimmed.slice(0, separator)
       const value = trimmed.slice(separator + 1).replace(/^["']|["']$/g, '')
-      process.env[key] ??= value
+      env[key] ??= value
     }
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
@@ -56,22 +77,23 @@ async function loadLocalEnv() {
   }
 }
 
-async function readCatalogFiles() {
-  const dir = path.resolve('catalog/components')
-  const names = (await fs.readdir(dir))
+export async function readCatalogFiles(
+  directory = path.resolve('catalog/components'),
+): Promise<Array<{ filePath: string; json: unknown }>> {
+  const names = (await fs.readdir(directory))
     .filter((name) => name.endsWith('.json'))
     .sort()
 
   return await Promise.all(
     names.map(async (name) => {
-      const filePath = path.join(dir, name)
+      const filePath = path.join(directory, name)
       const raw = await fs.readFile(filePath, 'utf8')
       return { filePath, json: JSON.parse(raw) as unknown }
     }),
   )
 }
 
-function toImportPayload(
+export function toImportPayload(
   component: CatalogComponent,
   catalogFile: string,
   importSecret: string,
@@ -79,7 +101,10 @@ function toImportPayload(
   return {
     importSecret,
     publisher: component.publisher,
-    publisherDisplayName: component.publisher === 'remotionlab' ? 'RemotionLab' : `@${component.publisher}`,
+    publisherDisplayName:
+      component.publisher === 'remotionlab'
+        ? 'RemotionLab'
+        : `@${component.publisher}`,
     runtime: component.runtime,
     slug: component.slug,
     displayName: component.displayName,
@@ -98,7 +123,9 @@ function toImportPayload(
         githubSource: version.artifact.githubSource
           ? {
               ...version.artifact.githubSource,
-              pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
+              pinned: /^[a-f0-9]{6,40}$/i.test(
+                version.artifact.githubSource.commit,
+              ),
             }
           : undefined,
       },
@@ -106,13 +133,16 @@ function toImportPayload(
   }
 }
 
-async function main() {
-  await loadLocalEnv()
+export async function runImportCatalog(
+  argv: string[],
+  dependencies: ImportCatalogDependencies,
+): Promise<void> {
+  await dependencies.loadEnv()
 
-  const args = parseArgs(process.argv.slice(2))
+  const args = parseArgs(argv)
   const configuredConvexUrl =
-    process.env.CONVEX_URL ?? process.env.VITE_CONVEX_URL
-  const importSecret = process.env.CATALOG_IMPORT_SECRET
+    dependencies.env.CONVEX_URL ?? dependencies.env.VITE_CONVEX_URL
+  const importSecret = dependencies.env.CATALOG_IMPORT_SECRET
   const willWrite = args.apply && !args.dryRun && !args.localOnly
 
   if (willWrite && !configuredConvexUrl) {
@@ -124,27 +154,27 @@ async function main() {
   if (
     willWrite &&
     args.target === 'production' &&
-    !process.env.CONVEX_DEPLOY_KEY
+    !dependencies.env.CONVEX_DEPLOY_KEY
   ) {
     throw new Error('CONVEX_DEPLOY_KEY is required for production imports.')
   }
 
-  const files = await readCatalogFiles()
+  const files = await dependencies.readFiles()
   const payloads = files.map(({ filePath, json }) => {
     const parsed = catalogComponentSchema.parse(json)
     return toImportPayload(parsed, filePath, importSecret ?? '')
   })
 
-  console.log(`Validated ${payloads.length} catalog component(s).`)
+  dependencies.log(`Validated ${payloads.length} catalog component(s).`)
   for (const payload of payloads) {
-    console.log(
+    dependencies.log(
       `- ${payload.runtime}/${payload.publisher}/${payload.slug}: ` +
         `${payload.versions.length} version(s)`,
     )
   }
 
   if (args.dryRun || args.localOnly) {
-    console.log('Dry-run complete. No Convex writes performed.')
+    dependencies.log('Dry-run complete. No Convex writes performed.')
     return
   }
 
@@ -153,20 +183,40 @@ async function main() {
     throw new Error('CONVEX_URL or VITE_CONVEX_URL is required.')
   }
 
-  const client = new ConvexHttpClient(convexUrl)
+  const client = dependencies.createClient(convexUrl)
   for (const payload of payloads) {
     const result = await client.mutation(
       api.components.importCatalogComponent,
       payload,
     )
-    console.log(
+    dependencies.log(
       `Imported ${payload.runtime}/${payload.publisher}/${payload.slug}: ` +
         `${result.createdVersions} created, ${result.skippedVersions} skipped`,
     )
   }
 }
 
-main().catch((error: unknown) => {
-  console.error(error)
-  process.exit(1)
-})
+const defaultDependencies: ImportCatalogDependencies = {
+  env: process.env,
+  loadEnv: () => loadLocalEnv(),
+  readFiles: () => readCatalogFiles(),
+  createClient: (url) => new ConvexHttpClient(url),
+  log: (message) => console.log(message),
+}
+
+export async function runImportCatalogCli(
+  argv: string[],
+  dependencies: ImportCatalogDependencies,
+): Promise<void> {
+  try {
+    await runImportCatalog(argv, dependencies)
+  } catch (error: unknown) {
+    console.error(error)
+    process.exitCode = 1
+  }
+}
+
+const entryPoint = process.argv[1]
+if (entryPoint && import.meta.url === pathToFileURL(entryPoint).href) {
+  void runImportCatalogCli(process.argv.slice(2), defaultDependencies)
+}
