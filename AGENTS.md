@@ -85,6 +85,7 @@ Keep this section as the command map agents normally need, not a full `package.j
 - Production deploys are manual-only. Merging to `main` does **not** deploy.
 - To release production, start the GitHub Actions `Deploy` workflow from `main`:
   `gh workflow run deploy.yml --repo remotionhub/remotionhub --ref main`
+- The deploy workflow command is only valid once `.github/workflows/deploy.yml` exists on `main`; if it is absent, treat production release automation as not yet implemented and do not use this document as proof that the release chain is fixed.
 - The workflow supports `full`, `backend`, and `frontend` targets.
 - `frontend` currently means: wait for the Vercel production deploy for the selected `main` SHA, then run production smoke checks. It does not call `vercel deploy` directly yet.
 - The workflow uses the GitHub `Production` environment for deploy secrets, but it does not require a separate approval step.
