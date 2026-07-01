@@ -44,7 +44,13 @@ Keep this section as the command map agents normally need, not a full `package.j
 - `npm run build` — production build (Vite + Nitro SSR).
 - `npm run preview` — preview production build locally.
 - `npm run test` — Vitest test suite.
+- `npm run coverage` — Vitest coverage suite; also used by `npm run ci:unit`.
+- `npm run ci:unit` — CI coverage gate.
+- `npm run ci:types-build` — TypeScript check plus production build.
+- `npm run ci:playwright-smoke` — production build plus Playwright tests; requires the Playwright and backend prerequisites for the tested flow.
 - `npm run generate-routes` — regenerate TanStack Router route tree (`routeTree.gen.ts`).
+- `make check` — main local verification gate after dependencies are installed; runs tests, catalog validation, TypeScript check, and build with a stable placeholder Convex URL.
+- `make e2e` / `make smoke` — local Convex-backed Playwright smoke path.
 
 ## Coding Style & Naming Conventions
 
