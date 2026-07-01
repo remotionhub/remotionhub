@@ -3,6 +3,7 @@ import { constants, type BigIntStats } from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
+import os from 'node:os'
 import { pathToFileURL } from 'node:url'
 import { componentSlugPattern } from '../shared/catalog'
 import { type TagKey } from '../src/lib/tags'
@@ -101,6 +102,16 @@ function fileIdentity(stats: BigIntStats): FileIdentity {
   }
 }
 
+function directoryIdentity(stats: BigIntStats): FileIdentity {
+  return {
+    dev: stats.dev,
+    ino: stats.ino,
+    size: 0n,
+    mtimeNs: 0n,
+    ctimeNs: 0n,
+  }
+}
+
 function identitiesMatch(left: FileIdentity, right: FileIdentity) {
   return (
     left.dev === right.dev &&
@@ -120,6 +131,62 @@ function pathIdentitiesMatch(left: PathIdentity[], right: PathIdentity[]) {
         identitiesMatch(entry.identity, right[index].identity),
     )
   )
+}
+
+function isPathWithin(root: string, candidate: string) {
+  const relativePath = path.relative(root, candidate)
+  return (
+    relativePath === '' ||
+    (relativePath !== '..' &&
+      !relativePath.startsWith(`..${path.sep}`) &&
+      !path.isAbsolute(relativePath))
+  )
+}
+
+async function inspectDirectoryPath(
+  directoryPath: string,
+  symbolicLinkError: () => Error,
+  nonDirectoryError: () => Error,
+) {
+  const absolutePath = path.resolve(directoryPath)
+  // Resolve trusted roots once (including system aliases such as /tmp), then
+  // lstat every user-controlled descendant without following symlinks.
+  const configuredRoots = [
+    path.resolve(process.cwd()),
+    path.resolve(os.tmpdir()),
+  ]
+    .filter((root) => isPathWithin(root, absolutePath))
+    .sort((left, right) => right.length - left.length)
+  const trustedRoot = configuredRoots[0] ?? path.parse(absolutePath).root
+  const canonicalRoot = await fs.realpath(trustedRoot)
+  const rootStats = await fs.lstat(canonicalRoot, { bigint: true })
+  if (!rootStats.isDirectory()) {
+    throw new Error(`Trusted path root is not a directory: ${canonicalRoot}`)
+  }
+
+  const pathIdentities: PathIdentity[] = [
+    { path: canonicalRoot, identity: directoryIdentity(rootStats) },
+  ]
+  const relativePath = path.relative(trustedRoot, absolutePath)
+  const segments = relativePath.split(path.sep).filter(Boolean)
+  let currentPath = canonicalRoot
+
+  for (const segment of segments) {
+    currentPath = path.join(currentPath, segment)
+    const stats = await fs.lstat(currentPath, { bigint: true })
+    if (stats.isSymbolicLink()) {
+      throw symbolicLinkError()
+    }
+    if (!stats.isDirectory()) {
+      throw nonDirectoryError()
+    }
+    pathIdentities.push({
+      path: currentPath,
+      identity: directoryIdentity(stats),
+    })
+  }
+
+  return { canonicalPath: currentPath, pathIdentities }
 }
 
 function manifestChangedError(slug: string) {
@@ -368,19 +435,18 @@ async function readMarkdownTitle(
 ): Promise<string> {
   const validateMarkdownPath = async () => {
     const sourceRootPath = path.resolve(options.sourceMdDir)
-    const sourceRootStats = await fs.lstat(sourceRootPath, { bigint: true })
-    if (sourceRootStats.isSymbolicLink()) {
-      throw new Error(
-        `Source Markdown path contains a symbolic link for slug ${JSON.stringify(slug)}`,
-      )
-    }
-    if (!sourceRootStats.isDirectory()) {
-      throw new Error(
-        `Source Markdown root is not a directory for slug ${JSON.stringify(slug)}`,
-      )
-    }
-
-    const sourceRoot = await fs.realpath(sourceRootPath)
+    const sourcePath = await inspectDirectoryPath(
+      sourceRootPath,
+      () =>
+        new Error(
+          `Source Markdown path contains a symbolic link for slug ${JSON.stringify(slug)}`,
+        ),
+      () =>
+        new Error(
+          `Source Markdown root is not a directory for slug ${JSON.stringify(slug)}`,
+        ),
+    )
+    const sourceRoot = sourcePath.canonicalPath
     const mdPath = path.resolve(sourceRoot, `${slug}.md`)
     const relativePath = path.relative(sourceRoot, mdPath)
     if (
@@ -408,7 +474,7 @@ async function readMarkdownTitle(
     return {
       mdPath,
       pathIdentities: [
-        { path: sourceRootPath, identity: fileIdentity(sourceRootStats) },
+        ...sourcePath.pathIdentities,
         { path: mdPath, identity: fileIdentity(markdownStats) },
       ],
     }
@@ -518,43 +584,23 @@ function isErrnoException(error: unknown): error is NodeJS.ErrnoException {
 
 async function validateOutputDirectories(outputPath: string, slug: string) {
   const targetDirPath = path.dirname(path.resolve(outputPath))
-  const parentDirPath = path.dirname(targetDirPath)
-  const parentStats = await fs.lstat(parentDirPath, { bigint: true })
-  if (parentStats.isSymbolicLink()) {
-    throw new Error(
-      `Output directory path contains a symbolic link for slug ${JSON.stringify(slug)}`,
-    )
-  }
-  if (!parentStats.isDirectory()) {
-    throw new Error(
-      `Output directory parent is not a directory for slug ${JSON.stringify(slug)}`,
-    )
-  }
-
-  const canonicalParent = await fs.realpath(parentDirPath)
-  const canonicalTarget = path.join(
-    canonicalParent,
-    path.basename(targetDirPath),
+  const targetPath = await inspectDirectoryPath(
+    targetDirPath,
+    () =>
+      new Error(
+        `Output directory path contains a symbolic link for slug ${JSON.stringify(slug)}`,
+      ),
+    () =>
+      new Error(
+        `Output target is not a directory for slug ${JSON.stringify(slug)}`,
+      ),
   )
-  const targetStats = await fs.lstat(canonicalTarget, { bigint: true })
-  if (targetStats.isSymbolicLink()) {
-    throw new Error(
-      `Output directory path contains a symbolic link for slug ${JSON.stringify(slug)}`,
-    )
-  }
-  if (!targetStats.isDirectory()) {
-    throw new Error(
-      `Output target is not a directory for slug ${JSON.stringify(slug)}`,
-    )
-  }
+  const canonicalTarget = targetPath.canonicalPath
 
   return {
     outputPath: path.join(canonicalTarget, path.basename(outputPath)),
-    parentDirPath: canonicalParent,
-    pathIdentities: [
-      { path: canonicalParent, identity: fileIdentity(parentStats) },
-      { path: canonicalTarget, identity: fileIdentity(targetStats) },
-    ],
+    targetDirPath: canonicalTarget,
+    pathIdentities: targetPath.pathIdentities,
   }
 }
 
@@ -578,7 +624,7 @@ async function writeCatalogFile(
   }
 
   const tempPath = path.join(
-    path.dirname(initial.parentDirPath),
+    initial.targetDirPath,
     `.generate-catalog-${process.pid}-${randomUUID()}.tmp`,
   )
   let published = false
