@@ -291,6 +291,34 @@ describe('command runner', () => {
 })
 
 describe('generateCatalogEntry', () => {
+  it('creates the temporary catalog file beside the output target', async () => {
+    const fixture = await makeAssetFixture('logo-reveal')
+    const targetDir = await fs.mkdtemp(
+      path.join(await fs.realpath(os.tmpdir()), 'generate-catalog-target-'),
+    )
+    createdDirs.push(targetDir)
+    const originalOpen = fs.open
+    let tempPath = ''
+    vi.spyOn(fs, 'open').mockImplementation(async (...args) => {
+      const [target] = args
+      const openedPath = path.resolve(target.toString())
+      if (path.basename(openedPath).startsWith('.generate-catalog-')) {
+        tempPath = openedPath
+      }
+      return originalOpen(...args)
+    })
+
+    await generateCatalogEntry('logo-reveal', fixture.commit, {
+      ...fixture.options,
+      targetDir,
+    })
+
+    expect(path.dirname(tempPath)).toBe(await fs.realpath(targetDir))
+    await expect(
+      fs.readFile(path.join(targetDir, 'logo-reveal.json'), 'utf8'),
+    ).resolves.toContain('"slug": "logo-reveal"')
+  })
+
   it('rejects a Markdown title symlink without consuming outside content', async () => {
     const fixture = await makeAssetFixture('intro-card', {
       displayNameZh: '',
@@ -330,6 +358,47 @@ describe('generateCatalogEntry', () => {
     expect(output).toBe('')
   })
 
+  it('rejects a symlink in the source Markdown directory ancestors', async () => {
+    const fixture = await makeAssetFixture('intro-card', {
+      displayNameZh: '',
+    })
+    const sourceParent = path.dirname(fixture.sourceMdDir)
+    const outsideRoot = path.join(sourceParent, 'outside-markdown-root')
+    const outsideMarkdownDir = path.join(outsideRoot, 'markdown')
+    const sourceLink = path.join(sourceParent, 'source-link')
+    await fs.mkdir(outsideMarkdownDir, { recursive: true })
+    await fs.writeFile(
+      path.join(outsideMarkdownDir, 'intro-card.md'),
+      '---\ntitle: "outside-ancestor-marker"\n---\n',
+      'utf8',
+    )
+    await fs.symlink(outsideRoot, sourceLink)
+
+    const error = await generateCatalogEntry(
+      'intro-card',
+      fixture.commit,
+      {
+        ...fixture.options,
+        sourceMdDir: path.join(sourceLink, 'markdown'),
+      },
+    ).then(
+      () => undefined,
+      (reason: unknown) => reason,
+    )
+    const output = await readTextIfExists(
+      path.join(fixture.outputDir, 'intro-card.json'),
+    )
+
+    expect.soft(error).toEqual(
+      expect.objectContaining({
+        message:
+          'Source Markdown path contains a symbolic link for slug "intro-card"',
+      }),
+    )
+    expect(output).not.toContain('outside-ancestor-marker')
+    expect(output).toBe('')
+  })
+
   it('rejects a target directory symlink without writing outside it', async () => {
     const fixture = await makeAssetFixture('logo-reveal')
     const outsideDir = path.join(
@@ -360,6 +429,38 @@ describe('generateCatalogEntry', () => {
     expect(await fs.readFile(sentinelPath, 'utf8')).toBe('sentinel\n')
     expect(
       await readTextIfExists(path.join(outsideDir, 'logo-reveal.json')),
+    ).toBe('')
+  })
+
+  it('rejects a symlink in nested target directory ancestors', async () => {
+    const fixture = await makeAssetFixture('logo-reveal')
+    const outputRoot = path.dirname(fixture.outputDir)
+    const outsideRoot = path.join(outputRoot, 'outside-nested-output')
+    const outsideTarget = path.join(outsideRoot, 'sub', 'components')
+    const outputLink = path.join(outputRoot, 'output-link')
+    await fs.mkdir(outsideTarget, { recursive: true })
+    await fs.symlink(outsideRoot, outputLink)
+
+    const error = await generateCatalogEntry(
+      'logo-reveal',
+      fixture.commit,
+      {
+        ...fixture.options,
+        targetDir: path.join(outputLink, 'sub', 'components'),
+      },
+    ).then(
+      () => undefined,
+      (reason: unknown) => reason,
+    )
+
+    expect.soft(error).toEqual(
+      expect.objectContaining({
+        message:
+          'Output directory path contains a symbolic link for slug "logo-reveal"',
+      }),
+    )
+    expect(
+      await readTextIfExists(path.join(outsideTarget, 'logo-reveal.json')),
     ).toBe('')
   })
 
