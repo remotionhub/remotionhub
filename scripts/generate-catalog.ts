@@ -154,6 +154,7 @@ async function inspectDirectoryPath(
   const configuredRoots = [
     path.resolve(process.cwd()),
     path.resolve(os.tmpdir()),
+    ...(process.platform === 'win32' ? [] : [path.resolve('/tmp')]),
   ]
     .filter((root) => isPathWithin(root, absolutePath))
     .sort((left, right) => right.length - left.length)

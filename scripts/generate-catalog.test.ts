@@ -319,6 +319,24 @@ describe('generateCatalogEntry', () => {
     ).resolves.toContain('"slug": "logo-reveal"')
   })
 
+  it.skipIf(process.platform === 'win32')(
+    'accepts the trusted /tmp system alias as an output root',
+    async () => {
+      const fixture = await makeAssetFixture('logo-reveal')
+      const targetDir = await fs.mkdtemp('/tmp/generate-catalog-alias-')
+      createdDirs.push(targetDir)
+
+      await generateCatalogEntry('logo-reveal', fixture.commit, {
+        ...fixture.options,
+        targetDir,
+      })
+
+      await expect(
+        fs.readFile(path.join(targetDir, 'logo-reveal.json'), 'utf8'),
+      ).resolves.toContain('"slug": "logo-reveal"')
+    },
+  )
+
   it('rejects a Markdown title symlink without consuming outside content', async () => {
     const fixture = await makeAssetFixture('intro-card', {
       displayNameZh: '',
