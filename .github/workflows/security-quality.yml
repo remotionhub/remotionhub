@@ -1,4 +1,4 @@
-name: Issue 5 Security and Quality
+name: Security Quality
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   production-audit:
-    name: Issue 5 / Production audit
+    name: Security / Production audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -25,7 +25,7 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
 
   unit-coverage:
-    name: Issue 5 / Unit coverage
+    name: Security / Unit coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
