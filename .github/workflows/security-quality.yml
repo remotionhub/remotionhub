@@ -1,4 +1,4 @@
-name: Security Quality
+name: Security & Quality Gates
 
 on:
   pull_request:
@@ -25,7 +25,7 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
 
   unit-coverage:
-    name: Security / Unit coverage
+    name: Quality / Unit coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
