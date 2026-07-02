@@ -8,7 +8,7 @@
   - `/.github/workflows/issue-5-security-quality.yml`
   - `/.github/workflows/security-quality.yml`
 - 在工作流文件内同步更新展示名称：
-  - `name: Issue 5 Security and Quality` -> `name: Security & Quality Gates`
+  - `name: Issue 5 Security and Quality` -> `name: Security and Quality Gates`
   - `name: Issue 5 / Production audit` -> `name: Security / Production audit`
   - `name: Issue 5 / Unit coverage` -> `name: Quality / Unit coverage`
 
