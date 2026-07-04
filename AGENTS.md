@@ -86,10 +86,10 @@ Keep this section as the command map agents normally need, not a full `package.j
 - To release production, start the GitHub Actions `Deploy` workflow from `main`:
   `gh workflow run deploy.yml --repo remotionhub/remotionhub --ref main`
 - The deploy workflow command is only valid once `.github/workflows/deploy.yml` exists on `main`; if it is absent, treat production release automation as not yet implemented and do not use this document as proof that the release chain is fixed.
-- The workflow supports `full`, `backend`, and `frontend` targets.
-- `frontend` currently means: deploy the TanStack Start frontend to Cloudflare Workers, then run production smoke checks once that workflow exists. It does not call `wrangler deploy` directly yet.
+- The workflow supports `full`, `backend`, `frontend`, and `smoke` targets.
+- `frontend` currently means: build and deploy the TanStack Start frontend to Cloudflare Workers. Production smoke runs only for `smoke` or a non-dry-run `full` release.
 - The workflow uses the GitHub `Production` environment for deploy secrets, but it does not require a separate approval step.
-- Prod deploy secrets live on the `Production` environment, not as ordinary repo secrets. Required: `CONVEX_DEPLOY_KEY`. Optional: `PLAYWRIGHT_AUTH_STORAGE_STATE_JSON`.
+- Prod deploy secrets live on the `Production` environment, not as ordinary repo secrets. Required secrets: `CONVEX_DEPLOY_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Required vars: `VITE_CONVEX_URL`, `PRODUCTION_URL`. Optional secret: `PLAYWRIGHT_AUTH_STORAGE_STATE_JSON`.
 - CLI npm releases are also manual-only and tag-based. Stable tags only: `vX.Y.Z`. Start `RemotionHub CLI NPM Release` from `main`, first with `preflight_only=true`, then rerun it with the same tag and the successful `preflight_run_id`.
 - Real CLI publishes wait at the GitHub `npm-release` environment and use npm trusted publishing. Required npm trusted publisher settings: repository `remotionhub/remotionhub`, workflow `remotionhub-cli-npm-release.yml`, environment `npm-release`.
 
