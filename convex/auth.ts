@@ -1,5 +1,8 @@
 import GitHub from '@auth/core/providers/github'
 import { convexAuth } from '@convex-dev/auth/server'
+import type { GenericMutationCtx } from 'convex/server'
+import { internal } from './_generated/api'
+import type { DataModel } from './_generated/dataModel'
 import type { Id } from './_generated/dataModel'
 
 type AuthProfile = Record<string, unknown> & {
@@ -69,6 +72,15 @@ function userDataFromAuthProfile(args: {
   }
 }
 
+async function schedulePostUserCreatedOrUpdated(
+  ctx: GenericMutationCtx<DataModel>,
+  userId: Id<'users'>,
+) {
+  await ctx.scheduler.runAfter(0, internal.users.ensurePersonalPublisherInternal, {
+    userId,
+  })
+}
+
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [createGitHubAuthProvider()],
   callbacks: {
@@ -80,6 +92,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
           ...userData,
           updatedAt: Date.now(),
         })
+        await schedulePostUserCreatedOrUpdated(ctx, userId)
         return userId
       }
 
@@ -90,6 +103,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
         createdAt: now,
         updatedAt: now,
       })
+      await schedulePostUserCreatedOrUpdated(ctx, userId)
       return userId
     },
   },
