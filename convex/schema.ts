@@ -60,8 +60,7 @@ export default defineSchema({
   })
     .index('email', ['email'])
     .index('phone', ['phone'])
-    .index('by_handle', ['handle'])
-    .index('by_email', ['email']),
+    .index('by_handle', ['handle']),
 
   publishers: defineTable({
     handle: v.string(),

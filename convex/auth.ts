@@ -25,11 +25,15 @@ export function normalizeGitHubProfileId(profileId: unknown) {
 }
 
 export function createGitHubAuthProvider() {
-  return GitHub({
+  const provider = GitHub({
     clientId: process.env.AUTH_GITHUB_ID ?? '',
     clientSecret: process.env.AUTH_GITHUB_SECRET ?? '',
     allowDangerousEmailAccountLinking: false,
-    profile(profile) {
+  })
+
+  return {
+    ...provider,
+    profile(profile: { id?: unknown; login: string; email?: string | null; avatar_url: string }) {
       return {
         id: normalizeGitHubProfileId(profile.id),
         name: profile.login,
@@ -37,18 +41,21 @@ export function createGitHubAuthProvider() {
         image: profile.avatar_url,
       }
     },
-  })
+  }
 }
 
 function userDataFromAuthProfile(args: {
   provider: { type: string; allowDangerousEmailAccountLinking?: boolean }
   profile: AuthProfile
 }) {
+  const profile = { ...args.profile }
+  delete profile.id
+
   const {
     emailVerified: profileEmailVerified,
     phoneVerified: profilePhoneVerified,
-    ...profile
-  } = args.profile
+    ...profileData
+  } = profile
   const emailVerified =
     profileEmailVerified ??
     ((args.provider.type === 'oauth' || args.provider.type === 'oidc') &&
@@ -58,7 +65,7 @@ function userDataFromAuthProfile(args: {
   return {
     ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
     ...(phoneVerified ? { phoneVerificationTime: Date.now() } : null),
-    ...profile,
+    ...profileData,
   }
 }
 
