@@ -22,7 +22,7 @@ export default function HeaderAuth() {
     return (
       <span
         aria-label={t('auth.loading')}
-        className="h-9 w-28 rounded-md bg-[var(--surface-muted)]"
+        className="inline-block h-9 w-28 rounded-md bg-[var(--surface-muted)]"
       />
     )
   }

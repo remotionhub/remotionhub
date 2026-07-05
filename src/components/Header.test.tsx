@@ -182,7 +182,9 @@ describe('Header', () => {
 
     renderHeader()
 
-    expect(screen.getByLabelText('Loading auth state')).toBeTruthy()
+    const skeleton = screen.getByLabelText('Loading auth state')
+    expect(skeleton).toBeTruthy()
+    expect(skeleton.className).toContain('inline-block')
   })
 
   it('shows the signed-in user and signs out', async () => {
