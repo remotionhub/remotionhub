@@ -1,3 +1,4 @@
+import { authTables } from '@convex-dev/auth/server'
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
 
@@ -40,13 +41,41 @@ const githubSource = v.object({
 })
 
 export default defineSchema({
+  ...authTables,
+
+  users: defineTable({
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+    handle: v.optional(v.string()),
+    displayName: v.optional(v.string()),
+    role: v.optional(v.union(v.literal('admin'), v.literal('user'))),
+    personalPublisherId: v.optional(v.id('publishers')),
+    createdAt: v.optional(v.number()),
+    updatedAt: v.optional(v.number()),
+  })
+    .index('email', ['email'])
+    .index('phone', ['phone'])
+    .index('by_handle', ['handle'])
+    .index('by_email', ['email']),
+
   publishers: defineTable({
     handle: v.string(),
     displayName: v.string(),
     imageUrl: v.optional(v.string()),
+    kind: v.optional(
+      v.union(v.literal('user'), v.literal('org'), v.literal('system')),
+    ),
+    linkedUserId: v.optional(v.id('users')),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }).index('by_handle', ['handle']),
+  })
+    .index('by_handle', ['handle'])
+    .index('by_linked_user', ['linkedUserId']),
 
   components: defineTable({
     runtime,
