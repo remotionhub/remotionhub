@@ -31,6 +31,7 @@ export default function HeaderAuth() {
     return (
       <button
         type="button"
+        aria-label={t('auth.signInWithGitHub')}
         className="inline-flex h-9 items-center gap-2 rounded-md border border-[var(--line)] px-3 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)]"
         onClick={() => {
           void signIn('github', { redirectTo: getCurrentRelativeUrl() }).catch(() => {
@@ -47,10 +48,12 @@ export default function HeaderAuth() {
   const handle = getDisplayHandle(me)
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        aria-label={t('auth.signedInAs', { handle })}
+    <div
+      role="group"
+      aria-label={t('auth.signedInAs', { handle })}
+      className="flex items-center gap-2"
+    >
+      <div
         className="inline-flex h-9 items-center gap-2 rounded-md border border-[var(--line)] px-2 text-sm text-[var(--sea-ink)]"
       >
         {me.image ? (
@@ -66,7 +69,7 @@ export default function HeaderAuth() {
           </span>
         )}
         <span className="hidden max-w-28 truncate sm:inline">{handle}</span>
-      </button>
+      </div>
       <button
         type="button"
         className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"

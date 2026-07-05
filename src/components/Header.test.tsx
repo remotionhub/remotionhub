@@ -155,6 +155,23 @@ describe('Header', () => {
     })
   })
 
+  it('reports sign-in failures without changing the auth state', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    await waitFor(() => {
+      expect(authMocks.toastError).toHaveBeenCalledWith('Sign in failed. Please try again.')
+    })
+    expect(authMocks.signIn).toHaveBeenCalledWith('github', {
+      redirectTo: '/remotion?tag=card#top',
+    })
+    expect(screen.getByRole('button', { name: 'Sign in with GitHub' })).toBeTruthy()
+  })
+
   it('shows a stable auth loading skeleton', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     authMocks.useAuthStatus.mockReturnValue({
@@ -184,11 +201,39 @@ describe('Header', () => {
 
     renderHeader()
 
-    expect(screen.getByRole('button', { name: 'Signed in as octocat' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Signed in as octocat' })).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
 
     await waitFor(() => {
       expect(authMocks.signOut).toHaveBeenCalled()
     })
+  })
+
+  it('reports sign-out failures without logging the user out locally', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      me: {
+        _id: 'users:1',
+        handle: 'octocat',
+        name: 'Octocat',
+        image: 'https://example.com/avatar.png',
+      },
+    })
+    authMocks.signOut.mockRejectedValue(new Error('sign-out failed'))
+
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    await waitFor(() => {
+      expect(authMocks.toastError).toHaveBeenCalledWith(
+        'Sign out failed. Please try again.',
+      )
+    })
+    expect(authMocks.signOut).toHaveBeenCalled()
+    expect(screen.getByRole('group', { name: 'Signed in as octocat' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Sign in with GitHub' })).toBeNull()
   })
 })
