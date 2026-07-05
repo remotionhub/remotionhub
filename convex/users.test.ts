@@ -1,6 +1,6 @@
 import { convexTest } from 'convex-test'
+import { anyApi } from 'convex/server'
 import { describe, expect, it, vi } from 'vitest'
-import { api, internal } from './_generated/api'
 import type { Id } from './_generated/dataModel'
 import schema from './schema'
 
@@ -22,7 +22,7 @@ describe('users auth queries and publisher bootstrap', () => {
     vi.mocked(getAuthUserId).mockResolvedValue(null)
     const t = convexTest(schema, modules)
 
-    await expect(t.query(api.users.me, {})).resolves.toBeNull()
+    await expect(t.query(anyApi.users.me, {})).resolves.toBeNull()
   })
 
   it('returns the current active user from me', async () => {
@@ -38,7 +38,7 @@ describe('users auth queries and publisher bootstrap', () => {
     })
     vi.mocked(getAuthUserId).mockResolvedValue(userId)
 
-    const me = await t.query(api.users.me, {})
+    const me = await t.query(anyApi.users.me, {})
 
     expect(me?._id).toBe(userId)
     expect(me?.handle).toBe('octocat')
@@ -56,8 +56,8 @@ describe('users auth queries and publisher bootstrap', () => {
     })
     vi.mocked(getAuthUserId).mockResolvedValue(userId)
 
-    const first = await t.mutation(api.users.ensure, {})
-    const second = await t.mutation(api.users.ensure, {})
+    const first = await t.mutation(anyApi.users.ensure, {})
+    const second = await t.mutation(anyApi.users.ensure, {})
 
     expect(first.publisherId).toBe(second.publisherId)
     const publishers = await t.run(async (ctx) => {
@@ -86,7 +86,7 @@ describe('users auth queries and publisher bootstrap', () => {
       })
     })
 
-    await t.mutation(internal.users.ensurePersonalPublisherInternal, { userId })
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
 
     const user = await t.run(async (ctx) => await ctx.db.get(userId))
     const publisher = await t.run(
@@ -95,5 +95,147 @@ describe('users auth queries and publisher bootstrap', () => {
     )
     expect(publisher?.handle).toMatch(/^octocat-[a-z0-9]{8}$/)
     expect(publisher?.linkedUserId).toBe(userId)
+  })
+
+  it("does not patch another user's personal publisher", async () => {
+    const t = convexTest(schema, modules)
+    const { currentUserId, otherPublisherId } = await t.run(async (ctx) => {
+      const otherUserId = await ctx.db.insert('users', {
+        name: 'Other User',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      const otherPublisherId = await ctx.db.insert('publishers', {
+        handle: 'other-user',
+        displayName: 'Other User',
+        imageUrl: 'https://example.com/other.png',
+        kind: 'user',
+        linkedUserId: otherUserId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      const currentUserId = await ctx.db.insert('users', {
+        name: 'Current User',
+        image: 'https://example.com/current.png',
+        role: 'user',
+        personalPublisherId: otherPublisherId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      return { currentUserId, otherPublisherId }
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, {
+      userId: currentUserId,
+    })
+
+    const { currentUser, currentPublisher, otherPublisher, publishers } =
+      await t.run(async (ctx) => {
+        const currentUser = await ctx.db.get(currentUserId)
+        const currentPublisher = currentUser?.personalPublisherId
+          ? await ctx.db.get(currentUser.personalPublisherId)
+          : null
+        const otherPublisher = await ctx.db.get(otherPublisherId)
+        const publishers = await ctx.db.query('publishers').collect()
+        return { currentUser, currentPublisher, otherPublisher, publishers }
+      })
+
+    expect(currentUser?.personalPublisherId).not.toBe(otherPublisherId)
+    expect(currentPublisher?.linkedUserId).toBe(currentUserId)
+    expect(currentPublisher?.kind).toBe('user')
+    expect(currentPublisher?.displayName).toBe('Current User')
+    expect(currentPublisher?.imageUrl).toBe('https://example.com/current.png')
+    expect(otherPublisher).toMatchObject({
+      _id: otherPublisherId,
+      linkedUserId: otherPublisher?.linkedUserId,
+      kind: 'user',
+      displayName: 'Other User',
+      imageUrl: 'https://example.com/other.png',
+    })
+    expect(publishers).toHaveLength(2)
+  })
+
+  it.each(['org', 'system'] as const)(
+    'does not reuse a %s publisher as a personal publisher',
+    async (publisherKind) => {
+      const t = convexTest(schema, modules)
+      const { userId, existingPublisherId } = await t.run(async (ctx) => {
+        const existingPublisherId = await ctx.db.insert('publishers', {
+          handle: `${publisherKind}-publisher`,
+          displayName: `${publisherKind} publisher`,
+          kind: publisherKind,
+          createdAt: 1,
+          updatedAt: 1,
+        })
+        const userId = await ctx.db.insert('users', {
+          name: 'Current User',
+          role: 'user',
+          personalPublisherId: existingPublisherId,
+          createdAt: 1,
+          updatedAt: 1,
+        })
+        return { userId, existingPublisherId }
+      })
+
+      await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+      const { user, personalPublisher, existingPublisher, publishers } =
+        await t.run(async (ctx) => {
+          const user = await ctx.db.get(userId)
+          const personalPublisher = user?.personalPublisherId
+            ? await ctx.db.get(user.personalPublisherId)
+            : null
+          const existingPublisher = await ctx.db.get(existingPublisherId)
+          const publishers = await ctx.db.query('publishers').collect()
+          return { user, personalPublisher, existingPublisher, publishers }
+        })
+
+      expect(user?.personalPublisherId).not.toBe(existingPublisherId)
+      expect(personalPublisher?.linkedUserId).toBe(userId)
+      expect(personalPublisher?.kind).toBe('user')
+      expect(existingPublisher?.kind).toBe(publisherKind)
+      expect(existingPublisher?.linkedUserId).toBeUndefined()
+      expect(publishers).toHaveLength(2)
+    },
+  )
+
+  it('repairs linked personal publisher profile fields and kind', async () => {
+    const t = convexTest(schema, modules)
+    const userId = await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Current User',
+        displayName: 'Current Display Name',
+        image: 'https://example.com/current.png',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.insert('publishers', {
+        handle: 'current-user',
+        displayName: 'Stale Publisher Name',
+        imageUrl: 'https://example.com/stale.png',
+        linkedUserId: userId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      return userId
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const { user, publisher } = await t.run(async (ctx) => {
+      const user = await ctx.db.get(userId)
+      const publisher = user?.personalPublisherId
+        ? await ctx.db.get(user.personalPublisherId)
+        : null
+      return { user, publisher }
+    })
+
+    expect(publisher?.linkedUserId).toBe(userId)
+    expect(publisher?.kind).toBe('user')
+    expect(publisher?.displayName).toBe('Current Display Name')
+    expect(publisher?.imageUrl).toBe('https://example.com/current.png')
+    expect(user?.personalPublisherId).toBe(publisher?._id)
   })
 })

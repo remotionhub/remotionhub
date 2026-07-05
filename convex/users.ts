@@ -43,6 +43,39 @@ function imageUrlForUser(user: UserDoc) {
   return user.image?.trim() || undefined
 }
 
+function canReuseAsPersonalPublisher(
+  publisher: Doc<'publishers'>,
+  userId: Id<'users'>,
+) {
+  if (publisher.linkedUserId !== userId) return false
+  return publisher.kind === 'user' || publisher.kind === undefined
+}
+
+async function syncPersonalPublisherFromUser(
+  ctx: MutationCtx,
+  user: UserDoc,
+  publisher: Doc<'publishers'>,
+) {
+  const now = Date.now()
+
+  await ctx.db.patch(publisher._id, {
+    displayName: displayNameForUser(user),
+    imageUrl: imageUrlForUser(user),
+    kind: 'user',
+    linkedUserId: user._id,
+    updatedAt: now,
+  })
+
+  if (user.personalPublisherId !== publisher._id) {
+    await ctx.db.patch(user._id, {
+      personalPublisherId: publisher._id,
+      updatedAt: now,
+    })
+  }
+
+  return publisher._id
+}
+
 async function choosePersonalPublisherHandle(
   ctx: Pick<MutationCtx, 'db'>,
   user: UserDoc,
@@ -72,25 +105,14 @@ async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {
 
   if (user.personalPublisherId) {
     const publisher = await ctx.db.get(user.personalPublisherId)
-    if (publisher) {
-      await ctx.db.patch(publisher._id, {
-        displayName: displayNameForUser(user),
-        imageUrl: imageUrlForUser(user),
-        kind: publisher.kind ?? 'user',
-        linkedUserId: publisher.linkedUserId ?? userId,
-        updatedAt: Date.now(),
-      })
-      return publisher._id
+    if (publisher && canReuseAsPersonalPublisher(publisher, userId)) {
+      return await syncPersonalPublisherFromUser(ctx, user, publisher)
     }
   }
 
   const linkedPublisher = await getPublisherByLinkedUser(ctx, userId)
-  if (linkedPublisher) {
-    await ctx.db.patch(userId, {
-      personalPublisherId: linkedPublisher._id,
-      updatedAt: Date.now(),
-    })
-    return linkedPublisher._id
+  if (linkedPublisher && canReuseAsPersonalPublisher(linkedPublisher, userId)) {
+    return await syncPersonalPublisherFromUser(ctx, user, linkedPublisher)
   }
 
   const now = Date.now()
