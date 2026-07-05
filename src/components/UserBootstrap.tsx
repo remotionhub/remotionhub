@@ -1,23 +1,21 @@
 import { useMutation } from 'convex/react'
 import { useEffect, useRef } from 'react'
-import { api } from '../../convex/_generated/api'
-import { useAuthStatus } from '#/lib/useAuthStatus'
-
-const usersApi = api as typeof api & {
-  users: {
-    ensure: never
-  }
-}
+import { bootstrapUsersApi, useAuthStatus } from '#/lib/useAuthStatus'
 
 export function UserBootstrap() {
   const { isAuthenticated, isLoading, me } = useAuthStatus()
-  const ensureUser = useMutation(usersApi.users.ensure)
-  const didRun = useRef(false)
+  const ensureUser = useMutation(bootstrapUsersApi.users.ensure)
+  const lastEnsuredUserId = useRef<string | null>(null)
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || !me || didRun.current) return
+    if (!isAuthenticated) {
+      lastEnsuredUserId.current = null
+      return
+    }
 
-    didRun.current = true
+    if (isLoading || !me || lastEnsuredUserId.current === me._id) return
+
+    lastEnsuredUserId.current = me._id
     void ensureUser({}).catch(() => {
       // Best-effort repair. Broken bootstrap state should not crash public browsing.
     })
