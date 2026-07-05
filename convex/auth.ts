@@ -1,7 +1,6 @@
 import GitHub from '@auth/core/providers/github'
 import { convexAuth } from '@convex-dev/auth/server'
-import type { GenericMutationCtx } from 'convex/server'
-import { internal } from './_generated/api'
+import { anyApi, type GenericMutationCtx } from 'convex/server'
 import type { DataModel } from './_generated/dataModel'
 import type { Id } from './_generated/dataModel'
 
@@ -76,7 +75,7 @@ async function schedulePostUserCreatedOrUpdated(
   ctx: GenericMutationCtx<DataModel>,
   userId: Id<'users'>,
 ) {
-  await ctx.scheduler.runAfter(0, internal.users.ensurePersonalPublisherInternal, {
+  await ctx.scheduler.runAfter(0, anyApi.users.ensurePersonalPublisherInternal, {
     userId,
   })
 }
