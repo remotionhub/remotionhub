@@ -97,6 +97,51 @@ describe('users auth queries and publisher bootstrap', () => {
     expect(publisher?.linkedUserId).toBe(userId)
   })
 
+  it('keeps searching when the first fallback handle is also taken', async () => {
+    const t = convexTest(schema, modules)
+    const userId = await t.run(async (ctx) => {
+      return await ctx.db.insert('users', {
+        name: 'Octocat',
+        handle: 'octocat',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+    const suffix = userId
+      .toString()
+      .replace(/^[^:]+:/, '')
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, 8)
+      .toLowerCase()
+
+    await t.run(async (ctx) => {
+      await ctx.db.insert('publishers', {
+        handle: 'octocat',
+        displayName: 'Existing Octocat',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.insert('publishers', {
+        handle: `octocat-${suffix}`,
+        displayName: 'Existing Suffixed Octocat',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const user = await t.run(async (ctx) => await ctx.db.get(userId))
+    const publisher = await t.run(
+      async (ctx) =>
+        await ctx.db.get(user?.personalPublisherId as Id<'publishers'>),
+    )
+
+    expect(publisher?.handle).toBe(`octocat-${suffix}-2`)
+    expect(publisher?.linkedUserId).toBe(userId)
+  })
+
   it("does not patch another user's personal publisher", async () => {
     const t = convexTest(schema, modules)
     const { currentUserId, otherPublisherId } = await t.run(async (ctx) => {

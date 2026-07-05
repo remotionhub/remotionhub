@@ -86,17 +86,38 @@ async function choosePersonalPublisherHandle(
     normalizeHandleCandidate(user.name)
   const fallback = fallbackHandleForUserId(userIdText)
   const base = preferredBase ?? fallback
-  const existingBase = await getPublisherByHandle(ctx, base)
-  if (!existingBase || existingBase.linkedUserId === user._id) return base
-
   const suffix = userIdText
     .replace(/^[^:]+:/, '')
     .replace(/[^a-zA-Z0-9]/g, '')
     .slice(0, 8)
     .toLowerCase()
-  const suffixedBase =
-    preferredBase ?? fallback.slice(0, Math.max(2, 30 - suffix.length))
-  return `${suffixedBase.slice(0, Math.max(2, 30 - suffix.length))}-${suffix}`
+  const candidates = [
+    base,
+    ...buildHandleVariants(base, suffix),
+  ]
+
+  for (const candidate of candidates) {
+    const existing = await getPublisherByHandle(ctx, candidate)
+    if (!existing || existing.linkedUserId === user._id) {
+      return candidate
+    }
+  }
+
+  throw new Error('Could not choose a unique personal publisher handle')
+}
+
+function buildHandleVariants(base: string, suffix: string) {
+  const variants = new Set<string>()
+  for (let attempt = 1; attempt <= 100; attempt += 1) {
+    const tail = attempt === 1 ? suffix : `${suffix}-${attempt}`
+    const maxBaseLength = Math.max(2, 39 - tail.length - 1)
+    const candidate = `${base.slice(0, maxBaseLength)}-${tail}`
+    const normalized = normalizeHandleCandidate(candidate)
+    if (normalized) {
+      variants.add(normalized)
+    }
+  }
+  return [...variants]
 }
 
 async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {

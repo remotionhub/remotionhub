@@ -46,18 +46,18 @@ export function createGitHubAuthProvider() {
   }
 }
 
-function userDataFromAuthProfile(args: {
+export function userDataFromAuthProfile(args: {
   provider: { type: string; allowDangerousEmailAccountLinking?: boolean }
   profile: AuthProfile
 }) {
-  const profile = { ...args.profile }
-  delete profile.id
-
   const {
+    name,
+    email,
+    image,
+    phone,
     emailVerified: profileEmailVerified,
     phoneVerified: profilePhoneVerified,
-    ...profileData
-  } = profile
+  } = args.profile
   const emailVerified =
     profileEmailVerified ??
     ((args.provider.type === 'oauth' || args.provider.type === 'oidc') &&
@@ -65,9 +65,12 @@ function userDataFromAuthProfile(args: {
   const phoneVerified = profilePhoneVerified ?? false
 
   return {
+    ...(typeof name === 'string' ? { name } : null),
+    ...(typeof email === 'string' ? { email } : null),
+    ...(typeof image === 'string' ? { image } : null),
+    ...(typeof phone === 'string' ? { phone } : null),
     ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
     ...(phoneVerified ? { phoneVerificationTime: Date.now() } : null),
-    ...profileData,
   }
 }
 

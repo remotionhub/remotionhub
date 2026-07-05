@@ -1,5 +1,9 @@
-import { describe, expect, it } from 'vitest'
-import { createGitHubAuthProvider, normalizeGitHubProfileId } from './auth'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  createGitHubAuthProvider,
+  normalizeGitHubProfileId,
+  userDataFromAuthProfile,
+} from './auth'
 
 describe('normalizeGitHubProfileId', () => {
   it('accepts a numeric GitHub profile id', () => {
@@ -61,5 +65,42 @@ describe('createGitHubAuthProvider', () => {
       email: 'octocat@example.com',
       image: 'https://example.com/avatar.png',
     })
+  })
+})
+
+describe('userDataFromAuthProfile', () => {
+  it('allowlists only business user fields from the auth profile', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-07-05T00:00:00Z'))
+
+    expect(
+      userDataFromAuthProfile({
+        provider: {
+          type: 'oauth',
+          allowDangerousEmailAccountLinking: false,
+        },
+        profile: {
+          id: '123456',
+          name: 'Octocat',
+          email: 'octocat@example.com',
+          image: 'https://example.com/avatar.png',
+          phone: '+1234567890',
+          emailVerified: true,
+          phoneVerified: true,
+          role: 'admin',
+          isAnonymous: true,
+          customClaim: 'ignored',
+        },
+      }),
+    ).toEqual({
+      name: 'Octocat',
+      email: 'octocat@example.com',
+      image: 'https://example.com/avatar.png',
+      phone: '+1234567890',
+      emailVerificationTime: Date.now(),
+      phoneVerificationTime: Date.now(),
+    })
+
+    vi.useRealTimers()
   })
 })
