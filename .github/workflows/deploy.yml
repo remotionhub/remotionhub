@@ -28,10 +28,24 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  release_source_guard:
+    name: Release / Source guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require main branch
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Production deploys must run from refs/heads/main, got $GITHUB_REF" >&2
+            exit 1
+          fi
+
   preflight:
     name: Release / Preflight
     runs-on: ubuntu-latest
     environment: Production
+    needs:
+      - release_source_guard
     env:
       TARGET: ${{ inputs.target }}
       DRY_RUN: ${{ inputs.dry_run }}
@@ -64,11 +78,6 @@ jobs:
           }
 
           require_env VITE_CONVEX_URL
-
-          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
-            echo "Production deploys must run from refs/heads/main, got $GITHUB_REF" >&2
-            exit 1
-          fi
 
           if [ "$TARGET" = "backend" ] || [ "$TARGET" = "full" ]; then
             require_env CONVEX_DEPLOY_KEY
