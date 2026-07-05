@@ -13,6 +13,7 @@ type WorkflowStep = {
 type WorkflowJob = {
   needs?: string | string[]
   if?: string
+  environment?: string
   env?: Record<string, string>
   steps: WorkflowStep[]
 }
@@ -68,9 +69,12 @@ describe('deploy workflow', () => {
     expect(parsed.on.workflow_dispatch.inputs.dry_run.default).toBe(true)
     expect(parsed.concurrency.group).toBe('production-deploy')
     expect(parsed.concurrency['cancel-in-progress']).toBe(false)
-    expect(getStep('preflight', 'Validate release configuration').run).toContain(
+    expect(jobs.release_source_guard.environment).toBeUndefined()
+    expect(jobs.release_source_guard.env).toBeUndefined()
+    expect(getStep('release_source_guard', 'Require main branch').run).toContain(
       'refs/heads/main',
     )
+    expect(jobs.preflight.needs).toEqual(['release_source_guard'])
   })
 
   test('limits deploy secrets to validation and deploy steps', () => {

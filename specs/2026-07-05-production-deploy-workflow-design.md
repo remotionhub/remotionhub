@@ -8,7 +8,7 @@ RemotionHub 的 Cloudflare Workers frontend baseline 已经存在，但生产发
 
 - 生产发布必须是 manual-only，通过 `workflow_dispatch` 触发。
 - `main` merge 不自动 deploy。
-- workflow 可以从 GitHub UI 选择 ref，但 preflight 必须拒绝非 `refs/heads/main` 的生产发布。
+- workflow 可以从 GitHub UI 选择 ref，但不带 `Production` environment 的 source guard 必须在任何生产环境 job 之前拒绝非 `refs/heads/main` 的发布。
 - 支持 `target=full|backend|frontend|smoke`。
 - 支持 `dry_run`，默认值必须是 `true`。
 - 使用 GitHub `Production` environment 读取生产 secrets 和 vars。
@@ -30,6 +30,7 @@ RemotionHub 的 Cloudflare Workers frontend baseline 已经存在，但生产发
 
 `.github/workflows/deploy.yml` 使用以下 job：
 
+- `release_source_guard`：不进入 `Production` environment，先拒绝非 `refs/heads/main` 的发布。
 - `preflight`：安装依赖，验证 release configuration，运行 audit、unit coverage 和 TypeScript/build gate。
 - `backend_deploy`：当 `target=backend|full` 时执行 Convex dry-run 或真实 deploy。
 - `frontend_deploy`：当 `target=frontend|full` 时执行 Cloudflare dry-run 或真实 deploy。
@@ -39,7 +40,7 @@ RemotionHub 的 Cloudflare Workers frontend baseline 已经存在，但生产发
 `full` 的发布顺序是：
 
 ```text
-preflight -> backend_deploy -> frontend_deploy -> production_smoke -> release_summary
+release_source_guard -> preflight -> backend_deploy -> frontend_deploy -> production_smoke -> release_summary
 ```
 
 `frontend` 可以独立执行，不要求 backend deploy。`smoke` 可以独立执行，用于验证当前生产 URL。
