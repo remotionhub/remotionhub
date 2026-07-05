@@ -131,4 +131,17 @@ describe('deploy workflow', () => {
       "inputs.target == 'full' && !inputs.dry_run",
     )
   })
+
+  test('writes summary values through shell-safe environment variables', () => {
+    const summary = getStep('release_summary', 'Write release summary')
+
+    expect(summary.env).toMatchObject({
+      SUMMARY_REF: '${{ github.ref }}',
+      SUMMARY_SHA: '${{ github.sha }}',
+    })
+    expect(summary.run).toContain("printf -- '- Ref: %s\\n' \"$SUMMARY_REF\"")
+    expect(summary.run).toContain("printf -- '- Commit: %s\\n' \"$SUMMARY_SHA\"")
+    expect(summary.run).not.toContain('${{ github.ref }}')
+    expect(summary.run).not.toContain('${{ github.sha }}')
+  })
 })

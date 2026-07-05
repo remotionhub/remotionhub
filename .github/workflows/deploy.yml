@@ -185,18 +185,25 @@ jobs:
     if: ${{ always() }}
     steps:
       - name: Write release summary
+        env:
+          SUMMARY_TARGET: ${{ inputs.target }}
+          SUMMARY_DRY_RUN: ${{ inputs.dry_run }}
+          SUMMARY_REF: ${{ github.ref }}
+          SUMMARY_SHA: ${{ github.sha }}
+          SUMMARY_PREFLIGHT: ${{ needs.preflight.result }}
+          SUMMARY_BACKEND: ${{ needs.backend_deploy.result }}
+          SUMMARY_FRONTEND: ${{ needs.frontend_deploy.result }}
+          SUMMARY_SMOKE: ${{ needs.production_smoke.result }}
         run: |
           {
-            echo "## Deploy workflow summary"
-            echo
-            echo "- Target: ${{ inputs.target }}"
-            echo "- Dry run: ${{ inputs.dry_run }}"
-            echo "- Ref: ${{ github.ref }}"
-            echo "- Commit: ${{ github.sha }}"
-            echo "- Preflight: ${{ needs.preflight.result }}"
-            echo "- Backend: ${{ needs.backend_deploy.result }}"
-            echo "- Frontend: ${{ needs.frontend_deploy.result }}"
-            echo "- Production smoke: ${{ needs.production_smoke.result }}"
-            echo
-            echo "Production smoke is intentionally lightweight until a dedicated Playwright production smoke suite exists."
+            printf '## Deploy workflow summary\n\n'
+            printf -- '- Target: %s\n' "$SUMMARY_TARGET"
+            printf -- '- Dry run: %s\n' "$SUMMARY_DRY_RUN"
+            printf -- '- Ref: %s\n' "$SUMMARY_REF"
+            printf -- '- Commit: %s\n' "$SUMMARY_SHA"
+            printf -- '- Preflight: %s\n' "$SUMMARY_PREFLIGHT"
+            printf -- '- Backend: %s\n' "$SUMMARY_BACKEND"
+            printf -- '- Frontend: %s\n' "$SUMMARY_FRONTEND"
+            printf -- '- Production smoke: %s\n\n' "$SUMMARY_SMOKE"
+            printf 'Production smoke is intentionally lightweight until a dedicated Playwright production smoke suite exists.\n'
           } >>"$GITHUB_STEP_SUMMARY"
