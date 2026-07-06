@@ -181,6 +181,9 @@ export const importCatalogComponent = mutation({
     const now = Date.now()
 
     let publisher = await getPublisherByHandle(ctx.db, args.publisher)
+    if (publisher?.kind === 'user') {
+      throw new ConvexError('Catalog import cannot target a user publisher.')
+    }
     if (!publisher) {
       const publisherId = await ctx.db.insert('publishers', {
         handle: args.publisher,

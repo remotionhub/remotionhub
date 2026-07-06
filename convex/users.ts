@@ -57,14 +57,29 @@ async function syncPersonalPublisherFromUser(
   publisher: Doc<'publishers'>,
 ) {
   const now = Date.now()
+  const displayName = displayNameForUser(user)
+  const imageUrl = imageUrlForUser(user)
+  const publisherPatch: {
+    displayName?: string
+    imageUrl?: string
+    kind?: 'user'
+    linkedUserId?: Id<'users'>
+    updatedAt?: number
+  } = {}
 
-  await ctx.db.patch(publisher._id, {
-    displayName: displayNameForUser(user),
-    imageUrl: imageUrlForUser(user),
-    kind: 'user',
-    linkedUserId: user._id,
-    updatedAt: now,
-  })
+  if (publisher.displayName !== displayName) {
+    publisherPatch.displayName = displayName
+  }
+  if (publisher.imageUrl !== imageUrl) publisherPatch.imageUrl = imageUrl
+  if (publisher.kind !== 'user') publisherPatch.kind = 'user'
+  if (publisher.linkedUserId !== user._id) publisherPatch.linkedUserId = user._id
+
+  if (Object.keys(publisherPatch).length > 0) {
+    await ctx.db.patch(publisher._id, {
+      ...publisherPatch,
+      updatedAt: now,
+    })
+  }
 
   if (user.personalPublisherId !== publisher._id || user.handle !== publisher.handle) {
     await ctx.db.patch(user._id, {
@@ -99,7 +114,7 @@ async function choosePersonalPublisherHandle(
 
   for (const candidate of candidates) {
     const existing = await getPublisherByHandle(ctx, candidate)
-    if (!existing || existing.linkedUserId === user._id) {
+    if (!existing || canReuseAsPersonalPublisher(existing, user._id)) {
       return candidate
     }
   }

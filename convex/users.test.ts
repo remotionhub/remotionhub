@@ -169,6 +169,44 @@ describe('users auth queries and publisher bootstrap', () => {
     expect(user?.handle).toBe(publisher?.handle)
   })
 
+  it('does not reuse a non-personal publisher handle linked to the user', async () => {
+    const t = convexTest(schema, modules)
+    const userId = await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Team Owner',
+        handle: 'team-owner',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.insert('publishers', {
+        handle: 'team-owner',
+        displayName: 'Team Owner Org',
+        kind: 'org',
+        linkedUserId: userId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      return userId
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const { user, publishers } = await t.run(async (ctx) => {
+      const user = await ctx.db.get(userId)
+      const publishers = await ctx.db.query('publishers').collect()
+      return { user, publishers }
+    })
+
+    expect(publishers.map((publisher) => publisher.handle)).toContain(
+      'team-owner',
+    )
+    expect(
+      publishers.find((publisher) => publisher.kind === 'user')?.handle,
+    ).toMatch(/^team-owner-[a-z0-9]{8}$/)
+    expect(user?.handle).toMatch(/^team-owner-[a-z0-9]{8}$/)
+  })
+
   it("does not patch another user's personal publisher", async () => {
     const t = convexTest(schema, modules)
     const { currentUserId, otherPublisherId } = await t.run(async (ctx) => {
@@ -309,5 +347,44 @@ describe('users auth queries and publisher bootstrap', () => {
     expect(publisher?.displayName).toBe('Current Display Name')
     expect(publisher?.imageUrl).toBe('https://example.com/current.png')
     expect(user?.personalPublisherId).toBe(publisher?._id)
+  })
+
+  it('does not write an already synchronized personal publisher', async () => {
+    const t = convexTest(schema, modules)
+    const { userId, publisherId } = await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Current User',
+        displayName: 'Current User',
+        handle: 'current-user',
+        image: 'https://example.com/current.png',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 10,
+      })
+      const publisherId = await ctx.db.insert('publishers', {
+        handle: 'current-user',
+        displayName: 'Current User',
+        imageUrl: 'https://example.com/current.png',
+        kind: 'user',
+        linkedUserId: userId,
+        createdAt: 1,
+        updatedAt: 10,
+      })
+      await ctx.db.patch(userId, {
+        personalPublisherId: publisherId,
+      })
+      return { userId, publisherId }
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const { user, publisher } = await t.run(async (ctx) => {
+      const user = await ctx.db.get(userId)
+      const publisher = await ctx.db.get(publisherId)
+      return { user, publisher }
+    })
+
+    expect(user?.updatedAt).toBe(10)
+    expect(publisher?.updatedAt).toBe(10)
   })
 })
