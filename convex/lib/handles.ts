@@ -1,5 +1,11 @@
 const MAX_HANDLE_LENGTH = 39
 const MIN_HANDLE_LENGTH = 2
+const RESERVED_HANDLE_NAMES = new Set([
+  'api',
+  'about',
+  'remotion',
+  'hyperframes',
+])
 
 export function normalizeHandleCandidate(value: string | null | undefined) {
   if (!value) return null
@@ -14,6 +20,7 @@ export function normalizeHandleCandidate(value: string | null | undefined) {
     .replace(/-+$/g, '')
 
   if (normalized.length < MIN_HANDLE_LENGTH) return null
+  if (RESERVED_HANDLE_NAMES.has(normalized)) return null
   return normalized
 }
 
