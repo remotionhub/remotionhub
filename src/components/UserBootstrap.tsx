@@ -17,6 +17,9 @@ export function UserBootstrap() {
 
     lastEnsuredUserId.current = me._id
     void ensureUser({}).catch(() => {
+      if (lastEnsuredUserId.current === me._id) {
+        lastEnsuredUserId.current = null
+      }
       // Best-effort repair. Broken bootstrap state should not crash public browsing.
     })
   }, [ensureUser, isAuthenticated, isLoading, me])
