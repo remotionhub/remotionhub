@@ -15,6 +15,13 @@ describe('normalizeHandleCandidate', () => {
     expect(normalizeHandleCandidate('a')).toBeNull()
   })
 
+  it('rejects reserved top-level route names', () => {
+    expect(normalizeHandleCandidate('api')).toBeNull()
+    expect(normalizeHandleCandidate('About')).toBeNull()
+    expect(normalizeHandleCandidate(' remotion ')).toBeNull()
+    expect(normalizeHandleCandidate('hyperframes')).toBeNull()
+  })
+
   it('trims repeated separators and caps length', () => {
     expect(normalizeHandleCandidate('---Alpha___Beta---')).toBe('alpha-beta')
     expect(normalizeHandleCandidate('a'.repeat(80))).toHaveLength(39)
