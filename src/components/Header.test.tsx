@@ -112,7 +112,6 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Remotion' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'HyperFrames' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'EN' }).getAttribute('aria-pressed')).toBe(
       'true',
@@ -131,13 +130,6 @@ describe('Header', () => {
     })
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
-  })
-
-  it('points to the correct GitHub repository', () => {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
-    renderHeader()
-    const githubLink = screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })
-    expect(githubLink.getAttribute('href')).toBe('https://github.com/remotionhub/remotionhub')
   })
 
   it('starts GitHub sign-in with the current relative URL', async () => {

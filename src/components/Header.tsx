@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router'
-import { GithubIcon } from 'lucide-react'
 import HeaderAuth from './HeaderAuth'
 import { useI18n } from './I18nProvider'
 import LanguageToggle from './LanguageToggle'
@@ -52,16 +51,6 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-2">
           <LanguageToggle />
           <ThemeToggle />
-          <a
-            href="https://github.com/remotionhub/remotionhub"
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-          >
-            <span className="sr-only">{t('nav.github')}</span>
-            <GithubIcon aria-hidden="true" size={21} />
-          </a>
-
           <HeaderAuth />
         </div>
       </nav>
