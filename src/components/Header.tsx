@@ -50,6 +50,8 @@ export default function Header() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle />
           <a
             href="https://github.com/remotionhub/remotionhub"
             target="_blank"
@@ -61,8 +63,6 @@ export default function Header() {
           </a>
 
           <HeaderAuth />
-          <LanguageToggle />
-          <ThemeToggle />
         </div>
       </nav>
     </header>

@@ -32,14 +32,14 @@ export default function HeaderAuth() {
       <button
         type="button"
         aria-label={t('auth.signInWithGitHub')}
-        className="inline-flex h-9 items-center gap-2 rounded-md border border-[var(--line)] px-3 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-[var(--link-bg-hover)]"
+        className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 text-sm font-semibold text-[var(--sea-ink)] shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:bg-[var(--link-bg-hover)]"
         onClick={() => {
           void signIn('github', { redirectTo: getCurrentRelativeUrl() }).catch(() => {
             toast.error(t('auth.signInFailed'))
           })
         }}
       >
-        <GithubIcon aria-hidden="true" size={17} />
+        <GithubIcon aria-hidden="true" size={16} />
         <span className="hidden sm:inline">{t('auth.signInWithGitHub')}</span>
       </button>
     )
