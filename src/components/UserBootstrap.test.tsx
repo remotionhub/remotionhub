@@ -78,6 +78,36 @@ describe('UserBootstrap', () => {
     })
   })
 
+  it('retries the same user id after a failed ensure', async () => {
+    let currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
+    mocks.useAuthStatus.mockImplementation(() => currentStatus)
+    ensureUser
+      .mockRejectedValueOnce(new Error('transient ensure failure'))
+      .mockResolvedValueOnce({ publisherId: 'publishers:1' })
+
+    const view = render(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).toHaveBeenCalledTimes(1)
+    })
+    await Promise.resolve()
+
+    currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
+    view.rerender(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).toHaveBeenCalledTimes(2)
+    })
+  })
+
   it('retriggers when the authenticated user id changes', async () => {
     let currentStatus = {
       isAuthenticated: true,

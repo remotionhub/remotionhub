@@ -74,9 +74,7 @@ export default function HeaderAuth() {
         type="button"
         className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
         onClick={() => {
-          void signOut().catch(() => {
-            toast.error(t('auth.signOutFailed'))
-          })
+          void signOut()
         }}
       >
         <span className="sr-only">{t('auth.signOut')}</span>
