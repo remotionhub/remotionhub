@@ -66,8 +66,9 @@ async function syncPersonalPublisherFromUser(
     updatedAt: now,
   })
 
-  if (user.personalPublisherId !== publisher._id) {
+  if (user.personalPublisherId !== publisher._id || user.handle !== publisher.handle) {
     await ctx.db.patch(user._id, {
+      handle: publisher.handle,
       personalPublisherId: publisher._id,
       updatedAt: now,
     })
@@ -149,7 +150,7 @@ async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {
   })
 
   await ctx.db.patch(userId, {
-    handle: user.handle ?? handle,
+    handle,
     displayName: user.displayName ?? displayNameForUser(user),
     personalPublisherId: publisherId,
     updatedAt: now,
