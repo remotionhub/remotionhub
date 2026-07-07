@@ -99,6 +99,10 @@ async function getPublisherByHandle(db: DbReader, handle: string) {
     .unique()
 }
 
+function isLegacyOrExplicitUserPublisher(publisher: Doc<'publishers'>) {
+  return publisher.kind === 'user' || (publisher.kind === undefined && publisher.linkedUserId !== undefined)
+}
+
 async function getComponentByIdentity(
   db: DbReader,
   runtimeValue: Runtime,
@@ -179,9 +183,8 @@ export const importCatalogComponent = mutation({
     }
 
     const now = Date.now()
-
     let publisher = await getPublisherByHandle(ctx.db, args.publisher)
-    if (publisher?.kind === 'user') {
+    if (publisher && isLegacyOrExplicitUserPublisher(publisher)) {
       throw new ConvexError('Catalog import cannot target a user publisher.')
     }
     if (!publisher) {

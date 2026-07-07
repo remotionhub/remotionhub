@@ -73,6 +73,30 @@ describe('components catalog mutations and queries', () => {
     ).rejects.toThrow(/Invalid catalog import secret/)
   })
 
+  it('rejects imports that target a legacy personal user publisher', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Terence',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.insert('publishers', {
+        handle: 'terence',
+        displayName: 'Terence',
+        linkedUserId: userId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    await expect(t.mutation(api.components.importCatalogComponent, component)).rejects.toThrow(
+      /Catalog import cannot target a user publisher/,
+    )
+  })
+
   it('imports a published component and exposes it in listCatalog', async () => {
     const t = convexTest(schema, modules)
 
