@@ -9,6 +9,16 @@ type AuthProfile = Record<string, unknown> & {
   phoneVerified?: boolean
 }
 
+type UserProfileData = {
+  name?: string
+  image?: string
+  email?: string
+  phone?: string
+  isAnonymous?: boolean
+  handle?: string
+  displayName?: string
+}
+
 export type WeChatProfileLike = {
   openid?: unknown
   unionid?: unknown
@@ -20,6 +30,10 @@ function normalizedString(value: unknown) {
   if (typeof value !== 'string') return null
   const trimmed = value.trim()
   return trimmed.length > 0 ? trimmed : null
+}
+
+function optionalBoolean(value: unknown) {
+  return typeof value === 'boolean' ? value : undefined
 }
 
 export function normalizeWeChatProviderAccountId(
@@ -69,50 +83,97 @@ export function createWeChatAuthProvider() {
   })
 }
 
-function userDataFromAuthProfile(args: {
+function sanitizeUserProfile(profile: AuthProfile): UserProfileData {
+  const userData: UserProfileData = {}
+
+  const name = normalizedString(profile.name)
+  if (name) userData.name = name
+
+  const image = normalizedString(profile.image)
+  if (image) userData.image = image
+
+  const email = normalizedString(profile.email)
+  if (email) userData.email = email
+
+  const phone = normalizedString(profile.phone)
+  if (phone) userData.phone = phone
+
+  const handle = normalizedString(profile.handle)
+  if (handle) userData.handle = handle
+
+  const displayName = normalizedString(profile.displayName)
+  if (displayName) userData.displayName = displayName
+
+  const isAnonymous = optionalBoolean(profile.isAnonymous)
+  if (isAnonymous !== undefined) userData.isAnonymous = isAnonymous
+
+  return userData
+}
+
+export function userDataFromAuthProfile(args: {
   provider: { type: string; allowDangerousEmailAccountLinking?: boolean }
   profile: AuthProfile
 }) {
   const {
     emailVerified: profileEmailVerified,
     phoneVerified: profilePhoneVerified,
-    ...profile
   } = args.profile
-  const emailVerified =
-    profileEmailVerified ??
-    ((args.provider.type === 'oauth' || args.provider.type === 'oidc') &&
-      args.provider.allowDangerousEmailAccountLinking !== false)
-  const phoneVerified = profilePhoneVerified ?? false
+  const emailVerified = profileEmailVerified === true
+  const phoneVerified = profilePhoneVerified === true
+  const userProfile = sanitizeUserProfile(args.profile)
 
   return {
     ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
     ...(phoneVerified ? { phoneVerificationTime: Date.now() } : null),
-    ...profile,
+    ...userProfile,
   }
+}
+
+export function normalizeRelativeRedirectTo(redirectTo: string) {
+  const trimmed = redirectTo.trim()
+  if (trimmed.startsWith('?')) return trimmed
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return trimmed
+  return '/'
+}
+
+export const authCallbacks = {
+  async redirect({ redirectTo }: { redirectTo: string }) {
+    return normalizeRelativeRedirectTo(redirectTo)
+  },
+  async createOrUpdateUser(
+    ctx: Parameters<
+      NonNullable<
+        NonNullable<Parameters<typeof convexAuth>[0]['callbacks']>['createOrUpdateUser']
+      >
+    >[0],
+    args: Parameters<
+      NonNullable<
+        NonNullable<Parameters<typeof convexAuth>[0]['callbacks']>['createOrUpdateUser']
+      >
+    >[1],
+  ) {
+    const userData = userDataFromAuthProfile(args)
+    if (args.existingUserId !== null) {
+      const userId = args.existingUserId as Id<'users'>
+      await ctx.db.patch(userId, {
+        ...userData,
+        updatedAt: Date.now(),
+      })
+      return userId
+    }
+
+    const now = Date.now()
+    const userId = await ctx.db.insert('users', {
+      ...userData,
+      role: 'user',
+      createdAt: now,
+      updatedAt: now,
+    })
+    return userId
+  },
 }
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [createWeChatAuthProvider()],
-  callbacks: {
-    async createOrUpdateUser(ctx, args) {
-      const userData = userDataFromAuthProfile(args)
-      if (args.existingUserId !== null) {
-        const userId = args.existingUserId as Id<'users'>
-        await ctx.db.patch(userId, {
-          ...userData,
-          updatedAt: Date.now(),
-        })
-        return userId
-      }
-
-      const now = Date.now()
-      const userId = await ctx.db.insert('users', {
-        ...userData,
-        role: 'user',
-        createdAt: now,
-        updatedAt: now,
-      })
-      return userId
-    },
-  },
+  callbacks: authCallbacks,
 })
