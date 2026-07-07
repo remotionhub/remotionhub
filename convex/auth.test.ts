@@ -92,15 +92,22 @@ describe('userDataFromAuthProfile', () => {
 describe('normalizeRelativeRedirectTo', () => {
   it('keeps safe relative redirects', () => {
     expect(normalizeRelativeRedirectTo('/dashboard')).toBe('/dashboard')
+    expect(normalizeRelativeRedirectTo('  /dashboard?tab=security#sessions  ')).toBe(
+      '/dashboard?tab=security#sessions',
+    )
     expect(normalizeRelativeRedirectTo('?tab=security')).toBe('?tab=security')
   })
 
-  it('falls back to root for absolute or protocol-relative redirects', () => {
+  it('falls back to root for absolute, escaped, or dangerous redirects', () => {
     expect(normalizeRelativeRedirectTo('https://remotionhub.ai/dashboard')).toBe(
       '/',
     )
     expect(normalizeRelativeRedirectTo('https://evil.example/phish')).toBe('/')
     expect(normalizeRelativeRedirectTo('//evil.example/phish')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/\\\\evil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('\\\\evil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/%2f%2fevil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/safe\ndanger')).toBe('/')
   })
 })
 

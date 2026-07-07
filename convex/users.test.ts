@@ -25,6 +25,15 @@ describe('users auth queries and publisher bootstrap', () => {
     await expect(t.query(api.users.me, {})).resolves.toBeNull()
   })
 
+  it('propagates unexpected auth errors from me', async () => {
+    vi.mocked(getAuthUserId).mockRejectedValue(new Error('auth backend unavailable'))
+    const t = convexTest(schema, modules)
+
+    await expect(t.query(api.users.me, {})).rejects.toThrow(
+      'auth backend unavailable',
+    )
+  })
+
   it('returns the current active user from me', async () => {
     const t = convexTest(schema, modules)
     const userId = await t.run(async (ctx) => {

@@ -132,6 +132,9 @@ export function userDataFromAuthProfile(args: {
 
 export function normalizeRelativeRedirectTo(redirectTo: string) {
   const trimmed = redirectTo.trim()
+  if (!trimmed) return '/'
+  if (/[\\\u0000-\u001F\u007F]/.test(trimmed)) return '/'
+  if (/%(?:0[0-9a-f]|1[0-9a-f]|2f|5c|7f)/i.test(trimmed)) return '/'
   if (trimmed.startsWith('?')) return trimmed
   if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return trimmed
   return '/'

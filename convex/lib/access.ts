@@ -3,11 +3,7 @@ import type { Doc, Id } from '../_generated/dataModel'
 import type { MutationCtx, QueryCtx } from '../_generated/server'
 
 export async function getOptionalAuthUserId(ctx: QueryCtx | MutationCtx) {
-  try {
-    return await getAuthUserId(ctx)
-  } catch {
-    return null
-  }
+  return await getAuthUserId(ctx)
 }
 
 export async function requireUser(
