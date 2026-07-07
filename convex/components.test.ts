@@ -75,6 +75,7 @@ describe('components catalog mutations and queries', () => {
 
   it('rejects imports that target a legacy personal user publisher', async () => {
     const t = convexTest(schema, modules)
+    const legacyHandle = 'legacy-personal-linked'
 
     await t.run(async (ctx) => {
       const userId = await ctx.db.insert('users', {
@@ -84,7 +85,7 @@ describe('components catalog mutations and queries', () => {
         updatedAt: 1,
       })
       await ctx.db.insert('publishers', {
-        handle: 'terence',
+        handle: legacyHandle,
         displayName: 'Terence',
         linkedUserId: userId,
         createdAt: 1,
@@ -92,9 +93,34 @@ describe('components catalog mutations and queries', () => {
       })
     })
 
-    await expect(t.mutation(api.components.importCatalogComponent, component)).rejects.toThrow(
-      /Catalog import cannot target a user publisher/,
-    )
+    await expect(
+      t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        publisher: legacyHandle,
+        publisherDisplayName: 'Legacy Personal Publisher',
+      }),
+    ).rejects.toThrow(/Catalog import cannot target a user publisher/)
+  })
+
+  it('rejects imports that target a legacy unlinked personal publisher', async () => {
+    const t = convexTest(schema, modules)
+
+    await t.run(async (ctx) => {
+      await ctx.db.insert('publishers', {
+        handle: 'legacy-unlinked',
+        displayName: 'Terence',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    await expect(
+      t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        publisher: 'legacy-unlinked',
+        publisherDisplayName: 'Legacy Unlinked Publisher',
+      }),
+    ).rejects.toThrow(/Catalog import cannot target a user publisher/)
   })
 
   it('imports a published component and exposes it in listCatalog', async () => {
@@ -117,17 +143,18 @@ describe('components catalog mutations and queries', () => {
 
   it('rejects imports that target a personal user publisher handle', async () => {
     const t = convexTest(schema, modules)
+    const legacyUserHandle = 'legacy-user'
 
     await t.run(async (ctx) => {
       const userId = await ctx.db.insert('users', {
         name: 'Terence',
-        handle: 'terence',
+        handle: legacyUserHandle,
         role: 'user',
         createdAt: 1,
         updatedAt: 1,
       })
       await ctx.db.insert('publishers', {
-        handle: 'terence',
+        handle: legacyUserHandle,
         displayName: 'Terence',
         kind: 'user',
         linkedUserId: userId,
@@ -137,7 +164,10 @@ describe('components catalog mutations and queries', () => {
     })
 
     await expect(
-      t.mutation(api.components.importCatalogComponent, component),
+      t.mutation(api.components.importCatalogComponent, {
+        ...component,
+        publisher: legacyUserHandle,
+      }),
     ).rejects.toThrow(/user publisher/)
   })
 

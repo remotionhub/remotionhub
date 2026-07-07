@@ -100,7 +100,7 @@ async function getPublisherByHandle(db: DbReader, handle: string) {
 }
 
 function isLegacyOrExplicitUserPublisher(publisher: Doc<'publishers'>) {
-  return publisher.kind === 'user' || (publisher.kind === undefined && publisher.linkedUserId !== undefined)
+  return publisher.kind === 'user' || publisher.kind === undefined
 }
 
 async function getComponentByIdentity(
@@ -191,6 +191,7 @@ export const importCatalogComponent = mutation({
       const publisherId = await ctx.db.insert('publishers', {
         handle: args.publisher,
         displayName: args.publisherDisplayName,
+        kind: 'system',
         createdAt: now,
         updatedAt: now,
       })
