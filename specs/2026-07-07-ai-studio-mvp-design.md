@@ -4,7 +4,7 @@
 
 本迭代的目标是交付一个最小可行的在线 AI 动画工作台，让用户在网页里输入提示词后，生成可在线播放和下载的 `16:9` MP4 视频。MVP 阶段由 Remotion 白名单模板完成渲染，系统架构预留 HyperFrames runtime。
 
-第一版聚焦官网和产品演示场景，默认输出横屏 `16:9` MP4 视频。产品形态参考即梦这类低操作创作入口，但 RemotionHub 的核心差异不是泛视频生成，而是复用已有开源模板、素材和 `agentPrompt`，用更可控的模板渲染链路生成稳定结果。
+第一版聚焦官网和产品演示场景。产品形态参考即梦这类低操作创作入口，但 RemotionHub 的核心差异不是泛视频生成，而是复用已有开源模板、素材和 `agentPrompt`，用更可控的模板渲染链路生成稳定结果。
 
 ## 2. 核心结论
 
@@ -20,9 +20,11 @@ MVP 分为两个验收层级：P0 技术闭环和 MVP 上线。P0 技术闭环�
 6. 后台 worker 使用受控 Remotion 模板渲染视频。
 7. 页面展示生成状态，完成后提供 MP4 在线播放和下载。
 
-如果用户没有手动选择模板，MVP 使用简单规则选择默认模板并要求用户确认。智能模板推荐放到后续版本。
+如果用户没有手动选择模板，MVP 使用后台配置的默认模板规则选择模板并要求用户确认。默认模板规则先采用白名单模板的 `priority` 排序，选择 `priority` 最高且状态为 `active` 的模板。智能模板推荐放到后续版本。
 
 第一版不做时间线、多轨道、手动关键帧、代码编辑器或复杂素材上传。工作台不是传统剪辑器，而是一个“AI 制片台”：用户表达意图和选择模板，系统完成规划、合成、渲染和交付。
+
+MVP 不追求生成结果完全符合用户品牌视觉，也不追求真实产品 UI 还原。MVP 只验证模板驱动的 prompt-to-video 闭环、稳定性和基础转化。
 
 ## 3. 范围
 
@@ -36,6 +38,7 @@ MVP 分为两个验收层级：P0 技术闭环和 MVP 上线。P0 技术闭环�
 - 支持 `queued` 状态取消任务，并按规则返还额度。
 - 支持 `planning` 状态取消任务，但返还额度取决于模型调用是否已经开始。
 - 支持生成结果 MP4 在线播放、下载。
+- 支持当前用户最近 10 条 generation job 历史，点击后可以查看状态、视频和下载入口。
 - 支持每个新登录用户 2 次免费生成额度。
 - 支持系统失败自动返还额度，且同一个 job 最多返还一次。
 - 记录模型调用、渲染输入输出和任务状态，便于排障和后续计费。
@@ -88,9 +91,9 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 
 工作台采用左右结构：
 
-- 左侧是对话和输入区，包含生成历史、当前 prompt、模板引用和生成按钮。
-- 右侧是成片工作区，包含当前任务状态、视频播放器、下载入口、使用的模板和生成参数摘要。
-- 模板列表放在左侧输入区下方或右侧视频区下方，重点动作是“使用此模板”或“插入提示词”。
+- 左侧是对话和输入区，包含最近 10 条生成历史、当前 prompt、模板引用和生成按钮。
+- 左侧输入区下方展示模板列表，重点动作是“使用此模板”或“插入提示词”。
+- 右侧是成片工作区，只展示当前任务状态、视频播放器、下载入口、使用的模板和生成参数摘要。
 
 页面应保持工作台感，不做营销 hero。用户进入后第一屏即可输入 prompt 或选择模板。
 
@@ -101,7 +104,7 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 - 顶部保留 prompt 输入和生成按钮。
 - 中间展示生成状态和视频结果。
 - 模板/素材卡片改为横向滑动列表。
-- 历史记录收进抽屉。
+- 最近 10 条生成历史收进抽屉。
 - MVP 不做复杂素材抽屉。
 
 ### 4.3 核心流程
@@ -110,7 +113,7 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 2. 系统展示一个大输入框和白名单模板列表。
 3. 用户输入产品演示需求，或点击模板卡片将 `agentPrompt` 注入输入框。
 4. 如果用户已选择模板，系统展示“将使用这个模板生成”。
-5. 如果用户未选择模板，系统用简单规则选择默认模板并展示“将使用这个模板生成”。
+5. 如果用户未选择模板，系统按后台配置的 `priority` 规则选择默认模板并展示“将使用这个模板生成”。
 6. 用户确认模板后点击生成。
 7. 系统检查登录态、免费额度、并发限制、prompt 完整性和内容安全。
 8. 系统消耗 1 次额度，创建 generation job，并进入规划状态。
@@ -124,7 +127,7 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 
 - 输入不完整：例如用户只写“帮我做个视频”时，不创建 generation job，不扣额度，提示用户补充产品、场景、文案或目标受众。
 - 模型或系统规划失败：已创建 job 后，planner 输出无效且修复一次仍失败，任务失败并自动返还额度。
-- 模板不匹配：展示可手动选择的候选模板。
+- 模板不匹配：提示用户当前模板不适合该 prompt，并展示白名单模板列表，允许用户重新选择。
 - 渲染失败：保留原 prompt，允许重试；如果已扣额度则自动返还。
 - 超时：任务标记为失败或可恢复重试，避免前端无限等待。
 - 用户取消：`queued` 状态取消返还额度；`planning` 状态如果模型尚未开始调用则返还，如果模型已经开始调用则不返还；`rendering` 状态 MVP 不支持取消。
@@ -146,12 +149,14 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 ### 5.2 数据流
 
 1. 前端调用 `createGenerationJob`。
-2. Convex mutation 校验登录用户、额度、模板确认状态、并发限制、prompt 完整性和内容安全；校验通过后写入 `generationJobs` 和 `usageLedger`。
+2. `createGenerationJob` mutation 只做轻量同步校验：登录态、额度、并发限制、模板确认状态和 prompt 基础完整性。内容安全 MVP 先做基础规则检查；如果后续接外部审核服务，应拆成独立 preflight 或 action，不阻塞 mutation。
 3. MVP 阶段由同一个外部 worker 领取 `queued` job，并串行执行 planning 和 rendering。
 4. worker 内部的 planner 模块切换 job 到 `planning`，调用模型，输出 render plan。
 5. render plan 通过 schema validation 后，worker 内部的 renderer 模块切换 job 到 `rendering`，执行 Remotion 渲染。
-6. worker 上传 artifact，切换 job 到 `uploading`，回写 artifact 后切换到 `completed`。
-7. 前端订阅任务状态并展示结果。
+6. renderer 模块完成本地渲染后，将 job 切换到 `uploading`。
+7. worker 上传 MP4 和缩略图到对象存储。
+8. 上传成功后创建 `generationArtifact`，并将 job 切换到 `completed`。
+9. 前端订阅任务状态并展示结果。
 
 虽然 MVP 可以由同一个外部 worker 串行执行 planning 和 rendering，但代码上必须保留 planner 与 renderer 两个模块边界，便于后续拆成独立队列或服务。
 
@@ -170,6 +175,8 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 - `aspectRatio`
 - `durationSeconds`
 - `templateId`
+- `templateVersion`
+- `propsSchemaVersion`
 - `assetIds`
 - `plannerOutput`
 - `artifactId`
@@ -178,6 +185,8 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 - `idempotencyKey`
 - `workerId`
 - `lockedAt`
+- `heartbeatAt`
+- `lockExpiresAt`
 - `errorCode`
 - `errorMessage`
 - `startedAt`
@@ -210,7 +219,11 @@ MVP 的产品演示视频主要基于用户输入的文字、模板内置视觉�
 
 `completed`、`failed`、`canceled` 是终态，不能再变更。
 
-worker 领取任务时必须写入 `workerId` 和 `lockedAt`，防止多个 worker 同时渲染同一个任务。worker 处理期间需要更新心跳或锁时间；如果任务超过约定时间没有心跳，系统可以将任务标记为 `failed` 或重新入队。MVP 推荐先标记为 `failed` 并返还额度，避免重复渲染导致成本不可控。
+active generation job 指 `queued`、`planning`、`rendering`、`uploading` 状态。`completed`、`failed`、`canceled` 不算 active。
+
+worker 领取任务时必须写入 `workerId`、`lockedAt` 和 `lockExpiresAt`，防止多个 worker 同时渲染同一个任务。worker 处理期间定期更新 `heartbeatAt`。系统根据 `heartbeatAt` 判断任务是否悬挂；如果任务超过约定时间没有心跳，系统可以将任务标记为 `failed` 或重新入队。MVP 推荐先标记为 `failed` 并返还额度，避免重复渲染导致成本不可控。
+
+所有状态流转必须基于当前 `status` 做条件更新。只有当前状态仍为 `queued` 时，用户取消才可以进入 `canceled` 并返还额度。`planning` 取消时必须检查 `modelStartedAt`。worker 在 planning 完成后、进入 rendering 前，需要重新读取 job 状态；如果任务已经 `canceled`，则停止后续渲染。
 
 ### 6.2 generationJobEvents
 
@@ -228,13 +241,12 @@ worker 领取任务时必须写入 `workerId` 和 `lockedAt`，防止多个 work
 
 记录生成结果。
 
-关键字段：
+持久字段：
 
 - `userId`
 - `jobId`
-- `videoUrl`
-- `thumbnailUrl`
 - `storageKey`
+- `thumbnailStorageKey`
 - `fileSizeBytes`
 - `mimeType`
 - `width`
@@ -246,7 +258,9 @@ worker 领取任务时必须写入 `workerId` 和 `lockedAt`，防止多个 work
 - `expiresAt`
 - `createdAt`
 
-artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，下载链接也使用签名 URL。用户只能访问自己的 `generationArtifacts`。
+`storageKey` 和 `thumbnailStorageKey` 是 artifact 的长期存储标识。读取接口可以返回动态生成的 `videoUrl` 和 `thumbnailUrl` 短期签名 URL，但 URL 不作为长期真相；如果数据库保存 URL，则必须允许过期后重新签发。
+
+artifact 默认按用户隔离访问。用户只能访问自己的 `generationArtifacts`。未登录用户或其他用户访问 artifact 下载链接时会被拒绝，或只能通过仍有效的签名 URL 访问。
 
 ### 6.4 usageLedger
 
@@ -269,7 +283,13 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 - `consume`
 - `refund`
 
-返还必须幂等。同一个 job 最多只能产生一次系统失败返还，写入 `generationJobs.refundedAt` 和 `usageLedger.idempotencyKey` 防止重复返还。
+返还必须幂等。同一个 job 最多只能产生一次 `refund`，写入 `generationJobs.refundedAt` 和 `usageLedger.idempotencyKey` 防止重复返还。
+
+`usageLedger.idempotencyKey` 必须唯一。初始 grant 使用固定 key，例如 `initial-grant-v1:{userId}`；job consume 使用 `consume:{jobId}`；job refund 使用 `refund:{jobId}`。`balanceAfter` 必须在服务端事务中计算，不能由前端传入。
+
+一个 job 最多只能产生一次 `refund`，不论原因是系统失败、超时、上传失败，还是允许返还的用户取消。
+
+新用户首次进入 Studio 或首次创建 job 前，后端执行 `ensureInitialGrant`。该操作必须幂等，避免重复登录或重复进入 Studio 时重复发放额度。
 
 ### 6.5 modelRuns
 
@@ -280,6 +300,8 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 - `jobId`
 - `provider`
 - `model`
+- `attemptIndex`
+- `runType`
 - `inputDigest`
 - `outputDigest`
 - `inputSnapshotRef`
@@ -296,6 +318,8 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 
 `inputSnapshotRef` 和 `outputSnapshotRef` 指向加密存储或权限受控存储。只保存 digest 不足以支持质量回放和失败排障；MVP 至少需要保存脱敏后的模型输入输出，或保存指向受控存储的引用。
 
+每次模型调用都创建一条 `modelRuns` 记录。schema validation 失败后的修复调用也要单独记录，并用 `attemptIndex` 区分。`runType` 初期使用 `plan` 和 `repair`。
+
 ### 6.6 renderRuns
 
 记录渲染执行过程，便于定位 worker、Remotion、上传和环境问题。
@@ -306,6 +330,10 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 - `workerId`
 - `runtime`
 - `templateId`
+- `templateVersion`
+- `rendererVersion`
+- `remotionVersion`
+- `workerVersion`
 - `startedAt`
 - `completedAt`
 - `durationMs`
@@ -313,8 +341,29 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 - `errorCode`
 - `errorMessage`
 - `logsRef`
+- `renderInputSnapshotRef`
 - `outputStorageKey`
 - `createdAt`
+
+`renderInputSnapshotRef` 指向本次渲染实际使用的 `props`、`assetIds`、`templateId`、`templateVersion` 和 output 设置，确保老视频可以复现和排查。
+
+### 6.7 Error Codes
+
+MVP 初版错误码：
+
+- `AUTH_REQUIRED`
+- `INSUFFICIENT_CREDITS`
+- `ACTIVE_JOB_LIMIT`
+- `PROMPT_INCOMPLETE`
+- `CONTENT_BLOCKED`
+- `TEMPLATE_NOT_FOUND`
+- `TEMPLATE_NOT_ALLOWED`
+- `PLAN_VALIDATION_FAILED`
+- `MODEL_PROVIDER_ERROR`
+- `RENDER_TIMEOUT`
+- `RENDER_FAILED`
+- `UPLOAD_FAILED`
+- `JOB_CANCELED`
 
 ## 7. 模板与素材复用
 
@@ -333,6 +382,8 @@ artifact 默认按用户隔离访问。`videoUrl` 可以是短期签名 URL，�
 
 MVP 使用白名单模板列表。用户可以手动选择模板；如果用户没有选择，系统用简单规则选择默认模板；智能模板推荐放到后续版本。
 
+默认模板规则由后台配置，不由模型选择。MVP 可以先采用白名单模板的 `priority` 排序，选择 `priority` 最高且状态为 `active` 的模板。后续再加入标签匹配和智能推荐。
+
 模板卡片在工作台中应强调三件事：
 
 - 预览效果。
@@ -349,6 +400,8 @@ render plan 使用结构化 JSON。MVP 简化 schema 如下：
 {
   "schemaVersion": 1,
   "templateId": "string",
+  "templateVersion": "string",
+  "propsSchemaVersion": "string",
   "runtime": "remotion",
   "output": {
     "aspectRatio": "16:9",
@@ -381,9 +434,16 @@ render plan 使用结构化 JSON。MVP 简化 schema 如下：
 
 生成前必须做 schema validation。校验失败时，可以让模型修复一次；仍失败则任务失败并返还额度。
 
+MVP 不做自动 render retry。除 render plan schema 修复一次外，其他失败都进入 `failed`。用户点击重试时创建新的 job，并重新检查额度。
+
+`scenes` 是 planner 的高层语义结构，用于解释视频内容和排障。MVP 渲染的唯一输入源是 `props` 和 `assetIds`；renderer 不直接消费 `scenes`。planner 必须把 `scenes` 中的内容转换为符合模板 props schema 的 `props`。
+
 校验规则：
 
 - `templateId` 必须来自白名单。
+- `renderPlan.templateId` 必须等于 `generationJobs.templateId`。用户确认模板后，planner 不允许改成其他模板。
+- `templateVersion` 必须等于 job 创建时锁定的 `generationJobs.templateVersion`。
+- `propsSchemaVersion` 必须等于 job 创建时锁定的 `generationJobs.propsSchemaVersion`。
 - `runtime` 在 MVP 中必须是 `remotion`。
 - `output.aspectRatio` 必须是 `16:9`。
 - `output.width` 必须是 `1280`。
@@ -397,23 +457,21 @@ render plan 使用结构化 JSON。MVP 简化 schema 如下：
 
 第一版模型 provider 应通过内部网关封装，避免前端直接接触 provider key。provider 选择、模型名称、限流策略和成本记录都在后端处理。
 
-用户 prompt、模型输入和模型输出只做最小化保存，并做权限控制。普通用户只能查看自己的任务输入和输出；后台管理员只能在排障需要时查看完整内容。
+用户 prompt、模型输入和模型输出只做最小化保存，并做权限控制。普通用户只能查看自己的 prompt、任务状态、生成结果和下载链接。model input、model output、render plan、render logs 默认仅供后台排障使用。
 
 用户 prompt 进入 job 创建前必须做基础内容安全检查，禁止违法、色情、仇恨、诈骗、侵权等内容。检查失败时不创建 generation job，也不消耗额度。
+
+`generationJobEvents.metadata` 不应直接保存敏感 prompt、完整模型输出或完整 render props。如需排障，应保存 `snapshotRef` 或脱敏摘要。
 
 ## 9. 渲染与存储
 
 渲染链路应与网页请求解耦，避免长时间请求阻塞。
 
-第一版可以使用以下执行方式之一：
+MVP 产品路径采用独立 render worker。Convex action 调用外部 render service 可以作为未来替代方案。GitHub Actions 或临时队列只适合内部试验，不作为 MVP 产品路径。
 
-- Convex action 调用外部 render service。
-- 独立 worker 轮询 Convex 待处理任务。
-- GitHub Actions 或临时队列只适合内部试验，不适合作为产品路径。
+独立 render worker 是 MVP 推荐路径，因为 Remotion 渲染通常需要 Node 环境、浏览器依赖、字体和较明确的资源限制。
 
-推荐使用独立 render worker，因为 Remotion 渲染通常需要 Node 环境、浏览器依赖、字体和较明确的资源限制。
-
-渲染结果上传到对象存储，Convex 只保存 URL、metadata 和状态。前端播放使用 `videoUrl`，下载使用同一 artifact 或签名下载 URL。
+渲染结果上传到对象存储，Convex 保存 `storageKey`、metadata 和状态。前端播放和下载使用动态签名 URL 或仍有效的短期 URL。
 
 MVP 不提供 Remotion 或 HyperFrames 源码下载。用户获得的是可播放、可下载的 MP4 artifact。
 
@@ -464,10 +522,16 @@ MVP 不提供 Remotion 或 HyperFrames 源码下载。用户获得的是可播�
 
 - usage ledger 消耗和返还。
 - usage ledger 返还幂等。
+- `usageLedger.idempotencyKey` 唯一约束。
+- `ensureInitialGrant` 幂等。
 - job 状态机合法流转。
+- 基于当前 `status` 的条件状态更新。
 - worker lock 和过期任务处理。
+- worker `heartbeatAt` 悬挂检测。
 - render plan schema validation。
+- render plan `templateId`、`templateVersion`、`propsSchemaVersion` 必须匹配 job。
 - template selection helper。
+- 默认模板 priority 规则。
 - modelRuns 记录脱敏快照引用、schema version、validation errors 和成本字段。
 - renderRuns 记录 worker id、duration、exit code、logsRef 和 output storage key。
 
@@ -478,9 +542,12 @@ MVP 不提供 Remotion 或 HyperFrames 源码下载。用户获得的是可播�
 - 失败任务会返还额度。
 - `queued` 状态主动取消会返还额度。
 - `planning` 状态主动取消按 `modelStartedAt` 判断是否返还额度。
-- 同一个 job 不会重复返还额度。
+- 同一个 job 最多产生一次 `refund`。
 - 单用户同时只能运行 1 个生成任务。
 - catalog 模板白名单只返回 `16:9` 且可用于 studio 的素材。
+- worker 在进入 rendering 前会重新读取 job 状态，已取消任务不会继续渲染。
+- 除 render plan schema 修复一次外，失败任务不会自动 render retry。
+- artifact 访问按用户隔离，下载 URL 可过期后重新签发。
 
 ### 12.3 浏览器验收
 
@@ -489,13 +556,14 @@ MVP 不提供 Remotion 或 HyperFrames 源码下载。用户获得的是可播�
 - 未选择模板时，系统用默认模板规则选择模板并要求用户确认。
 - 生成任务创建后能看到状态变化。
 - 完成任务显示视频播放器和下载入口。
+- 用户可以查看最近 10 条 generation job 历史。
 - 无额度用户看到清晰的无额度提示，并说明当前 MVP 暂不支持在线购买额度。
 
 ## 13. 风险与缓解
 
 模板覆盖不足是最大产品风险。缓解方式是 MVP 上线先挑 5-10 个高质量官网/产品演示模板，并为每个模板准备黄金 prompt。验证转化和稳定性后，再扩展到 20-30 个模板。
 
-模型选择模板不准会影响体验。缓解方式是允许用户手动选择模板，并在 planner 输出前把选中模板作为硬约束。
+默认模板规则不准会影响体验。缓解方式是要求用户确认模板，并允许用户手动选择白名单模板。planner 输出前，`templateId` 必须作为硬约束。
 
 产品演示预期过高会影响满意度。MVP 不支持上传 logo、截图或视频，因此只能生成基于文字、模板内置视觉和 catalog 素材的示意型产品演示；真实品牌素材上传放到后续版本。
 
@@ -553,9 +621,10 @@ worker 崩溃会导致任务悬挂。缓解方式是 worker 领取任务时写�
 - 登录用户可以在 `/studio` 输入 prompt 并创建生成任务。
 - 新用户默认有 2 次免费额度。
 - 用户选择或确认模板后，创建任务会扣 1 次额度。
-- 系统失败会自动返还额度，且同一个 job 不会重复返还。
+- 系统失败会自动返还额度，且同一个 job 最多产生一次 `refund`。
 - 用户最多同时运行 1 个生成任务。
 - 至少 1 个 Remotion 模板可以从 prompt 生成 `16:9` MP4。
+- 用户确认的 `templateId` 必须作为硬约束，render plan 不允许切换到其他模板。
 - 生成视频分辨率为 `1280x720`，FPS 为 `30`，时长在 `10-30` 秒内。
 - 完成后用户可以在线播放和下载 MP4 视频。
 - 所有 job 有状态记录、事件记录、artifact 记录、modelRuns 记录和 renderRuns 记录。
@@ -569,3 +638,4 @@ worker 崩溃会导致任务悬挂。缓解方式是 worker 领取任务时写�
 - 无额度用户看到清晰的无额度提示，并说明 MVP 暂不支持在线购买额度。
 - Prompt 信息不足或内容安全检查失败时，不创建 job，也不消耗额度。
 - 用户只能访问自己的 generation job 和 artifact。
+- 未登录用户或其他用户访问 artifact 下载链接时会被拒绝，或只能通过有效签名 URL 访问。
