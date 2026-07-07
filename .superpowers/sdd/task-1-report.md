@@ -29,3 +29,26 @@ Implemented the AI Studio domain constants and render plan validator in:
 ## Concerns
 
 - None for this task scope.
+
+## Fix Report
+
+### Files changed
+
+- `convex/lib/studio/renderPlan.ts`
+- `convex/lib/studio/renderPlan.test.ts`
+
+### Test command
+
+- `npm run test -- convex/lib/studio/constants.test.ts convex/lib/studio/renderPlan.test.ts`
+
+### Test summary
+
+- Passed: 2 files, 9 tests
+
+### Self-review
+
+- `validateRenderPlan` now safe-parses the render plan before any template lock comparison.
+- The `template` argument is narrowed to `allowedAssetIds` and `propsSchema` only.
+- Malformed structural input now returns `PLAN_VALIDATION_FAILED`.
+- Structurally valid input with a mismatched template lock still returns `TEMPLATE_VERSION_MISMATCH`.
+- Props schema validation remains limited to the required JSON-schema subset used by the task.

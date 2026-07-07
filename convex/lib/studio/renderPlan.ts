@@ -129,27 +129,10 @@ export function validateRenderPlan(
     propsSchemaVersion: string
   },
   template: {
-    templateId: string
-    templateVersion: string
-    propsSchemaVersion: string
     allowedAssetIds: string[]
     propsSchema: unknown
   },
 ): { ok: true; value: StudioRenderPlan } | { ok: false; errors: StudioErrorCode[] } {
-  if (
-    !input ||
-    typeof input !== 'object' ||
-    Array.isArray(input) ||
-    (input as { templateId?: unknown }).templateId !== job.templateId ||
-    (input as { templateVersion?: unknown }).templateVersion !== job.templateVersion ||
-    (input as { propsSchemaVersion?: unknown }).propsSchemaVersion !== job.propsSchemaVersion ||
-    (input as { templateId?: unknown }).templateId !== template.templateId ||
-    (input as { templateVersion?: unknown }).templateVersion !== template.templateVersion ||
-    (input as { propsSchemaVersion?: unknown }).propsSchemaVersion !== template.propsSchemaVersion
-  ) {
-    return { ok: false, errors: ['TEMPLATE_VERSION_MISMATCH'] }
-  }
-
   const parsed = renderPlanSchema.safeParse(input)
   if (!parsed.success) {
     return { ok: false, errors: ['PLAN_VALIDATION_FAILED'] }
@@ -159,10 +142,7 @@ export function validateRenderPlan(
   if (
     plan.templateId !== job.templateId ||
     plan.templateVersion !== job.templateVersion ||
-    plan.propsSchemaVersion !== job.propsSchemaVersion ||
-    plan.templateId !== template.templateId ||
-    plan.templateVersion !== template.templateVersion ||
-    plan.propsSchemaVersion !== template.propsSchemaVersion
+    plan.propsSchemaVersion !== job.propsSchemaVersion
   ) {
     return { ok: false, errors: ['TEMPLATE_VERSION_MISMATCH'] }
   }
