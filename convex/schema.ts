@@ -110,6 +110,7 @@ export default defineSchema({
     templateVersion: v.string(),
     propsSchemaVersion: v.string(),
     assetIds: v.array(v.string()),
+    attemptCount: v.number(),
     plannerOutput: v.optional(v.any()),
     artifactId: v.optional(v.id('generationArtifacts')),
     progress: v.number(),

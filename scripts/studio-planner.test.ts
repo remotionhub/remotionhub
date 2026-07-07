@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { validateRenderPlan } from '../convex/lib/studio/renderPlan'
 import { p0StudioTemplateSeed } from '../convex/lib/studio/templates'
 import { createStubRenderPlan } from './studio-planner'
+import { runStudioWorkerOnce } from './studio-worker'
 
 describe('createStubRenderPlan', () => {
   it('returns the expected P0 remotion render plan', () => {
@@ -37,6 +38,55 @@ describe('createStubRenderPlan', () => {
     ).toEqual({
       ok: true,
       value: plan,
+    })
+  })
+
+  it('fails the claimed job after planning when renderer work is not implemented', async () => {
+    const calls: Array<{ step: string; args: Record<string, unknown> }> = []
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation(_mutation, args) {
+        const step = ['claim', 'markModelStarted', 'completePlanning', 'failGenerationJob'][
+          calls.length
+        ]
+        calls.push({
+          step,
+          args: args as Record<string, unknown>,
+        })
+
+        if (step === 'claim') {
+          return {
+            id: 'job-1',
+            prompt: 'Launch an AI analytics dashboard',
+            templateId: p0StudioTemplateSeed.templateId,
+            templateVersion: p0StudioTemplateSeed.templateVersion,
+          }
+        }
+
+        return null
+      },
+    }))
+
+    expect(result).toEqual({
+      status: 'failed',
+      jobId: 'job-1',
+    })
+    expect(calls.map((call) => call.step)).toEqual([
+      'claim',
+      'markModelStarted',
+      'completePlanning',
+      'failGenerationJob',
+    ])
+    expect(calls[3]?.args).toMatchObject({
+      jobId: 'job-1',
+      workerId: 'worker-1',
+      workerSecret: 'studio-worker-secret',
+      errorCode: 'RENDER_NOT_IMPLEMENTED',
     })
   })
 })

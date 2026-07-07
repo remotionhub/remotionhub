@@ -13,3 +13,10 @@
 - Test output summary: expected the planner stub suite and studio worker mutation suite to pass, including new coverage for missing/wrong secret rejection and correct-secret success paths.
 - Self-review: kept the existing status and `workerId` ownership guards unchanged, centralized the worker trust-boundary check in one helper to avoid drift across mutations, and added rejection assertions that verify unauthorized calls do not advance queued/planning job state.
 - Verification on 2026-07-07: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts` passed with `2` test files and `5` tests green in `185ms`.
+
+## Task 5 re-review fix
+- Files changed: `convex/schema.ts`, `convex/studio.ts`, `convex/studio-worker.test.ts`, `scripts/studio-worker.ts`, `scripts/studio-planner.test.ts`, `.superpowers/sdd/task-5-report.md`.
+- Fix summary: added `attemptCount` to generation jobs, reclaimed expired planning locks on claim, failed expired rendering/uploading or planner-finished stale jobs into terminal states, refreshed worker lock deadlines across stage mutations, and replaced worker payload `v.any()` inputs with explicit Convex validators.
+- Worker CLI summary: default worker flow now completes planning and then fails the claimed job with `RENDER_NOT_IMPLEMENTED` unless `STUDIO_WORKER_MODE=planner-only` is explicitly set, so Task 5 no longer leaves planning jobs permanently active.
+- Test command: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts`
+- Test output summary: passed with `2` test files and `11` tests green in `167ms`; coverage now includes stale planning recovery, stale rendering/uploading failure recovery, attempt counting, planner-only CLI safety, and invalid transition guards after terminal or duplicate planning states.

@@ -121,11 +121,6 @@ export async function runStudioWorkerOnce(
       renderPlan,
       modelRun: createStubModelRun(claimedJob, claimedJob.prompt),
     })
-
-    console.log(
-      `Planned studio job ${claimedJob.id}. Renderer integration remains for Task 6.`,
-    )
-    return { status: 'planned', jobId: claimedJob.id }
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown studio worker error.'
@@ -141,6 +136,28 @@ export async function runStudioWorkerOnce(
     console.error(`Failed studio job ${claimedJob.id}: ${errorMessage}`)
     return { status: 'failed', jobId: claimedJob.id }
   }
+
+  if (env.STUDIO_WORKER_MODE === 'planner-only') {
+    console.log(
+      `Planned studio job ${claimedJob.id}. Renderer integration remains for Task 6.`,
+    )
+    return { status: 'planned', jobId: claimedJob.id }
+  }
+
+  const errorCode = 'RENDER_NOT_IMPLEMENTED'
+  const errorMessage =
+    'Renderer integration is not implemented in Task 5. Retry after Task 6 ships.'
+
+  await client.mutation(studioApi.studio.failGenerationJob, {
+    jobId: claimedJob.id,
+    workerId,
+    workerSecret,
+    errorCode,
+    errorMessage,
+  })
+
+  console.error(`Failed studio job ${claimedJob.id}: ${errorCode} ${errorMessage}`)
+  return { status: 'failed', jobId: claimedJob.id }
 }
 
 const entryPoint = process.argv[1]

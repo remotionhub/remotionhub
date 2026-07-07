@@ -24,6 +24,107 @@ const STUDIO_INITIAL_GRANT_CREDITS = 2
 const STUDIO_JOB_COST = 1
 const MIN_PROMPT_LENGTH = 10
 const BLOCKED_PROMPT_KEYWORDS = ['terrorist', 'bomb', 'kill myself', 'suicide']
+const DEFAULT_STUDIO_WORKER_LOCK_TTL_MS = 30_000
+
+const studioTokenUsageValidator = v.object({
+  inputTokens: v.number(),
+  outputTokens: v.number(),
+  totalTokens: v.number(),
+})
+
+const studioRenderPlanValidator = v.object({
+  schemaVersion: v.literal(1),
+  templateId: v.string(),
+  templateVersion: v.string(),
+  propsSchemaVersion: v.string(),
+  runtime: v.literal('remotion'),
+  output: v.object({
+    aspectRatio: v.literal('16:9'),
+    width: v.literal(1280),
+    height: v.literal(720),
+    fps: v.literal(30),
+    durationSeconds: v.number(),
+    format: v.literal('mp4'),
+  }),
+  intentSummary: v.string(),
+  style: v.object({
+    tone: v.string(),
+    primaryColor: v.string(),
+    backgroundStyle: v.string(),
+  }),
+  scenes: v.array(
+    v.object({
+      id: v.string(),
+      durationSeconds: v.number(),
+      headline: v.string(),
+      subtitle: v.string(),
+      body: v.string(),
+      visualHint: v.string(),
+    }),
+  ),
+  props: v.record(v.string(), v.string()),
+  assetIds: v.array(v.string()),
+})
+
+const studioModelRunValidator = v.object({
+  provider: v.string(),
+  model: v.string(),
+  attemptIndex: v.number(),
+  runType: v.union(v.literal('plan'), v.literal('repair')),
+  inputDigest: v.string(),
+  outputDigest: v.optional(v.string()),
+  inputSnapshotRef: v.string(),
+  outputSnapshotRef: v.optional(v.string()),
+  validationErrors: v.optional(v.array(v.string())),
+  errorCode: v.optional(v.string()),
+  errorMessage: v.optional(v.string()),
+  promptVersion: v.string(),
+  schemaVersion: v.string(),
+  tokenUsage: v.optional(studioTokenUsageValidator),
+  estimatedCost: v.optional(v.number()),
+  latencyMs: v.optional(v.number()),
+})
+
+const studioRenderRunValidator = v.object({
+  runtime: v.union(v.literal('remotion'), v.literal('hyperframes')),
+  templateId: v.string(),
+  templateVersion: v.string(),
+  rendererVersion: v.string(),
+  remotionVersion: v.string(),
+  workerVersion: v.string(),
+  startedAt: v.number(),
+  completedAt: v.optional(v.number()),
+  durationMs: v.optional(v.number()),
+  exitCode: v.optional(v.number()),
+  errorCode: v.optional(v.string()),
+  errorMessage: v.optional(v.string()),
+  logsRef: v.optional(v.string()),
+  renderInputSnapshotRef: v.string(),
+  outputStorageKey: v.optional(v.string()),
+})
+
+const studioRenderRunPatchValidator = v.object({
+  completedAt: v.optional(v.number()),
+  durationMs: v.optional(v.number()),
+  exitCode: v.optional(v.number()),
+  errorCode: v.optional(v.string()),
+  errorMessage: v.optional(v.string()),
+  logsRef: v.optional(v.string()),
+  outputStorageKey: v.optional(v.string()),
+})
+
+const studioArtifactValidator = v.object({
+  storageKey: v.string(),
+  thumbnailStorageKey: v.optional(v.string()),
+  fileSizeBytes: v.number(),
+  mimeType: v.string(),
+  width: v.number(),
+  height: v.number(),
+  fps: v.number(),
+  durationSeconds: v.number(),
+  aspectRatio: v.string(),
+  runtime: v.union(v.literal('remotion'), v.literal('hyperframes')),
+})
 
 const studioTemplateSeedValidator = v.object({
   importSecret: v.string(),
@@ -86,6 +187,7 @@ type StudioWorkerClaimResult = {
   templateVersion: string
   propsSchemaVersion: string
   assetIds: string[]
+  attemptCount: number
   workerId: string
   progress: number
   startedAt: number | null
@@ -144,6 +246,7 @@ function toWorkerGenerationJob(job: Doc<'generationJobs'>): StudioWorkerClaimRes
     templateVersion: job.templateVersion,
     propsSchemaVersion: job.propsSchemaVersion,
     assetIds: job.assetIds,
+    attemptCount: job.attemptCount,
     workerId: job.workerId ?? '',
     progress: job.progress,
     startedAt: job.startedAt ?? null,
@@ -367,6 +470,153 @@ function requireStudioWorkerSecret(workerSecret: string) {
   }
 }
 
+function getWorkerLockTtlMs(
+  job: Pick<Doc<'generationJobs'>, 'lockExpiresAt' | 'heartbeatAt' | 'lockedAt'>,
+  fallbackTtlMs = DEFAULT_STUDIO_WORKER_LOCK_TTL_MS,
+) {
+  if (job.lockExpiresAt !== undefined) {
+    const base = job.heartbeatAt ?? job.lockedAt ?? job.lockExpiresAt
+    const ttlMs = job.lockExpiresAt - base
+    if (ttlMs > 0) {
+      return ttlMs
+    }
+  }
+
+  return fallbackTtlMs
+}
+
+function getLockExpiryTime(
+  job: Pick<Doc<'generationJobs'>, 'lockExpiresAt' | 'heartbeatAt' | 'lockedAt'>,
+  fallbackTtlMs = DEFAULT_STUDIO_WORKER_LOCK_TTL_MS,
+) {
+  if (job.lockExpiresAt !== undefined) {
+    return job.lockExpiresAt
+  }
+
+  const heartbeatBase = job.heartbeatAt ?? job.lockedAt
+  if (heartbeatBase !== undefined) {
+    return heartbeatBase + fallbackTtlMs
+  }
+
+  return null
+}
+
+function isExpiredWorkerLock(
+  job: Pick<
+    Doc<'generationJobs'>,
+    'lockExpiresAt' | 'heartbeatAt' | 'lockedAt' | 'workerId'
+  >,
+  now: number,
+  fallbackTtlMs: number,
+) {
+  if (!job.workerId) {
+    return false
+  }
+
+  const expiryTime = getLockExpiryTime(job, fallbackTtlMs)
+  return expiryTime !== null && expiryTime <= now
+}
+
+async function claimPlanningJob(
+  ctx: MutationCtx,
+  job: Doc<'generationJobs'>,
+  args: {
+    workerId: string
+    lockTtlMs: number
+    now: number
+    recovered: boolean
+  },
+) {
+  await ctx.db.patch(job._id, {
+    status: 'planning',
+    workerId: args.workerId,
+    lockedAt: args.now,
+    heartbeatAt: args.now,
+    lockExpiresAt: args.now + args.lockTtlMs,
+    startedAt: job.startedAt ?? args.now,
+    attemptCount: job.attemptCount + 1,
+    progress: defaultProgressForStatus('planning'),
+    updatedAt: args.now,
+  })
+  await ctx.db.insert('generationJobEvents', {
+    jobId: job._id,
+    type: 'planning_started',
+    metadata: {
+      workerId: args.workerId,
+      recovered: args.recovered,
+      previousWorkerId: job.workerId,
+    },
+    createdAt: args.now,
+  })
+
+  const claimedJob = await ctx.db.get(job._id)
+  if (!claimedJob) {
+    throw new ConvexError('Claimed generation job lookup failed.')
+  }
+
+  return toWorkerGenerationJob(claimedJob)
+}
+
+async function failExpiredWorkerJob(
+  ctx: MutationCtx,
+  job: Doc<'generationJobs'>,
+  now: number,
+) {
+  const errorCode =
+    job.status === 'rendering'
+      ? 'RENDER_TIMEOUT'
+      : job.status === 'uploading'
+        ? 'UPLOAD_FAILED'
+        : 'RENDER_NOT_IMPLEMENTED'
+  const errorMessage =
+    job.status === 'rendering'
+      ? 'Rendering worker lock expired before completion.'
+      : job.status === 'uploading'
+        ? 'Upload worker lock expired before completion.'
+        : 'Planner output was produced, but rendering is not implemented in Task 5.'
+
+  await ctx.db.patch(job._id, {
+    status: 'failed',
+    errorCode,
+    errorMessage,
+    failedAt: now,
+    heartbeatAt: now,
+    lockExpiresAt: now,
+    updatedAt: now,
+  })
+  await ctx.db.insert('generationJobEvents', {
+    jobId: job._id,
+    type: 'job_failed',
+    message: errorMessage,
+    metadata: {
+      workerId: job.workerId ?? 'system',
+      errorCode,
+      recovery: 'expired_lock',
+    },
+    createdAt: now,
+  })
+}
+
+async function findExpiredActiveJobs(
+  ctx: MutationCtx,
+  now: number,
+  fallbackTtlMs: number,
+) {
+  const activeJobs = await Promise.all(
+    ACTIVE_JOB_STATUSES.filter((status) => status !== 'queued').map((status) =>
+      ctx.db
+        .query('generationJobs')
+        .withIndex('by_status_lock', (q) => q.eq('status', status))
+        .collect(),
+    ),
+  )
+
+  return activeJobs
+    .flat()
+    .filter((job) => isExpiredWorkerLock(job, now, fallbackTtlMs))
+    .sort((left, right) => left.createdAt - right.createdAt)
+}
+
 export const upsertStudioTemplate = mutation({
   args: studioTemplateSeedValidator,
   handler: async (ctx, args) => {
@@ -489,6 +739,7 @@ export const createGenerationJob = mutation({
       templateVersion: template.templateVersion,
       propsSchemaVersion: template.propsSchemaVersion,
       assetIds: args.assetIds,
+      attemptCount: 0,
       progress: defaultProgressForStatus('queued'),
       idempotencyKey: args.idempotencyKey,
       createdAt: now,
@@ -619,6 +870,21 @@ export const claimNextGenerationJob = mutation({
   handler: async (ctx, args) => {
     requireStudioWorkerSecret(args.workerSecret)
 
+    const now = Date.now()
+    const expiredActiveJobs = await findExpiredActiveJobs(ctx, now, args.lockTtlMs)
+    for (const expiredJob of expiredActiveJobs) {
+      if (expiredJob.status === 'planning' && !expiredJob.plannerOutput) {
+        return claimPlanningJob(ctx, expiredJob, {
+          workerId: args.workerId,
+          lockTtlMs: args.lockTtlMs,
+          now,
+          recovered: true,
+        })
+      }
+
+      await failExpiredWorkerJob(ctx, expiredJob, now)
+    }
+
     const queuedJobs = await ctx.db
       .query('generationJobs')
       .withIndex('by_status_lock', (q) => q.eq('status', 'queued'))
@@ -631,32 +897,12 @@ export const claimNextGenerationJob = mutation({
       return null
     }
 
-    const now = Date.now()
-    await ctx.db.patch(nextJob._id, {
-      status: 'planning',
+    return claimPlanningJob(ctx, nextJob, {
       workerId: args.workerId,
-      lockedAt: now,
-      heartbeatAt: now,
-      lockExpiresAt: now + args.lockTtlMs,
-      startedAt: nextJob.startedAt ?? now,
-      progress: defaultProgressForStatus('planning'),
-      updatedAt: now,
+      lockTtlMs: args.lockTtlMs,
+      now,
+      recovered: false,
     })
-    await ctx.db.insert('generationJobEvents', {
-      jobId: nextJob._id,
-      type: 'planning_started',
-      metadata: {
-        workerId: args.workerId,
-      },
-      createdAt: now,
-    })
-
-    const claimedJob = await ctx.db.get(nextJob._id)
-    if (!claimedJob) {
-      throw new ConvexError('Claimed generation job lookup failed.')
-    }
-
-    return toWorkerGenerationJob(claimedJob)
   },
 })
 
@@ -675,9 +921,14 @@ export const markModelStarted = mutation({
     })
 
     const now = Date.now()
+    if (job.modelStartedAt) {
+      studioError('INVALID_WORKER_STATE')
+    }
+
     await ctx.db.patch(job._id, {
-      modelStartedAt: job.modelStartedAt ?? now,
+      modelStartedAt: now,
       heartbeatAt: now,
+      lockExpiresAt: now + getWorkerLockTtlMs(job),
       updatedAt: now,
     })
     await ctx.db.insert('generationJobEvents', {
@@ -703,8 +954,8 @@ export const completePlanning = mutation({
     jobId: v.id('generationJobs'),
     workerId: v.string(),
     workerSecret: v.string(),
-    renderPlan: v.any(),
-    modelRun: v.any(),
+    renderPlan: studioRenderPlanValidator,
+    modelRun: studioModelRunValidator,
   },
   handler: async (ctx, args) => {
     requireStudioWorkerSecret(args.workerSecret)
@@ -714,6 +965,10 @@ export const completePlanning = mutation({
       workerId: args.workerId,
       expectedStatus: 'planning',
     })
+
+    if (job.plannerOutput) {
+      studioError('INVALID_WORKER_STATE')
+    }
 
     const template = await getTemplateByIdentity(
       ctx.db,
@@ -745,6 +1000,7 @@ export const completePlanning = mutation({
     await ctx.db.patch(job._id, {
       plannerOutput: planResult.value,
       heartbeatAt: now,
+      lockExpiresAt: now + getWorkerLockTtlMs(job),
       updatedAt: now,
     })
 
@@ -762,7 +1018,7 @@ export const startRendering = mutation({
     jobId: v.id('generationJobs'),
     workerId: v.string(),
     workerSecret: v.string(),
-    renderRun: v.any(),
+    renderRun: studioRenderRunValidator,
   },
   handler: async (ctx, args) => {
     requireStudioWorkerSecret(args.workerSecret)
@@ -788,6 +1044,7 @@ export const startRendering = mutation({
       status: 'rendering',
       progress: defaultProgressForStatus('rendering'),
       heartbeatAt: now,
+      lockExpiresAt: now + getWorkerLockTtlMs(job),
       updatedAt: now,
     })
     await ctx.db.insert('generationJobEvents', {
@@ -827,6 +1084,7 @@ export const startUploading = mutation({
       status: 'uploading',
       progress: defaultProgressForStatus('uploading'),
       heartbeatAt: now,
+      lockExpiresAt: now + getWorkerLockTtlMs(job),
       updatedAt: now,
     })
     await ctx.db.insert('generationJobEvents', {
@@ -852,8 +1110,8 @@ export const completeGenerationJob = mutation({
     jobId: v.id('generationJobs'),
     workerId: v.string(),
     workerSecret: v.string(),
-    artifact: v.any(),
-    renderRun: v.any(),
+    artifact: studioArtifactValidator,
+    renderRun: studioRenderRunPatchValidator,
   },
   handler: async (ctx, args) => {
     requireStudioWorkerSecret(args.workerSecret)
