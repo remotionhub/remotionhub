@@ -9,7 +9,7 @@ export function UserBootstrap() {
   const didRun = useRef(false)
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || !me || didRun.current) return
+    if (isLoading || !isAuthenticated || me === undefined || didRun.current) return
     didRun.current = true
     void ensureUser({}).catch(() => {
       didRun.current = false
