@@ -1,11 +1,22 @@
 import { describe, expect, it } from 'vitest'
 import { validateRenderPlan } from './renderPlan'
+import type { StudioErrorCode } from './constants'
 
 const job = {
   templateId: 'yt-simple-ai-product',
   templateVersion: '1.0.0',
   propsSchemaVersion: '1',
-} as const
+}
+
+function expectErrors(
+  result: ReturnType<typeof validateRenderPlan>,
+): StudioErrorCode[] {
+  expect(result.ok).toBe(false)
+  if (result.ok) {
+    throw new Error('Expected validation to fail.')
+  }
+  return result.errors
+}
 
 const template = {
   allowedAssetIds: ['template:yt-simple-ai-product:hero-bg'],
@@ -17,7 +28,7 @@ const template = {
       headline: { type: 'string', minLength: 1, maxLength: 120 },
     },
   },
-} as const
+}
 
 describe('validateRenderPlan', () => {
   it('accepts a strict Remotion render plan locked to the selected template', () => {
@@ -92,8 +103,7 @@ describe('validateRenderPlan', () => {
       template,
     )
 
-    expect(result.ok).toBe(false)
-    expect(result.errors).toContain('PLAN_VALIDATION_FAILED')
+    expect(expectErrors(result)).toContain('PLAN_VALIDATION_FAILED')
   })
 
   it('returns TEMPLATE_VERSION_MISMATCH for a structurally valid plan locked to a different template', () => {
@@ -135,8 +145,7 @@ describe('validateRenderPlan', () => {
       template,
     )
 
-    expect(result.ok).toBe(false)
-    expect(result.errors).toContain('TEMPLATE_VERSION_MISMATCH')
+    expect(expectErrors(result)).toContain('TEMPLATE_VERSION_MISMATCH')
   })
 
   it('rejects asset ids outside the allowed namespaces', () => {
@@ -178,8 +187,7 @@ describe('validateRenderPlan', () => {
       template,
     )
 
-    expect(result.ok).toBe(false)
-    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+    expect(expectErrors(result)).toContain('PROPS_VALIDATION_FAILED')
   })
 
   it('rejects props that are not allowed by the template schema', () => {
@@ -221,8 +229,7 @@ describe('validateRenderPlan', () => {
       template,
     )
 
-    expect(result.ok).toBe(false)
-    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+    expect(expectErrors(result)).toContain('PROPS_VALIDATION_FAILED')
   })
 
   it('rejects props that fail required and length constraints', () => {
@@ -264,7 +271,6 @@ describe('validateRenderPlan', () => {
       template,
     )
 
-    expect(result.ok).toBe(false)
-    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+    expect(expectErrors(result)).toContain('PROPS_VALIDATION_FAILED')
   })
 })
