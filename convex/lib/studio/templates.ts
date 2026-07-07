@@ -18,6 +18,7 @@ export type StudioTemplateSeed = {
 type StudioTemplateCandidate = {
   templateId: string
   templateVersion: string
+  runtime: 'remotion' | 'hyperframes'
   status: 'active' | 'inactive'
   priority: number
   licenseStatus: 'pending' | 'approved' | 'blocked'
@@ -51,7 +52,11 @@ export const p0StudioTemplateSeed: StudioTemplateSeed = {
 }
 
 function isActiveApprovedStudioTemplate(template: StudioTemplateCandidate) {
-  return template.status === 'active' && template.licenseStatus === 'approved'
+  return (
+    template.runtime === 'remotion' &&
+    template.status === 'active' &&
+    template.licenseStatus === 'approved'
+  )
 }
 
 function compareStudioTemplates(

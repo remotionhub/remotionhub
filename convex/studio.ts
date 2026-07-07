@@ -1,4 +1,4 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 import {
   getDefaultStudioTemplate as getDefaultStudioTemplateFromList,
@@ -7,6 +7,7 @@ import {
 } from './lib/studio/templates'
 
 const studioTemplateSeedValidator = v.object({
+  importSecret: v.string(),
   templateId: v.string(),
   templateVersion: v.string(),
   runtime: v.literal('remotion'),
@@ -54,6 +55,11 @@ function toSeedRecord(args: StudioTemplateSeed) {
 export const upsertStudioTemplate = mutation({
   args: studioTemplateSeedValidator,
   handler: async (ctx, args) => {
+    const expectedSecret = process.env.STUDIO_TEMPLATE_IMPORT_SECRET
+    if (!expectedSecret || args.importSecret !== expectedSecret) {
+      throw new ConvexError('Invalid studio template import secret.')
+    }
+
     const now = Date.now()
     const templateRecord = toSeedRecord(args)
     const existing = await ctx.db
@@ -93,7 +99,9 @@ export const listStudioTemplates = query({
       .order('asc')
       .collect()
 
-    return listActiveApprovedStudioTemplates(templates)
+    return listActiveApprovedStudioTemplates(
+      templates.filter((template) => template.runtime === 'remotion'),
+    )
   },
 })
 
@@ -106,6 +114,8 @@ export const getDefaultStudioTemplate = query({
       .order('asc')
       .collect()
 
-    return getDefaultStudioTemplateFromList(templates)
+    return getDefaultStudioTemplateFromList(
+      templates.filter((template) => template.runtime === 'remotion'),
+    )
   },
 })

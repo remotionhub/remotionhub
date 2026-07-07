@@ -54,6 +54,10 @@ export async function runSeedStudioTemplates(
   if (!convexUrl) {
     throw new Error('CONVEX_URL or VITE_CONVEX_URL is required.')
   }
+  const importSecret = env.STUDIO_TEMPLATE_IMPORT_SECRET
+  if (!importSecret) {
+    throw new Error('STUDIO_TEMPLATE_IMPORT_SECRET is required.')
+  }
 
   const studioApi = api as {
     studio: {
@@ -63,7 +67,10 @@ export async function runSeedStudioTemplates(
   const client = clientFactory(convexUrl)
   const result = await client.mutation(
     studioApi.studio.upsertStudioTemplate,
-    p0StudioTemplateSeed,
+    {
+      ...p0StudioTemplateSeed,
+      importSecret,
+    },
   )
 
   console.log(

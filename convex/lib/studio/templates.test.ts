@@ -10,6 +10,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'inactive-template',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'inactive',
         priority: 1,
         licenseStatus: 'approved',
@@ -17,6 +18,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'active-template',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 2,
         licenseStatus: 'approved',
@@ -31,6 +33,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'pending-template',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 1,
         licenseStatus: 'pending',
@@ -38,6 +41,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'approved-template',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 2,
         licenseStatus: 'approved',
@@ -52,6 +56,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'priority-20',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 20,
         licenseStatus: 'approved',
@@ -59,6 +64,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'priority-10',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 10,
         licenseStatus: 'approved',
@@ -66,6 +72,7 @@ describe('studio template helpers', () => {
       {
         templateId: 'priority-30',
         templateVersion: '1.0.0',
+        runtime: 'remotion',
         status: 'active',
         priority: 30,
         licenseStatus: 'approved',
@@ -73,6 +80,29 @@ describe('studio template helpers', () => {
     ])
 
     expect(template?.templateId).toBe('priority-10')
+  })
+
+  it('ignores hyperframes templates when selecting the default', () => {
+    const template = getDefaultStudioTemplate([
+      {
+        templateId: 'hyperframes-template',
+        templateVersion: '1.0.0',
+        runtime: 'hyperframes',
+        status: 'active',
+        priority: 1,
+        licenseStatus: 'approved',
+      },
+      {
+        templateId: 'remotion-template',
+        templateVersion: '1.0.0',
+        runtime: 'remotion',
+        status: 'active',
+        priority: 2,
+        licenseStatus: 'approved',
+      },
+    ])
+
+    expect(template?.templateId).toBe('remotion-template')
   })
 
   it('exports the p0 studio template seed payload', () => {
