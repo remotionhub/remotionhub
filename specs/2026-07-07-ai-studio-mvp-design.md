@@ -4,17 +4,19 @@
 
 本迭代的目标是交付一个最小可行的在线 AI 动画工作台，让用户在网页里输入提示词后，直接生成可播放、可下载的 Remotion 或 HyperFrames 成片。
 
-第一版聚焦官网和产品演示场景，默认输出横屏 `16:9` 视频。产品形态参考即梦这类低操作创作入口，但 RemotionHub 的核心差异不是泛视频生成，而是复用已有开源模板、素材和 `agentPrompt`，用更可控的模板渲染链路生成稳定结果。
+第一版聚焦官网和产品演示场景，默认输出横屏 `16:9` MP4 视频。产品形态参考即梦这类低操作创作入口，但 RemotionHub 的核心差异不是泛视频生成，而是复用已有开源模板、素材和 `agentPrompt`，用更可控的模板渲染链路生成稳定结果。
 
 ## 2. 核心结论
 
-采用模板驱动的 Agent 生成方案：
+采用模板驱动的 Agent 生成方案。系统架构预留 Remotion 和 HyperFrames 双 runtime，但 MVP 只上线白名单中的一个 Remotion 模板，先验证端到端闭环。
 
 1. 用户输入一段创作提示词。
-2. 系统从 RemotionHub catalog 中自动推荐或允许用户手动选择模板/素材。
-3. 模型基于用户提示词和模板元数据生成结构化 render plan。
-4. 后台 worker 使用 Remotion 或 HyperFrames 渲染视频。
-5. 页面展示生成状态，完成后提供在线播放和下载。
+2. 系统从 RemotionHub catalog 中自动推荐或允许用户手动选择模板。
+3. 用户确认最终使用的模板。
+4. 系统消耗 1 次额度并创建生成任务。
+5. 模型基于用户提示词和模板元数据生成结构化 render plan。
+6. 后台 worker 使用受控 Remotion 模板渲染视频。
+7. 页面展示生成状态，完成后提供 MP4 在线播放和下载。
 
 第一版不做时间线、多轨道、手动关键帧、代码编辑器或复杂素材上传。工作台不是传统剪辑器，而是一个“AI 制片台”：用户表达意图和选择素材，系统完成规划、合成、渲染和交付。
 
@@ -24,23 +26,49 @@
 
 - 新增在线工作台入口，例如 `/studio`。
 - 支持 `16:9` 官网/产品演示动画生成。
-- 支持 Remotion 和 HyperFrames 两类 runtime，但允许第一批模板先从稳定 runtime 开始白名单化。
-- 支持 prompt 输入、模板推荐、模板手动选择、一键使用素材提示词。
+- 系统架构预留 Remotion 和 HyperFrames 两类 runtime，但 MVP 只上线白名单中的一个 Remotion 模板。
+- 支持 prompt 输入、模板推荐、模板手动选择、一键使用模板提示词。
 - 支持生成任务状态展示：排队、规划、渲染、上传、完成、失败。
-- 支持生成结果在线播放、下载。
-- 支持每个登录用户 1-2 次免费生成额度。
+- 支持生成结果 MP4 在线播放、下载。
+- 支持每个新登录用户 2 次免费生成额度。
 - 支持失败任务不扣额度或自动返还额度。
 - 记录模型调用、渲染输入输出和任务状态，便于排障和后续计费。
+- 技术验收至少打通 1 个模板端到端。
+- MVP 上线验收至少提供 5-10 个高质量模板。
 
 ### 3.2 Out of Scope
 
 - 时间线编辑器。
 - 多轨道剪辑和素材逐帧调整。
 - 用户在线编辑 Remotion 或 HyperFrames 源码。
+- Remotion 或 HyperFrames 源码下载。
 - 任意代码生成和任意依赖安装。
-- 批量素材上传、素材抠图、图片生成、文生图。
+- 用户上传图片、logo、视频或其他二进制素材。
+- 模型生成新图片、文生图、素材抠图。
 - 完整会员订阅、充值、发票、订单后台。
 - 多人协作、项目文件夹、团队空间。
+
+### 3.3 Media Constraints
+
+MVP 固定以下媒体约束：
+
+- Aspect ratio: `16:9`
+- Resolution: `1280x720`
+- Future resolution option: `1920x1080`
+- Duration: `10-30` seconds
+- FPS: `30`
+- Output format: `mp4`
+- Max render time per job: `5` minutes
+- Max active generation jobs per user: `1`
+- Worker concurrency: deployment-specific, small scale for MVP
+
+素材来源限制：
+
+- RemotionHub catalog 中已有素材。
+- 模板自带素材。
+- 用户在 prompt 中输入的纯文本信息。
+
+MVP 不允许用户上传图片、logo、视频，也不允许模型生成新图片或新视频素材。
 
 ## 4. 用户体验设计
 
@@ -50,7 +78,7 @@
 
 - 左侧是对话和输入区，包含生成历史、当前 prompt、模板引用和生成按钮。
 - 右侧是成片工作区，包含当前任务状态、视频播放器、下载入口、使用的模板和生成参数摘要。
-- 素材/模板库以侧边抽屉、底部横向列表或右侧区域的卡片组出现，重点动作是“使用此模板”或“插入提示词”。
+- 模板列表放在左侧输入区下方或右侧视频区下方，重点动作是“使用此模板”或“插入提示词”。
 
 页面应保持工作台感，不做营销 hero。用户进入后第一屏即可输入 prompt 或选择模板。
 
@@ -62,18 +90,21 @@
 - 中间展示生成状态和视频结果。
 - 模板/素材卡片改为横向滑动列表。
 - 历史记录收进抽屉。
+- MVP 不做复杂素材抽屉。
 
 ### 4.3 核心流程
 
 1. 用户进入 `/studio`。
 2. 系统展示一个大输入框和推荐模板。
 3. 用户输入产品演示需求，或点击模板卡片将 `agentPrompt` 注入输入框。
-4. 用户点击生成。
-5. 系统检查登录态和免费额度。
-6. 系统创建 generation job，并进入规划状态。
-7. 模型输出 render plan。
-8. worker 渲染并上传视频。
-9. 页面自动切换到播放器，显示下载按钮。
+4. 如果用户已选择模板，系统展示“将使用这个模板生成”。
+5. 如果用户未选择模板，系统推荐一个模板并展示“将使用这个模板生成”。
+6. 用户确认模板后点击生成。
+7. 系统检查登录态、免费额度和并发限制。
+8. 系统消耗 1 次额度，创建 generation job，并进入规划状态。
+9. 模型输出 render plan。
+10. worker 渲染并上传 MP4 视频。
+11. 页面自动切换到播放器，显示下载按钮。
 
 ### 4.4 失败体验
 
@@ -83,6 +114,7 @@
 - 模板不匹配：展示可手动选择的候选模板。
 - 渲染失败：保留原 prompt，允许重试；如果已扣额度则自动返还。
 - 超时：任务标记为失败或可恢复重试，避免前端无限等待。
+- 用户取消：`queued` 和 `planning` 状态允许取消，取消后不返还额度；`rendering` 后不保证取消成功。
 
 ## 5. 系统架构
 
@@ -101,7 +133,7 @@
 ### 5.2 数据流
 
 1. 前端调用 `createGenerationJob`。
-2. Convex mutation 校验登录用户和额度，写入 `generationJobs` 和 `usageLedger`。
+2. Convex mutation 校验登录用户、额度、模板确认状态和并发限制，写入 `generationJobs` 和 `usageLedger`。
 3. 后台 action 或外部 worker 拉取待处理任务。
 4. planner 调用模型，输出 render plan。
 5. worker 根据 render plan 执行渲染。
@@ -122,11 +154,21 @@
 - `runtime`
 - `aspectRatio`
 - `durationSeconds`
+- `templateId`
 - `selectedComponentIds`
 - `plannerOutput`
 - `artifactId`
+- `attemptCount`
+- `progress`
+- `idempotencyKey`
+- `workerId`
+- `lockedAt`
 - `errorCode`
 - `errorMessage`
+- `startedAt`
+- `completedAt`
+- `failedAt`
+- `refundedAt`
 - `createdAt`
 - `updatedAt`
 
@@ -139,6 +181,20 @@
 - `completed`
 - `failed`
 - `canceled`
+
+合法状态流转：
+
+- `queued -> planning -> rendering -> uploading -> completed`
+- `queued -> failed`
+- `planning -> failed`
+- `rendering -> failed`
+- `uploading -> failed`
+- `queued -> canceled`
+- `planning -> canceled`
+
+`completed`、`failed`、`canceled` 是终态，不能再变更。
+
+worker 领取任务时必须写入 `workerId` 和 `lockedAt`，防止多个 worker 同时渲染同一个任务。worker 处理期间需要更新心跳或锁时间；如果任务超过约定时间没有心跳，系统可以将任务标记为 `failed` 或重新入队。MVP 推荐先标记为 `failed` 并返还额度，避免重复渲染导致成本不可控。
 
 ### 6.2 generationJobEvents
 
@@ -179,6 +235,7 @@
 - `balanceAfter`
 - `jobId`
 - `reason`
+- `idempotencyKey`
 - `createdAt`
 
 `kind` 初期只需要：
@@ -186,6 +243,8 @@
 - `grant`
 - `consume`
 - `refund`
+
+返还必须幂等。同一个 job 最多只能产生一次系统失败返还，写入 `generationJobs.refundedAt` 和 `usageLedger.idempotencyKey` 防止重复返还。
 
 ### 6.5 modelRuns
 
@@ -205,14 +264,16 @@
 
 ## 7. 模板与素材复用
 
-第一版应该建立模板白名单，而不是直接开放全部 catalog。每个可用于 AI Studio 的模板需要具备：
+第一版应该建立模板白名单，而不是直接开放全部 catalog。技术验收至少需要 1 个白名单 Remotion 模板打通端到端；MVP 上线至少需要 5-10 个高质量模板；后续再扩展到 20-30 个模板。每个可用于 AI Studio 的模板需要具备：
 
 - 稳定预览视频。
 - 明确 runtime。
 - `16:9` 支持。
+- 支持 `1280x720` 和 `30fps` 渲染。
 - 可被模型填写的 props schema。
 - 高质量 `agentPrompt`。
 - 适用场景标签，例如 `hero`、`product-demo`、`feature-showcase`、`dashboard`、`launch`。
+- license 确认可用于生成和下载。
 
 现有 catalog 的 `agentPrompt` 可以作为模板能力描述和 prompt 注入来源。后续可以补充 `studioHints` 类元数据，但第一版可以先通过白名单配置或 catalog 扩展实现。
 
@@ -241,6 +302,10 @@ render plan 至少包含：
 
 第一版模型 provider 应通过内部网关封装，避免前端直接接触 provider key。provider 选择、模型名称、限流策略和成本记录都在后端处理。
 
+用户 prompt、模型输入和模型输出只做最小化保存，并做权限控制。普通用户只能查看自己的任务输入和输出；后台管理员只能在排障需要时查看完整内容。
+
+用户 prompt 进入 planner 前必须做基础内容安全检查，禁止违法、色情、仇恨、诈骗、侵权等内容。检查失败时不创建渲染任务，也不消耗额度。
+
 ## 9. 渲染与存储
 
 渲染链路应与网页请求解耦，避免长时间请求阻塞。
@@ -255,6 +320,8 @@ render plan 至少包含：
 
 渲染结果上传到对象存储，Convex 只保存 URL、metadata 和状态。前端播放使用 `videoUrl`，下载使用同一 artifact 或签名下载 URL。
 
+MVP 不提供 Remotion 或 HyperFrames 源码下载。用户获得的是可播放、可下载的 MP4 artifact。
+
 ## 10. 免费额度与付费预留
 
 第一版只需要实现免费额度账本和消耗规则，不需要完整支付。
@@ -262,9 +329,11 @@ render plan 至少包含：
 规则建议：
 
 - 新用户首次登录获得 2 次免费生成额度。
-- 创建任务并进入规划前消耗 1 次。
-- 任务失败、取消或系统超时自动返还 1 次。
+- 用户确认模板并创建任务时消耗 1 次。
+- 系统失败或系统超时自动返还 1 次。
+- 用户在 `queued` 或 `planning` 状态主动取消不返还额度。
 - 用户主动多次重试需要创建新任务并重新检查额度。
+- 单用户最多同时运行 1 个生成任务。
 
 后续会员和积分充值可以基于 `usageLedger` 扩展：
 
@@ -285,13 +354,19 @@ render plan 至少包含：
 - 视频时长、分辨率、fps、并发数必须有限制。
 - 每个用户和 IP 需要基础限流。
 - provider key 只能存在后端或 worker 环境。
+- worker 不允许执行模型生成的任意代码。
+- 模板、字体、图片和视频素材必须在白名单中管理。
+- 模板和素材必须确认 license 可用于用户生成、在线播放和下载。
+- 用户 prompt、模型输入、模型输出和 render plan 需要权限控制和最小化保存。
 
 ## 12. 验证计划
 
 ### 12.1 单元测试
 
 - usage ledger 消耗和返还。
+- usage ledger 返还幂等。
 - job 状态机合法流转。
+- worker lock 和过期任务处理。
 - render plan schema validation。
 - template selection helper。
 
@@ -300,12 +375,16 @@ render plan 至少包含：
 - 创建 job 时额度不足会拒绝。
 - 创建 job 后状态可从 `queued` 推进到 `completed`。
 - 失败任务会返还额度。
+- 用户主动取消任务不会返还额度。
+- 同一个 job 不会重复返还额度。
+- 单用户同时只能运行 1 个生成任务。
 - catalog 模板白名单只返回 `16:9` 且可用于 studio 的素材。
 
 ### 12.3 浏览器验收
 
 - `/studio` 首屏能输入 prompt。
 - 模板卡片可注入 prompt。
+- 未选择模板时，系统推荐模板并要求用户确认。
 - 生成任务创建后能看到状态变化。
 - 完成任务显示视频播放器和下载入口。
 - 无额度用户看到清晰的登录或充值提示。
@@ -318,9 +397,11 @@ render plan 至少包含：
 
 渲染时间过长会影响转化。缓解方式是限制第一版视频时长，优先支持短视频段，例如 10-30 秒。
 
-成本失控会影响免费策略。缓解方式是所有生成必须走 `usageLedger`，并记录 `modelRuns` 与 render duration。
+成本失控会影响免费策略。缓解方式是所有生成必须走 `usageLedger`，并记录 `modelRuns` 与 render duration，同时限制单用户并发、任务最长渲染时间、分辨率、fps 和时长。
 
 任意代码生成会带来安全风险。第一版明确禁止模型生成可执行源码，只允许生成结构化 props。
+
+worker 崩溃会导致任务悬挂。缓解方式是 worker 领取任务时写入 `workerId`、`lockedAt` 和心跳，超过阈值后标记失败并返还额度。
 
 ## 14. 迭代顺序
 
@@ -361,9 +442,13 @@ render plan 至少包含：
 本 MVP 完成时应满足：
 
 - 登录用户可以在 `/studio` 输入 prompt 并创建生成任务。
-- 系统能检查和消耗免费额度。
-- 工作台能展示任务进度。
-- 至少一个白名单 Remotion 或 HyperFrames 模板可以被 prompt 驱动生成 `16:9` 成片。
-- 完成后用户可以在线播放和下载视频。
-- 失败任务不会永久消耗免费额度。
-- 所有模型调用和渲染结果有可追踪记录。
+- 新用户默认有 2 次免费额度。
+- 用户选择或确认模板后，创建任务会扣 1 次额度。
+- 系统失败会自动返还额度，且同一个 job 不会重复返还。
+- 用户最多同时运行 1 个生成任务。
+- 至少 1 个 Remotion 模板可以从 prompt 生成 `16:9` MP4。
+- 生成视频分辨率为 `1280x720`，FPS 为 `30`，时长在 `10-30` 秒内。
+- 完成后用户可以在线播放和下载 MP4 视频。
+- 所有 job 有状态记录、事件记录、artifact 记录和 modelRuns 记录。
+- 渲染失败、模型失败、超时都有清晰错误提示。
+- worker 不允许执行模型生成的任意代码。
