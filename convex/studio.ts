@@ -534,6 +534,10 @@ async function claimPlanningJob(
     heartbeatAt: args.now,
     lockExpiresAt: args.now + args.lockTtlMs,
     startedAt: job.startedAt ?? args.now,
+    modelStartedAt:
+      args.recovered && job.status === 'planning' && !job.plannerOutput
+        ? undefined
+        : job.modelStartedAt,
     attemptCount: job.attemptCount + 1,
     progress: defaultProgressForStatus('planning'),
     updatedAt: args.now,

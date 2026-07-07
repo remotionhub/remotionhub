@@ -20,3 +20,10 @@
 - Worker CLI summary: default worker flow now completes planning and then fails the claimed job with `RENDER_NOT_IMPLEMENTED` unless `STUDIO_WORKER_MODE=planner-only` is explicitly set, so Task 5 no longer leaves planning jobs permanently active.
 - Test command: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts`
 - Test output summary: passed with `2` test files and `11` tests green in `167ms`; coverage now includes stale planning recovery, stale rendering/uploading failure recovery, attempt counting, planner-only CLI safety, and invalid transition guards after terminal or duplicate planning states.
+
+## Task 5 remaining re-review fix
+- Files changed: `convex/studio.ts`, `convex/studio-worker.test.ts`, `.superpowers/sdd/task-5-report.md`.
+- Fix summary: when reclaiming an expired `planning` job without `plannerOutput`, `claimPlanningJob` now clears stale `modelStartedAt` before incrementing `attemptCount`, so the next worker can call `markModelStarted` for the new attempt while keeping worker ownership and terminal-state guards unchanged.
+- Test added: expired planning lock with stale `modelStartedAt` and no `plannerOutput` can be reclaimed and then successfully started by the next worker.
+- Command: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts`
+- Output summary: passed with `2` test files and `12` tests green in `165ms`.

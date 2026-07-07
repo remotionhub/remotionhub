@@ -416,6 +416,57 @@ describe('studio worker mutations', () => {
     expect(storedJob?.status).toBe('planning')
   })
 
+  it('reclaims an expired planning lock with stale modelStartedAt and allows the next attempt to start', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await t.run(async (ctx) =>
+      ctx.db.insert('generationJobs', {
+        userId: 'studio-user-1',
+        status: 'planning',
+        prompt: 'Launch an AI analytics dashboard',
+        runtime: 'remotion',
+        aspectRatio: '16:9',
+        durationSeconds: 15,
+        templateId: p0StudioTemplateSeed.templateId,
+        templateVersion: p0StudioTemplateSeed.templateVersion,
+        propsSchemaVersion: p0StudioTemplateSeed.propsSchemaVersion,
+        assetIds: [],
+        attemptCount: 1,
+        progress: 20,
+        idempotencyKey: 'stale-planning-model-started',
+        workerId: 'worker-stale',
+        lockedAt: 10,
+        heartbeatAt: 20,
+        lockExpiresAt: 30,
+        startedAt: 10,
+        modelStartedAt: 25,
+        createdAt: 10,
+        updatedAt: 30,
+      }),
+    )
+
+    const claimedJob = await t.mutation(claimNextGenerationJob, {
+      workerId: 'worker-2',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+
+    expect(claimedJob?.id).toBe(jobId)
+    expect(claimedJob?.attemptCount).toBe(2)
+
+    await t.mutation(markModelStarted, {
+      jobId,
+      workerId: 'worker-2',
+      workerSecret: WORKER_SECRET,
+    })
+
+    const storedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+    expect(storedJob?.attemptCount).toBe(2)
+    expect(storedJob?.workerId).toBe('worker-2')
+    expect(storedJob?.status).toBe('planning')
+    expect(storedJob?.modelStartedAt).toEqual(expect.any(Number))
+  })
+
   it.each([
     ['rendering', 'RENDER_TIMEOUT'],
     ['uploading', 'UPLOAD_FAILED'],
