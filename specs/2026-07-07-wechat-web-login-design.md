@@ -200,9 +200,10 @@ Error states:
 Convex/server-only environment:
 
 ```dotenv
-AUTH_WECHAT_ID=your-wechat-open-platform-app-id
-AUTH_WECHAT_SECRET=your-wechat-open-platform-app-secret
-AUTH_WECHAT_CALLBACK_URL=https://remotionhub.ai/callback/wechat
+SITE_URL=https://remotionhub.ai
+AUTH_WECHAT_ID=your-wechat-open-platform-website-app-id
+AUTH_WECHAT_SECRET=your-wechat-open-platform-website-app-secret
+JWKS=generated-by-convex-auth-setup
 ```
 
 Frontend environment:
@@ -210,6 +211,8 @@ Frontend environment:
 ```dotenv
 VITE_CONVEX_URL=https://example.convex.cloud
 ```
+
+Register the WeChat Open Platform website app callback as `${CONVEX_SITE_URL}/api/auth/callback/wechat`, or `${CUSTOM_AUTH_SITE_URL}/api/auth/callback/wechat` when overriding the Convex Auth site.
 
 Do not expose `AUTH_WECHAT_SECRET`, Convex deploy keys, token exchange results, or provider refresh tokens through `VITE_*` variables.
 

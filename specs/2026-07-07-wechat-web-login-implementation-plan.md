@@ -366,9 +366,13 @@ Modify `.env.example`:
 VITE_CONVEX_URL=https://example.convex.cloud
 
 # Convex Auth values live in Convex env, not VITE_* browser env.
+# SITE_URL=https://remotionhub.ai
 # AUTH_WECHAT_ID=your-wechat-open-platform-website-app-id
 # AUTH_WECHAT_SECRET=your-wechat-open-platform-website-app-secret
-# AUTH_WECHAT_CALLBACK_URL=https://remotionhub.ai/callback/wechat
+# Register the WeChat callback as ${CONVEX_SITE_URL}/api/auth/callback/wechat
+# (or ${CUSTOM_AUTH_SITE_URL}/api/auth/callback/wechat when overriding the auth site).
+# SITE_URL controls the final post-auth app redirect origin; set it to the canonical frontend origin in production.
+# AUTH_WECHAT_CALLBACK_URL is derived by Convex Auth; do not mirror it into browser env files.
 # JWKS=generated-by-convex-auth-setup
 ```
 
