@@ -7,6 +7,13 @@ import { LOCALE_STORAGE_KEY } from '#/lib/i18n'
 import Header from './Header'
 import { I18nProvider } from './I18nProvider'
 
+const authMocks = vi.hoisted(() => ({
+  useAuthStatus: vi.fn(),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  toastError: vi.fn(),
+}))
+
 vi.mock('@tanstack/react-router', () => ({
   Link: ({
     to,
@@ -22,6 +29,23 @@ vi.mock('@tanstack/react-router', () => ({
       {children}
     </a>
   ),
+}))
+
+vi.mock('#/lib/useAuthStatus', () => ({
+  useAuthStatus: authMocks.useAuthStatus,
+}))
+
+vi.mock('@convex-dev/auth/react', () => ({
+  useAuthActions: () => ({
+    signIn: authMocks.signIn,
+    signOut: authMocks.signOut,
+  }),
+}))
+
+vi.mock('sonner', () => ({
+  toast: {
+    error: authMocks.toastError,
+  },
 }))
 
 function installLocalStorage() {
@@ -64,6 +88,14 @@ function renderHeader() {
 describe('Header', () => {
   beforeEach(() => {
     installLocalStorage()
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      me: null,
+    })
+    authMocks.signIn.mockReset()
+    authMocks.signOut.mockReset()
+    authMocks.toastError.mockReset()
   })
 
   afterEach(() => {
@@ -80,7 +112,6 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Remotion' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'HyperFrames' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'EN' }).getAttribute('aria-pressed')).toBe(
       'true',
@@ -101,10 +132,74 @@ describe('Header', () => {
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
   })
 
-  it('points to the correct GitHub repository', () => {
+  it('starts GitHub sign-in with the current relative URL', async () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockResolvedValue({ signingIn: true })
     renderHeader()
-    const githubLink = screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })
-    expect(githubLink.getAttribute('href')).toBe('https://github.com/remotionhub/remotionhub')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    await waitFor(() => {
+      expect(authMocks.signIn).toHaveBeenCalledWith('github', {
+        redirectTo: '/remotion?tag=card#top',
+      })
+    })
+  })
+
+  it('reports sign-in failures without changing the auth state', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    await waitFor(() => {
+      expect(authMocks.toastError).toHaveBeenCalledWith('Sign in failed. Please try again.')
+    })
+    expect(authMocks.signIn).toHaveBeenCalledWith('github', {
+      redirectTo: '/remotion?tag=card#top',
+    })
+    expect(screen.getByRole('button', { name: 'Sign in with GitHub' })).toBeTruthy()
+  })
+
+  it('shows a stable auth loading skeleton', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: true,
+      me: undefined,
+    })
+
+    renderHeader()
+
+    const skeleton = screen.getByLabelText('Loading auth state')
+    expect(skeleton).toBeTruthy()
+    expect(skeleton.className).toContain('inline-block')
+  })
+
+  it('shows the signed-in user and signs out', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      me: {
+        _id: 'users:1',
+        handle: 'octocat',
+        name: 'Octocat',
+        image: 'https://example.com/avatar.png',
+      },
+    })
+    authMocks.signOut.mockResolvedValue(undefined)
+
+    renderHeader()
+
+    expect(screen.getByRole('group', { name: 'Signed in as octocat' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    await waitFor(() => {
+      expect(authMocks.signOut).toHaveBeenCalled()
+    })
   })
 })
