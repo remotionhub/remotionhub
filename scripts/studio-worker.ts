@@ -5,6 +5,7 @@ import { api } from '../convex/_generated/api'
 import { p0StudioTemplateSeed } from '../convex/lib/studio/templates'
 import { loadLocalEnv } from './seed-studio-templates'
 import { createStubRenderPlan } from './studio-planner'
+import { renderStudioArtifact } from './studio-renderer'
 
 type WorkerClient = {
   mutation<TArgs, TResult>(mutation: unknown, args: TArgs): Promise<TResult>
@@ -20,6 +21,7 @@ type ClaimedGenerationJob = {
 type RunWorkerResult =
   | { status: 'idle' }
   | { status: 'planned'; jobId: string }
+  | { status: 'completed'; jobId: string }
   | { status: 'failed'; jobId: string }
 
 function getStudioApi() {
@@ -28,6 +30,9 @@ function getStudioApi() {
       claimNextGenerationJob: unknown
       markModelStarted: unknown
       completePlanning: unknown
+      startRendering: unknown
+      startUploading: unknown
+      completeGenerationJob: unknown
       failGenerationJob: unknown
     }
   }
@@ -65,6 +70,19 @@ function createStubModelRun(job: ClaimedGenerationJob, prompt: string) {
     },
     estimatedCost: 0,
     latencyMs: 0,
+  }
+}
+
+function createRenderRun(job: ClaimedGenerationJob) {
+  return {
+    runtime: 'remotion' as const,
+    templateId: job.templateId,
+    templateVersion: job.templateVersion,
+    rendererVersion: 'task-6-fake-renderer',
+    remotionVersion: 'unwired',
+    workerVersion: 'task-6-worker',
+    startedAt: Date.now(),
+    renderInputSnapshotRef: `studio/jobs/${job.id}/render-input.json`,
   }
 }
 
@@ -121,15 +139,55 @@ export async function runStudioWorkerOnce(
       renderPlan,
       modelRun: createStubModelRun(claimedJob, claimedJob.prompt),
     })
+
+    if (env.STUDIO_WORKER_MODE === 'planner-only') {
+      console.log(`Planned studio job ${claimedJob.id}.`)
+      return { status: 'planned', jobId: claimedJob.id }
+    }
+
+    const renderRun = createRenderRun(claimedJob)
+
+    await client.mutation(studioApi.studio.startRendering, {
+      jobId: claimedJob.id,
+      workerId,
+      workerSecret,
+      renderRun,
+    })
+
+    const artifact = await renderStudioArtifact(claimedJob.id, renderPlan)
+
+    await client.mutation(studioApi.studio.startUploading, {
+      jobId: claimedJob.id,
+      workerId,
+      workerSecret,
+    })
+
+    const completedAt = Date.now()
+
+    await client.mutation(studioApi.studio.completeGenerationJob, {
+      jobId: claimedJob.id,
+      workerId,
+      workerSecret,
+      artifact,
+      renderRun: {
+        completedAt,
+        durationMs: Math.max(0, completedAt - renderRun.startedAt),
+        exitCode: 0,
+        outputStorageKey: artifact.storageKey,
+      },
+    })
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown studio worker error.'
+    const errorCode = errorMessage.includes('RENDER_FAILED')
+      ? 'RENDER_FAILED'
+      : 'MODEL_PROVIDER_ERROR'
 
     await client.mutation(studioApi.studio.failGenerationJob, {
       jobId: claimedJob.id,
       workerId,
       workerSecret,
-      errorCode: 'MODEL_PROVIDER_ERROR',
+      errorCode,
       errorMessage: errorMessage.slice(0, 500),
     })
 
@@ -137,27 +195,8 @@ export async function runStudioWorkerOnce(
     return { status: 'failed', jobId: claimedJob.id }
   }
 
-  if (env.STUDIO_WORKER_MODE === 'planner-only') {
-    console.log(
-      `Planned studio job ${claimedJob.id}. Renderer integration remains for Task 6.`,
-    )
-    return { status: 'planned', jobId: claimedJob.id }
-  }
-
-  const errorCode = 'RENDER_NOT_IMPLEMENTED'
-  const errorMessage =
-    'Renderer integration is not implemented in Task 5. Retry after Task 6 ships.'
-
-  await client.mutation(studioApi.studio.failGenerationJob, {
-    jobId: claimedJob.id,
-    workerId,
-    workerSecret,
-    errorCode,
-    errorMessage,
-  })
-
-  console.error(`Failed studio job ${claimedJob.id}: ${errorCode} ${errorMessage}`)
-  return { status: 'failed', jobId: claimedJob.id }
+  console.log(`Completed studio job ${claimedJob.id}.`)
+  return { status: 'completed', jobId: claimedJob.id }
 }
 
 const entryPoint = process.argv[1]

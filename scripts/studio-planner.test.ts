@@ -41,19 +41,25 @@ describe('createStubRenderPlan', () => {
     })
   })
 
-  it('fails the claimed job after planning when renderer work is not implemented', async () => {
+  it('moves the claimed job through planning, rendering, uploading, and completion in fake mode', async () => {
     const calls: Array<{ step: string; args: Record<string, unknown> }> = []
     const env = {
       CONVEX_URL: 'https://example.convex.cloud',
       STUDIO_WORKER_ID: 'worker-1',
       STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
     }
 
     const result = await runStudioWorkerOnce(env, () => ({
       async mutation(_mutation, args) {
-        const step = ['claim', 'markModelStarted', 'completePlanning', 'failGenerationJob'][
-          calls.length
-        ]
+        const step = [
+          'claim',
+          'markModelStarted',
+          'completePlanning',
+          'startRendering',
+          'startUploading',
+          'completeGenerationJob',
+        ][calls.length]
         calls.push({
           step,
           args: args as Record<string, unknown>,
@@ -73,20 +79,38 @@ describe('createStubRenderPlan', () => {
     }))
 
     expect(result).toEqual({
-      status: 'failed',
+      status: 'completed',
       jobId: 'job-1',
     })
     expect(calls.map((call) => call.step)).toEqual([
       'claim',
       'markModelStarted',
       'completePlanning',
-      'failGenerationJob',
+      'startRendering',
+      'startUploading',
+      'completeGenerationJob',
     ])
     expect(calls[3]?.args).toMatchObject({
       jobId: 'job-1',
       workerId: 'worker-1',
       workerSecret: 'studio-worker-secret',
-      errorCode: 'RENDER_NOT_IMPLEMENTED',
+      renderRun: {
+        runtime: 'remotion',
+        templateId: p0StudioTemplateSeed.templateId,
+        templateVersion: p0StudioTemplateSeed.templateVersion,
+      },
+    })
+    expect(calls[5]?.args).toMatchObject({
+      jobId: 'job-1',
+      workerId: 'worker-1',
+      workerSecret: 'studio-worker-secret',
+      artifact: {
+        storageKey: 'studio/job-1/artifact.mp4',
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+      },
     })
   })
 })

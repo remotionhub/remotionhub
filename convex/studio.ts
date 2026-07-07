@@ -8,6 +8,10 @@ import type {
 } from './_generated/server'
 import { ACTIVE_JOB_STATUSES } from './lib/studio/constants'
 import {
+  DEFAULT_STUDIO_THUMBNAIL_URL,
+  createStudioSignedArtifactUrl,
+} from './lib/studio/artifacts'
+import {
   canCancelGenerationJob,
   canRefundCancellation,
   defaultProgressForStatus,
@@ -384,6 +388,14 @@ async function getOwnedJobOrThrow(
     studioError('TEMPLATE_NOT_FOUND')
   }
   return job
+}
+
+function getStudioArtifactSigningSecret() {
+  const secret = process.env.STUDIO_ARTIFACT_SIGNING_SECRET?.trim()
+  if (!secret) {
+    studioError('ARTIFACT_ACCESS_NOT_CONFIGURED')
+  }
+  return secret
 }
 
 async function refundGenerationJobInMutation(
@@ -809,6 +821,125 @@ export const getMyStudioHistory = query({
       .collect()
 
     return jobs.slice(0, 10).map(toPublicGenerationJob)
+  },
+})
+
+export const getGenerationArtifactAccess = query({
+  args: {
+    jobId: v.id('generationJobs'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
+    const artifact = await ctx.db
+      .query('generationArtifacts')
+      .withIndex('by_user_job', (q) =>
+        q.eq('userId', userId).eq('jobId', args.jobId),
+      )
+      .unique()
+
+    if (!artifact) {
+      studioError('ARTIFACT_NOT_READY')
+    }
+
+    const signingSecret = getStudioArtifactSigningSecret()
+    const issuedAt = Date.now()
+    const [playback, download] = await Promise.all([
+      createStudioSignedArtifactUrl({
+        storageKey: artifact.storageKey,
+        kind: 'playback',
+        secret: signingSecret,
+        now: issuedAt,
+      }),
+      createStudioSignedArtifactUrl({
+        storageKey: artifact.storageKey,
+        kind: 'download',
+        secret: signingSecret,
+        now: issuedAt,
+      }),
+    ])
+
+    const thumbnail = artifact.thumbnailStorageKey
+      ? {
+          ...(await createStudioSignedArtifactUrl({
+            storageKey: artifact.thumbnailStorageKey,
+            kind: 'thumbnail',
+            secret: signingSecret,
+            now: issuedAt,
+          })),
+          source: 'artifact' as const,
+        }
+      : (() => null)()
+
+    if (thumbnail) {
+      return {
+        artifactId: artifact._id,
+        jobId: job._id,
+        playback,
+        download,
+        thumbnail,
+        mimeType: artifact.mimeType,
+        fileSizeBytes: artifact.fileSizeBytes,
+        width: artifact.width,
+        height: artifact.height,
+        fps: artifact.fps,
+        durationSeconds: artifact.durationSeconds,
+        aspectRatio: artifact.aspectRatio,
+        runtime: artifact.runtime,
+      }
+    }
+
+    const template = await getTemplateByIdentity(
+      ctx.db,
+      job.templateId,
+      job.templateVersion,
+    )
+
+    if (template.previewStorageKey) {
+      return {
+        artifactId: artifact._id,
+        jobId: job._id,
+        playback,
+        download,
+        thumbnail: {
+          ...(await createStudioSignedArtifactUrl({
+            storageKey: template.previewStorageKey,
+            kind: 'preview',
+            secret: signingSecret,
+            now: issuedAt,
+          })),
+          source: 'template-preview' as const,
+        },
+        mimeType: artifact.mimeType,
+        fileSizeBytes: artifact.fileSizeBytes,
+        width: artifact.width,
+        height: artifact.height,
+        fps: artifact.fps,
+        durationSeconds: artifact.durationSeconds,
+        aspectRatio: artifact.aspectRatio,
+        runtime: artifact.runtime,
+      }
+    }
+
+    return {
+      artifactId: artifact._id,
+      jobId: job._id,
+      playback,
+      download,
+      thumbnail: {
+        url: DEFAULT_STUDIO_THUMBNAIL_URL,
+        expiresAt: null,
+        source: 'default' as const,
+      },
+      mimeType: artifact.mimeType,
+      fileSizeBytes: artifact.fileSizeBytes,
+      width: artifact.width,
+      height: artifact.height,
+      fps: artifact.fps,
+      durationSeconds: artifact.durationSeconds,
+      aspectRatio: artifact.aspectRatio,
+      runtime: artifact.runtime,
+    }
   },
 })
 
