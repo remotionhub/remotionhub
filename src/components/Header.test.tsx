@@ -7,6 +7,13 @@ import { LOCALE_STORAGE_KEY } from '#/lib/i18n'
 import Header from './Header'
 import { I18nProvider } from './I18nProvider'
 
+const authMocks = vi.hoisted(() => ({
+  useAuthStatus: vi.fn(),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  toastError: vi.fn(),
+}))
+
 vi.mock('@tanstack/react-router', () => ({
   Link: ({
     to,
@@ -22,6 +29,23 @@ vi.mock('@tanstack/react-router', () => ({
       {children}
     </a>
   ),
+}))
+
+vi.mock('#/lib/useAuthStatus', () => ({
+  useAuthStatus: authMocks.useAuthStatus,
+}))
+
+vi.mock('@convex-dev/auth/react', () => ({
+  useAuthActions: () => ({
+    signIn: authMocks.signIn,
+    signOut: authMocks.signOut,
+  }),
+}))
+
+vi.mock('sonner', () => ({
+  toast: {
+    error: authMocks.toastError,
+  },
 }))
 
 function installLocalStorage() {
@@ -64,6 +88,14 @@ function renderHeader() {
 describe('Header', () => {
   beforeEach(() => {
     installLocalStorage()
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      me: null,
+    })
+    authMocks.signIn.mockReset()
+    authMocks.signOut.mockReset()
+    authMocks.toastError.mockReset()
   })
 
   afterEach(() => {
@@ -106,5 +138,69 @@ describe('Header', () => {
     renderHeader()
     const githubLink = screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })
     expect(githubLink.getAttribute('href')).toBe('https://github.com/remotionhub/remotionhub')
+  })
+
+  it('opens a login dialog from the header account button', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+
+    expect(screen.getByRole('dialog', { name: 'Log in to RemotionHub' })).toBeTruthy()
+    expect(screen.getByText('Other methods')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Log in with WeChat' })).toBeTruthy()
+  })
+
+  it('starts WeChat sign-in with the current relative URL', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockResolvedValue({ signingIn: true })
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+
+    await waitFor(() => {
+      expect(authMocks.signIn).toHaveBeenCalledWith('wechat', {
+        redirectTo: '/remotion?tag=card#top',
+      })
+    })
+  })
+
+  it('shows a stable auth loading skeleton', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: true,
+      me: undefined,
+    })
+
+    renderHeader()
+
+    expect(screen.getByLabelText('Loading auth state')).toBeTruthy()
+  })
+
+  it('shows the signed-in user and signs out', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      me: {
+        _id: 'users:1',
+        handle: 'wechat-user',
+        name: 'WeChat User',
+        image: 'https://example.com/avatar.png',
+      },
+    })
+    authMocks.signOut.mockResolvedValue(undefined)
+
+    renderHeader()
+
+    expect(screen.getByRole('button', { name: 'Signed in as wechat-user' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
+
+    await waitFor(() => {
+      expect(authMocks.signOut).toHaveBeenCalled()
+    })
   })
 })

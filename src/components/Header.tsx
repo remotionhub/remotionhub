@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { GithubIcon } from 'lucide-react'
+import HeaderAuth from './HeaderAuth'
 import { useI18n } from './I18nProvider'
 import LanguageToggle from './LanguageToggle'
 import ThemeToggle from './ThemeToggle'
@@ -59,6 +60,7 @@ export default function Header() {
             <GithubIcon aria-hidden="true" size={21} />
           </a>
 
+          <HeaderAuth />
           <LanguageToggle />
           <ThemeToggle />
         </div>
