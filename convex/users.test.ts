@@ -349,6 +349,47 @@ describe('users auth queries and publisher bootstrap', () => {
     expect(user?.personalPublisherId).toBe(publisher?._id)
   })
 
+  it('repairs unlinked legacy personal publisher fields through personalPublisherId', async () => {
+    const t = convexTest(schema, modules)
+    const userId = await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Current User',
+        displayName: 'Current Display Name',
+        image: 'https://example.com/current.png',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      const publisherId = await ctx.db.insert('publishers', {
+        handle: 'current-user',
+        displayName: 'Stale Publisher Name',
+        imageUrl: 'https://example.com/stale.png',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.patch(userId, {
+        personalPublisherId: publisherId,
+      })
+      return userId
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const { user, publisher } = await t.run(async (ctx) => {
+      const user = await ctx.db.get(userId)
+      const publisher = user?.personalPublisherId
+        ? await ctx.db.get(user.personalPublisherId)
+        : null
+      return { user, publisher }
+    })
+
+    expect(publisher?.linkedUserId).toBe(userId)
+    expect(publisher?.kind).toBe('user')
+    expect(publisher?.displayName).toBe('Current Display Name')
+    expect(publisher?.imageUrl).toBe('https://example.com/current.png')
+    expect(user?.personalPublisherId).toBe(publisher?._id)
+  })
+
   it('does not write an already synchronized personal publisher', async () => {
     const t = convexTest(schema, modules)
     const { userId, publisherId } = await t.run(async (ctx) => {

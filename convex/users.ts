@@ -46,8 +46,11 @@ function imageUrlForUser(user: UserDoc) {
 function canReuseAsPersonalPublisher(
   publisher: Doc<'publishers'>,
   userId: Id<'users'>,
+  allowUnlinked = false,
 ) {
-  if (publisher.linkedUserId !== userId) return false
+  if (publisher.kind === 'org' || publisher.kind === 'system') return false
+  if (publisher.linkedUserId && publisher.linkedUserId !== userId) return false
+  if (!allowUnlinked) return publisher.linkedUserId === userId
   return publisher.kind === 'user' || publisher.kind === undefined
 }
 
@@ -142,7 +145,7 @@ async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {
 
   if (user.personalPublisherId) {
     const publisher = await ctx.db.get(user.personalPublisherId)
-    if (publisher && canReuseAsPersonalPublisher(publisher, userId)) {
+    if (publisher && canReuseAsPersonalPublisher(publisher, userId, true)) {
       return await syncPersonalPublisherFromUser(ctx, user, publisher)
     }
   }
