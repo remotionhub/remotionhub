@@ -12,3 +12,4 @@
 - Test command: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts`
 - Test output summary: expected the planner stub suite and studio worker mutation suite to pass, including new coverage for missing/wrong secret rejection and correct-secret success paths.
 - Self-review: kept the existing status and `workerId` ownership guards unchanged, centralized the worker trust-boundary check in one helper to avoid drift across mutations, and added rejection assertions that verify unauthorized calls do not advance queued/planning job state.
+- Verification on 2026-07-07: `npm run test -- scripts/studio-planner.test.ts convex/studio-worker.test.ts` passed with `2` test files and `5` tests green in `185ms`.
