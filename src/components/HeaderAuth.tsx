@@ -1,5 +1,5 @@
 import { useAuthActions } from '@convex-dev/auth/react'
-import { LogInIcon, LogOutIcon, MessageCircleIcon, XIcon } from 'lucide-react'
+import { LogInIcon, LogOutIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { getCurrentRelativeUrl } from '#/lib/authRedirect'
@@ -8,6 +8,30 @@ import { useI18n } from './I18nProvider'
 
 function getDisplayHandle(me: { handle?: string; name?: string } | null | undefined) {
   return me?.handle?.trim() || me?.name?.trim() || 'user'
+}
+
+function WeChatIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-[18px] w-[18px] shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M15.6 4.5c-3.1 0-5.6 2-5.6 4.5 0 1 .4 2 1.1 2.8l-.4 1.5 1.5-.6c.8.4 1.8.7 2.8.7.4 0 .8 0 1.2-.1-.1-.4-.2-.8-.2-1.2 0-2.5 2.5-4.5 5.6-4.5.2 0 .3 0 .5.1-.6-2-2.7-3.2-6.5-3.2Z"
+        fill="#07C160"
+      />
+      <path
+        d="M8.8 6.4c-2.8 0-5 1.8-5 4s2.2 4 5 4c.5 0 1-.1 1.5-.2l1.6.7-.5-1.5c.9-.7 1.4-1.8 1.4-3 0-2.2-2.2-4-5-4Zm-1.7 2.4a.7.7 0 1 1 0 1.4.7.7 0 0 1 0-1.4Zm3.5 0a.7.7 0 1 1 0 1.4.7.7 0 0 1 0-1.4Z"
+        fill="#07C160"
+      />
+      <circle cx="7.1" cy="8.8" r="0.55" fill="#fff" />
+      <circle cx="10.6" cy="8.8" r="0.55" fill="#fff" />
+      <circle cx="14.9" cy="9.5" r="0.55" fill="#fff" />
+      <circle cx="18.3" cy="9.5" r="0.55" fill="#fff" />
+    </svg>
+  )
 }
 
 export default function HeaderAuth() {
@@ -55,7 +79,7 @@ export default function HeaderAuth() {
                 <h2 className="m-0 text-lg font-semibold">{t('auth.loginToRemotionHub')}</h2>
                 <button
                   type="button"
-                  aria-label="Close"
+                  aria-label={t('auth.close')}
                   className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
                   onClick={() => setIsDialogOpen(false)}
                 >
@@ -78,7 +102,7 @@ export default function HeaderAuth() {
                     })
                   }}
                 >
-                  <MessageCircleIcon aria-hidden="true" size={18} />
+                  <WeChatIcon />
                   {t('auth.signInWithWeChat')}
                 </button>
               </div>

@@ -148,7 +148,12 @@ describe('Header', () => {
 
     expect(screen.getByRole('dialog', { name: 'Log in to RemotionHub' })).toBeTruthy()
     expect(screen.getByText('Other methods')).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Log in with WeChat' })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+
+    expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
   })
 
   it('starts WeChat sign-in with the current relative URL', async () => {
