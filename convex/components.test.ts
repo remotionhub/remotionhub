@@ -104,23 +104,56 @@ describe('components catalog mutations and queries', () => {
 
   it('rejects imports that target a legacy unlinked personal publisher', async () => {
     const t = convexTest(schema, modules)
+    const legacyHandle = 'legacy-unlinked'
 
     await t.run(async (ctx) => {
-      await ctx.db.insert('publishers', {
-        handle: 'legacy-unlinked',
+      const userId = await ctx.db.insert('users', {
+        name: 'Terence',
+        handle: legacyHandle,
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      const publisherId = await ctx.db.insert('publishers', {
+        handle: legacyHandle,
         displayName: 'Terence',
         createdAt: 1,
         updatedAt: 1,
+      })
+      await ctx.db.patch(userId, {
+        personalPublisherId: publisherId,
       })
     })
 
     await expect(
       t.mutation(api.components.importCatalogComponent, {
         ...component,
-        publisher: 'legacy-unlinked',
+        publisher: legacyHandle,
         publisherDisplayName: 'Legacy Unlinked Publisher',
       }),
     ).rejects.toThrow(/Catalog import cannot target a user publisher/)
+  })
+
+  it('allows imports for legacy catalog publishers without a personalPublisherId link', async () => {
+    const t = convexTest(schema, modules)
+    const legacyCatalogHandle = 'legacy-catalog'
+
+    await t.run(async (ctx) => {
+      await ctx.db.insert('publishers', {
+        handle: legacyCatalogHandle,
+        displayName: 'Legacy Catalog Publisher',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    const result = await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      publisher: legacyCatalogHandle,
+      publisherDisplayName: 'Legacy Catalog Publisher',
+    })
+
+    expect(result.createdVersions).toBe(1)
   })
 
   it('imports a published component and exposes it in listCatalog', async () => {

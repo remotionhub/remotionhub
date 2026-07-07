@@ -99,8 +99,28 @@ async function getPublisherByHandle(db: DbReader, handle: string) {
     .unique()
 }
 
-function isLegacyOrExplicitUserPublisher(publisher: Doc<'publishers'>) {
-  return publisher.kind === 'user' || publisher.kind === undefined
+async function getUserByHandle(db: DbReader, handle: string) {
+  return await db
+    .query('users')
+    .withIndex('by_handle', (q) => q.eq('handle', handle))
+    .unique()
+}
+
+async function isLegacyOrExplicitUserPublisher(
+  db: DbReader,
+  publisher: Doc<'publishers'>,
+) {
+  if (publisher.kind === 'user') {
+    return true
+  }
+  if (publisher.linkedUserId !== undefined) {
+    return true
+  }
+  if (publisher.kind === undefined) {
+    const user = await getUserByHandle(db, publisher.handle)
+    return Boolean(user && user.personalPublisherId === publisher._id)
+  }
+  return false
 }
 
 async function getComponentByIdentity(
@@ -184,7 +204,7 @@ export const importCatalogComponent = mutation({
 
     const now = Date.now()
     let publisher = await getPublisherByHandle(ctx.db, args.publisher)
-    if (publisher && isLegacyOrExplicitUserPublisher(publisher)) {
+    if (publisher && (await isLegacyOrExplicitUserPublisher(ctx.db, publisher))) {
       throw new ConvexError('Catalog import cannot target a user publisher.')
     }
     if (!publisher) {
