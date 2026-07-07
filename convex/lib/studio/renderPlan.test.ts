@@ -1,0 +1,230 @@
+import { describe, expect, it } from 'vitest'
+import { validateRenderPlan } from './renderPlan'
+
+const job = {
+  templateId: 'yt-simple-ai-product',
+  templateVersion: '1.0.0',
+  propsSchemaVersion: '1',
+} as const
+
+const template = {
+  templateId: 'yt-simple-ai-product',
+  templateVersion: '1.0.0',
+  propsSchemaVersion: '1',
+  allowedAssetIds: ['template:yt-simple-ai-product:hero-bg'],
+  propsSchema: {
+    type: 'object',
+    additionalProperties: false,
+    required: ['headline'],
+    properties: {
+      headline: { type: 'string', minLength: 1, maxLength: 120 },
+    },
+  },
+} as const
+
+describe('validateRenderPlan', () => {
+  it('accepts a strict Remotion render plan locked to the selected template', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: 'Launch faster' },
+        assetIds: ['template:yt-simple-ai-product:hero-bg'],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(true)
+  })
+
+  it('rejects template switching and unknown props', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'different-template',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [],
+        props: { headline: 'Launch faster', shellCommand: 'rm -rf .' },
+        assetIds: [],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.errors).toContain('TEMPLATE_VERSION_MISMATCH')
+  })
+
+  it('rejects asset ids outside the allowed namespaces', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: 'Launch faster' },
+        assetIds: ['external:unsafe-asset'],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+  })
+
+  it('rejects props that are not allowed by the template schema', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: 'Launch faster', shellCommand: 'rm -rf .' },
+        assetIds: [],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+  })
+
+  it('rejects props that fail required and length constraints', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: '' },
+        assetIds: [],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+  })
+})
