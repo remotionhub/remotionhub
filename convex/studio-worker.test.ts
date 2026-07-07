@@ -1,5 +1,5 @@
 import { convexTest } from 'convex-test'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import schema from './schema'
 import {
   claimNextGenerationJob,
@@ -14,6 +14,8 @@ import { p0StudioTemplateSeed } from './lib/studio/templates'
 import { createStubRenderPlan } from '../scripts/studio-planner'
 
 const modules = import.meta.glob('./**/*.*s')
+const WORKER_SECRET = 'studio-worker-secret'
+const ORIGINAL_WORKER_SECRET = process.env.STUDIO_WORKER_SECRET
 
 async function seedStudioTemplate(t: ReturnType<typeof convexTest>) {
   await t.run(async (ctx) => {
@@ -47,6 +49,19 @@ async function seedQueuedJob(t: ReturnType<typeof convexTest>, jobIdempotencyKey
 }
 
 describe('studio worker mutations', () => {
+  beforeEach(() => {
+    process.env.STUDIO_WORKER_SECRET = WORKER_SECRET
+  })
+
+  afterEach(() => {
+    if (ORIGINAL_WORKER_SECRET === undefined) {
+      delete process.env.STUDIO_WORKER_SECRET
+      return
+    }
+
+    process.env.STUDIO_WORKER_SECRET = ORIGINAL_WORKER_SECRET
+  })
+
   it('claims and completes a generation job through the worker state machine', async () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
@@ -54,6 +69,7 @@ describe('studio worker mutations', () => {
 
     const claimedJob = await t.mutation(claimNextGenerationJob, {
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
@@ -65,11 +81,13 @@ describe('studio worker mutations', () => {
     await t.mutation(markModelStarted, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
     })
 
     await t.mutation(completePlanning, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       renderPlan: createStubRenderPlan(
         'Launch an AI analytics dashboard',
         p0StudioTemplateSeed,
@@ -94,6 +112,7 @@ describe('studio worker mutations', () => {
     await t.mutation(startRendering, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       renderRun: {
         runtime: 'remotion',
         templateId: p0StudioTemplateSeed.templateId,
@@ -109,11 +128,13 @@ describe('studio worker mutations', () => {
     await t.mutation(startUploading, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
     })
 
     const completedJob = await t.mutation(completeGenerationJob, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       artifact: {
         storageKey: 'studio/jobs/job_1/render-output.mp4',
         thumbnailStorageKey: 'studio/jobs/job_1/render-output.jpg',
@@ -183,6 +204,7 @@ describe('studio worker mutations', () => {
 
     await t.mutation(claimNextGenerationJob, {
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
@@ -190,8 +212,142 @@ describe('studio worker mutations', () => {
       t.mutation(markModelStarted, {
         jobId,
         workerId: 'worker-2',
+        workerSecret: WORKER_SECRET,
       }),
     ).rejects.toThrowError('INVALID_WORKER_STATE')
+  })
+
+  it('rejects missing or incorrect worker secrets before worker reads or mutations', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await seedQueuedJob(t, 'worker-secret-guard')
+    const renderPlan = createStubRenderPlan(
+      'Launch an AI analytics dashboard',
+      p0StudioTemplateSeed,
+    )
+
+    delete process.env.STUDIO_WORKER_SECRET
+    await expect(
+      t.mutation(claimNextGenerationJob, {
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        lockTtlMs: 30_000,
+      }),
+    ).rejects.toThrowError('INVALID_WORKER_SECRET')
+
+    process.env.STUDIO_WORKER_SECRET = WORKER_SECRET
+
+    await expect(
+      t.mutation(claimNextGenerationJob, {
+        workerId: 'worker-1',
+        workerSecret: 'wrong-secret',
+        lockTtlMs: 30_000,
+      }),
+    ).rejects.toThrowError('INVALID_WORKER_SECRET')
+
+    const unclaimedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+    expect(unclaimedJob?.status).toBe('queued')
+    expect(unclaimedJob?.workerId).toBeUndefined()
+
+    await t.mutation(claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+
+    const invalidSecretMutations = [
+      () =>
+        t.mutation(markModelStarted, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+        }),
+      () =>
+        t.mutation(completePlanning, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+          renderPlan,
+          modelRun: {
+            provider: 'openai',
+            model: 'gpt-4.1',
+            attemptIndex: 0,
+            runType: 'plan',
+            inputDigest: 'input-digest',
+            outputDigest: 'output-digest',
+            inputSnapshotRef: 'studio/jobs/job_1/model-input.json',
+            outputSnapshotRef: 'studio/jobs/job_1/model-output.json',
+            promptVersion: '1',
+            schemaVersion: '1',
+            tokenUsage: { inputTokens: 12, outputTokens: 34, totalTokens: 46 },
+            estimatedCost: 0.12,
+            latencyMs: 1000,
+          },
+        }),
+      () =>
+        t.mutation(startRendering, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+          renderRun: {
+            runtime: 'remotion',
+            templateId: p0StudioTemplateSeed.templateId,
+            templateVersion: p0StudioTemplateSeed.templateVersion,
+            rendererVersion: '1.0.0',
+            remotionVersion: '4.0.0',
+            workerVersion: '1.0.0',
+            startedAt: 100,
+            renderInputSnapshotRef: 'studio/jobs/job_1/render-input.json',
+          },
+        }),
+      () =>
+        t.mutation(startUploading, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+        }),
+      () =>
+        t.mutation(completeGenerationJob, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+          artifact: {
+            storageKey: 'studio/jobs/job_1/render-output.mp4',
+            thumbnailStorageKey: 'studio/jobs/job_1/render-output.jpg',
+            fileSizeBytes: 1_024,
+            mimeType: 'video/mp4',
+            width: 1280,
+            height: 720,
+            fps: 30,
+            durationSeconds: 15,
+            aspectRatio: '16:9',
+            runtime: 'remotion',
+          },
+          renderRun: {
+            completedAt: 200,
+            durationMs: 100,
+            exitCode: 0,
+            outputStorageKey: 'studio/jobs/job_1/render-output.mp4',
+          },
+        }),
+      () =>
+        t.mutation(failGenerationJob, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+          errorCode: 'MODEL_PROVIDER_ERROR',
+          errorMessage: 'Planner backend unavailable.',
+        }),
+    ]
+
+    for (const runMutation of invalidSecretMutations) {
+      await expect(runMutation()).rejects.toThrowError('INVALID_WORKER_SECRET')
+    }
+
+    const guardedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+    expect(guardedJob?.status).toBe('planning')
+    expect(guardedJob?.workerId).toBe('worker-1')
+    expect(guardedJob?.plannerOutput).toBeUndefined()
   })
 
   it('fails an active claimed generation job and records the terminal error', async () => {
@@ -201,12 +357,14 @@ describe('studio worker mutations', () => {
 
     await t.mutation(claimNextGenerationJob, {
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
     const failedJob = await t.mutation(failGenerationJob, {
       jobId,
       workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
       errorCode: 'MODEL_PROVIDER_ERROR',
       errorMessage: 'Planner backend unavailable.',
     })

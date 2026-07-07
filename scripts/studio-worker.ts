@@ -80,15 +80,20 @@ export async function runStudioWorkerOnce(
   }
 
   const workerId = env.STUDIO_WORKER_ID ?? 'studio-worker-local'
+  const workerSecret = env.STUDIO_WORKER_SECRET
+  if (!workerSecret) {
+    throw new Error('STUDIO_WORKER_SECRET is required.')
+  }
   const lockTtlMs = Number(env.STUDIO_WORKER_LOCK_TTL_MS ?? 30_000)
   const studioApi = getStudioApi()
   const client = clientFactory(convexUrl)
 
   const claimedJob = await client.mutation<
-    { workerId: string; lockTtlMs: number },
+    { workerId: string; workerSecret: string; lockTtlMs: number },
     ClaimedGenerationJob | null
   >(studioApi.studio.claimNextGenerationJob, {
     workerId,
+    workerSecret,
     lockTtlMs,
   })
 
@@ -101,6 +106,7 @@ export async function runStudioWorkerOnce(
     await client.mutation(studioApi.studio.markModelStarted, {
       jobId: claimedJob.id,
       workerId,
+      workerSecret,
     })
 
     const renderPlan = createStubRenderPlan(
@@ -111,6 +117,7 @@ export async function runStudioWorkerOnce(
     await client.mutation(studioApi.studio.completePlanning, {
       jobId: claimedJob.id,
       workerId,
+      workerSecret,
       renderPlan,
       modelRun: createStubModelRun(claimedJob, claimedJob.prompt),
     })
@@ -126,6 +133,7 @@ export async function runStudioWorkerOnce(
     await client.mutation(studioApi.studio.failGenerationJob, {
       jobId: claimedJob.id,
       workerId,
+      workerSecret,
       errorCode: 'MODEL_PROVIDER_ERROR',
       errorMessage: errorMessage.slice(0, 500),
     })

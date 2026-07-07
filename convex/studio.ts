@@ -360,6 +360,13 @@ async function getWorkerOwnedJobOrThrow(
   return job
 }
 
+function requireStudioWorkerSecret(workerSecret: string) {
+  const expectedSecret = process.env.STUDIO_WORKER_SECRET
+  if (!expectedSecret || workerSecret !== expectedSecret) {
+    studioError('INVALID_WORKER_SECRET')
+  }
+}
+
 export const upsertStudioTemplate = mutation({
   args: studioTemplateSeedValidator,
   handler: async (ctx, args) => {
@@ -606,9 +613,12 @@ export const cancelGenerationJob = mutation({
 export const claimNextGenerationJob = mutation({
   args: {
     workerId: v.string(),
+    workerSecret: v.string(),
     lockTtlMs: v.number(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const queuedJobs = await ctx.db
       .query('generationJobs')
       .withIndex('by_status_lock', (q) => q.eq('status', 'queued'))
@@ -654,8 +664,11 @@ export const markModelStarted = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await getWorkerOwnedJobOrThrow(ctx, {
       ...args,
       expectedStatus: 'planning',
@@ -689,10 +702,13 @@ export const completePlanning = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
     renderPlan: v.any(),
     modelRun: v.any(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await getWorkerOwnedJobOrThrow(ctx, {
       jobId: args.jobId,
       workerId: args.workerId,
@@ -745,9 +761,12 @@ export const startRendering = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
     renderRun: v.any(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await getWorkerOwnedJobOrThrow(ctx, {
       jobId: args.jobId,
       workerId: args.workerId,
@@ -793,8 +812,11 @@ export const startUploading = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await getWorkerOwnedJobOrThrow(ctx, {
       ...args,
       expectedStatus: 'rendering',
@@ -829,10 +851,13 @@ export const completeGenerationJob = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
     artifact: v.any(),
     renderRun: v.any(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await getWorkerOwnedJobOrThrow(ctx, {
       jobId: args.jobId,
       workerId: args.workerId,
@@ -892,10 +917,13 @@ export const failGenerationJob = mutation({
   args: {
     jobId: v.id('generationJobs'),
     workerId: v.string(),
+    workerSecret: v.string(),
     errorCode: v.string(),
     errorMessage: v.string(),
   },
   handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
     const job = await ctx.db.get(args.jobId)
     if (!job) {
       studioError('JOB_NOT_FOUND')
