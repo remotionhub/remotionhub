@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   authCallbacks,
   normalizeRelativeRedirectTo,
@@ -113,5 +113,75 @@ describe('authCallbacks.redirect', () => {
         redirectTo: 'https://remotionhub.ai/account/settings',
       }),
     ).resolves.toBe('/')
+  })
+})
+
+describe('authCallbacks.createOrUpdateUser', () => {
+  it('schedules personal publisher bootstrap after updating an existing user', async () => {
+    const patch = vi.fn(async () => {})
+    const runAfter = vi.fn(async () => null)
+    const ctx = {
+      db: { patch },
+      scheduler: { runAfter },
+    }
+
+    const userId = 'users:existing-user' as never
+
+    await expect(
+      authCallbacks.createOrUpdateUser(ctx as never, {
+        existingUserId: userId,
+        profile: {
+          name: 'WeChat User',
+        },
+        provider: { type: 'oauth' },
+      } as never),
+    ).resolves.toBe(userId)
+
+    expect(ctx.db.patch).toHaveBeenCalledWith(
+      userId,
+      expect.objectContaining({
+        name: 'WeChat User',
+        updatedAt: expect.any(Number),
+      }),
+    )
+    expect(ctx.scheduler.runAfter).toHaveBeenCalledWith(
+      0,
+      expect.anything(),
+      { userId },
+    )
+  })
+
+  it('schedules personal publisher bootstrap after creating a new user', async () => {
+    const insert = vi.fn(async () => 'users:new-user')
+    const runAfter = vi.fn(async () => null)
+    const ctx = {
+      db: { insert },
+      scheduler: { runAfter },
+    }
+
+    await expect(
+      authCallbacks.createOrUpdateUser(ctx as never, {
+        existingUserId: null,
+        profile: {
+          name: 'WeChat User',
+        },
+        provider: { type: 'oauth' },
+      } as never),
+    ).resolves.toBe('users:new-user')
+
+    expect(ctx.db.insert).toHaveBeenCalledWith(
+      'users',
+      expect.objectContaining({
+        name: 'WeChat User',
+        role: 'user',
+        createdAt: expect.any(Number),
+        updatedAt: expect.any(Number),
+      }),
+    )
+    expect(ctx.scheduler.runAfter).toHaveBeenCalledWith(
+      0,
+      expect.anything(),
+      { userId: 'users:new-user' },
+    )
   })
 })
