@@ -281,6 +281,49 @@ describe('validateRenderPlan', () => {
     expect(result.ok).toBe(false)
     expect(result.errors).toContain('TEMPLATE_VERSION_MISMATCH')
   })
+
+  it('rejects props that are not allowed by the template schema', () => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: 'Launch faster', shellCommand: 'rm -rf .' },
+        assetIds: [],
+      },
+      job,
+      template,
+    )
+
+    expect(result.ok).toBe(false)
+    expect(result.errors).toContain('PROPS_VALIDATION_FAILED')
+  })
 })
 ```
 
@@ -342,6 +385,48 @@ const renderPlanSchema = z
   })
   .strict()
 
+export type StudioRenderPlan = z.infer<typeof renderPlanSchema>
+
+function validatePropsSchema(
+  props: Record<string, unknown>,
+  schema: unknown,
+): boolean {
+  if (!schema || typeof schema !== 'object') return false
+  const objectSchema = schema as {
+    additionalProperties?: boolean
+    required?: string[]
+    properties?: Record<
+      string,
+      { type?: string; minLength?: number; maxLength?: number }
+    >
+  }
+  const properties = objectSchema.properties ?? {}
+  const required = objectSchema.required ?? []
+
+  if (
+    objectSchema.additionalProperties === false &&
+    Object.keys(props).some((key) => !(key in properties))
+  ) {
+    return false
+  }
+
+  if (required.some((key) => !(key in props))) {
+    return false
+  }
+
+  for (const [key, rule] of Object.entries(properties)) {
+    const value = props[key]
+    if (value === undefined) continue
+    if (rule.type === 'string') {
+      if (typeof value !== 'string') return false
+      if (rule.minLength !== undefined && value.length < rule.minLength) return false
+      if (rule.maxLength !== undefined && value.length > rule.maxLength) return false
+    }
+  }
+
+  return true
+}
+
 export function validateRenderPlan(
   input: unknown,
   job: {
@@ -375,6 +460,10 @@ export function validateRenderPlan(
       !template.allowedAssetIds.includes(assetId),
   )
   if (hasInvalidAsset) {
+    return { ok: false, errors: ['PROPS_VALIDATION_FAILED'] }
+  }
+
+  if (!validatePropsSchema(plan.props, template.propsSchema)) {
     return { ok: false, errors: ['PROPS_VALIDATION_FAILED'] }
   }
 
