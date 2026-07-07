@@ -7,12 +7,12 @@ import AppProviders from './AppProviders'
 const { client } = vi.hoisted(() => ({ client: { name: 'convex-client' } }))
 
 vi.mock('#/lib/convex', () => ({ convexReactClient: client }))
-vi.mock('convex/react', () => ({
-  ConvexProvider: ({
+vi.mock('@convex-dev/auth/react', () => ({
+  ConvexAuthProvider: ({
     children,
     client: providerClient,
   }: React.PropsWithChildren<{ client: unknown }>) => (
-    <div data-testid="convex-provider" data-client={providerClient === client}>
+    <div data-testid="convex-auth-provider" data-client={providerClient === client}>
       {children}
     </div>
   ),
@@ -22,6 +22,9 @@ vi.mock('./I18nProvider', () => ({
     <div data-testid="i18n-provider">{children}</div>
   ),
 }))
+vi.mock('./UserBootstrap', () => ({
+  UserBootstrap: () => <div data-testid="user-bootstrap" />,
+}))
 vi.mock('#/components/ui/sonner', () => ({
   Toaster: () => <div data-testid="toaster" />,
 }))
@@ -29,19 +32,19 @@ vi.mock('#/components/ui/sonner', () => ({
 describe('AppProviders', () => {
   afterEach(cleanup)
 
-  it('nests application content and one toaster inside i18n and Convex providers', () => {
+  it('nests content, bootstrap, and toaster inside i18n and Convex auth providers', () => {
     render(
       <AppProviders>
         <div data-testid="content" />
       </AppProviders>,
     )
 
-    const convexProvider = screen.getByTestId('convex-provider')
+    const convexProvider = screen.getByTestId('convex-auth-provider')
     const i18nProvider = screen.getByTestId('i18n-provider')
     expect(convexProvider.getAttribute('data-client')).toBe('true')
     expect(convexProvider.firstElementChild).toBe(i18nProvider)
+    expect(i18nProvider.contains(screen.getByTestId('user-bootstrap'))).toBe(true)
     expect(i18nProvider.contains(screen.getByTestId('content'))).toBe(true)
     expect(i18nProvider.contains(screen.getByTestId('toaster'))).toBe(true)
-    expect(screen.getAllByTestId('toaster')).toHaveLength(1)
   })
 })

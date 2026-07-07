@@ -1,7 +1,8 @@
-import { ConvexProvider } from 'convex/react'
+import { ConvexAuthProvider } from '@convex-dev/auth/react'
 import { Toaster } from '#/components/ui/sonner'
 import { convexReactClient } from '#/lib/convex'
 import { I18nProvider } from './I18nProvider'
+import { UserBootstrap } from './UserBootstrap'
 
 export default function AppProviders({
   children,
@@ -9,11 +10,12 @@ export default function AppProviders({
   children: React.ReactNode
 }) {
   return (
-    <ConvexProvider client={convexReactClient}>
+    <ConvexAuthProvider client={convexReactClient}>
       <I18nProvider>
+        <UserBootstrap />
         {children}
         <Toaster />
       </I18nProvider>
-    </ConvexProvider>
+    </ConvexAuthProvider>
   )
 }
