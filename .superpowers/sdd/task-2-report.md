@@ -72,3 +72,9 @@
 
 ### Concerns
 - None.
+
+## Fix after re-review
+
+- Updated the two `authCallbacks.createOrUpdateUser` scheduling assertions in `convex/auth.test.ts` to check `internal.users.ensurePersonalPublisherInternal` directly.
+- Added the generated `internal` import from `./_generated/api` so the test matches the exact scheduled function reference.
+- No production code changes were needed for this re-review fix.

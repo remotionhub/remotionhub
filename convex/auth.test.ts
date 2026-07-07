@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { internal } from './_generated/api'
 import {
   authCallbacks,
   normalizeRelativeRedirectTo,
@@ -146,7 +147,7 @@ describe('authCallbacks.createOrUpdateUser', () => {
     )
     expect(ctx.scheduler.runAfter).toHaveBeenCalledWith(
       0,
-      expect.anything(),
+      internal.users.ensurePersonalPublisherInternal,
       { userId },
     )
   })
@@ -180,7 +181,7 @@ describe('authCallbacks.createOrUpdateUser', () => {
     )
     expect(ctx.scheduler.runAfter).toHaveBeenCalledWith(
       0,
-      expect.anything(),
+      internal.users.ensurePersonalPublisherInternal,
       { userId: 'users:new-user' },
     )
   })
