@@ -1,10 +1,25 @@
 import { ConvexError, v } from 'convex/values'
+import type { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
+import type {
+  DatabaseReader,
+  DatabaseWriter,
+  MutationCtx,
+  QueryCtx,
+} from './_generated/server'
+import { ACTIVE_JOB_STATUSES } from './lib/studio/constants'
+import { canRefundCancellation, defaultProgressForStatus } from './lib/studio/jobs'
+import { consumeKey, initialGrantKey, refundKey } from './lib/studio/ledger'
 import {
   getDefaultStudioTemplate as getDefaultStudioTemplateFromList,
   listActiveApprovedStudioTemplates,
   type StudioTemplateSeed,
 } from './lib/studio/templates'
+
+const STUDIO_INITIAL_GRANT_CREDITS = 2
+const STUDIO_JOB_COST = 1
+const MIN_PROMPT_LENGTH = 10
+const BLOCKED_PROMPT_KEYWORDS = ['terrorist', 'bomb', 'kill myself', 'suicide']
 
 const studioTemplateSeedValidator = v.object({
   importSecret: v.string(),
@@ -50,6 +65,196 @@ function toSeedRecord(args: StudioTemplateSeed) {
     previewStorageKey: args.previewStorageKey,
     licenseStatus: args.licenseStatus,
   }
+}
+
+function studioError(code: string) {
+  throw new ConvexError(code)
+}
+
+async function getAuthenticatedUserId(ctx: QueryCtx | MutationCtx) {
+  const identity = await ctx.auth.getUserIdentity()
+  const userId = identity?.subject?.trim()
+  if (!userId) {
+    studioError('AUTH_REQUIRED')
+  }
+  return userId
+}
+
+async function getLatestLedgerBalance(db: DatabaseReader, userId: string) {
+  const latestEntry = await db
+    .query('usageLedger')
+    .withIndex('by_user_created', (q) => q.eq('userId', userId))
+    .order('desc')
+    .first()
+
+  return latestEntry?.balanceAfter ?? 0
+}
+
+async function ensureInitialGrant(ctx: MutationCtx, userId: string) {
+  const idempotencyKey = initialGrantKey(userId)
+  const existing = await ctx.db
+    .query('usageLedger')
+    .withIndex('by_idempotency', (q) => q.eq('idempotencyKey', idempotencyKey))
+    .unique()
+
+  if (existing) {
+    return existing
+  }
+
+  const now = Date.now()
+  const balanceBefore = await getLatestLedgerBalance(ctx.db, userId)
+  const ledgerId = await ctx.db.insert('usageLedger', {
+    userId,
+    kind: 'grant',
+    amount: STUDIO_INITIAL_GRANT_CREDITS,
+    balanceAfter: balanceBefore + STUDIO_INITIAL_GRANT_CREDITS,
+    reason: 'Initial studio credit grant.',
+    idempotencyKey,
+    createdAt: now,
+  })
+
+  const created = await ctx.db.get(ledgerId)
+  if (!created) {
+    throw new ConvexError('Initial studio grant creation failed.')
+  }
+  return created
+}
+
+function validatePrompt(prompt: string) {
+  const normalizedPrompt = prompt.trim()
+  if (normalizedPrompt.length < MIN_PROMPT_LENGTH) {
+    studioError('PROMPT_INCOMPLETE')
+  }
+
+  const lowerPrompt = normalizedPrompt.toLowerCase()
+  if (
+    BLOCKED_PROMPT_KEYWORDS.some((keyword) => lowerPrompt.includes(keyword))
+  ) {
+    studioError('CONTENT_BLOCKED')
+  }
+
+  return normalizedPrompt
+}
+
+async function getTemplateByIdentity(
+  db: DatabaseReader,
+  templateId: string,
+  templateVersion: string,
+) {
+  const templates = await db.query('studioTemplates').collect()
+  const exactMatch =
+    templates.find(
+      (template) =>
+        template.templateId === templateId &&
+        template.templateVersion === templateVersion,
+    ) ?? null
+
+  if (exactMatch) {
+    return exactMatch
+  }
+
+  const sameTemplate = templates.find((template) => template.templateId === templateId)
+  if (sameTemplate) {
+    studioError('TEMPLATE_VERSION_MISMATCH')
+  }
+
+  studioError('TEMPLATE_NOT_FOUND')
+}
+
+function validateTemplate(template: Doc<'studioTemplates'>) {
+  if (template.runtime !== 'remotion') {
+    studioError('TEMPLATE_NOT_ALLOWED')
+  }
+  if (template.status !== 'active') {
+    studioError('TEMPLATE_INACTIVE')
+  }
+  if (template.licenseStatus !== 'approved') {
+    studioError('TEMPLATE_LICENSE_BLOCKED')
+  }
+}
+
+async function hasActiveJob(db: DatabaseReader, userId: string) {
+  for (const status of ACTIVE_JOB_STATUSES) {
+    const activeJob = await db
+      .query('generationJobs')
+      .withIndex('by_user_status', (q) =>
+        q.eq('userId', userId).eq('status', status),
+      )
+      .first()
+    if (activeJob) {
+      return true
+    }
+  }
+
+  return false
+}
+
+async function getOwnedJobOrThrow(
+  ctx: QueryCtx | MutationCtx,
+  userId: string,
+  jobId: Id<'generationJobs'>,
+) {
+  const job = await ctx.db.get(jobId)
+  if (!job || job.userId !== userId) {
+    studioError('TEMPLATE_NOT_FOUND')
+  }
+  return job
+}
+
+async function refundGenerationJobInMutation(
+  ctx: MutationCtx,
+  args: {
+    job: Doc<'generationJobs'>
+    reason: string
+  },
+) {
+  if (args.job.refundedAt) {
+    return { refunded: false, refundedAt: args.job.refundedAt }
+  }
+
+  const key = refundKey(args.job._id)
+  const existingRefund = await ctx.db
+    .query('usageLedger')
+    .withIndex('by_idempotency', (q) => q.eq('idempotencyKey', key))
+    .unique()
+
+  if (existingRefund) {
+    if (!args.job.refundedAt) {
+      await ctx.db.patch(args.job._id, {
+        refundedAt: existingRefund.createdAt,
+        updatedAt: existingRefund.createdAt,
+      })
+    }
+    return { refunded: false, refundedAt: existingRefund.createdAt }
+  }
+
+  const now = Date.now()
+  const balanceBefore = await getLatestLedgerBalance(ctx.db, args.job.userId)
+  await ctx.db.insert('usageLedger', {
+    userId: args.job.userId,
+    kind: 'refund',
+    amount: 1,
+    balanceAfter: balanceBefore + 1,
+    jobId: args.job._id,
+    reason: args.reason,
+    idempotencyKey: key,
+    createdAt: now,
+  })
+  await ctx.db.patch(args.job._id, {
+    refundedAt: now,
+    updatedAt: now,
+  })
+  await ctx.db.insert('generationJobEvents', {
+    jobId: args.job._id,
+    type: 'credits_refunded',
+    message: args.reason,
+    metadata: {
+      idempotencyKey: key,
+    },
+    createdAt: now,
+  })
+
+  return { refunded: true, refundedAt: now }
 }
 
 export const upsertStudioTemplate = mutation({
@@ -117,5 +322,199 @@ export const getDefaultStudioTemplate = query({
     return getDefaultStudioTemplateFromList(
       templates.filter((template) => template.runtime === 'remotion'),
     )
+  },
+})
+
+export const createGenerationJob = mutation({
+  args: {
+    idempotencyKey: v.string(),
+    prompt: v.string(),
+    templateId: v.string(),
+    templateVersion: v.string(),
+    aspectRatio: v.string(),
+    durationSeconds: v.number(),
+    assetIds: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const existing = await ctx.db
+      .query('generationJobs')
+      .withIndex('by_user_idempotency', (q) =>
+        q.eq('userId', userId).eq('idempotencyKey', args.idempotencyKey),
+      )
+      .unique()
+
+    if (existing) {
+      return existing
+    }
+
+    await ensureInitialGrant(ctx, userId)
+
+    const prompt = validatePrompt(args.prompt)
+    const template = await getTemplateByIdentity(
+      ctx.db,
+      args.templateId,
+      args.templateVersion,
+    )
+    validateTemplate(template)
+
+    if (await hasActiveJob(ctx.db, userId)) {
+      studioError('ACTIVE_JOB_LIMIT')
+    }
+
+    const balanceBefore = await getLatestLedgerBalance(ctx.db, userId)
+    if (balanceBefore < STUDIO_JOB_COST) {
+      studioError('INSUFFICIENT_CREDITS')
+    }
+
+    const now = Date.now()
+    const jobId = await ctx.db.insert('generationJobs', {
+      userId,
+      status: 'queued',
+      prompt,
+      runtime: template.runtime,
+      aspectRatio: args.aspectRatio,
+      durationSeconds: args.durationSeconds,
+      templateId: template.templateId,
+      templateVersion: template.templateVersion,
+      propsSchemaVersion: template.propsSchemaVersion,
+      assetIds: args.assetIds,
+      progress: defaultProgressForStatus('queued'),
+      idempotencyKey: args.idempotencyKey,
+      createdAt: now,
+      updatedAt: now,
+    })
+
+    const consumeIdempotencyKey = consumeKey(jobId)
+    await ctx.db.insert('usageLedger', {
+      userId,
+      kind: 'consume',
+      amount: -STUDIO_JOB_COST,
+      balanceAfter: balanceBefore - STUDIO_JOB_COST,
+      jobId,
+      reason: 'Studio generation job created.',
+      idempotencyKey: consumeIdempotencyKey,
+      createdAt: now,
+    })
+    await ctx.db.insert('generationJobEvents', {
+      jobId,
+      type: 'job_created',
+      metadata: {
+        status: 'queued',
+      },
+      createdAt: now,
+    })
+    await ctx.db.insert('generationJobEvents', {
+      jobId,
+      type: 'credits_consumed',
+      metadata: {
+        amount: STUDIO_JOB_COST,
+        idempotencyKey: consumeIdempotencyKey,
+      },
+      createdAt: now,
+    })
+
+    const createdJob = await ctx.db.get(jobId)
+    if (!createdJob) {
+      throw new ConvexError('Generation job creation failed.')
+    }
+    return createdJob
+  },
+})
+
+export const getGenerationJob = query({
+  args: {
+    jobId: v.id('generationJobs'),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
+    return job
+  },
+})
+
+export const getMyStudioHistory = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const jobs = await ctx.db
+      .query('generationJobs')
+      .withIndex('by_user_created', (q) => q.eq('userId', userId))
+      .order('desc')
+      .collect()
+
+    return jobs.slice(0, 10)
+  },
+})
+
+export const refundGenerationJob = mutation({
+  args: {
+    jobId: v.id('generationJobs'),
+    reason: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
+    return await refundGenerationJobInMutation(ctx, {
+      job,
+      reason: args.reason,
+    })
+  },
+})
+
+export const cancelGenerationJob = mutation({
+  args: {
+    jobId: v.id('generationJobs'),
+    reason: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthenticatedUserId(ctx)
+    const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
+    if (job.status === 'canceled') {
+      return job
+    }
+
+    const now = Date.now()
+    await ctx.db.patch(job._id, {
+      status: 'canceled',
+      canceledAt: now,
+      canceledBy: userId,
+      cancelReason: args.reason,
+      updatedAt: now,
+    })
+    await ctx.db.insert('generationJobEvents', {
+      jobId: job._id,
+      type: 'job_canceled',
+      message: args.reason,
+      createdAt: now,
+    })
+
+    let refundedAt: number | undefined
+    if (
+      canRefundCancellation({
+        status: job.status,
+        modelStartedAt: job.modelStartedAt,
+      })
+    ) {
+      const refundResult = await refundGenerationJobInMutation(ctx, {
+        job,
+        reason: `Refund for canceled job: ${args.reason}`,
+      })
+      refundedAt = refundResult.refundedAt
+    }
+
+    const canceledJob = await ctx.db.get(job._id)
+    if (!canceledJob) {
+      throw new ConvexError('Canceled job lookup failed.')
+    }
+
+    if (refundedAt && !canceledJob.refundedAt) {
+      return {
+        ...canceledJob,
+        refundedAt,
+      }
+    }
+
+    return canceledJob
   },
 })
