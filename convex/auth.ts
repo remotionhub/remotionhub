@@ -1,6 +1,7 @@
 import WeChat from '@auth/core/providers/wechat'
 import { convexAuth } from '@convex-dev/auth/server'
 import type { Id } from './_generated/dataModel'
+import { internal } from './_generated/api'
 
 type AuthProfile = Record<string, unknown> & {
   email?: string | null
@@ -159,6 +160,7 @@ export const authCallbacks = {
         ...userData,
         updatedAt: Date.now(),
       })
+      await schedulePostUserCreatedOrUpdated(ctx, userId)
       return userId
     }
 
@@ -169,8 +171,26 @@ export const authCallbacks = {
       createdAt: now,
       updatedAt: now,
     })
+    await schedulePostUserCreatedOrUpdated(ctx, userId)
     return userId
   },
+}
+
+async function schedulePostUserCreatedOrUpdated(
+  ctx: {
+    scheduler: {
+      runAfter: (
+        delayMs: number,
+        functionReference: typeof internal.users.ensurePersonalPublisherInternal,
+        args: { userId: Id<'users'> },
+      ) => Promise<unknown>
+    }
+  },
+  userId: Id<'users'>,
+) {
+  await ctx.scheduler.runAfter(0, internal.users.ensurePersonalPublisherInternal, {
+    userId,
+  })
 }
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
