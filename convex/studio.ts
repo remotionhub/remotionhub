@@ -3,12 +3,15 @@ import type { Doc, Id } from './_generated/dataModel'
 import { mutation, query } from './_generated/server'
 import type {
   DatabaseReader,
-  DatabaseWriter,
   MutationCtx,
   QueryCtx,
 } from './_generated/server'
 import { ACTIVE_JOB_STATUSES } from './lib/studio/constants'
-import { canRefundCancellation, defaultProgressForStatus } from './lib/studio/jobs'
+import {
+  canCancelGenerationJob,
+  canRefundCancellation,
+  defaultProgressForStatus,
+} from './lib/studio/jobs'
 import { consumeKey, initialGrantKey, refundKey } from './lib/studio/ledger'
 import {
   getDefaultStudioTemplate as getDefaultStudioTemplateFromList,
@@ -69,6 +72,29 @@ function toSeedRecord(args: StudioTemplateSeed) {
 
 function studioError(code: string) {
   throw new ConvexError(code)
+}
+
+function toPublicGenerationJob(job: Doc<'generationJobs'>) {
+  return {
+    id: job._id,
+    status: job.status,
+    prompt: job.prompt,
+    runtime: job.runtime,
+    aspectRatio: job.aspectRatio,
+    durationSeconds: job.durationSeconds,
+    templateId: job.templateId,
+    templateVersion: job.templateVersion,
+    progress: job.progress,
+    artifactId: job.artifactId ?? null,
+    errorCode: job.errorCode ?? null,
+    errorMessage: job.errorMessage ?? null,
+    startedAt: job.startedAt ?? null,
+    completedAt: job.completedAt ?? null,
+    failedAt: job.failedAt ?? null,
+    canceledAt: job.canceledAt ?? null,
+    createdAt: job.createdAt,
+    updatedAt: job.updatedAt,
+  }
 }
 
 async function getAuthenticatedUserId(ctx: QueryCtx | MutationCtx) {
@@ -345,7 +371,7 @@ export const createGenerationJob = mutation({
       .unique()
 
     if (existing) {
-      return existing
+      return toPublicGenerationJob(existing)
     }
 
     await ensureInitialGrant(ctx, userId)
@@ -418,7 +444,7 @@ export const createGenerationJob = mutation({
     if (!createdJob) {
       throw new ConvexError('Generation job creation failed.')
     }
-    return createdJob
+    return toPublicGenerationJob(createdJob)
   },
 })
 
@@ -429,7 +455,7 @@ export const getGenerationJob = query({
   handler: async (ctx, args) => {
     const userId = await getAuthenticatedUserId(ctx)
     const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
-    return job
+    return toPublicGenerationJob(job)
   },
 })
 
@@ -443,22 +469,7 @@ export const getMyStudioHistory = query({
       .order('desc')
       .collect()
 
-    return jobs.slice(0, 10)
-  },
-})
-
-export const refundGenerationJob = mutation({
-  args: {
-    jobId: v.id('generationJobs'),
-    reason: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const userId = await getAuthenticatedUserId(ctx)
-    const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
-    return await refundGenerationJobInMutation(ctx, {
-      job,
-      reason: args.reason,
-    })
+    return jobs.slice(0, 10).map(toPublicGenerationJob)
   },
 })
 
@@ -470,8 +481,13 @@ export const cancelGenerationJob = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthenticatedUserId(ctx)
     const job = await getOwnedJobOrThrow(ctx, userId, args.jobId)
+
     if (job.status === 'canceled') {
-      return job
+      return toPublicGenerationJob(job)
+    }
+
+    if (!canCancelGenerationJob(job.status)) {
+      studioError('INVALID_CANCEL_STATE')
     }
 
     const now = Date.now()
@@ -489,18 +505,16 @@ export const cancelGenerationJob = mutation({
       createdAt: now,
     })
 
-    let refundedAt: number | undefined
     if (
       canRefundCancellation({
         status: job.status,
         modelStartedAt: job.modelStartedAt,
       })
     ) {
-      const refundResult = await refundGenerationJobInMutation(ctx, {
+      await refundGenerationJobInMutation(ctx, {
         job,
         reason: `Refund for canceled job: ${args.reason}`,
       })
-      refundedAt = refundResult.refundedAt
     }
 
     const canceledJob = await ctx.db.get(job._id)
@@ -508,13 +522,6 @@ export const cancelGenerationJob = mutation({
       throw new ConvexError('Canceled job lookup failed.')
     }
 
-    if (refundedAt && !canceledJob.refundedAt) {
-      return {
-        ...canceledJob,
-        refundedAt,
-      }
-    }
-
-    return canceledJob
+    return toPublicGenerationJob(canceledJob)
   },
 })

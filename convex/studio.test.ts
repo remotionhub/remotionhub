@@ -1,14 +1,14 @@
 import { convexTest } from 'convex-test'
 import { describe, expect, it } from 'vitest'
 import schema from './schema'
+import * as studioModule from './studio'
 import {
   cancelGenerationJob,
   createGenerationJob,
+  getDefaultStudioTemplate,
   getGenerationJob,
   getMyStudioHistory,
-  getDefaultStudioTemplate,
   listStudioTemplates,
-  refundGenerationJob,
   upsertStudioTemplate,
 } from './studio'
 
@@ -85,7 +85,32 @@ const createGenerationArgs = {
   assetIds: [] as string[],
 }
 
+const safeGenerationJobKeys = [
+  'artifactId',
+  'aspectRatio',
+  'canceledAt',
+  'completedAt',
+  'createdAt',
+  'durationSeconds',
+  'errorCode',
+  'errorMessage',
+  'failedAt',
+  'id',
+  'progress',
+  'prompt',
+  'runtime',
+  'startedAt',
+  'status',
+  'templateId',
+  'templateVersion',
+  'updatedAt',
+] as const
+
 describe('studio queries and mutations', () => {
+  it('does not expose a public arbitrary refund mutation', () => {
+    expect('refundGenerationJob' in studioModule).toBe(false)
+  })
+
   it('rejects missing or wrong import secrets and accepts the correct one', async () => {
     const t = convexTest(schema, modules)
     const { importSecret: _ignoredImportSecret, ...templateWithoutSecret } =
@@ -168,14 +193,15 @@ describe('studio queries and mutations', () => {
     const firstJob = await authed.mutation(createGenerationJob, createGenerationArgs)
     const repeatedJob = await authed.mutation(createGenerationJob, createGenerationArgs)
 
-    expect(firstJob._id).toBe(repeatedJob._id)
+    expect(firstJob.id).toBe(repeatedJob.id)
     expect(firstJob.status).toBe('queued')
     expect(repeatedJob.status).toBe('queued')
 
     const storedJob = await authed.query(getGenerationJob, {
-      jobId: firstJob._id,
+      jobId: firstJob.id,
     })
-    expect(storedJob?._id).toBe(firstJob._id)
+    expect(storedJob?.id).toBe(firstJob.id)
+    expect(Object.keys(storedJob ?? {}).sort()).toEqual([...safeGenerationJobKeys].sort())
 
     const ledger = await t.run(async (ctx) =>
       ctx.db
@@ -187,14 +213,14 @@ describe('studio queries and mutations', () => {
     )
     expect(ledger).toHaveLength(2)
     expect(ledger.map((entry) => entry.idempotencyKey).sort()).toEqual([
-      `consume:${firstJob._id}`,
+      `consume:${firstJob.id}`,
       `initial-grant-v1:${studioIdentity.subject}`,
     ])
 
     const events = await t.run(async (ctx) =>
       ctx.db
         .query('generationJobEvents')
-        .withIndex('by_job_created', (q) => q.eq('jobId', firstJob._id))
+        .withIndex('by_job_created', (q) => q.eq('jobId', firstJob.id))
         .collect(),
     )
     expect(events.map((event) => event.type)).toEqual([
@@ -218,7 +244,7 @@ describe('studio queries and mutations', () => {
     ).rejects.toThrowError('ACTIVE_JOB_LIMIT')
   })
 
-  it('cancels queued jobs with a refund and keeps the refund idempotent', async () => {
+  it('cancels queued jobs with a refund and keeps the refund idempotent across repeated cancellation', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(upsertStudioTemplate, approvedTemplate)
 
@@ -226,21 +252,24 @@ describe('studio queries and mutations', () => {
     const job = await authed.mutation(createGenerationJob, createGenerationArgs)
 
     const canceledJob = await authed.mutation(cancelGenerationJob, {
-      jobId: job._id,
+      jobId: job.id,
       reason: 'Changed my mind.',
     })
 
     expect(canceledJob.status).toBe('canceled')
     expect(canceledJob.canceledAt).toEqual(expect.any(Number))
-    expect(canceledJob.canceledBy).toBe(studioIdentity.subject)
-    expect(canceledJob.cancelReason).toBe('Changed my mind.')
-    expect(canceledJob.refundedAt).toEqual(expect.any(Number))
+    expect(canceledJob).not.toHaveProperty('refundedAt')
 
-    const secondRefund = await authed.mutation(refundGenerationJob, {
-      jobId: job._id,
-      reason: 'Retry refund.',
+    const storedCanceledJob = await t.run(async (ctx) => ctx.db.get(job.id))
+    expect(storedCanceledJob?.refundedAt).toEqual(expect.any(Number))
+
+    const secondCancel = await authed.mutation(cancelGenerationJob, {
+      jobId: job.id,
+      reason: 'Changed my mind again.',
     })
-    expect(secondRefund.refunded).toBe(false)
+    expect(secondCancel.id).toBe(job.id)
+    expect(secondCancel.status).toBe('canceled')
+    expect(secondCancel).not.toHaveProperty('refundedAt')
 
     const ledger = await t.run(async (ctx) =>
       ctx.db
@@ -251,9 +280,9 @@ describe('studio queries and mutations', () => {
         .collect(),
     )
     expect(ledger.map((entry) => entry.idempotencyKey).sort()).toEqual([
-      `consume:${job._id}`,
+      `consume:${job.id}`,
       `initial-grant-v1:${studioIdentity.subject}`,
-      `refund:${job._id}`,
+      `refund:${job.id}`,
     ])
   })
 
@@ -275,11 +304,11 @@ describe('studio queries and mutations', () => {
     })
 
     await t.run(async (ctx) => {
-      await ctx.db.patch(job._id, {
+      await ctx.db.patch(job.id, {
         status: 'planning',
         updatedAt: Date.now(),
       })
-      await ctx.db.patch(otherJob._id, {
+      await ctx.db.patch(otherJob.id, {
         status: 'planning',
         modelStartedAt: Date.now(),
         updatedAt: Date.now(),
@@ -287,24 +316,127 @@ describe('studio queries and mutations', () => {
     })
 
     const refundedPlanningJob = await authed.mutation(cancelGenerationJob, {
-      jobId: job._id,
+      jobId: job.id,
       reason: 'Cancel before model start.',
     })
     const nonRefundedPlanningJob = await secondAuthed.mutation(
       cancelGenerationJob,
       {
-        jobId: otherJob._id,
+        jobId: otherJob.id,
         reason: 'Cancel after model start.',
       },
     )
 
-    expect(refundedPlanningJob.refundedAt).toEqual(expect.any(Number))
-    expect(nonRefundedPlanningJob.refundedAt).toBeUndefined()
+    const storedRefundedPlanningJob = await t.run(async (ctx) => ctx.db.get(job.id))
+    const storedNonRefundedPlanningJob = await t.run(async (ctx) =>
+      ctx.db.get(otherJob.id),
+    )
+
+    expect(storedRefundedPlanningJob?.refundedAt).toEqual(expect.any(Number))
+    expect(storedNonRefundedPlanningJob?.refundedAt).toBeUndefined()
+    expect(refundedPlanningJob).not.toHaveProperty('refundedAt')
+    expect(nonRefundedPlanningJob).not.toHaveProperty('refundedAt')
   })
 
-  it('returns only the current user history ordered by newest first and limited to ten', async () => {
+  it('rejects cancellation for completed and failed jobs without rewriting them', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(upsertStudioTemplate, approvedTemplate)
+
+    const authed = t.withIdentity(studioIdentity)
+    const completedJobId = await t.run(async (ctx) =>
+      ctx.db.insert('generationJobs', {
+        userId: studioIdentity.subject,
+        status: 'completed',
+        prompt: 'Completed prompt',
+        runtime: 'remotion',
+        aspectRatio: '16:9',
+        durationSeconds: 30,
+        templateId: approvedTemplate.templateId,
+        templateVersion: approvedTemplate.templateVersion,
+        propsSchemaVersion: approvedTemplate.propsSchemaVersion,
+        assetIds: [],
+        progress: 100,
+        idempotencyKey: 'completed-job',
+        createdAt: 2_000,
+        updatedAt: 2_000,
+        completedAt: 2_000,
+      }),
+    )
+    const failedJobId = await t.run(async (ctx) =>
+      ctx.db.insert('generationJobs', {
+        userId: studioIdentity.subject,
+        status: 'failed',
+        prompt: 'Failed prompt',
+        runtime: 'remotion',
+        aspectRatio: '16:9',
+        durationSeconds: 30,
+        templateId: approvedTemplate.templateId,
+        templateVersion: approvedTemplate.templateVersion,
+        propsSchemaVersion: approvedTemplate.propsSchemaVersion,
+        assetIds: [],
+        progress: 100,
+        idempotencyKey: 'failed-job',
+        createdAt: 3_000,
+        updatedAt: 3_000,
+        failedAt: 3_000,
+        errorCode: 'FAILED',
+        errorMessage: 'Render failed',
+      }),
+    )
+
+    await expect(
+      authed.mutation(cancelGenerationJob, {
+        jobId: completedJobId,
+        reason: 'Too late.',
+      }),
+    ).rejects.toThrowError('INVALID_CANCEL_STATE')
+    await expect(
+      authed.mutation(cancelGenerationJob, {
+        jobId: failedJobId,
+        reason: 'Already failed.',
+      }),
+    ).rejects.toThrowError('INVALID_CANCEL_STATE')
+
+    const [storedCompleted, storedFailed] = await t.run(async (ctx) =>
+      Promise.all([ctx.db.get(completedJobId), ctx.db.get(failedJobId)]),
+    )
+
+    expect(storedCompleted?.status).toBe('completed')
+    expect(storedCompleted?.canceledAt).toBeUndefined()
+    expect(storedFailed?.status).toBe('failed')
+    expect(storedFailed?.canceledAt).toBeUndefined()
+  })
+
+  it('returns only user-safe generation job fields for detail and history', async () => {
+    const t = convexTest(schema, modules)
+    await t.mutation(upsertStudioTemplate, approvedTemplate)
+
+    const detailJobId = await t.run(async (ctx) =>
+      ctx.db.insert('generationJobs', {
+        userId: studioIdentity.subject,
+        status: 'rendering',
+        prompt: 'Private detail prompt',
+        runtime: 'remotion',
+        aspectRatio: '16:9',
+        durationSeconds: 45,
+        templateId: approvedTemplate.templateId,
+        templateVersion: approvedTemplate.templateVersion,
+        propsSchemaVersion: approvedTemplate.propsSchemaVersion,
+        assetIds: ['asset-1'],
+        progress: 60,
+        plannerOutput: { secret: true },
+        workerId: 'worker-1',
+        lockedAt: 4_000,
+        heartbeatAt: 4_001,
+        lockExpiresAt: 4_002,
+        modelStartedAt: 4_003,
+        refundedAt: 4_004,
+        idempotencyKey: 'private-detail-job',
+        createdAt: 4_000,
+        updatedAt: 4_005,
+        startedAt: 4_003,
+      }),
+    )
 
     await t.run(async (ctx) => {
       for (let index = 0; index < 12; index += 1) {
@@ -320,10 +452,12 @@ describe('studio queries and mutations', () => {
           propsSchemaVersion: approvedTemplate.propsSchemaVersion,
           assetIds: [],
           progress: 100,
+          plannerOutput: { index },
+          workerId: `worker-${index}`,
           idempotencyKey: `history-${index}`,
-          createdAt: 1_000 + index,
-          updatedAt: 1_000 + index,
-          completedAt: 1_000 + index,
+          createdAt: 10_000 + index,
+          updatedAt: 10_000 + index,
+          completedAt: 10_000 + index,
         })
       }
 
@@ -339,22 +473,39 @@ describe('studio queries and mutations', () => {
         propsSchemaVersion: approvedTemplate.propsSchemaVersion,
         assetIds: [],
         progress: 100,
+        plannerOutput: { other: true },
+        workerId: 'worker-other',
         idempotencyKey: 'other-user-history',
-        createdAt: 9_999,
-        updatedAt: 9_999,
-        completedAt: 9_999,
+        createdAt: 99_999,
+        updatedAt: 99_999,
+        completedAt: 99_999,
       })
     })
 
-    const history = await t
-      .withIdentity(studioIdentity)
-      .query(getMyStudioHistory, {})
+    const authed = t.withIdentity(studioIdentity)
+    const detail = await authed.query(getGenerationJob, {
+      jobId: detailJobId,
+    })
+    const history = await authed.query(getMyStudioHistory, {})
+
+    expect(detail.id).toBe(detailJobId)
+    expect(Object.keys(detail).sort()).toEqual([...safeGenerationJobKeys].sort())
+    expect(detail).not.toHaveProperty('plannerOutput')
+    expect(detail).not.toHaveProperty('workerId')
+    expect(detail).not.toHaveProperty('lockedAt')
+    expect(detail).not.toHaveProperty('heartbeatAt')
+    expect(detail).not.toHaveProperty('lockExpiresAt')
+    expect(detail).not.toHaveProperty('modelStartedAt')
+    expect(detail).not.toHaveProperty('refundedAt')
+    expect(detail).not.toHaveProperty('idempotencyKey')
 
     expect(history).toHaveLength(10)
     expect(history[0]?.prompt).toBe('Prompt 11')
     expect(history[9]?.prompt).toBe('Prompt 2')
-    expect(history.every((job) => job.userId === studioIdentity.subject)).toBe(
-      true,
-    )
+    expect(history.some((job) => job.prompt === 'Other user prompt')).toBe(false)
+    expect(history.every((job) => !('plannerOutput' in job))).toBe(true)
+    expect(history.every((job) => !('workerId' in job))).toBe(true)
+    expect(history.every((job) => !('idempotencyKey' in job))).toBe(true)
+    expect(history.every((job) => !('userId' in job))).toBe(true)
   })
 })

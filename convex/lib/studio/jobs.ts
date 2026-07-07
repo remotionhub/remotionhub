@@ -10,6 +10,10 @@ export function isActiveStatus(status: string) {
   return ACTIVE_JOB_STATUSES.includes(status as never)
 }
 
+export function canCancelGenerationJob(status: string) {
+  return status === 'queued' || status === 'planning'
+}
+
 export function canRefundCancellation(args: {
   status: string
   modelStartedAt?: number
