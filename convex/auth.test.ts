@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { internal } from './_generated/api'
 import {
   authCallbacks,
+  createAbsoluteRedirectUrl,
   normalizeRelativeRedirectTo,
   normalizeWeChatProviderAccountId,
   userDataFromAuthProfile,
@@ -112,15 +113,46 @@ describe('normalizeRelativeRedirectTo', () => {
 })
 
 describe('authCallbacks.redirect', () => {
-  it('enforces relative-only redirects', async () => {
+  it('returns absolute same-origin urls for safe relative redirects', async () => {
+    const siteUrl = process.env.SITE_URL
+    process.env.SITE_URL = 'https://remotionhub.ai'
+
     await expect(
       authCallbacks.redirect({ redirectTo: '/account/settings' }),
-    ).resolves.toBe('/account/settings')
+    ).resolves.toBe('https://remotionhub.ai/account/settings')
+    await expect(
+      authCallbacks.redirect({ redirectTo: '?tab=security' }),
+    ).resolves.toBe('https://remotionhub.ai/?tab=security')
+
+    process.env.SITE_URL = siteUrl
+  })
+
+  it('falls back to a safe same-origin root for unsafe redirects', async () => {
+    const siteUrl = process.env.SITE_URL
+    process.env.SITE_URL = 'https://remotionhub.ai'
+
     await expect(
       authCallbacks.redirect({
         redirectTo: 'https://remotionhub.ai/account/settings',
       }),
-    ).resolves.toBe('/')
+    ).resolves.toBe('https://remotionhub.ai/')
+    await expect(
+      authCallbacks.redirect({
+        redirectTo: 'https://evil.example/phish',
+      }),
+    ).resolves.toBe('https://remotionhub.ai/')
+
+    process.env.SITE_URL = siteUrl
+  })
+})
+
+describe('createAbsoluteRedirectUrl', () => {
+  it('uses an explicit site url override when provided', () => {
+    expect(
+      createAbsoluteRedirectUrl('/account/settings', {
+        siteUrl: 'https://preview.remotionhub.ai/base',
+      }),
+    ).toBe('https://preview.remotionhub.ai/account/settings')
   })
 })
 

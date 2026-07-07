@@ -140,9 +140,31 @@ export function normalizeRelativeRedirectTo(redirectTo: string) {
   return '/'
 }
 
+function getAuthSiteUrl() {
+  const siteUrl =
+    process.env.SITE_URL ??
+    process.env.CUSTOM_AUTH_SITE_URL ??
+    process.env.CONVEX_SITE_URL
+  const normalizedSiteUrl = normalizedString(siteUrl)
+  if (!normalizedSiteUrl) {
+    throw new Error(
+      'Convex Auth redirect callback requires SITE_URL, CUSTOM_AUTH_SITE_URL, or CONVEX_SITE_URL',
+    )
+  }
+  return normalizedSiteUrl
+}
+
+export function createAbsoluteRedirectUrl(
+  redirectTo: string,
+  options: { siteUrl?: string } = {},
+) {
+  const safeRedirectTo = normalizeRelativeRedirectTo(redirectTo)
+  return new URL(safeRedirectTo, options.siteUrl ?? getAuthSiteUrl()).toString()
+}
+
 export const authCallbacks = {
   async redirect({ redirectTo }: { redirectTo: string }) {
-    return normalizeRelativeRedirectTo(redirectTo)
+    return createAbsoluteRedirectUrl(redirectTo)
   },
   async createOrUpdateUser(
     ctx: Parameters<

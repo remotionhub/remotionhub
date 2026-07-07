@@ -144,7 +144,9 @@ describe('Header', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     renderHeader()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    const loginButton = screen.getByRole('button', { name: 'Log in' })
+
+    fireEvent.click(loginButton)
 
     expect(screen.getByRole('dialog', { name: 'Log in to RemotionHub' })).toBeTruthy()
     expect(screen.getByText('Other methods')).toBeTruthy()
@@ -154,6 +156,7 @@ describe('Header', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
 
     expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
+    expect(document.activeElement).toBe(loginButton)
   })
 
   it('starts WeChat sign-in with the current relative URL', async () => {

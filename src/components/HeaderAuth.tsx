@@ -1,6 +1,6 @@
 import { useAuthActions } from '@convex-dev/auth/react'
 import { LogInIcon, LogOutIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { getCurrentRelativeUrl } from '#/lib/authRedirect'
 import { useAuthStatus } from '#/lib/useAuthStatus'
@@ -39,6 +39,15 @@ export default function HeaderAuth() {
   const { isAuthenticated, isLoading, me } = useAuthStatus()
   const { signIn, signOut } = useAuthActions()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const loginButtonRef = useRef<HTMLButtonElement | null>(null)
+  const wasDialogOpen = useRef(false)
+
+  useEffect(() => {
+    if (wasDialogOpen.current && !isDialogOpen) {
+      loginButtonRef.current?.focus()
+    }
+    wasDialogOpen.current = isDialogOpen
+  }, [isDialogOpen])
 
   if (isLoading) {
     return (
@@ -53,6 +62,7 @@ export default function HeaderAuth() {
     return (
       <>
         <button
+          ref={loginButtonRef}
           type="button"
           aria-label={t('auth.login')}
           className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
