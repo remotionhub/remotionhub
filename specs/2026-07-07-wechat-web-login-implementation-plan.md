@@ -373,6 +373,7 @@ VITE_CONVEX_URL=https://example.convex.cloud
 # (or ${CUSTOM_AUTH_SITE_URL}/api/auth/callback/wechat when overriding the auth site).
 # SITE_URL controls the final post-auth app redirect origin; set it to the canonical frontend origin in production.
 # AUTH_WECHAT_CALLBACK_URL is derived by Convex Auth; do not mirror it into browser env files.
+# JWT_PRIVATE_KEY=generated-by-convex-auth-setup
 # JWKS=generated-by-convex-auth-setup
 ```
 
@@ -1700,7 +1701,7 @@ Manual setup required:
 - Configure the production callback domain for remotionhub.ai.
 - Configure a staging or tunnel callback domain for local validation if needed.
 - Set AUTH_WECHAT_ID and AUTH_WECHAT_SECRET in Convex env.
-- Generate and set the Convex Auth JWKS value required by the installed @convex-dev/auth version.
+- Generate and set the Convex Auth JWT_PRIVATE_KEY and JWKS values required by the installed @convex-dev/auth version.
 - Keep VITE_CONVEX_URL as the only browser-exposed auth-adjacent env var.
 ```
 

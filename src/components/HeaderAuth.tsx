@@ -119,12 +119,12 @@ export default function HeaderAuth() {
 
               <p className="mt-5 mb-0 text-xs leading-5 text-[var(--sea-ink-soft)]">
                 {t('auth.agreementPrefix')}{' '}
-                <a className="text-[var(--sea-ink)]" href="/page/agreement">
+                <span className="text-[var(--sea-ink)]">
                   {t('auth.userAgreement')}
-                </a>{' '}
-                <a className="text-[var(--sea-ink)]" href="/page/privacy">
+                </span>{' '}
+                <span className="text-[var(--sea-ink)]">
                   {t('auth.privacyPolicy')}
-                </a>
+                </span>
               </p>
             </section>
           </div>

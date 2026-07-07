@@ -152,6 +152,8 @@ describe('Header', () => {
     expect(screen.getByText('Other methods')).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Log in with WeChat' })).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'User Agreement' })).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Privacy Policy' })).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }))
 

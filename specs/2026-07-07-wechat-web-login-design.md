@@ -203,6 +203,7 @@ Convex/server-only environment:
 SITE_URL=https://remotionhub.ai
 AUTH_WECHAT_ID=your-wechat-open-platform-website-app-id
 AUTH_WECHAT_SECRET=your-wechat-open-platform-website-app-secret
+JWT_PRIVATE_KEY=generated-by-convex-auth-setup
 JWKS=generated-by-convex-auth-setup
 ```
 
