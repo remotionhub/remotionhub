@@ -143,6 +143,8 @@ Run the worker in fake render mode:
 STUDIO_RENDER_MODE=fake npx tsx scripts/studio-worker.ts
 ```
 
+The worker stays alive and polls for jobs by default. For one-shot debugging, set `STUDIO_WORKER_RUN_ONCE=1`.
+
 Run the app against local Convex:
 
 ```bash
@@ -151,8 +153,8 @@ make app
 
 Open `/studio`, confirm the recommended template, submit a prompt, and wait for the job to move from queued/planning into a completed artifact with playback and download links.
 
-Run the focused Studio Playwright smoke once the local app, Convex backend, seeded template, and fake worker are all ready:
+Run the focused Studio Playwright smoke once the local app, Convex backend, authenticated browser state, seeded template, and fake worker are all ready:
 
 ```bash
-npm run test:e2e -- e2e/studio-smoke.pw.test.ts
+STUDIO_E2E=1 npm run test:e2e -- e2e/studio-smoke.pw.test.ts
 ```

@@ -43,6 +43,7 @@ async function seedGenerationJob(t: ReturnType<typeof convexTest>) {
       templateVersion: '1.0.0',
       propsSchemaVersion: '1',
       assetIds: ['template:yt-simple-ai-product:hero-bg'],
+      attemptCount: 0,
       progress: 5,
       idempotencyKey: 'test-job',
       createdAt: 1,

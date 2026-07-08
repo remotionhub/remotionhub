@@ -8,6 +8,11 @@ const IN_FLIGHT_OR_DONE_STATUS =
   /Queued|Planning|Rendering|Uploading|Completed|排队|规划|渲染|上传|完成/
 
 test.describe('ai studio p0 smoke', () => {
+  test.skip(
+    process.env.STUDIO_E2E !== '1',
+    'Studio smoke requires STUDIO_E2E=1 plus local auth, Convex, seeded template, fake worker, and app processes.',
+  )
+
   test('studio creates a generation job and exposes a downloadable artifact', async ({
     page,
   }) => {

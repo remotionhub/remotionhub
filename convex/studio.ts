@@ -837,6 +837,20 @@ export const getDefaultStudioTemplate = query({
   },
 })
 
+export const getStudioViewer = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      return null
+    }
+
+    return {
+      userId: identity.subject,
+    }
+  },
+})
+
 export const createGenerationJob = mutation({
   args: {
     idempotencyKey: v.string(),
@@ -1369,6 +1383,51 @@ export const startUploading = mutation({
     const updatedJob = await ctx.db.get(job._id)
     if (!updatedJob) {
       throw new ConvexError('Uploading generation job lookup failed.')
+    }
+
+    return toWorkerGenerationJob(updatedJob)
+  },
+})
+
+export const heartbeatGenerationJob = mutation({
+  args: {
+    jobId: v.id('generationJobs'),
+    workerId: v.string(),
+    workerSecret: v.string(),
+    expectedStatus: v.optional(
+      v.union(
+        v.literal('planning'),
+        v.literal('rendering'),
+        v.literal('uploading'),
+      ),
+    ),
+  },
+  handler: async (ctx, args) => {
+    requireStudioWorkerSecret(args.workerSecret)
+
+    const job = await ctx.db.get(args.jobId)
+    if (!job) {
+      studioError('JOB_NOT_FOUND')
+    }
+
+    if (
+      !ACTIVE_JOB_STATUSES.includes(job.status as (typeof ACTIVE_JOB_STATUSES)[number]) ||
+      job.workerId !== args.workerId ||
+      (args.expectedStatus && job.status !== args.expectedStatus)
+    ) {
+      studioError('INVALID_WORKER_STATE')
+    }
+
+    const now = Date.now()
+    await ctx.db.patch(job._id, {
+      heartbeatAt: now,
+      lockExpiresAt: now + getWorkerLockTtlMs(job),
+      updatedAt: now,
+    })
+
+    const updatedJob = await ctx.db.get(job._id)
+    if (!updatedJob) {
+      throw new ConvexError('Heartbeat generation job lookup failed.')
     }
 
     return toWorkerGenerationJob(updatedJob)

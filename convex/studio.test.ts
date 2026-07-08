@@ -103,6 +103,17 @@ describe('studio queries and mutations', () => {
     expect('refundGenerationJob' in studioModule).toBe(false)
   })
 
+  it('returns the current studio viewer only when authenticated', async () => {
+    const t = convexTest(schema, modules)
+
+    await expect(t.query(api.studio.getStudioViewer, {})).resolves.toBeNull()
+    await expect(
+      t.withIdentity(studioIdentity).query(api.studio.getStudioViewer, {}),
+    ).resolves.toEqual({
+      userId: 'studio-user-1',
+    })
+  })
+
   it('rejects missing or wrong import secrets and accepts the correct one', async () => {
     const t = convexTest(schema, modules)
     const { importSecret: _ignoredImportSecret, ...templateWithoutSecret } =

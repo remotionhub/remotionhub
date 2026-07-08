@@ -2,6 +2,7 @@ import process from 'node:process'
 import { pathToFileURL } from 'node:url'
 import { ConvexHttpClient } from 'convex/browser'
 import { api } from '../convex/_generated/api'
+import { STUDIO_ERROR_CODES, type StudioErrorCode } from '../convex/lib/studio/constants'
 import { p0StudioTemplateSeed } from '../convex/lib/studio/templates'
 import { loadLocalEnv } from './seed-studio-templates'
 import { createStubRenderPlan } from './studio-planner'
@@ -31,10 +32,78 @@ function getStudioApi() {
       markModelStarted: unknown
       completePlanning: unknown
       startRendering: unknown
+      heartbeatGenerationJob: unknown
       startUploading: unknown
       completeGenerationJob: unknown
       failGenerationJob: unknown
     }
+  }
+}
+
+function getStudioWorkerFailureCode(message: string): StudioErrorCode {
+  for (const code of STUDIO_ERROR_CODES) {
+    if (message.includes(code)) {
+      return code
+    }
+  }
+
+  return 'MODEL_PROVIDER_ERROR'
+}
+
+function sleep(ms: number, signal?: AbortSignal) {
+  if (ms <= 0) {
+    return Promise.resolve()
+  }
+
+  return new Promise<void>((resolve) => {
+    const timeout = setTimeout(resolve, ms)
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timeout)
+        resolve()
+      },
+      { once: true },
+    )
+  })
+}
+
+async function runWithRenderHeartbeat<T>({
+  client,
+  heartbeatIntervalMs,
+  jobId,
+  workerId,
+  workerSecret,
+  studioApi,
+  task,
+}: {
+  client: WorkerClient
+  heartbeatIntervalMs: number
+  jobId: string
+  workerId: string
+  workerSecret: string
+  studioApi: ReturnType<typeof getStudioApi>
+  task: Promise<T>
+}) {
+  const heartbeat = setInterval(() => {
+    void client
+      .mutation(studioApi.studio.heartbeatGenerationJob, {
+        jobId,
+        workerId,
+        workerSecret,
+        expectedStatus: 'rendering',
+      })
+      .catch((error: unknown) => {
+        const message =
+          error instanceof Error ? error.message : 'Unknown heartbeat error.'
+        console.warn(`Studio worker heartbeat failed for ${jobId}: ${message}`)
+      })
+  }, heartbeatIntervalMs)
+
+  try {
+    return await task
+  } finally {
+    clearInterval(heartbeat)
   }
 }
 
@@ -103,6 +172,10 @@ export async function runStudioWorkerOnce(
     throw new Error('STUDIO_WORKER_SECRET is required.')
   }
   const lockTtlMs = Number(env.STUDIO_WORKER_LOCK_TTL_MS ?? 30_000)
+  const heartbeatIntervalMs = Math.max(
+    1_000,
+    Number(env.STUDIO_WORKER_HEARTBEAT_INTERVAL_MS ?? Math.floor(lockTtlMs / 3)),
+  )
   const studioApi = getStudioApi()
   const client = clientFactory(convexUrl)
 
@@ -154,7 +227,15 @@ export async function runStudioWorkerOnce(
       renderRun,
     })
 
-    const artifact = await renderStudioArtifact(claimedJob.id, renderPlan)
+    const artifact = await runWithRenderHeartbeat({
+      client,
+      heartbeatIntervalMs,
+      jobId: claimedJob.id,
+      workerId,
+      workerSecret,
+      studioApi,
+      task: renderStudioArtifact(claimedJob.id, renderPlan),
+    })
 
     await client.mutation(studioApi.studio.startUploading, {
       jobId: claimedJob.id,
@@ -179,9 +260,7 @@ export async function runStudioWorkerOnce(
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown studio worker error.'
-    const errorCode = errorMessage.includes('RENDER_FAILED')
-      ? 'RENDER_FAILED'
-      : 'MODEL_PROVIDER_ERROR'
+    const errorCode = getStudioWorkerFailureCode(errorMessage)
 
     await client.mutation(studioApi.studio.failGenerationJob, {
       jobId: claimedJob.id,
@@ -199,9 +278,32 @@ export async function runStudioWorkerOnce(
   return { status: 'completed', jobId: claimedJob.id }
 }
 
+export async function runStudioWorker(
+  env = process.env,
+  clientFactory: (url: string) => WorkerClient = (url) => new ConvexHttpClient(url),
+  options: { signal?: AbortSignal } = {},
+) {
+  if (env.STUDIO_WORKER_RUN_ONCE === '1') {
+    return runStudioWorkerOnce(env, clientFactory)
+  }
+
+  const pollIntervalMs = Math.max(
+    250,
+    Number(env.STUDIO_WORKER_POLL_INTERVAL_MS ?? 2_000),
+  )
+  let lastResult: RunWorkerResult = { status: 'idle' }
+
+  while (!options.signal?.aborted) {
+    lastResult = await runStudioWorkerOnce(env, clientFactory)
+    await sleep(pollIntervalMs, options.signal)
+  }
+
+  return lastResult
+}
+
 const entryPoint = process.argv[1]
 if (entryPoint && import.meta.url === pathToFileURL(entryPoint).href) {
-  void runStudioWorkerOnce().catch((error: unknown) => {
+  void runStudioWorker().catch((error: unknown) => {
     console.error(error)
     process.exitCode = 1
   })

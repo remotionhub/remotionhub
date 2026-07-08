@@ -74,8 +74,14 @@ function getErrorMessage(error: unknown) {
 
 export default function StudioPage() {
   const { locale, t } = useI18n()
+  const viewer = useQuery(api.studio.getStudioViewer, {})
   const templates = useQuery(api.studio.listStudioTemplates, {})
-  const history = useQuery(api.studio.getMyStudioHistory, {})
+  const isViewerLoading = viewer === undefined
+  const isAuthenticated = Boolean(viewer)
+  const history = useQuery(
+    api.studio.getMyStudioHistory,
+    isAuthenticated ? {} : 'skip',
+  )
   const createGenerationJob = useMutation(api.studio.createGenerationJob)
   const cancelGenerationJob = useMutation(api.studio.cancelGenerationJob)
   const [prompt, setPrompt] = useState('')
@@ -115,8 +121,12 @@ export default function StudioPage() {
       : 'skip',
   )
   const selectedTemplateResolution = selectedTemplate?.supportedResolutions?.[0] ?? null
-  const canGenerate = Boolean(selectedTemplate && prompt.trim() && !isSubmitting)
-  const canCancel = currentJob?.status === 'queued' || currentJob?.status === 'planning'
+  const canGenerate = Boolean(
+    isAuthenticated && selectedTemplate && prompt.trim() && !isSubmitting,
+  )
+  const canCancel =
+    isAuthenticated &&
+    (currentJob?.status === 'queued' || currentJob?.status === 'planning')
 
   useEffect(() => {
     if (!selectedJobId && visibleHistory[0]) {
@@ -131,6 +141,11 @@ export default function StudioPage() {
   }
 
   async function handleCreateJob() {
+    if (!isAuthenticated) {
+      setSubmissionError(t('studio.authRequiredDescription'))
+      return
+    }
+
     if (!selectedTemplate) {
       return
     }
@@ -273,6 +288,15 @@ export default function StudioPage() {
             <Alert variant="destructive">
               <AlertTitle>{t('studio.errorTitle')}</AlertTitle>
               <AlertDescription>{submissionError}</AlertDescription>
+            </Alert>
+          ) : null}
+
+          {!isViewerLoading && !isAuthenticated ? (
+            <Alert data-testid="studio-auth-required">
+              <AlertTitle>{t('studio.authRequiredTitle')}</AlertTitle>
+              <AlertDescription>
+                {t('studio.authRequiredDescription')}
+              </AlertDescription>
             </Alert>
           ) : null}
 

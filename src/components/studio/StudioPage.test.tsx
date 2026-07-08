@@ -161,6 +161,9 @@ const mocks = vi.hoisted(() => {
       aspectRatio: '16:9',
       runtime: 'remotion',
     },
+    viewer: {
+      userId: 'studio-user-1',
+    } as { userId: string } | null | undefined,
     confirm: vi.fn(() => true),
   }
 })
@@ -172,6 +175,7 @@ vi.mock('../../../convex/_generated/api', () => ({
       getMyStudioHistory: 'getMyStudioHistory',
       getGenerationJob: 'getGenerationJob',
       getGenerationArtifactAccess: 'getGenerationArtifactAccess',
+      getStudioViewer: 'getStudioViewer',
       createGenerationJob: 'createGenerationJob',
       cancelGenerationJob: 'cancelGenerationJob',
     },
@@ -183,7 +187,13 @@ vi.mock('convex/react', () => ({
     if (reference === 'listStudioTemplates') {
       return mocks.templates
     }
+    if (reference === 'getStudioViewer') {
+      return mocks.viewer
+    }
     if (reference === 'getMyStudioHistory') {
+      if (args === 'skip') {
+        return undefined
+      }
       return mocks.history
     }
     if (reference === 'getGenerationJob') {
@@ -246,9 +256,12 @@ vi.mock('#/components/I18nProvider', () => ({
             'studio.cancel': 'Cancel job',
             'studio.canceling': 'Canceling…',
             'studio.cancelConfirmQueued':
-              'Cancel this queued job? Credits should be refunded if work has not started.',
+              'Cancel this queued job? Credits are not refunded after cancellation.',
             'studio.cancelConfirmPlanning':
-              'Cancel this planning job? Credits may not return after model start.',
+              'Cancel this planning job? Credits are not refunded, and cancellation is not guaranteed after rendering starts.',
+            'studio.authRequiredTitle': 'Sign in to use Studio',
+            'studio.authRequiredDescription':
+              'Sign in before creating, viewing, or downloading your AI Studio generation jobs.',
             'studio.templatesKicker': 'Templates',
             'studio.templatesTitle': 'Choose a launch-ready frame',
             'studio.templatesEmptyTitle': 'No templates available',
@@ -280,6 +293,7 @@ describe('StudioPage', () => {
     mocks.templates = buildTemplates()
     mocks.history = buildHistory()
     mocks.currentJob = buildCurrentJob()
+    mocks.viewer = { userId: 'studio-user-1' }
     mocks.createGenerationJob.mockReset().mockResolvedValue({
       id: 'job-created',
       status: 'queued',
@@ -371,6 +385,46 @@ describe('StudioPage', () => {
     })
   })
 
+  it('gates owner-only studio calls when the viewer is unauthenticated', () => {
+    mocks.viewer = null
+
+    renderStudioPage()
+
+    expect(screen.getByTestId('studio-auth-required')).toBeTruthy()
+    expect(
+      (screen.getByRole('button', { name: 'Generate video' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true)
+    expect(screen.getByText('No jobs yet.')).toBeTruthy()
+  })
+
+  it('keeps generation disabled while the viewer is loading', () => {
+    mocks.viewer = undefined
+
+    renderStudioPage()
+
+    expect(screen.queryByTestId('studio-auth-required')).toBeNull()
+    expect(
+      (screen.getByRole('button', { name: 'Generate video' }) as HTMLButtonElement)
+        .disabled,
+    ).toBe(true)
+  })
+
+  it('renders template loading and empty states', () => {
+    mocks.templates = undefined as never
+    const { container, rerender } = renderStudioPage()
+
+    expect(container.querySelectorAll('.studio-template-skeleton')).toHaveLength(3)
+
+    mocks.templates = []
+    rerender(<StudioPage />)
+
+    expect(screen.getByText('No templates available')).toBeTruthy()
+    expect(
+      screen.getByText('Seed an approved Remotion studio template to unlock generation.'),
+    ).toBeTruthy()
+  })
+
   it('renders at most ten history items', () => {
     renderStudioPage()
 
@@ -411,7 +465,56 @@ describe('StudioPage', () => {
     ).toBe('https://cdn.example.com/download.mp4')
   })
 
-  it('warns that planning cancellations may not refund after model start', async () => {
+  it('shows a pending artifact message when a completed job has no signed URLs yet', () => {
+    mocks.artifactAccess = undefined as never
+
+    renderStudioPage()
+
+    expect(
+      screen.getByText(
+        'The job completed, but the playback links are still being prepared.',
+      ),
+    ).toBeTruthy()
+    expect(screen.queryByTestId('studio-video')).toBeNull()
+  })
+
+  it('shows the fallback error message when generation fails with a non-error value', async () => {
+    mocks.createGenerationJob.mockRejectedValue('network interrupted')
+
+    renderStudioPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use recommended template' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Generate video' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Unknown studio error.')).toBeTruthy()
+    })
+  })
+
+  it('does not cancel a queued job when the user rejects confirmation', async () => {
+    const currentJob = mocks.currentJob ?? buildCurrentJob()
+    mocks.currentJob = {
+      ...currentJob,
+      id: 'job-queued',
+      status: 'queued',
+      artifactId: null,
+      progress: 5,
+    }
+    mocks.confirm.mockReturnValue(false)
+
+    renderStudioPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel job' }))
+
+    await waitFor(() => {
+      expect(mocks.confirm).toHaveBeenCalledWith(
+        'Cancel this queued job? Credits are not refunded after cancellation.',
+      )
+    })
+    expect(mocks.cancelGenerationJob).not.toHaveBeenCalled()
+  })
+
+  it('warns that planning cancellations do not refund', async () => {
     const currentJob = mocks.currentJob ?? buildCurrentJob()
     mocks.currentJob = {
       ...currentJob,
@@ -427,7 +530,7 @@ describe('StudioPage', () => {
 
     await waitFor(() => {
       expect(mocks.confirm).toHaveBeenCalledWith(
-        'Cancel this planning job? Credits may not return after model start.',
+        'Cancel this planning job? Credits are not refunded, and cancellation is not guaranteed after rendering starts.',
       )
     })
     expect(mocks.cancelGenerationJob).toHaveBeenCalledWith({

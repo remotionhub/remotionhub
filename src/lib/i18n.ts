@@ -97,8 +97,10 @@ const zhDictionary = {
   'studio.artifactPending': '任务已完成，但播放链接仍在准备中。',
   'studio.cancel': '取消任务',
   'studio.canceling': '正在取消…',
-  'studio.cancelConfirmQueued': '取消这个排队中的任务？如果工作尚未开始，积分应该会退回。',
-  'studio.cancelConfirmPlanning': '取消这个规划中的任务？模型开始后，积分可能不会退回。',
+  'studio.cancelConfirmQueued': '取消这个排队中的任务？取消后不会返还额度。',
+  'studio.cancelConfirmPlanning': '取消这个规划中的任务？取消后不会返还额度，渲染开始后不保证成功。',
+  'studio.authRequiredTitle': '需要登录后使用 Studio',
+  'studio.authRequiredDescription': '请先登录账号，再创建、查看或下载你的 AI Studio 生成任务。',
   'studio.templatesKicker': '模板',
   'studio.templatesTitle': '选择一个适合发布的视频骨架',
   'studio.templatesEmptyTitle': '还没有可用模板',
@@ -210,9 +212,12 @@ const enDictionary = {
   'studio.cancel': 'Cancel job',
   'studio.canceling': 'Canceling…',
   'studio.cancelConfirmQueued':
-    'Cancel this queued job? Credits should be refunded if work has not started.',
+    'Cancel this queued job? Credits are not refunded after cancellation.',
   'studio.cancelConfirmPlanning':
-    'Cancel this planning job? Credits may not return after model start.',
+    'Cancel this planning job? Credits are not refunded, and cancellation is not guaranteed after rendering starts.',
+  'studio.authRequiredTitle': 'Sign in to use Studio',
+  'studio.authRequiredDescription':
+    'Sign in before creating, viewing, or downloading your AI Studio generation jobs.',
   'studio.templatesKicker': 'Templates',
   'studio.templatesTitle': 'Choose a launch-ready frame',
   'studio.templatesEmptyTitle': 'No templates available',

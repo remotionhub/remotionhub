@@ -52,14 +52,18 @@ describe('createStubRenderPlan', () => {
 
     const result = await runStudioWorkerOnce(env, () => ({
       async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
-        const step = [
+        const sequence = [
           'claim',
           'markModelStarted',
           'completePlanning',
           'startRendering',
           'startUploading',
           'completeGenerationJob',
-        ][calls.length]
+        ]
+        const step =
+          'expectedStatus' in (args as Record<string, unknown>)
+            ? 'heartbeatGenerationJob'
+            : sequence[calls.length]
         calls.push({
           step,
           args: args as Record<string, unknown>,
@@ -110,6 +114,166 @@ describe('createStubRenderPlan', () => {
         width: 1280,
         height: 720,
         fps: 30,
+      },
+    })
+  })
+
+  it('returns idle when no queued studio job is available', async () => {
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
+        expect(args).toMatchObject({
+          workerId: 'worker-1',
+          workerSecret: 'studio-worker-secret',
+        })
+
+        return null as TResult
+      },
+    }))
+
+    expect(result).toEqual({ status: 'idle' })
+  })
+
+  it('stops after planning when the worker runs in planner-only mode', async () => {
+    const calls: Array<{ step: string; args: Record<string, unknown> }> = []
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
+      STUDIO_WORKER_MODE: 'planner-only',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
+        const sequence = ['claim', 'markModelStarted', 'completePlanning']
+        const step = sequence[calls.length]
+        calls.push({
+          step,
+          args: args as Record<string, unknown>,
+        })
+
+        if (step === 'claim') {
+          return {
+            id: 'job-1',
+            prompt: 'Launch an AI analytics dashboard',
+            templateId: p0StudioTemplateSeed.templateId,
+            templateVersion: p0StudioTemplateSeed.templateVersion,
+          } as TResult
+        }
+
+        return null as TResult
+      },
+    }))
+
+    expect(result).toEqual({
+      status: 'planned',
+      jobId: 'job-1',
+    })
+    expect(calls.map((call) => call.step)).toEqual([
+      'claim',
+      'markModelStarted',
+      'completePlanning',
+    ])
+  })
+
+  it('falls back to a model provider error for unsupported worker failures', async () => {
+    const calls: Array<{ step: string; args: Record<string, unknown> }> = []
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
+        const sequence = ['claim', 'markModelStarted', 'failGenerationJob']
+        const step = sequence[calls.length]
+        calls.push({
+          step,
+          args: args as Record<string, unknown>,
+        })
+
+        if (step === 'claim') {
+          return {
+            id: 'job-1',
+            prompt: 'Launch an AI analytics dashboard',
+            templateId: 'unsupported-template',
+            templateVersion: '1.0.0',
+          } as TResult
+        }
+
+        return null as TResult
+      },
+    }))
+
+    expect(result).toEqual({
+      status: 'failed',
+      jobId: 'job-1',
+    })
+    expect(calls.at(-1)).toMatchObject({
+      step: 'failGenerationJob',
+      args: {
+        errorCode: 'MODEL_PROVIDER_ERROR',
+      },
+    })
+  })
+
+  it('preserves backend validation error codes when worker failure handling runs', async () => {
+    const calls: Array<{ step: string; args: Record<string, unknown> }> = []
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
+        const sequence = [
+          'claim',
+          'markModelStarted',
+          'completePlanning',
+          'failGenerationJob',
+        ]
+        const step = sequence[calls.length]
+        calls.push({
+          step,
+          args: args as Record<string, unknown>,
+        })
+
+        if (step === 'claim') {
+          return {
+            id: 'job-1',
+            prompt: 'Launch an AI analytics dashboard',
+            templateId: p0StudioTemplateSeed.templateId,
+            templateVersion: p0StudioTemplateSeed.templateVersion,
+          } as TResult
+        }
+
+        if (step === 'completePlanning') {
+          throw new Error('ConvexError: PROPS_VALIDATION_FAILED')
+        }
+
+        return null as TResult
+      },
+    }))
+
+    expect(result).toEqual({
+      status: 'failed',
+      jobId: 'job-1',
+    })
+    expect(calls.at(-1)).toMatchObject({
+      step: 'failGenerationJob',
+      args: {
+        errorCode: 'PROPS_VALIDATION_FAILED',
       },
     })
   })

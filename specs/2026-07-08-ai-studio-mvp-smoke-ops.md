@@ -36,7 +36,8 @@ STUDIO_FAKE_ARTIFACT_DIR=/tmp/remotionhub-studio-artifacts
 2. Seed the Studio template with `npx tsx scripts/seed-studio-templates.ts`.
 3. Start the worker with `STUDIO_RENDER_MODE=fake npx tsx scripts/studio-worker.ts`.
 4. Start the app with `make app`.
-5. Run `npm run test:e2e -- e2e/studio-smoke.pw.test.ts`.
+5. Sign in locally so `/studio` has an authenticated Convex identity.
+6. Run `STUDIO_E2E=1 npm run test:e2e -- e2e/studio-smoke.pw.test.ts`.
 
 If the e2e smoke is run manually in a browser, use `/studio`, confirm the recommended template, submit a prompt, and wait for the download link.
 
@@ -55,4 +56,5 @@ Because of those constraints, Task 8 must not be described as production renderi
 
 - If local Convex is up but the Studio template was not seeded, `/studio` will render the empty-template state and the smoke will fail before job creation.
 - If the worker is not running, job creation can still succeed but the smoke will stall before a download link appears.
+- If `STUDIO_E2E=1` is omitted, the Studio Playwright spec is skipped so the default e2e gate does not fail without Studio-specific auth, template, and worker prerequisites.
 - If only local artifact storage is configured in a production runtime, the artifact route should fail safely instead of pretending remote storage exists.

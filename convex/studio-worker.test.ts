@@ -253,6 +253,95 @@ describe('studio worker mutations', () => {
     ).rejects.toThrowError('INVALID_WORKER_STATE')
   })
 
+  it('extends the active worker lock with a heartbeat', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await seedQueuedJob(t, 'worker-heartbeat')
+    const renderPlan = createWorkerRenderPlan('Launch an AI analytics dashboard')
+
+    await t.mutation(api.studio.claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+    await t.mutation(api.studio.markModelStarted, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+    })
+    await t.mutation(api.studio.completePlanning, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderPlan,
+      modelRun: createModelRun(),
+    })
+    await t.mutation(api.studio.startRendering, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderRun: createRenderRun(),
+    })
+
+    const beforeHeartbeat = await t.run(async (ctx) => ctx.db.get(jobId))
+    const heartbeatJob = await t.mutation(api.studio.heartbeatGenerationJob, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      expectedStatus: 'rendering',
+    })
+    const heartbeatWithoutExpectedStatus = await t.mutation(
+      api.studio.heartbeatGenerationJob,
+      {
+        jobId,
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+      },
+    )
+    const afterHeartbeat = await t.run(async (ctx) => ctx.db.get(jobId))
+
+    expect(heartbeatJob.status).toBe('rendering')
+    expect(heartbeatWithoutExpectedStatus.status).toBe('rendering')
+    expect(afterHeartbeat?.status).toBe('rendering')
+    expect(afterHeartbeat?.workerId).toBe('worker-1')
+    expect(afterHeartbeat?.heartbeatAt).toBeGreaterThanOrEqual(
+      beforeHeartbeat?.heartbeatAt ?? 0,
+    )
+    expect(afterHeartbeat?.lockExpiresAt).toBeGreaterThanOrEqual(
+      beforeHeartbeat?.lockExpiresAt ?? 0,
+    )
+  })
+
+  it('rejects heartbeat calls for the wrong expected status', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await seedQueuedJob(t, 'worker-heartbeat-status-mismatch')
+
+    await t.mutation(api.studio.claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+
+    await expect(
+      t.mutation(api.studio.heartbeatGenerationJob, {
+        jobId,
+        workerId: 'worker-2',
+        workerSecret: WORKER_SECRET,
+        expectedStatus: 'planning',
+      }),
+    ).rejects.toThrowError('INVALID_WORKER_STATE')
+
+    await expect(
+      t.mutation(api.studio.heartbeatGenerationJob, {
+        jobId,
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        expectedStatus: 'rendering',
+      }),
+    ).rejects.toThrowError('INVALID_WORKER_STATE')
+  })
+
   it('rejects missing or incorrect worker secrets before worker reads or mutations', async () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
@@ -317,6 +406,13 @@ describe('studio worker mutations', () => {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
+        }),
+      () =>
+        t.mutation(api.studio.heartbeatGenerationJob, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: 'wrong-secret',
+          expectedStatus: 'planning',
         }),
       () =>
         t.mutation(api.studio.completeGenerationJob, {
