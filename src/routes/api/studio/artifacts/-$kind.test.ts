@@ -42,6 +42,7 @@ import './$kind'
 
 const ORIGINAL_SIGNING_SECRET = process.env.STUDIO_ARTIFACT_SIGNING_SECRET
 const ORIGINAL_FAKE_ARTIFACT_DIR = process.env.STUDIO_FAKE_ARTIFACT_DIR
+const ORIGINAL_NODE_ENV = process.env.NODE_ENV
 
 function getHandler() {
   const options = mocks.routes.get('/api/studio/artifacts/$kind')
@@ -117,6 +118,12 @@ describe('studio artifact route', () => {
       process.env.STUDIO_FAKE_ARTIFACT_DIR = ORIGINAL_FAKE_ARTIFACT_DIR
     }
 
+    if (ORIGINAL_NODE_ENV === undefined) {
+      delete process.env.NODE_ENV
+    } else {
+      process.env.NODE_ENV = ORIGINAL_NODE_ENV
+    }
+
     return rm(artifactDir, { recursive: true, force: true })
   })
 
@@ -187,6 +194,18 @@ describe('studio artifact route', () => {
     })
 
     expect(response.status).toBe(403)
+  })
+
+  it('fails safely in production when only local artifact storage is configured', async () => {
+    process.env.NODE_ENV = 'production'
+
+    const response = await sendSignedRequest({
+      kind: 'playback',
+      storageKey: 'studio/job-1/artifact.mp4',
+      secret: signingSecret,
+    })
+
+    expect(response.status).toBe(501)
   })
 
   it.each(['thumbnail', 'preview'] as const)(

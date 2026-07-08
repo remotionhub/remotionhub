@@ -65,3 +65,14 @@
 
 - Command: `npm run test -- scripts/studio-renderer.test.ts scripts/studio-planner.test.ts convex/studio-artifacts.test.ts src/routes/api/studio/artifacts/-$kind.test.ts`
 - Output: `4 passed, 16 passed`
+
+## Task 6 Re-review Fixes (Round 2)
+
+- Replaced fake renderer placeholder bytes with a real tiny MP4 fixture and asserted MP4 container boxes (`ftyp`, `moov`, `mdat`) in tests.
+- Added completion-time artifact profile validation so only Remotion MP4 artifacts matching the fixed MVP output profile can be persisted.
+- Moved local artifact storage access behind runtime-safe dynamic Node imports and return `501` in production instead of pretending production artifact storage exists.
+
+### Focused Test Run (Round 2)
+
+- Command: `npm run test -- scripts/studio-renderer.test.ts scripts/studio-planner.test.ts convex/studio-artifacts.test.ts src/routes/api/studio/artifacts/-$kind.test.ts`
+- Output: `4 passed, 21 passed`

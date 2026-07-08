@@ -59,7 +59,7 @@ describe('renderStudioArtifact', () => {
     expect(artifact).toEqual({
       storageKey: 'studio/job-1/artifact.mp4',
       thumbnailStorageKey: 'studio/job-1/artifact-thumbnail.jpg',
-      fileSizeBytes: 1024,
+      fileSizeBytes: 3291,
       mimeType: 'video/mp4',
       width: 1280,
       height: 720,
@@ -76,7 +76,12 @@ describe('renderStudioArtifact', () => {
       path.join(artifactDir, 'studio', 'job-1', 'artifact-thumbnail.jpg'),
     )
 
-    expect(artifactBytes.byteLength).toBe(1024)
+    expect(artifactBytes.byteLength).toBe(3291)
+    expect(Buffer.from(artifactBytes.subarray(4, 12)).toString('ascii')).toBe(
+      'ftypisom',
+    )
+    expect(artifactBytes.includes(Buffer.from('moov'))).toBe(true)
+    expect(artifactBytes.includes(Buffer.from('mdat'))).toBe(true)
     expect(thumbnailBytes.byteLength).toBeGreaterThan(0)
   })
 
@@ -94,7 +99,7 @@ describe('renderStudioArtifact', () => {
     expect(artifact.mimeType).toBe('video/mp4')
     await expect(
       readFile(path.join(artifactDir, 'studio', 'job-2', 'artifact.mp4')),
-    ).resolves.toHaveLength(1024)
+    ).resolves.toHaveLength(3291)
   })
 
   it('fails fast when the remotion renderer handoff is requested before wiring exists', async () => {

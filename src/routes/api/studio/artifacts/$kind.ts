@@ -1,4 +1,3 @@
-import path from 'node:path'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   DEFAULT_STUDIO_THUMBNAIL_URL,
@@ -28,8 +27,14 @@ function getStudioArtifactSigningSecret() {
   return secret
 }
 
+function getFileExtension(storageKey: string) {
+  const filename = storageKey.split('/').filter(Boolean).at(-1) ?? ''
+  const dotIndex = filename.lastIndexOf('.')
+  return dotIndex >= 0 ? filename.slice(dotIndex).toLowerCase() : ''
+}
+
 function getContentType(kind: StudioArtifactUrlKind, storageKey: string) {
-  const extension = path.extname(storageKey).toLowerCase()
+  const extension = getFileExtension(storageKey)
 
   if (kind === 'playback' || kind === 'download') {
     return 'video/mp4'
@@ -55,7 +60,7 @@ function getContentType(kind: StudioArtifactUrlKind, storageKey: string) {
 }
 
 function getContentDisposition(kind: StudioArtifactUrlKind, storageKey: string) {
-  const filename = path.basename(storageKey) || 'artifact'
+  const filename = storageKey.split('/').filter(Boolean).at(-1) || 'artifact'
   const dispositionType = kind === 'download' ? 'attachment' : 'inline'
   return `${dispositionType}; filename="${filename}"`
 }
@@ -65,7 +70,7 @@ function createDefaultThumbnailResponse() {
     headers: {
       'content-type': 'image/svg+xml',
       'content-disposition': 'inline; filename="thumbnail.svg"',
-      'content-length': String(Buffer.byteLength(DEFAULT_THUMBNAIL_SVG)),
+      'content-length': String(new TextEncoder().encode(DEFAULT_THUMBNAIL_SVG).byteLength),
     },
   })
 }
@@ -109,8 +114,12 @@ export const Route = createFileRoute('/api/studio/artifacts/$kind')({
           return new Response('Invalid signed artifact URL.', { status: 403 })
         }
 
-        const artifactBytes = await readStudioLocalArtifact(storageKey)
-        if (!artifactBytes) {
+        const artifactResult = await readStudioLocalArtifact(storageKey)
+        if (artifactResult.status === 'unsupported') {
+          return new Response(artifactResult.reason, { status: 501 })
+        }
+
+        if (artifactResult.status === 'missing') {
           if (kind === 'thumbnail' || kind === 'preview') {
             return createDefaultThumbnailResponse()
           }
@@ -118,11 +127,11 @@ export const Route = createFileRoute('/api/studio/artifacts/$kind')({
           return new Response('Artifact not found.', { status: 404 })
         }
 
-        return new Response(artifactBytes, {
+        return new Response(artifactResult.bytes, {
           headers: {
             'content-type': getContentType(kind, storageKey),
             'content-disposition': getContentDisposition(kind, storageKey),
-            'content-length': String(artifactBytes.byteLength),
+            'content-length': String(artifactResult.bytes.byteLength),
           },
         })
       },

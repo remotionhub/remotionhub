@@ -1,10 +1,11 @@
 import { convexTest } from 'convex-test'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import schema from './schema'
-import { getGenerationArtifactAccess } from './studio'
+import { completeGenerationJob, getGenerationArtifactAccess } from './studio'
 
 const modules = import.meta.glob('./**/*.*s')
 const ORIGINAL_SIGNING_SECRET = process.env.STUDIO_ARTIFACT_SIGNING_SECRET
+const ORIGINAL_WORKER_SECRET = process.env.STUDIO_WORKER_SECRET
 
 const studioIdentity = {
   subject: 'studio-user-1',
@@ -16,6 +17,107 @@ const otherIdentity = {
   subject: 'studio-user-2',
   issuer: 'https://example.test',
   tokenIdentifier: 'https://example.test|studio-user-2',
+}
+
+const workerId = 'studio-worker-1'
+const workerSecret = 'studio-worker-secret'
+
+async function seedUploadingFixture(t: ReturnType<typeof convexTest>) {
+  return t.run(async (ctx) => {
+    await ctx.db.insert('studioTemplates', {
+      templateId: 'approved-template',
+      templateVersion: '1.0.0',
+      runtime: 'remotion',
+      status: 'active',
+      priority: 1,
+      supportedAspectRatios: ['16:9'],
+      supportedResolutions: [{ width: 1280, height: 720 }],
+      fps: 30,
+      propsSchemaVersion: '1',
+      propsSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {},
+      },
+      agentPrompt: 'Create a concise product launch video.',
+      tags: ['launch'],
+      licenseStatus: 'approved',
+      createdAt: 1,
+      updatedAt: 1,
+    })
+
+    const jobId = await ctx.db.insert('generationJobs', {
+      userId: studioIdentity.subject,
+      status: 'uploading',
+      prompt: 'Launch an AI analytics dashboard',
+      runtime: 'remotion',
+      aspectRatio: '16:9',
+      durationSeconds: 15,
+      templateId: 'approved-template',
+      templateVersion: '1.0.0',
+      propsSchemaVersion: '1',
+      assetIds: [],
+      attemptCount: 1,
+      progress: 90,
+      idempotencyKey: 'uploading-artifact-job',
+      workerId,
+      plannerOutput: {
+        schemaVersion: 1,
+        templateId: 'approved-template',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Launch video',
+        style: {
+          tone: 'confident',
+          primaryColor: '#0f172a',
+          backgroundStyle: 'gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch fast',
+            subtitle: 'A short product film',
+            body: 'Automate analytics and reporting.',
+            visualHint: 'Black background',
+          },
+        ],
+        props: {},
+        assetIds: [],
+      },
+      createdAt: 10,
+      updatedAt: 10,
+      lockedAt: 10,
+      heartbeatAt: 10,
+      lockExpiresAt: 60_000,
+      startedAt: 10,
+    })
+
+    await ctx.db.insert('renderRuns', {
+      jobId,
+      workerId,
+      runtime: 'remotion',
+      templateId: 'approved-template',
+      templateVersion: '1.0.0',
+      rendererVersion: 'test-renderer',
+      remotionVersion: '4.0.0',
+      workerVersion: 'test-worker',
+      startedAt: 10,
+      renderInputSnapshotRef: 'snapshots/input.json',
+      createdAt: 10,
+    })
+
+    return { jobId }
+  })
 }
 
 async function seedArtifactFixture(t: ReturnType<typeof convexTest>, args?: {
@@ -93,6 +195,7 @@ async function seedArtifactFixture(t: ReturnType<typeof convexTest>, args?: {
 describe('getGenerationArtifactAccess', () => {
   beforeEach(() => {
     process.env.STUDIO_ARTIFACT_SIGNING_SECRET = 'studio-artifact-signing-secret'
+    process.env.STUDIO_WORKER_SECRET = workerSecret
   })
 
   afterEach(() => {
@@ -100,6 +203,12 @@ describe('getGenerationArtifactAccess', () => {
       delete process.env.STUDIO_ARTIFACT_SIGNING_SECRET
     } else {
       process.env.STUDIO_ARTIFACT_SIGNING_SECRET = ORIGINAL_SIGNING_SECRET
+    }
+
+    if (ORIGINAL_WORKER_SECRET === undefined) {
+      delete process.env.STUDIO_WORKER_SECRET
+    } else {
+      process.env.STUDIO_WORKER_SECRET = ORIGINAL_WORKER_SECRET
     }
   })
 
@@ -149,5 +258,95 @@ describe('getGenerationArtifactAccess', () => {
       }),
     ).rejects.toThrowError('TEMPLATE_NOT_FOUND')
   })
-})
 
+  it.each([
+    {
+      label: 'hyperframes runtime',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'hyperframes',
+      },
+    },
+    {
+      label: 'non-mp4 mime type',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.webm',
+        fileSizeBytes: 3291,
+        mimeType: 'video/webm',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion',
+      },
+    },
+    {
+      label: 'out-of-profile dimensions',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1920,
+        height: 1080,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion',
+      },
+    },
+    {
+      label: 'out-of-profile duration',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 45,
+        aspectRatio: '16:9',
+        runtime: 'remotion',
+      },
+    },
+  ])('rejects completed artifacts with $label before persisting them', async ({ artifact }) => {
+    const t = convexTest(schema, modules)
+    const { jobId } = await seedUploadingFixture(t)
+
+    await expect(
+      t.mutation(completeGenerationJob, {
+        jobId,
+        workerId,
+        workerSecret,
+        artifact,
+        renderRun: {
+          completedAt: 20,
+          durationMs: 10,
+          exitCode: 0,
+          outputStorageKey: artifact.storageKey,
+        },
+      }),
+    ).rejects.toThrowError('ARTIFACT_PROFILE_MISMATCH')
+
+    const persistedArtifacts = await t.run(async (ctx) =>
+      ctx.db
+        .query('generationArtifacts')
+        .withIndex('by_user_job', (q) =>
+          q.eq('userId', studioIdentity.subject).eq('jobId', jobId),
+        )
+        .collect(),
+    )
+    const job = await t.run(async (ctx) => ctx.db.get(jobId))
+
+    expect(persistedArtifacts).toHaveLength(0)
+    expect(job?.status).toBe('uploading')
+    expect(job?.artifactId).toBeUndefined()
+  })
+})

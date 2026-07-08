@@ -29,6 +29,13 @@ const STUDIO_JOB_COST = 1
 const MIN_PROMPT_LENGTH = 10
 const BLOCKED_PROMPT_KEYWORDS = ['terrorist', 'bomb', 'kill myself', 'suicide']
 const DEFAULT_STUDIO_WORKER_LOCK_TTL_MS = 30_000
+const STUDIO_MVP_RUNTIME = 'remotion'
+const STUDIO_MVP_MIME_TYPE = 'video/mp4'
+const STUDIO_MVP_ASPECT_RATIO = '16:9'
+const STUDIO_MVP_WIDTH = 1280
+const STUDIO_MVP_HEIGHT = 720
+const STUDIO_MVP_FPS = 30
+const STUDIO_MVP_MAX_DURATION_SECONDS = 30
 
 const studioTokenUsageValidator = v.object({
   inputTokens: v.number(),
@@ -178,6 +185,49 @@ function toSeedRecord(args: StudioTemplateSeed) {
 
 function studioError(code: string) {
   throw new ConvexError(code)
+}
+
+function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
+  mimeType: string
+  width: number
+  height: number
+  fps: number
+  durationSeconds: number
+  aspectRatio: string
+  runtime: 'remotion' | 'hyperframes'
+}) {
+  const plannedOutput = job.plannerOutput?.output
+  const expectedDurationSeconds = plannedOutput?.durationSeconds ?? job.durationSeconds
+  const matchesMvpProfile =
+    job.runtime === STUDIO_MVP_RUNTIME &&
+    artifact.runtime === STUDIO_MVP_RUNTIME &&
+    artifact.mimeType === STUDIO_MVP_MIME_TYPE &&
+    artifact.aspectRatio === STUDIO_MVP_ASPECT_RATIO &&
+    artifact.width === STUDIO_MVP_WIDTH &&
+    artifact.height === STUDIO_MVP_HEIGHT &&
+    artifact.fps === STUDIO_MVP_FPS &&
+    artifact.durationSeconds >= 0 &&
+    artifact.durationSeconds <= STUDIO_MVP_MAX_DURATION_SECONDS
+
+  if (!matchesMvpProfile) {
+    studioError('ARTIFACT_PROFILE_MISMATCH')
+  }
+
+  if (!plannedOutput) {
+    studioError('PLAN_VALIDATION_FAILED')
+  }
+
+  const matchesPlannedOutput =
+    artifact.runtime === job.runtime &&
+    artifact.aspectRatio === plannedOutput.aspectRatio &&
+    artifact.width === plannedOutput.width &&
+    artifact.height === plannedOutput.height &&
+    artifact.fps === plannedOutput.fps &&
+    artifact.durationSeconds === expectedDurationSeconds
+
+  if (!matchesPlannedOutput) {
+    studioError('ARTIFACT_PROFILE_MISMATCH')
+  }
 }
 
 type StudioWorkerClaimResult = {
@@ -1257,14 +1307,9 @@ export const completeGenerationJob = mutation({
       expectedStatus: 'uploading',
     })
 
-    const now = Date.now()
-    const artifactId = await ctx.db.insert('generationArtifacts', {
-      ...(args.artifact as StudioWorkerArtifactInput),
-      jobId: job._id,
-      userId: job.userId,
-      createdAt: now,
-    })
+    assertStudioArtifactProfile(job, args.artifact)
 
+    const now = Date.now()
     const latestRenderRun = await ctx.db
       .query('renderRuns')
       .withIndex('by_job_created', (q) => q.eq('jobId', job._id))
@@ -1274,6 +1319,13 @@ export const completeGenerationJob = mutation({
     if (!latestRenderRun || latestRenderRun.workerId !== args.workerId) {
       studioError('INVALID_WORKER_STATE')
     }
+
+    const artifactId = await ctx.db.insert('generationArtifacts', {
+      ...(args.artifact as StudioWorkerArtifactInput),
+      jobId: job._id,
+      userId: job.userId,
+      createdAt: now,
+    })
 
     await ctx.db.patch(latestRenderRun._id, {
       ...(args.renderRun as Partial<StudioWorkerRenderRunInput>),
