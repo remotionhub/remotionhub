@@ -33,3 +33,8 @@
 - Passed: filtered TypeScript check showing no Task 7 file errors via `VITE_CONVEX_URL=https://example.invalid npx tsc --noEmit --pretty false` with output filtered to Task 7 files.
 - Attempted: `npm run generate-routes && npx convex codegen` with fake env. Route generation succeeded and updated `src/routeTree.gen.ts`; Convex codegen failed because the local environment is not authenticated to Convex, so `convex/_generated/api.d.ts` was updated manually with the minimal `studio` module entry.
 - Full `VITE_CONVEX_URL=https://example.invalid npm run ci:types-build` remains blocked by pre-existing unrelated errors in backend studio tests/runtime files (`convex/studio-artifacts.test.ts`, `convex/studio-worker.test.ts`, `convex/studio.ts`, `scripts/seed-studio-templates.ts`, `scripts/studio-worker.ts`, `src/routes/api/studio/artifacts/$kind.ts`). None of the remaining reported errors point at Task 7 files after the final patch.
+
+## Task 7 Follow-up Fix
+- Fixed the selected-job handoff in `StudioPage` so an active `selectedJobId` no longer falls back to `visibleHistory[0]` while `getGenerationJob` is still unresolved.
+- Added a pending result-state render path for selected-but-loading jobs, which suppresses stale completed playback/download actions until the selected job or matching history entry exists.
+- Added a regression test covering a newly created job whose query has not returned yet, proving the result panel stays pending and does not render the previous completed artifact.

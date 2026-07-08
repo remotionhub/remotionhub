@@ -135,7 +135,7 @@ const mocks = vi.hoisted(() => {
     randomUUID: vi.fn(() => 'uuid-task-7'),
     templates: buildTemplates(),
     history: buildHistory(),
-    currentJob: buildCurrentJob(),
+    currentJob: buildCurrentJob() as MockJob | undefined,
     artifactAccess: {
       artifactId: 'artifact-1',
       jobId: 'job-1',
@@ -378,6 +378,26 @@ describe('StudioPage', () => {
     expect(within(historyList).getAllByRole('button')).toHaveLength(10)
     expect(screen.queryByText('Prompt 11')).toBeNull()
     expect(screen.queryByText('Prompt 12')).toBeNull()
+  })
+
+  it('keeps the selected result area in a pending state while a new job is still loading', async () => {
+    mocks.currentJob = undefined
+    mocks.createGenerationJob.mockResolvedValue({
+      id: 'job-created',
+      status: 'queued',
+    })
+
+    renderStudioPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use recommended template' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Generate video' }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('studio-selected-job-loading')).toBeTruthy()
+    })
+    expect(screen.queryByTestId('studio-video')).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Download MP4' })).toBeNull()
+    expect(screen.getByText('Creating job…')).toBeTruthy()
   })
 
   it('shows playback and download URLs for completed jobs', () => {

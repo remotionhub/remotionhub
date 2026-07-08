@@ -97,12 +97,17 @@ export default function StudioPage() {
   )
   const visibleHistory = useMemo(() => (history ?? []).slice(0, 10), [history])
   const selectedHistoryJob =
-    visibleHistory.find((job) => job.id === selectedJobId) ?? visibleHistory[0] ?? null
+    visibleHistory.find((job) => job.id === selectedJobId) ?? null
   const selectedJob = useQuery(
     api.studio.getGenerationJob,
     selectedJobId ? { jobId: selectedJobId } : 'skip',
   )
-  const currentJob = selectedJob ?? selectedHistoryJob ?? null
+  const isSelectedJobPending = Boolean(
+    selectedJobId && selectedJob === undefined && !selectedHistoryJob,
+  )
+  const currentJob = selectedJobId
+    ? selectedJob ?? selectedHistoryJob ?? null
+    : visibleHistory[0] ?? null
   const artifactAccess = useQuery(
     api.studio.getGenerationArtifactAccess,
     currentJob?.status === 'completed' && currentJob.artifactId
@@ -306,10 +311,31 @@ export default function StudioPage() {
               <span className={`studio-status-pill studio-status-${currentJob.status}`}>
                 {formatStatusLabel(currentJob.status)}
               </span>
+            ) : isSelectedJobPending ? (
+              <Skeleton
+                className="studio-status-pill"
+                data-testid="studio-selected-job-loading-pill"
+              />
             ) : null}
           </div>
 
-          {currentJob ? (
+          {isSelectedJobPending ? (
+            <div
+              className="studio-result-stack"
+              aria-busy="true"
+              data-testid="studio-selected-job-loading"
+            >
+              <div className="studio-job-summary">
+                {Array.from({ length: 3 }, (_, index) => (
+                  <Skeleton key={index} className="h-20 rounded-2xl" />
+                ))}
+              </div>
+              <div className="studio-empty-result">
+                <h3>{t('studio.resultTitle')}</h3>
+                <p>{t('studio.generating')}</p>
+              </div>
+            </div>
+          ) : currentJob ? (
             <div className="studio-result-stack">
               <div className="studio-job-summary">
                 <div>
