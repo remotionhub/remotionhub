@@ -35,6 +35,7 @@ const STUDIO_MVP_ASPECT_RATIO = '16:9'
 const STUDIO_MVP_WIDTH = 1280
 const STUDIO_MVP_HEIGHT = 720
 const STUDIO_MVP_FPS = 30
+const STUDIO_MVP_MIN_DURATION_SECONDS = 10
 const STUDIO_MVP_MAX_DURATION_SECONDS = 30
 const STUDIO_DEFAULT_DURATION_SECONDS = STUDIO_MVP_MAX_DURATION_SECONDS
 
@@ -443,7 +444,7 @@ function normalizeStudioRequestedDurationSeconds(durationSeconds: number) {
 
   const normalized = Math.trunc(durationSeconds)
   if (
-    normalized < 1 ||
+    normalized < STUDIO_MVP_MIN_DURATION_SECONDS ||
     normalized > STUDIO_MVP_MAX_DURATION_SECONDS
   ) {
     return STUDIO_DEFAULT_DURATION_SECONDS

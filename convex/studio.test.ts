@@ -228,11 +228,12 @@ describe('studio queries and mutations', () => {
     ])
   })
 
-  it('normalizes client media metadata and ignores client asset allowlists on job creation', async () => {
+  it('normalizes client media metadata into the MVP range and ignores client asset allowlists on job creation', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
+    const secondAuthed = t.withIdentity(secondStudioIdentity)
     const createdJob = await authed.mutation(api.studio.createGenerationJob, {
       ...createGenerationArgs,
       aspectRatio: '1:1',
@@ -245,14 +246,24 @@ describe('studio queries and mutations', () => {
       ],
       idempotencyKey: 'idem-normalized',
     })
+    const shortDurationJob = await secondAuthed.mutation(api.studio.createGenerationJob, {
+      ...createGenerationArgs,
+      durationSeconds: 5,
+      idempotencyKey: 'idem-short-duration',
+    })
 
     expect(createdJob.aspectRatio).toBe('16:9')
     expect(createdJob.durationSeconds).toBe(30)
+    expect(shortDurationJob.durationSeconds).toBe(30)
 
     const storedJob = await t.run(async (ctx) => ctx.db.get(createdJob.id))
+    const storedShortDurationJob = await t.run(async (ctx) =>
+      ctx.db.get(shortDurationJob.id),
+    )
     expect(storedJob?.aspectRatio).toBe('16:9')
     expect(storedJob?.durationSeconds).toBe(30)
     expect(storedJob?.assetIds).toEqual([])
+    expect(storedShortDurationJob?.durationSeconds).toBe(30)
   })
 
   it('blocks a second active job with a distinct idempotency key', async () => {

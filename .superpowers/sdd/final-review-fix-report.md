@@ -42,6 +42,7 @@ Fixed all Critical and Important findings from the final whole-branch AI Studio 
 
 ## Notes
 
+- Follow-up fix: `createGenerationJob` now rejects client durations outside the MVP/render-plan `10..30` range by normalizing them back to the default `30`, so queued/planning job summaries cannot temporarily store sub-MVP durations such as `5`.
 - Worker secret validation remains unchanged.
 - Artifact signed URL and owner-gating behavior remain unchanged.
 - No upload/source download/timeline/HyperFrames live support was added.
