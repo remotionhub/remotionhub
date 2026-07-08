@@ -30,24 +30,6 @@ RemotionHub currently has a public catalog frontend using TanStack Start, React,
 
 The repository already contains a GitHub auth bootstrap design and implementation plan in `specs/2026-07-05-github-auth-bootstrap-design.md` and `specs/2026-07-05-github-auth-bootstrap-implementation-plan.md`. The WeChat design should reuse the same long-term identity invariants and replace the first provider with WeChat.
 
-## 少数派 Login Observation
-
-Observed on 2026-07-07 with Chrome at `https://sspai.com/`:
-
-- The top navigation includes an icon-only account/login entry.
-- Clicking the account entry opens a centered modal dialog titled "登录少数派".
-- The dialog's primary path is phone or email input.
-- The dialog has an "其他方式" section with icon-only social login buttons.
-- Clicking the WeChat icon navigates the browser to:
-
-```text
-https://open.weixin.qq.com/connect/qrconnect?appid=wx4445a22c1049d828&redirect_uri=http%3A%2F%2Fsspai.com%2Fcallback%2Fweixin&response_type=code&scope=snsapi_login
-```
-
-RemotionHub should copy the interaction shape, not the exact information architecture. Since RemotionHub does not yet have phone/email login, the first modal can make WeChat the only active method while keeping the visual placement compatible with future login methods.
-
-Security difference: RemotionHub must include and verify a `state` value even though the observed 少数派 first-hop URL did not include one.
-
 ## Chosen Approach
 
 Use Convex Auth as the session layer and add a custom WeChat website OAuth provider if the installed Auth.js provider cannot be used cleanly.
