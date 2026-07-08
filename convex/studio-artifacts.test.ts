@@ -316,6 +316,34 @@ describe('getGenerationArtifactAccess', () => {
         runtime: 'remotion',
       },
     },
+    {
+      label: 'non-positive file size',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        fileSizeBytes: 0,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion',
+      },
+    },
+    {
+      label: 'invalid storage key shape',
+      artifact: {
+        storageKey: 'uploads/job-2/artifact.mp4',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion',
+      },
+    },
   ])('rejects completed artifacts with $label before persisting them', async ({ artifact }) => {
     const t = convexTest(schema, modules)
     const { jobId } = await seedUploadingFixture(t)
@@ -331,6 +359,51 @@ describe('getGenerationArtifactAccess', () => {
           durationMs: 10,
           exitCode: 0,
           outputStorageKey: artifact.storageKey,
+        },
+      }),
+    ).rejects.toThrowError('ARTIFACT_PROFILE_MISMATCH')
+
+    const persistedArtifacts = await t.run(async (ctx) =>
+      ctx.db
+        .query('generationArtifacts')
+        .withIndex('by_user_job', (q) =>
+          q.eq('userId', studioIdentity.subject).eq('jobId', jobId),
+        )
+        .collect(),
+    )
+    const job = await t.run(async (ctx) => ctx.db.get(jobId))
+
+    expect(persistedArtifacts).toHaveLength(0)
+    expect(job?.status).toBe('uploading')
+    expect(job?.artifactId).toBeUndefined()
+  })
+
+  it('rejects completed artifacts when the render output key does not match the artifact key', async () => {
+    const t = convexTest(schema, modules)
+    const { jobId } = await seedUploadingFixture(t)
+    const artifact = {
+      storageKey: 'studio/job-2/artifact.mp4',
+      fileSizeBytes: 3291,
+      mimeType: 'video/mp4',
+      width: 1280,
+      height: 720,
+      fps: 30,
+      durationSeconds: 15,
+      aspectRatio: '16:9',
+      runtime: 'remotion' as const,
+    }
+
+    await expect(
+      t.mutation(completeGenerationJob, {
+        jobId,
+        workerId,
+        workerSecret,
+        artifact,
+        renderRun: {
+          completedAt: 20,
+          durationMs: 10,
+          exitCode: 0,
+          outputStorageKey: 'studio/job-2/other.mp4',
         },
       }),
     ).rejects.toThrowError('ARTIFACT_PROFILE_MISMATCH')

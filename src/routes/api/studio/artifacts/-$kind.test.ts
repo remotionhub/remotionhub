@@ -162,6 +162,25 @@ describe('studio artifact route', () => {
     expect(response.headers.get('content-disposition')).toContain('artifact.mp4')
   })
 
+  it('sanitizes filenames in content-disposition headers', async () => {
+    await writeArtifact(
+      artifactDir,
+      'studio/job-1/artifact\";bad=.mp4',
+      Uint8Array.from([7, 8, 9]),
+    )
+
+    const response = await sendSignedRequest({
+      kind: 'download',
+      storageKey: 'studio/job-1/artifact\";bad=.mp4',
+      secret: signingSecret,
+    })
+
+    expect(response.status).toBe(200)
+    expect(response.headers.get('content-disposition')).toBe(
+      'attachment; filename="artifact__bad_.mp4"',
+    )
+  })
+
   it('rejects expired signatures', async () => {
     const response = await sendSignedRequest({
       kind: 'playback',

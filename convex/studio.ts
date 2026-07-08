@@ -188,6 +188,8 @@ function studioError(code: string) {
 }
 
 function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
+  storageKey: string
+  fileSizeBytes: number
   mimeType: string
   width: number
   height: number
@@ -210,6 +212,14 @@ function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
     artifact.durationSeconds <= STUDIO_MVP_MAX_DURATION_SECONDS
 
   if (!matchesMvpProfile) {
+    studioError('ARTIFACT_PROFILE_MISMATCH')
+  }
+
+  const hasValidStorageKey =
+    /^studio\/[^/]+\/artifact\.mp4$/.test(artifact.storageKey) &&
+    artifact.storageKey.endsWith('.mp4')
+
+  if (!hasValidStorageKey || artifact.fileSizeBytes <= 0) {
     studioError('ARTIFACT_PROFILE_MISMATCH')
   }
 
@@ -1318,6 +1328,10 @@ export const completeGenerationJob = mutation({
 
     if (!latestRenderRun || latestRenderRun.workerId !== args.workerId) {
       studioError('INVALID_WORKER_STATE')
+    }
+
+    if (args.renderRun.outputStorageKey !== args.artifact.storageKey) {
+      studioError('ARTIFACT_PROFILE_MISMATCH')
     }
 
     const artifactId = await ctx.db.insert('generationArtifacts', {

@@ -76,3 +76,14 @@
 
 - Command: `npm run test -- scripts/studio-renderer.test.ts scripts/studio-planner.test.ts convex/studio-artifacts.test.ts src/routes/api/studio/artifacts/-$kind.test.ts`
 - Output: `4 passed, 21 passed`
+
+## Task 6 Re-review Fixes (Round 3)
+
+- Removed module-load `process.cwd()` assumptions from `lib/studio/artifact-store.ts`; local artifact storage now resolves env and cwd lazily and returns `501`-compatible unsupported results instead of crashing non-Node production route imports.
+- Hardened `completeGenerationJob` so completed artifacts must have a positive `fileSizeBytes`, match the controlled MVP storage key shape `studio/<job>/artifact.mp4`, and exactly match `renderRun.outputStorageKey` before metadata is persisted.
+- Added regression coverage for mismatched render output keys, non-positive file sizes, invalid storage key shapes, and sanitized artifact download filenames in `content-disposition`.
+
+### Focused Test Run (Round 3)
+
+- Command: `npm run test -- scripts/studio-renderer.test.ts scripts/studio-planner.test.ts convex/studio-artifacts.test.ts 'src/routes/api/studio/artifacts/-$kind.test.ts'`
+- Output: `4 passed, 25 passed`

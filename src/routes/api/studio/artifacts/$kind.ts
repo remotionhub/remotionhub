@@ -60,7 +60,11 @@ function getContentType(kind: StudioArtifactUrlKind, storageKey: string) {
 }
 
 function getContentDisposition(kind: StudioArtifactUrlKind, storageKey: string) {
-  const filename = storageKey.split('/').filter(Boolean).at(-1) || 'artifact'
+  const filename =
+    (storageKey.split('/').filter(Boolean).at(-1) || 'artifact').replace(
+      /[^A-Za-z0-9._-]/g,
+      '_',
+    )
   const dispositionType = kind === 'download' ? 'attachment' : 'inline'
   return `${dispositionType}; filename="${filename}"`
 }
