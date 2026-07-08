@@ -15,6 +15,7 @@ import { Route as RemotionIndexRouteImport } from './routes/remotion/index'
 import { Route as HyperframesIndexRouteImport } from './routes/hyperframes/index'
 import { Route as RemotionOwnerSlugRouteImport } from './routes/remotion/$owner.$slug'
 import { Route as HyperframesOwnerSlugRouteImport } from './routes/hyperframes/$owner.$slug'
+import { Route as ApiStudioArtifactsKindRouteImport } from './routes/api/studio/artifacts/$kind'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -46,6 +47,11 @@ const HyperframesOwnerSlugRoute = HyperframesOwnerSlugRouteImport.update({
   path: '/hyperframes/$owner/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStudioArtifactsKindRoute = ApiStudioArtifactsKindRouteImport.update({
+  id: '/api/studio/artifacts/$kind',
+  path: '/api/studio/artifacts/$kind',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/remotion/': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
   '/remotion/$owner/$slug': typeof RemotionOwnerSlugRoute
+  '/api/studio/artifacts/$kind': typeof ApiStudioArtifactsKindRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/remotion': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
   '/remotion/$owner/$slug': typeof RemotionOwnerSlugRoute
+  '/api/studio/artifacts/$kind': typeof ApiStudioArtifactsKindRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/remotion/': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
   '/remotion/$owner/$slug': typeof RemotionOwnerSlugRoute
+  '/api/studio/artifacts/$kind': typeof ApiStudioArtifactsKindRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/remotion/'
     | '/hyperframes/$owner/$slug'
     | '/remotion/$owner/$slug'
+    | '/api/studio/artifacts/$kind'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/remotion'
     | '/hyperframes/$owner/$slug'
     | '/remotion/$owner/$slug'
+    | '/api/studio/artifacts/$kind'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/remotion/'
     | '/hyperframes/$owner/$slug'
     | '/remotion/$owner/$slug'
+    | '/api/studio/artifacts/$kind'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   RemotionIndexRoute: typeof RemotionIndexRoute
   HyperframesOwnerSlugRoute: typeof HyperframesOwnerSlugRoute
   RemotionOwnerSlugRoute: typeof RemotionOwnerSlugRoute
+  ApiStudioArtifactsKindRoute: typeof ApiStudioArtifactsKindRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HyperframesOwnerSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/studio/artifacts/$kind': {
+      id: '/api/studio/artifacts/$kind'
+      path: '/api/studio/artifacts/$kind'
+      fullPath: '/api/studio/artifacts/$kind'
+      preLoaderRoute: typeof ApiStudioArtifactsKindRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   RemotionIndexRoute: RemotionIndexRoute,
   HyperframesOwnerSlugRoute: HyperframesOwnerSlugRoute,
   RemotionOwnerSlugRoute: RemotionOwnerSlugRoute,
+  ApiStudioArtifactsKindRoute: ApiStudioArtifactsKindRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

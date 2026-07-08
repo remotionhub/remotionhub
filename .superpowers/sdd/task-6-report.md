@@ -53,3 +53,15 @@
 - No `/studio` UI work was added.
 - No HyperFrames live generation path was added.
 - The worker still does not execute arbitrary model-generated code.
+
+## Task 6 Review Fixes
+
+- Added a real TanStack Start responder at `/api/studio/artifacts/$kind` for `playback`, `download`, `thumbnail`, and `preview`.
+- Verifies `key`, `expires`, and `sig`, rejects expired URLs, and binds the HMAC payload to both `kind` and `storageKey` so tampering fails.
+- Streams bytes from the local/dev fake artifact backing used by Task 6 and falls back to the default SVG thumbnail when `thumbnail` or `preview` bytes are missing.
+- Fake renderer now writes deterministic local fixture bytes and rejects `STUDIO_RENDER_MODE=fake` when `NODE_ENV=production`.
+
+### Focused Test Run
+
+- Command: `npm run test -- scripts/studio-renderer.test.ts scripts/studio-planner.test.ts convex/studio-artifacts.test.ts src/routes/api/studio/artifacts/-$kind.test.ts`
+- Output: `4 passed, 16 passed`
