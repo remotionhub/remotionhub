@@ -3,6 +3,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
+import { compare, valid } from 'semver'
 
 export type GithubSource = {
   repo: string
@@ -47,6 +48,8 @@ type SourceCandidate = {
   source: GithubSource
   usageMarkdown: string
   agentPrompt: string
+  sourceIndex: number
+  sourceVersion: string | undefined
 }
 
 const RUNTIME_TEXT_PATTERN = /runtime-assets\.ts/i
@@ -110,10 +113,44 @@ function parseGithubSource(value: unknown): GithubSource | undefined {
   }
 }
 
+function parseCatalogVersion(value: unknown): string | undefined {
+  return typeof value === 'string' && valid(value) ? value : undefined
+}
+
+function shouldKeepSourceCandidate(
+  previous: SourceCandidate,
+  candidate: SourceCandidate,
+): SourceCandidate {
+  if (!previous.sourceVersion && !candidate.sourceVersion) {
+    return candidate.sourceIndex > previous.sourceIndex ? candidate : previous
+  }
+
+  if (!candidate.sourceVersion) {
+    return previous
+  }
+
+  if (!previous.sourceVersion) {
+    return candidate
+  }
+
+  const comparison = compare(candidate.sourceVersion, previous.sourceVersion)
+  if (comparison > 0) {
+    return candidate
+  }
+
+  if (comparison === 0 && candidate.sourceIndex > previous.sourceIndex) {
+    return candidate
+  }
+
+  return previous
+}
+
 function resolveLatestGithubSourceCandidate(
   versions: unknown[],
 ): SourceCandidate | undefined {
-  for (let index = versions.length - 1; index >= 0; index -= 1) {
+  let latestSource: SourceCandidate | undefined
+
+  for (let index = 0; index < versions.length; index += 1) {
     const version = versions[index]
     if (!isObject(version)) {
       continue
@@ -129,24 +166,39 @@ function resolveLatestGithubSourceCandidate(
       continue
     }
 
-    return {
+    const candidate: SourceCandidate = {
       source,
+      sourceIndex: index,
+      sourceVersion: parseCatalogVersion((version as { version?: unknown }).version),
       usageMarkdown:
         typeof artifact.usageMarkdown === 'string' ? artifact.usageMarkdown : '',
       agentPrompt: typeof artifact.agentPrompt === 'string'
         ? artifact.agentPrompt
         : '',
     }
+
+    if (!latestSource) {
+      latestSource = candidate
+      continue
+    }
+
+    latestSource = shouldKeepSourceCandidate(latestSource, candidate)
   }
 
-  return undefined
+  return latestSource
 }
 
 export function resolveLatestGithubSource(
   versions: unknown[],
   _slug: string,
 ): GithubSource | undefined {
-  return resolveLatestGithubSourceCandidate(versions)?.source
+  const latestSource = resolveLatestGithubSourceCandidate(versions)
+
+  if (!latestSource) {
+    return undefined
+  }
+
+  return latestSource.source
 }
 
 function verifyCommitPathExists(commit: string, assetRepo: string, relPath: string) {

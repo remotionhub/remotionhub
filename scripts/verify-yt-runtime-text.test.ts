@@ -221,6 +221,56 @@ describe('resolveLatestGithubSource', () => {
       path: 'remotion/new',
     })
   })
+
+  it('selects the highest semantic version even if versions are out of order', () => {
+    expect(
+      resolveLatestGithubSource(
+        [
+          {
+            version: '2.0.0',
+            artifact: {
+              kind: 'github-source',
+              githubSource: {
+                repo: 'remotionhub/remotionhub-assets',
+                ref: 'main',
+                commit: '222222',
+                path: 'remotion/out-of-order-old',
+              },
+            },
+          },
+          {
+            version: '2.1.0',
+            artifact: {
+              kind: 'github-source',
+              githubSource: {
+                repo: 'remotionhub/remotionhub-assets',
+                ref: 'main',
+                commit: '333333',
+                path: 'remotion/out-of-order-new',
+              },
+            },
+          },
+          {
+            version: '2.0.1',
+            artifact: {
+              kind: 'github-source',
+              githubSource: {
+                repo: 'x/other',
+                ref: 'main',
+                commit: '999999',
+                path: 'remotion/ignored-other-repo',
+              },
+            },
+          },
+        ],
+        'sample',
+      ),
+    ).toMatchObject({
+      repo: 'remotionhub/remotionhub-assets',
+      commit: '333333',
+      path: 'remotion/out-of-order-new',
+    })
+  })
 })
 
 describe('parseVerifyOptions', () => {
