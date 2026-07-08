@@ -18,6 +18,7 @@
     "ci:unit": "npm run coverage",
     "ci:types-build": "tsc --noEmit && npm run build",
     "ci:playwright-smoke": "npm run build && npm run test:e2e",
+    "verify:yt-runtime-text": "tsx scripts/verify-yt-runtime-text.ts --catalog-dir=catalog/components --throw-on-mismatch",
     "deploy:cloudflare": "npm run build && wrangler deploy",
     "cf-typegen": "wrangler types"
   },
