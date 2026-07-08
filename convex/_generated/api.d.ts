@@ -10,6 +10,7 @@
 
 import type * as components_ from "../components.js";
 import type * as lib_catalog from "../lib/catalog.js";
+import type * as studio from "../studio.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +21,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   components: typeof components_;
   "lib/catalog": typeof lib_catalog;
+  studio: typeof studio;
 }>;
 
 /**

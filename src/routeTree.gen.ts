@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudioRouteImport } from './routes/studio'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RemotionIndexRouteImport } from './routes/remotion/index'
@@ -17,6 +18,11 @@ import { Route as RemotionOwnerSlugRouteImport } from './routes/remotion/$owner.
 import { Route as HyperframesOwnerSlugRouteImport } from './routes/hyperframes/$owner.$slug'
 import { Route as ApiStudioArtifactsKindRouteImport } from './routes/api/studio/artifacts/$kind'
 
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -56,6 +62,7 @@ const ApiStudioArtifactsKindRoute = ApiStudioArtifactsKindRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio': typeof StudioRoute
   '/hyperframes/': typeof HyperframesIndexRoute
   '/remotion/': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio': typeof StudioRoute
   '/hyperframes': typeof HyperframesIndexRoute
   '/remotion': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio': typeof StudioRoute
   '/hyperframes/': typeof HyperframesIndexRoute
   '/remotion/': typeof RemotionIndexRoute
   '/hyperframes/$owner/$slug': typeof HyperframesOwnerSlugRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/studio'
     | '/hyperframes/'
     | '/remotion/'
     | '/hyperframes/$owner/$slug'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/studio'
     | '/hyperframes'
     | '/remotion'
     | '/hyperframes/$owner/$slug'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/studio'
     | '/hyperframes/'
     | '/remotion/'
     | '/hyperframes/$owner/$slug'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  StudioRoute: typeof StudioRoute
   HyperframesIndexRoute: typeof HyperframesIndexRoute
   RemotionIndexRoute: typeof RemotionIndexRoute
   HyperframesOwnerSlugRoute: typeof HyperframesOwnerSlugRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  StudioRoute: StudioRoute,
   HyperframesIndexRoute: HyperframesIndexRoute,
   RemotionIndexRoute: RemotionIndexRoute,
   HyperframesOwnerSlugRoute: HyperframesOwnerSlugRoute,

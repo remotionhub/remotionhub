@@ -87,6 +87,9 @@ vi.mock('../components/catalog/DetailPage', () => ({
     <div data-testid="detail-page">{detail.component.displayName}</div>
   ),
 }))
+vi.mock('../components/studio/StudioPage', () => ({
+  default: () => <div data-testid="studio-page">Studio Page</div>,
+}))
 vi.mock('../components/AppProviders', () => ({
   default: ({ children }: React.PropsWithChildren) => <>{children}</>,
 }))
@@ -109,6 +112,7 @@ import './remotion/index'
 import './remotion/$owner.$slug'
 import './hyperframes/index'
 import './hyperframes/$owner.$slug'
+import './studio'
 
 function route(path: string) {
   const options = mocks.routes.get(path)
@@ -151,6 +155,10 @@ describe('application routes', () => {
     expect(metaValue(route('/hyperframes/'), 'title')).toBe(
       'HyperFrames Components | RemotionHub',
     )
+    expect(metaValue(route('/studio'), 'title')).toBe('AI Studio | RemotionHub')
+    expect(metaValue(route('/studio'), 'description')).toBe(
+      'Generate 16:9 Remotion product demo videos from prompts.',
+    )
   })
 
   it.each([
@@ -167,6 +175,17 @@ describe('application routes', () => {
 
     expect(await screen.findByRole('heading', { name: heading })).toBeTruthy()
     expect(screen.getByTestId('catalog-grid').textContent).toBe(runtime)
+  })
+
+  it('registers the /studio route component', async () => {
+    const Component = route('/studio').component
+    if (!Component) throw new Error('Missing component for /studio')
+
+    await act(async () => {
+      render(createElement(Component))
+    })
+
+    expect(await screen.findByTestId('studio-page')).toBeTruthy()
   })
 
   it.each([

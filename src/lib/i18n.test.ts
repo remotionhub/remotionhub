@@ -24,6 +24,8 @@ describe('i18n core', () => {
   it('translates known UI keys in Chinese and English', () => {
     expect(translate('zh', 'nav.catalog')).toBe('目录')
     expect(translate('en', 'nav.catalog')).toBe('Catalog')
+    expect(translate('zh', 'nav.studio')).toBe('Studio')
+    expect(translate('en', 'nav.studio')).toBe('Studio')
     expect(translate('zh', 'detail.agentPrompt')).toBe('Agent 提示词')
     expect(translate('en', 'detail.agentPrompt')).toBe('Agent Prompt')
   })

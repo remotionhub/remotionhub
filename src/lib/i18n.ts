@@ -6,6 +6,7 @@ export const LOCALE_STORAGE_KEY = 'remotionhub.locale'
 
 const zhDictionary = {
   'nav.catalog': '目录',
+  'nav.studio': 'Studio',
   'nav.remotion': 'Remotion',
   'nav.hyperframes': 'HyperFrames',
   'nav.github': '打开 RemotionHub GitHub',
@@ -66,6 +67,47 @@ const zhDictionary = {
   'about.title': '面向 agent-assisted 项目的版本化动态组件。',
   'about.description':
     'RemotionHub 管理稳定组件、不可变版本和源码 artifact，方便团队预览、下载，并接入本地 Remotion 或 HyperFrames 项目。',
+  'studio.eyebrow': 'AI 优先工作台',
+  'studio.title': '先写提示词，再选模板，尽快拿到一个干净的视频结果。',
+  'studio.description':
+    '一个面向 16:9 Remotion 产品演示的极简 Studio 流程：提示词优先，少量手动编辑。',
+  'studio.promptKicker': '提示词',
+  'studio.promptTitle': '从创意 brief 开始',
+  'studio.promptLabel': '提示词',
+  'studio.promptPlaceholder': '描述产品故事、目标受众和你想要的画面风格。',
+  'studio.templateGate': '生成前需要明确选择或确认一个模板。',
+  'studio.templateSelected': '模板：{template}',
+  'studio.useRecommended': '确认推荐模板',
+  'studio.generate': '生成视频',
+  'studio.generating': '正在创建任务…',
+  'studio.resultKicker': '结果',
+  'studio.resultTitle': '最新生成',
+  'studio.statusLabel': '状态',
+  'studio.progressLabel': '进度',
+  'studio.updatedLabel': '更新时间',
+  'studio.templateLabel': '模板',
+  'studio.aspectLabel': '比例',
+  'studio.durationLabel': '时长',
+  'studio.runtimeLabel': '运行时',
+  'studio.fpsLabel': '帧率',
+  'studio.preview': '预览视频',
+  'studio.download': '下载 MP4',
+  'studio.emptyResultTitle': '还没有选中的生成结果',
+  'studio.emptyResultDescription': '选择一个最近任务，或者创建新的 prompt-first 生成任务。',
+  'studio.artifactPending': '任务已完成，但播放链接仍在准备中。',
+  'studio.cancel': '取消任务',
+  'studio.canceling': '正在取消…',
+  'studio.cancelConfirmQueued': '取消这个排队中的任务？如果工作尚未开始，积分应该会退回。',
+  'studio.cancelConfirmPlanning': '取消这个规划中的任务？模型开始后，积分可能不会退回。',
+  'studio.templatesKicker': '模板',
+  'studio.templatesTitle': '选择一个适合发布的视频骨架',
+  'studio.templatesEmptyTitle': '还没有可用模板',
+  'studio.templatesEmptyDescription': '先 seed 一个已批准的 Remotion Studio 模板，再开始生成。',
+  'studio.recommended': '推荐',
+  'studio.historyKicker': '历史',
+  'studio.historyTitle': '最近任务',
+  'studio.historyEmpty': '还没有任务。',
+  'studio.errorTitle': 'Studio 请求失败',
 } as const
 
 export type TranslationKey = keyof typeof zhDictionary
@@ -73,6 +115,7 @@ type Dictionary = Record<TranslationKey, string>
 
 const enDictionary = {
   'nav.catalog': 'Catalog',
+  'nav.studio': 'Studio',
   'nav.remotion': 'Remotion',
   'nav.hyperframes': 'HyperFrames',
   'nav.github': 'Go to RemotionHub GitHub',
@@ -133,6 +176,53 @@ const enDictionary = {
   'about.title': 'Versioned motion components for agent-assisted projects.',
   'about.description':
     'RemotionHub catalogs stable components, immutable versions, and source artifacts so teams can preview, download, and wire assets into local Remotion or HyperFrames projects.',
+  'studio.eyebrow': 'AI-first workbench',
+  'studio.title': 'Prompt, pick a template, and ship one clean video.',
+  'studio.description':
+    'A minimal studio flow for prompt-first 16:9 Remotion product demos.',
+  'studio.promptKicker': 'Prompt',
+  'studio.promptTitle': 'Start from the creative brief',
+  'studio.promptLabel': 'Prompt',
+  'studio.promptPlaceholder':
+    'Describe the product story, audience, and visual tone you want.',
+  'studio.templateGate': 'Pick or confirm a template before generating.',
+  'studio.templateSelected': 'Template: {template}',
+  'studio.useRecommended': 'Use recommended template',
+  'studio.generate': 'Generate video',
+  'studio.generating': 'Creating job…',
+  'studio.resultKicker': 'Result',
+  'studio.resultTitle': 'Latest generation',
+  'studio.statusLabel': 'Status',
+  'studio.progressLabel': 'Progress',
+  'studio.updatedLabel': 'Updated',
+  'studio.templateLabel': 'Template',
+  'studio.aspectLabel': 'Aspect',
+  'studio.durationLabel': 'Duration',
+  'studio.runtimeLabel': 'Runtime',
+  'studio.fpsLabel': 'FPS',
+  'studio.preview': 'Preview video',
+  'studio.download': 'Download MP4',
+  'studio.emptyResultTitle': 'No generation selected yet',
+  'studio.emptyResultDescription':
+    'Select a recent job or create a new prompt-first generation to see status here.',
+  'studio.artifactPending':
+    'The job completed, but the playback links are still being prepared.',
+  'studio.cancel': 'Cancel job',
+  'studio.canceling': 'Canceling…',
+  'studio.cancelConfirmQueued':
+    'Cancel this queued job? Credits should be refunded if work has not started.',
+  'studio.cancelConfirmPlanning':
+    'Cancel this planning job? Credits may not return after model start.',
+  'studio.templatesKicker': 'Templates',
+  'studio.templatesTitle': 'Choose a launch-ready frame',
+  'studio.templatesEmptyTitle': 'No templates available',
+  'studio.templatesEmptyDescription':
+    'Seed an approved Remotion studio template to unlock generation.',
+  'studio.recommended': 'Recommended',
+  'studio.historyKicker': 'History',
+  'studio.historyTitle': 'Recent jobs',
+  'studio.historyEmpty': 'No jobs yet.',
+  'studio.errorTitle': 'Studio request failed',
 } satisfies Dictionary
 
 export const dictionaries = {

@@ -78,6 +78,7 @@ describe('Header', () => {
 
     await screen.findByRole('link', { name: 'Catalog' })
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Studio' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Remotion' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'HyperFrames' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })).toBeTruthy()
@@ -98,6 +99,7 @@ describe('Header', () => {
       expect(window.localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('en')
     })
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Studio' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
   })
 
