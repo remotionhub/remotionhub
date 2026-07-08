@@ -389,6 +389,28 @@ describe('StudioPage', () => {
     })
   })
 
+  it('falls back to the default aspect ratio when the selected template has no aspect ratio', async () => {
+    mocks.templates = [
+      {
+        ...buildTemplates()[0],
+        supportedAspectRatios: [],
+      },
+    ]
+
+    renderStudioPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use recommended template' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Generate video' }))
+
+    await waitFor(() => {
+      expect(mocks.createGenerationJob).toHaveBeenCalledWith(
+        expect.objectContaining({
+          aspectRatio: '16:9',
+        }),
+      )
+    })
+  })
+
   it('gates owner-only studio calls when the viewer is unauthenticated', () => {
     mocks.viewer = null
 
@@ -539,6 +561,19 @@ describe('StudioPage', () => {
 
   it('shows the fallback error message when generation fails with a non-error value', async () => {
     mocks.createGenerationJob.mockRejectedValue('network interrupted')
+
+    renderStudioPage()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Use recommended template' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Generate video' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Unknown studio error.')).toBeTruthy()
+    })
+  })
+
+  it('shows the fallback error message when generation fails with a blank error', async () => {
+    mocks.createGenerationJob.mockRejectedValue(new Error('   '))
 
     renderStudioPage()
 
