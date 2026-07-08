@@ -125,6 +125,12 @@ STUDIO_ARTIFACT_SIGNING_SECRET=dev-studio-artifact-signing-secret
 STUDIO_FAKE_ARTIFACT_DIR=/tmp/remotionhub-studio-artifacts
 ```
 
+Start local Convex first:
+
+```bash
+make convex
+```
+
 Seed the first Studio template:
 
 ```bash

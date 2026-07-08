@@ -1,16 +1,8 @@
 import { convexTest } from 'convex-test'
 import { describe, expect, it } from 'vitest'
+import { api } from './_generated/api'
 import schema from './schema'
 import * as studioModule from './studio'
-import {
-  cancelGenerationJob,
-  createGenerationJob,
-  getDefaultStudioTemplate,
-  getGenerationJob,
-  getMyStudioHistory,
-  listStudioTemplates,
-  upsertStudioTemplate,
-} from './studio'
 
 const modules = import.meta.glob('./**/*.*s')
 const studioTemplateImportSecret = 'test-studio-template-secret'
@@ -117,39 +109,46 @@ describe('studio queries and mutations', () => {
       approvedTemplate
 
     await expect(
-      t.mutation(upsertStudioTemplate, {
+      t.mutation(api.studio.upsertStudioTemplate, {
         ...approvedTemplate,
         importSecret: 'wrong-secret',
       }),
     ).rejects.toThrowError('Invalid studio template import secret.')
 
     await expect(
-      t.mutation(upsertStudioTemplate, {
+      t.mutation(api.studio.upsertStudioTemplate, {
         ...approvedTemplate,
         importSecret: studioTemplateImportSecret,
       }),
     ).resolves.toEqual({ created: true })
 
     await expect(
-      t.mutation(upsertStudioTemplate, templateWithoutSecret as never),
+      t.mutation(api.studio.upsertStudioTemplate, templateWithoutSecret as never),
     ).rejects.toBeTruthy()
   })
 
   it('lists only remotion active approved templates in priority order and returns the default template', async () => {
     const t = convexTest(schema, modules)
 
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
-    await t.mutation(upsertStudioTemplate, inactiveApprovedTemplate)
-    await t.mutation(upsertStudioTemplate, pendingTemplate)
-    await t.mutation(upsertStudioTemplate, {
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, inactiveApprovedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, pendingTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, {
       ...approvedTemplate,
       templateId: 'lower-priority-template',
       priority: 10,
     })
-    await t.mutation(upsertStudioTemplate, hyperframesTemplate)
+    const { importSecret: _ignoredHyperframesSecret, ...hyperframesTemplateDoc } = hyperframesTemplate
+    await t.run(async (ctx) => {
+      await ctx.db.insert('studioTemplates', {
+        ...hyperframesTemplateDoc,
+        createdAt: 5,
+        updatedAt: 5,
+      })
+    })
 
-    const templates = await t.query(listStudioTemplates, {})
-    const defaultTemplate = await t.query(getDefaultStudioTemplate, {})
+    const templates = await t.query(api.studio.listStudioTemplates, {})
+    const defaultTemplate = await t.query(api.studio.getDefaultStudioTemplate, {})
 
     expect(templates.map((template) => template.templateId)).toEqual([
       'lower-priority-template',
@@ -171,8 +170,8 @@ describe('studio queries and mutations', () => {
   it('updates an existing studio template instead of creating a duplicate', async () => {
     const t = convexTest(schema, modules)
 
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
-    await t.mutation(upsertStudioTemplate, {
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, {
       ...approvedTemplate,
       agentPrompt: 'Updated prompt.',
     })
@@ -187,17 +186,17 @@ describe('studio queries and mutations', () => {
 
   it('creates one queued generation job per user and idempotency key and consumes credits once', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
-    const firstJob = await authed.mutation(createGenerationJob, createGenerationArgs)
-    const repeatedJob = await authed.mutation(createGenerationJob, createGenerationArgs)
+    const firstJob = await authed.mutation(api.studio.createGenerationJob, createGenerationArgs)
+    const repeatedJob = await authed.mutation(api.studio.createGenerationJob, createGenerationArgs)
 
     expect(firstJob.id).toBe(repeatedJob.id)
     expect(firstJob.status).toBe('queued')
     expect(repeatedJob.status).toBe('queued')
 
-    const storedJob = await authed.query(getGenerationJob, {
+    const storedJob = await authed.query(api.studio.getGenerationJob, {
       jobId: firstJob.id,
     })
     expect(storedJob?.id).toBe(firstJob.id)
@@ -231,13 +230,13 @@ describe('studio queries and mutations', () => {
 
   it('blocks a second active job with a distinct idempotency key', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
-    await authed.mutation(createGenerationJob, createGenerationArgs)
+    await authed.mutation(api.studio.createGenerationJob, createGenerationArgs)
 
     await expect(
-      authed.mutation(createGenerationJob, {
+      authed.mutation(api.studio.createGenerationJob, {
         ...createGenerationArgs,
         idempotencyKey: 'idem-2',
       }),
@@ -246,12 +245,12 @@ describe('studio queries and mutations', () => {
 
   it('cancels queued jobs with a refund and keeps the refund idempotent across repeated cancellation', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
-    const job = await authed.mutation(createGenerationJob, createGenerationArgs)
+    const job = await authed.mutation(api.studio.createGenerationJob, createGenerationArgs)
 
-    const canceledJob = await authed.mutation(cancelGenerationJob, {
+    const canceledJob = await authed.mutation(api.studio.cancelGenerationJob, {
       jobId: job.id,
       reason: 'Changed my mind.',
     })
@@ -263,7 +262,7 @@ describe('studio queries and mutations', () => {
     const storedCanceledJob = await t.run(async (ctx) => ctx.db.get(job.id))
     expect(storedCanceledJob?.refundedAt).toEqual(expect.any(Number))
 
-    const secondCancel = await authed.mutation(cancelGenerationJob, {
+    const secondCancel = await authed.mutation(api.studio.cancelGenerationJob, {
       jobId: job.id,
       reason: 'Changed my mind again.',
     })
@@ -288,16 +287,16 @@ describe('studio queries and mutations', () => {
 
   it('refunds planning cancellations only before model start', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
-    const job = await authed.mutation(createGenerationJob, createGenerationArgs)
+    const job = await authed.mutation(api.studio.createGenerationJob, createGenerationArgs)
     const secondAuthed = t.withIdentity(secondStudioIdentity)
-    await t.mutation(upsertStudioTemplate, {
+    await t.mutation(api.studio.upsertStudioTemplate, {
       ...approvedTemplate,
       templateId: 'approved-template-2',
     })
-    const otherJob = await secondAuthed.mutation(createGenerationJob, {
+    const otherJob = await secondAuthed.mutation(api.studio.createGenerationJob, {
       ...createGenerationArgs,
       templateId: 'approved-template-2',
       idempotencyKey: 'idem-other',
@@ -315,12 +314,12 @@ describe('studio queries and mutations', () => {
       })
     })
 
-    const refundedPlanningJob = await authed.mutation(cancelGenerationJob, {
+    const refundedPlanningJob = await authed.mutation(api.studio.cancelGenerationJob, {
       jobId: job.id,
       reason: 'Cancel before model start.',
     })
     const nonRefundedPlanningJob = await secondAuthed.mutation(
-      cancelGenerationJob,
+      api.studio.cancelGenerationJob,
       {
         jobId: otherJob.id,
         reason: 'Cancel after model start.',
@@ -340,7 +339,7 @@ describe('studio queries and mutations', () => {
 
   it('rejects cancellation for completed and failed jobs without rewriting them', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const authed = t.withIdentity(studioIdentity)
     const completedJobId = await t.run(async (ctx) =>
@@ -355,6 +354,7 @@ describe('studio queries and mutations', () => {
         templateVersion: approvedTemplate.templateVersion,
         propsSchemaVersion: approvedTemplate.propsSchemaVersion,
         assetIds: [],
+        attemptCount: 1,
         progress: 100,
         idempotencyKey: 'completed-job',
         createdAt: 2_000,
@@ -375,6 +375,7 @@ describe('studio queries and mutations', () => {
         propsSchemaVersion: approvedTemplate.propsSchemaVersion,
         assetIds: [],
         progress: 100,
+        attemptCount: 1,
         idempotencyKey: 'failed-job',
         createdAt: 3_000,
         updatedAt: 3_000,
@@ -385,13 +386,13 @@ describe('studio queries and mutations', () => {
     )
 
     await expect(
-      authed.mutation(cancelGenerationJob, {
+      authed.mutation(api.studio.cancelGenerationJob, {
         jobId: completedJobId,
         reason: 'Too late.',
       }),
     ).rejects.toThrowError('INVALID_CANCEL_STATE')
     await expect(
-      authed.mutation(cancelGenerationJob, {
+      authed.mutation(api.studio.cancelGenerationJob, {
         jobId: failedJobId,
         reason: 'Already failed.',
       }),
@@ -409,7 +410,7 @@ describe('studio queries and mutations', () => {
 
   it('returns only user-safe generation job fields for detail and history', async () => {
     const t = convexTest(schema, modules)
-    await t.mutation(upsertStudioTemplate, approvedTemplate)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
     const detailJobId = await t.run(async (ctx) =>
       ctx.db.insert('generationJobs', {
@@ -423,6 +424,7 @@ describe('studio queries and mutations', () => {
         templateVersion: approvedTemplate.templateVersion,
         propsSchemaVersion: approvedTemplate.propsSchemaVersion,
         assetIds: ['asset-1'],
+        attemptCount: 1,
         progress: 60,
         plannerOutput: { secret: true },
         workerId: 'worker-1',
@@ -451,6 +453,7 @@ describe('studio queries and mutations', () => {
           templateVersion: approvedTemplate.templateVersion,
           propsSchemaVersion: approvedTemplate.propsSchemaVersion,
           assetIds: [],
+          attemptCount: 1,
           progress: 100,
           plannerOutput: { index },
           workerId: `worker-${index}`,
@@ -472,6 +475,7 @@ describe('studio queries and mutations', () => {
         templateVersion: approvedTemplate.templateVersion,
         propsSchemaVersion: approvedTemplate.propsSchemaVersion,
         assetIds: [],
+        attemptCount: 1,
         progress: 100,
         plannerOutput: { other: true },
         workerId: 'worker-other',
@@ -483,10 +487,10 @@ describe('studio queries and mutations', () => {
     })
 
     const authed = t.withIdentity(studioIdentity)
-    const detail = await authed.query(getGenerationJob, {
+    const detail = await authed.query(api.studio.getGenerationJob, {
       jobId: detailJobId,
     })
-    const history = await authed.query(getMyStudioHistory, {})
+    const history = await authed.query(api.studio.getMyStudioHistory, {})
 
     expect(detail.id).toBe(detailJobId)
     expect(Object.keys(detail).sort()).toEqual([...safeGenerationJobKeys].sort())

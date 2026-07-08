@@ -1,7 +1,7 @@
 import { convexTest } from 'convex-test'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { api } from './_generated/api'
 import schema from './schema'
-import { completeGenerationJob, getGenerationArtifactAccess } from './studio'
 
 const modules = import.meta.glob('./**/*.*s')
 const ORIGINAL_SIGNING_SECRET = process.env.STUDIO_ARTIFACT_SIGNING_SECRET
@@ -66,7 +66,7 @@ async function seedUploadingFixture(t: ReturnType<typeof convexTest>) {
         templateId: 'approved-template',
         templateVersion: '1.0.0',
         propsSchemaVersion: '1',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
         output: {
           aspectRatio: '16:9',
           width: 1280,
@@ -218,7 +218,7 @@ describe('getGenerationArtifactAccess', () => {
       previewStorageKey: 'studio/templates/approved-template/preview.mp4',
     })
 
-    const access = await t.withIdentity(studioIdentity).query(getGenerationArtifactAccess, {
+    const access = await t.withIdentity(studioIdentity).query(api.studio.getGenerationArtifactAccess, {
       jobId,
     })
 
@@ -237,7 +237,7 @@ describe('getGenerationArtifactAccess', () => {
     const t = convexTest(schema, modules)
     const { jobId } = await seedArtifactFixture(t)
 
-    const access = await t.withIdentity(studioIdentity).query(getGenerationArtifactAccess, {
+    const access = await t.withIdentity(studioIdentity).query(api.studio.getGenerationArtifactAccess, {
       jobId,
     })
 
@@ -253,7 +253,7 @@ describe('getGenerationArtifactAccess', () => {
     })
 
     await expect(
-      t.withIdentity(otherIdentity).query(getGenerationArtifactAccess, {
+      t.withIdentity(otherIdentity).query(api.studio.getGenerationArtifactAccess, {
         jobId,
       }),
     ).rejects.toThrowError('TEMPLATE_NOT_FOUND')
@@ -271,7 +271,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 15,
         aspectRatio: '16:9',
-        runtime: 'hyperframes',
+        runtime: 'hyperframes' as const,
       },
     },
     {
@@ -285,7 +285,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 15,
         aspectRatio: '16:9',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
       },
     },
     {
@@ -299,7 +299,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 15,
         aspectRatio: '16:9',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
       },
     },
     {
@@ -313,7 +313,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 45,
         aspectRatio: '16:9',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
       },
     },
     {
@@ -327,7 +327,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 15,
         aspectRatio: '16:9',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
       },
     },
     {
@@ -341,7 +341,7 @@ describe('getGenerationArtifactAccess', () => {
         fps: 30,
         durationSeconds: 15,
         aspectRatio: '16:9',
-        runtime: 'remotion',
+        runtime: 'remotion' as const,
       },
     },
   ])('rejects completed artifacts with $label before persisting them', async ({ artifact }) => {
@@ -349,7 +349,7 @@ describe('getGenerationArtifactAccess', () => {
     const { jobId } = await seedUploadingFixture(t)
 
     await expect(
-      t.mutation(completeGenerationJob, {
+      t.mutation(api.studio.completeGenerationJob, {
         jobId,
         workerId,
         workerSecret,
@@ -394,7 +394,7 @@ describe('getGenerationArtifactAccess', () => {
     }
 
     await expect(
-      t.mutation(completeGenerationJob, {
+      t.mutation(api.studio.completeGenerationJob, {
         jobId,
         workerId,
         workerSecret,

@@ -12,7 +12,7 @@ import {
 type SeedClient = {
   mutation(
     mutation: unknown,
-    args: StudioTemplateSeed,
+    args: StudioTemplateSeed & { importSecret: string },
   ): Promise<{ created: boolean }>
 }
 

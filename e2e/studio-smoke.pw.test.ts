@@ -27,8 +27,21 @@ test.describe('ai studio p0 smoke', () => {
     await expect(page.getByText(IN_FLIGHT_OR_DONE_STATUS)).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByRole('link', { name: DOWNLOAD_MP4 })).toBeVisible({
+    const downloadLink = page.getByRole('link', { name: DOWNLOAD_MP4 })
+    await expect(downloadLink).toBeVisible({
       timeout: 60_000,
     })
+
+    await expect(downloadLink).toHaveAttribute('href', /\/api\/studio\/artifacts\/download\?/)
+    const href = await downloadLink.getAttribute('href')
+    expect(href).toBeTruthy()
+
+    const downloadUrl = new URL(href!, page.url()).toString()
+    const response = await page.request.get(downloadUrl)
+
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toContain('video/mp4')
+    expect(response.url()).toContain('/api/studio/artifacts/download?')
+    expect((await response.body()).byteLength).toBeGreaterThan(0)
   })
 })

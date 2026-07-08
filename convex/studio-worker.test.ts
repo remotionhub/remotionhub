@@ -1,15 +1,7 @@
 import { convexTest } from 'convex-test'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { api } from './_generated/api'
 import schema from './schema'
-import {
-  claimNextGenerationJob,
-  completeGenerationJob,
-  completePlanning,
-  failGenerationJob,
-  markModelStarted,
-  startRendering,
-  startUploading,
-} from './studio'
 import { p0StudioTemplateSeed } from './lib/studio/templates'
 import { createStubRenderPlan } from '../scripts/studio-planner'
 
@@ -48,16 +40,27 @@ function createRenderRun() {
   }
 }
 
-function createArtifact() {
+function createWorkerRenderPlan(prompt: string) {
+  const plan = createStubRenderPlan(prompt, p0StudioTemplateSeed)
+
   return {
-    storageKey: 'studio/jobs/job_1/render-output.mp4',
-    thumbnailStorageKey: 'studio/jobs/job_1/render-output.jpg',
+    ...plan,
+    props: Object.fromEntries(
+      Object.entries(plan.props).map(([key, value]) => [key, String(value)]),
+    ),
+  }
+}
+
+function createArtifact(durationSeconds: number) {
+  return {
+    storageKey: 'studio/job-1/artifact.mp4',
+    thumbnailStorageKey: 'studio/job-1/artifact.jpg',
     fileSizeBytes: 1_024,
     mimeType: 'video/mp4',
     width: 1280,
     height: 720,
     fps: 30,
-    durationSeconds: 15,
+    durationSeconds,
     aspectRatio: '16:9',
     runtime: 'remotion' as const,
   }
@@ -113,8 +116,9 @@ describe('studio worker mutations', () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'worker-happy-path')
+    const renderPlan = createWorkerRenderPlan('Launch an AI analytics dashboard')
 
-    const claimedJob = await t.mutation(claimNextGenerationJob, {
+    const claimedJob = await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
@@ -126,46 +130,43 @@ describe('studio worker mutations', () => {
     expect(claimedJob?.workerId).toBe('worker-1')
     expect(claimedJob?.startedAt).toEqual(expect.any(Number))
 
-    await t.mutation(markModelStarted, {
+    await t.mutation(api.studio.markModelStarted, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
     })
 
-    await t.mutation(completePlanning, {
+    await t.mutation(api.studio.completePlanning, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
-      renderPlan: createStubRenderPlan(
-        'Launch an AI analytics dashboard',
-        p0StudioTemplateSeed,
-      ),
+      renderPlan,
       modelRun: createModelRun(),
     })
 
-    await t.mutation(startRendering, {
+    await t.mutation(api.studio.startRendering, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       renderRun: createRenderRun(),
     })
 
-    await t.mutation(startUploading, {
+    await t.mutation(api.studio.startUploading, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
     })
 
-    const completedJob = await t.mutation(completeGenerationJob, {
+    const completedJob = await t.mutation(api.studio.completeGenerationJob, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
-      artifact: createArtifact(),
+      artifact: createArtifact(renderPlan.output.durationSeconds),
       renderRun: {
         completedAt: 200,
         durationMs: 100,
         exitCode: 0,
-        outputStorageKey: 'studio/jobs/job_1/render-output.mp4',
+        outputStorageKey: 'studio/job-1/artifact.mp4',
       },
     })
 
@@ -197,10 +198,10 @@ describe('studio worker mutations', () => {
     )
 
     expect(storedJob?.plannerOutput).toEqual(
-      createStubRenderPlan('Launch an AI analytics dashboard', p0StudioTemplateSeed),
+      renderPlan,
     )
     expect(storedJob?.attemptCount).toBe(1)
-    expect(storedArtifact?.storageKey).toBe('studio/jobs/job_1/render-output.mp4')
+    expect(storedArtifact?.storageKey).toBe('studio/job-1/artifact.mp4')
     expect(modelRuns).toHaveLength(1)
     expect(renderRuns).toHaveLength(1)
     expect(renderRuns[0]?.completedAt).toBe(200)
@@ -218,14 +219,14 @@ describe('studio worker mutations', () => {
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'worker-mismatch')
 
-    await t.mutation(claimNextGenerationJob, {
+    await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
     await expect(
-      t.mutation(markModelStarted, {
+      t.mutation(api.studio.markModelStarted, {
         jobId,
         workerId: 'worker-2',
         workerSecret: WORKER_SECRET,
@@ -237,14 +238,13 @@ describe('studio worker mutations', () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'worker-secret-guard')
-    const renderPlan = createStubRenderPlan(
+    const renderPlan = createWorkerRenderPlan(
       'Launch an AI analytics dashboard',
-      p0StudioTemplateSeed,
     )
 
     delete process.env.STUDIO_WORKER_SECRET
     await expect(
-      t.mutation(claimNextGenerationJob, {
+      t.mutation(api.studio.claimNextGenerationJob, {
         workerId: 'worker-1',
         workerSecret: WORKER_SECRET,
         lockTtlMs: 30_000,
@@ -254,7 +254,7 @@ describe('studio worker mutations', () => {
     process.env.STUDIO_WORKER_SECRET = WORKER_SECRET
 
     await expect(
-      t.mutation(claimNextGenerationJob, {
+      t.mutation(api.studio.claimNextGenerationJob, {
         workerId: 'worker-1',
         workerSecret: 'wrong-secret',
         lockTtlMs: 30_000,
@@ -265,7 +265,7 @@ describe('studio worker mutations', () => {
     expect(unclaimedJob?.status).toBe('queued')
     expect(unclaimedJob?.workerId).toBeUndefined()
 
-    await t.mutation(claimNextGenerationJob, {
+    await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
@@ -273,13 +273,13 @@ describe('studio worker mutations', () => {
 
     const invalidSecretMutations = [
       () =>
-        t.mutation(markModelStarted, {
+        t.mutation(api.studio.markModelStarted, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
         }),
       () =>
-        t.mutation(completePlanning, {
+        t.mutation(api.studio.completePlanning, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
@@ -287,33 +287,33 @@ describe('studio worker mutations', () => {
           modelRun: createModelRun(),
         }),
       () =>
-        t.mutation(startRendering, {
+        t.mutation(api.studio.startRendering, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
           renderRun: createRenderRun(),
         }),
       () =>
-        t.mutation(startUploading, {
+        t.mutation(api.studio.startUploading, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
         }),
       () =>
-        t.mutation(completeGenerationJob, {
+        t.mutation(api.studio.completeGenerationJob, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
-          artifact: createArtifact(),
+          artifact: createArtifact(renderPlan.output.durationSeconds),
           renderRun: {
             completedAt: 200,
             durationMs: 100,
             exitCode: 0,
-            outputStorageKey: 'studio/jobs/job_1/render-output.mp4',
+            outputStorageKey: 'studio/job-1/artifact.mp4',
           },
         }),
       () =>
-        t.mutation(failGenerationJob, {
+        t.mutation(api.studio.failGenerationJob, {
           jobId,
           workerId: 'worker-1',
           workerSecret: 'wrong-secret',
@@ -337,13 +337,13 @@ describe('studio worker mutations', () => {
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'worker-failure')
 
-    await t.mutation(claimNextGenerationJob, {
+    await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
-    const failedJob = await t.mutation(failGenerationJob, {
+    const failedJob = await t.mutation(api.studio.failGenerationJob, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
@@ -399,7 +399,7 @@ describe('studio worker mutations', () => {
       }),
     )
 
-    const claimedJob = await t.mutation(claimNextGenerationJob, {
+    const claimedJob = await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-2',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
@@ -445,7 +445,7 @@ describe('studio worker mutations', () => {
       }),
     )
 
-    const claimedJob = await t.mutation(claimNextGenerationJob, {
+    const claimedJob = await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-2',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
@@ -454,7 +454,7 @@ describe('studio worker mutations', () => {
     expect(claimedJob?.id).toBe(jobId)
     expect(claimedJob?.attemptCount).toBe(2)
 
-    await t.mutation(markModelStarted, {
+    await t.mutation(api.studio.markModelStarted, {
       jobId,
       workerId: 'worker-2',
       workerSecret: WORKER_SECRET,
@@ -502,7 +502,7 @@ describe('studio worker mutations', () => {
       )
       const queuedJobId = await seedQueuedJob(t, `queued-after-${status}`)
 
-      const claimedJob = await t.mutation(claimNextGenerationJob, {
+      const claimedJob = await t.mutation(api.studio.claimNextGenerationJob, {
         workerId: 'worker-2',
         workerSecret: WORKER_SECRET,
         lockTtlMs: 30_000,
@@ -523,21 +523,21 @@ describe('studio worker mutations', () => {
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'invalid-transition')
 
-    await t.mutation(claimNextGenerationJob, {
+    await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
     await expect(
-      t.mutation(startUploading, {
+      t.mutation(api.studio.startUploading, {
         jobId,
         workerId: 'worker-1',
         workerSecret: WORKER_SECRET,
       }),
     ).rejects.toThrowError('INVALID_WORKER_STATE')
 
-    await t.mutation(failGenerationJob, {
+    await t.mutation(api.studio.failGenerationJob, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
@@ -546,7 +546,7 @@ describe('studio worker mutations', () => {
     })
 
     await expect(
-      t.mutation(markModelStarted, {
+      t.mutation(api.studio.markModelStarted, {
         jobId,
         workerId: 'worker-1',
         workerSecret: WORKER_SECRET,
@@ -558,18 +558,17 @@ describe('studio worker mutations', () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'duplicate-planning')
-    const renderPlan = createStubRenderPlan(
+    const renderPlan = createWorkerRenderPlan(
       'Launch an AI analytics dashboard',
-      p0StudioTemplateSeed,
     )
 
-    await t.mutation(claimNextGenerationJob, {
+    await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
       lockTtlMs: 30_000,
     })
 
-    await t.mutation(completePlanning, {
+    await t.mutation(api.studio.completePlanning, {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
@@ -578,7 +577,7 @@ describe('studio worker mutations', () => {
     })
 
     await expect(
-      t.mutation(completePlanning, {
+      t.mutation(api.studio.completePlanning, {
         jobId,
         workerId: 'worker-1',
         workerSecret: WORKER_SECRET,

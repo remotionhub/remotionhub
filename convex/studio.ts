@@ -183,7 +183,7 @@ function toSeedRecord(args: StudioTemplateSeed) {
   }
 }
 
-function studioError(code: string) {
+function studioError(code: string): never {
   throw new ConvexError(code)
 }
 

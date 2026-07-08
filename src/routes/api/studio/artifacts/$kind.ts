@@ -131,7 +131,9 @@ export const Route = createFileRoute('/api/studio/artifacts/$kind')({
           return new Response('Artifact not found.', { status: 404 })
         }
 
-        return new Response(artifactResult.bytes, {
+        const body = Uint8Array.from(artifactResult.bytes)
+
+        return new Response(body, {
           headers: {
             'content-type': getContentType(kind, storageKey),
             'content-disposition': getContentDisposition(kind, storageKey),

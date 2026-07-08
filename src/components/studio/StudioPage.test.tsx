@@ -412,8 +412,9 @@ describe('StudioPage', () => {
   })
 
   it('warns that planning cancellations may not refund after model start', async () => {
+    const currentJob = mocks.currentJob ?? buildCurrentJob()
     mocks.currentJob = {
-      ...mocks.currentJob,
+      ...currentJob,
       id: 'job-2',
       status: 'planning',
       artifactId: null,

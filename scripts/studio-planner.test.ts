@@ -51,7 +51,7 @@ describe('createStubRenderPlan', () => {
     }
 
     const result = await runStudioWorkerOnce(env, () => ({
-      async mutation(_mutation, args) {
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
         const step = [
           'claim',
           'markModelStarted',
@@ -71,10 +71,10 @@ describe('createStubRenderPlan', () => {
             prompt: 'Launch an AI analytics dashboard',
             templateId: p0StudioTemplateSeed.templateId,
             templateVersion: p0StudioTemplateSeed.templateVersion,
-          }
+          } as TResult
         }
 
-        return null
+        return null as TResult
       },
     }))
 

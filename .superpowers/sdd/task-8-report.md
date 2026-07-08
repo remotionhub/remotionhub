@@ -64,4 +64,22 @@ The Playwright smoke was added for the local P0 path, but it requires a running 
 
 - The smoke path still depends on `STUDIO_RENDER_MODE=fake`; it does not validate real Remotion rendering.
 - Artifact bytes still come from `STUDIO_FAKE_ARTIFACT_DIR` through the local signed route, not production object storage.
-- The failing `convex/studio-worker.test.ts` and `ci:types-build` checks appear to be pre-existing Task 1-7 issues; Task 8 only changed smoke/docs/report files and did not touch Studio runtime logic.
+
+## Review Blocker Follow-Up
+
+- fixed the worker happy-path fixture so its artifact profile matches the current signed local fake-artifact contract
+- switched Studio Convex tests to generated `api.studio.*` references so `convex-test` type checks against real function references
+- tightened the smoke test from link visibility to signed download-route fetch validation
+- added `make convex` directly to the README AI Studio local flow
+
+### Verification Summary
+
+- `npm run test -- convex/studio-worker.test.ts convex/studio.test.ts src/components/studio/StudioPage.test.tsx`
+- `npm run test -- scripts/studio-renderer.test.ts convex/studio-artifacts.test.ts src/components/studio/StudioPage.test.tsx`
+- `VITE_CONVEX_URL=https://example.invalid npm run ci:types-build`
+- `convex/studio.test.ts` exists in the current tree, so the requested focused query/mutation verification used that exact file rather than a substitute.
+- Result: all three commands passed after the fixes.
+  - first focused command: `3` files passed, `27` tests passed
+  - second focused command: `3` files passed, `21` tests passed
+  - type/build gate: `tsc --noEmit` passed and `vite build` completed for client and SSR output
+- Playwright smoke was kept meaningful but not executed here because it still requires the documented local prerequisites: `make convex`, seeded Studio template data, `STUDIO_RENDER_MODE=fake` worker process, and a running local app/browser target.
