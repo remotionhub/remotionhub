@@ -254,11 +254,11 @@ export function inspectCatalogEntry(
 
   try {
     const manifest = readAssetManifest(options.assetRepo, commit, source.path)
-    if (
-      isObject(manifest) &&
-      Array.isArray(manifest.runtimeAssets as unknown) &&
-      manifest.runtimeAssets.length > 0
-    ) {
+    const manifestRuntimeAssets = isObject(manifest)
+      ? manifest.runtimeAssets
+      : undefined
+
+    if (Array.isArray(manifestRuntimeAssets) && manifestRuntimeAssets.length > 0) {
       entry.manifestRuntimeAssets = true
     }
   } catch {
