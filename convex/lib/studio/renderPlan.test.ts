@@ -148,7 +148,7 @@ describe('validateRenderPlan', () => {
     expect(expectErrors(result)).toContain('TEMPLATE_VERSION_MISMATCH')
   })
 
-  it('rejects asset ids outside the allowed namespaces', () => {
+  it('rejects catalog asset ids that are not in the server-derived allowlist', () => {
     const result = validateRenderPlan(
       {
         schemaVersion: 1,
@@ -181,7 +181,53 @@ describe('validateRenderPlan', () => {
           },
         ],
         props: { headline: 'Launch faster' },
-        assetIds: ['external:unsafe-asset'],
+        assetIds: ['catalog:arbitrary-asset'],
+      },
+      job,
+      template,
+    )
+
+    expect(expectErrors(result)).toContain('PROPS_VALIDATION_FAILED')
+  })
+
+  it.each([
+    'https://evil.example/asset.png',
+    '../artifact.mp4',
+    'npm:react',
+  ])('rejects unsafe asset id %s', (assetId) => {
+    const result = validateRenderPlan(
+      {
+        schemaVersion: 1,
+        templateId: 'yt-simple-ai-product',
+        templateVersion: '1.0.0',
+        propsSchemaVersion: '1',
+        runtime: 'remotion',
+        output: {
+          aspectRatio: '16:9',
+          width: 1280,
+          height: 720,
+          fps: 30,
+          durationSeconds: 15,
+          format: 'mp4',
+        },
+        intentSummary: 'Product launch explainer',
+        style: {
+          tone: 'modern',
+          primaryColor: '#0F766E',
+          backgroundStyle: 'clean gradient',
+        },
+        scenes: [
+          {
+            id: 'scene-1',
+            durationSeconds: 15,
+            headline: 'Launch faster',
+            subtitle: 'AI workflow for product teams',
+            body: 'Turn scattered notes into polished product demos.',
+            visualHint: 'Dashboard panels slide into view',
+          },
+        ],
+        props: { headline: 'Launch faster' },
+        assetIds: [assetId],
       },
       job,
       template,

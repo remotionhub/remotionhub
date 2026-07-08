@@ -36,6 +36,7 @@ const STUDIO_MVP_WIDTH = 1280
 const STUDIO_MVP_HEIGHT = 720
 const STUDIO_MVP_FPS = 30
 const STUDIO_MVP_MAX_DURATION_SECONDS = 30
+const STUDIO_DEFAULT_DURATION_SECONDS = STUDIO_MVP_MAX_DURATION_SECONDS
 
 const studioTokenUsageValidator = v.object({
   inputTokens: v.number(),
@@ -420,6 +421,40 @@ function validateTemplate(template: Doc<'studioTemplates'>) {
   if (template.licenseStatus !== 'approved') {
     studioError('TEMPLATE_LICENSE_BLOCKED')
   }
+
+  const supportsMvpProfile =
+    template.supportedAspectRatios.includes(STUDIO_MVP_ASPECT_RATIO) &&
+    template.supportedResolutions.some(
+      (resolution) =>
+        resolution.width === STUDIO_MVP_WIDTH &&
+        resolution.height === STUDIO_MVP_HEIGHT,
+    ) &&
+    template.fps === STUDIO_MVP_FPS
+
+  if (!supportsMvpProfile) {
+    studioError('TEMPLATE_NOT_ALLOWED')
+  }
+}
+
+function normalizeStudioRequestedDurationSeconds(durationSeconds: number) {
+  if (!Number.isFinite(durationSeconds)) {
+    return STUDIO_DEFAULT_DURATION_SECONDS
+  }
+
+  const normalized = Math.trunc(durationSeconds)
+  if (
+    normalized < 1 ||
+    normalized > STUDIO_MVP_MAX_DURATION_SECONDS
+  ) {
+    return STUDIO_DEFAULT_DURATION_SECONDS
+  }
+
+  return normalized
+}
+
+function getServerApprovedAssetIds(_template: Doc<'studioTemplates'>) {
+  // Current MVP templates do not expose a server-managed asset manifest yet.
+  return [] as string[]
 }
 
 async function hasActiveJob(db: DatabaseReader, userId: string) {
@@ -643,7 +678,7 @@ async function failExpiredWorkerJob(
       ? 'RENDER_TIMEOUT'
       : job.status === 'uploading'
         ? 'UPLOAD_FAILED'
-        : 'RENDER_NOT_IMPLEMENTED'
+        : 'RENDER_FAILED'
   const errorMessage =
     job.status === 'rendering'
       ? 'Rendering worker lock expired before completion.'
@@ -670,6 +705,10 @@ async function failExpiredWorkerJob(
       recovery: 'expired_lock',
     },
     createdAt: now,
+  })
+  await refundGenerationJobInMutation(ctx, {
+    job,
+    reason: `Refund for system failure: ${errorCode}`,
   })
 }
 
@@ -809,12 +848,14 @@ export const createGenerationJob = mutation({
       status: 'queued',
       prompt,
       runtime: template.runtime,
-      aspectRatio: args.aspectRatio,
-      durationSeconds: args.durationSeconds,
+      aspectRatio: STUDIO_MVP_ASPECT_RATIO,
+      durationSeconds: normalizeStudioRequestedDurationSeconds(
+        args.durationSeconds,
+      ),
       templateId: template.templateId,
       templateVersion: template.templateVersion,
       propsSchemaVersion: template.propsSchemaVersion,
-      assetIds: args.assetIds,
+      assetIds: getServerApprovedAssetIds(template),
       attemptCount: 0,
       progress: defaultProgressForStatus('queued'),
       idempotencyKey: args.idempotencyKey,
@@ -1194,6 +1235,8 @@ export const completePlanning = mutation({
     })
     await ctx.db.patch(job._id, {
       plannerOutput: planResult.value,
+      aspectRatio: planResult.value.output.aspectRatio,
+      durationSeconds: planResult.value.output.durationSeconds,
       heartbeatAt: now,
       lockExpiresAt: now + getWorkerLockTtlMs(job),
       updatedAt: now,
@@ -1414,6 +1457,10 @@ export const failGenerationJob = mutation({
         errorCode: args.errorCode,
       },
       createdAt: now,
+    })
+    await refundGenerationJobInMutation(ctx, {
+      job,
+      reason: `Refund for system failure: ${args.errorCode}`,
     })
 
     const updatedJob = await ctx.db.get(job._id)

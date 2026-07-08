@@ -111,14 +111,9 @@ function validatePropsSchema(
 
 function hasAllowedAssetId(
   assetId: string,
-  templateId: string,
   allowedAssetIds: readonly string[],
 ) {
-  return (
-    assetId.startsWith('catalog:') ||
-    assetId.startsWith(`template:${templateId}:`) ||
-    allowedAssetIds.includes(assetId)
-  )
+  return allowedAssetIds.includes(assetId)
 }
 
 export function validateRenderPlan(
@@ -129,7 +124,7 @@ export function validateRenderPlan(
     propsSchemaVersion: string
   },
   template: {
-    allowedAssetIds: string[]
+    allowedAssetIds: readonly string[]
     propsSchema: unknown
   },
 ): { ok: true; value: StudioRenderPlan } | { ok: false; errors: StudioErrorCode[] } {
@@ -149,7 +144,7 @@ export function validateRenderPlan(
 
   if (
     plan.assetIds.some(
-      (assetId) => !hasAllowedAssetId(assetId, job.templateId, template.allowedAssetIds),
+      (assetId) => !hasAllowedAssetId(assetId, template.allowedAssetIds),
     )
   ) {
     return { ok: false, errors: ['PROPS_VALIDATION_FAILED'] }

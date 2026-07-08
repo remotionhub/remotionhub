@@ -98,6 +98,25 @@ async function seedQueuedJob(t: ReturnType<typeof convexTest>, jobIdempotencyKey
   )
 }
 
+async function seedConsumedCredit(
+  t: ReturnType<typeof convexTest>,
+  jobId: string,
+  userId = 'studio-user-1',
+) {
+  await t.run(async (ctx) => {
+    await ctx.db.insert('usageLedger', {
+      userId,
+      kind: 'consume',
+      amount: -1,
+      balanceAfter: 0,
+      jobId: jobId as never,
+      reason: 'Seeded studio consume entry.',
+      idempotencyKey: `consume:${jobId}`,
+      createdAt: 9,
+    })
+  })
+}
+
 describe('studio worker mutations', () => {
   beforeEach(() => {
     process.env.STUDIO_WORKER_SECRET = WORKER_SECRET
@@ -336,6 +355,7 @@ describe('studio worker mutations', () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
     const jobId = await seedQueuedJob(t, 'worker-failure')
+    await seedConsumedCredit(t, jobId)
 
     await t.mutation(api.studio.claimNextGenerationJob, {
       workerId: 'worker-1',
@@ -355,6 +375,12 @@ describe('studio worker mutations', () => {
     expect(failedJob.workerId).toBe('worker-1')
 
     const storedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+    const ledger = await t.run(async (ctx) =>
+      ctx.db
+        .query('usageLedger')
+        .withIndex('by_user_created', (q) => q.eq('userId', 'studio-user-1'))
+        .collect(),
+    )
     const events = await t.run(async (ctx) =>
       ctx.db
         .query('generationJobEvents')
@@ -365,10 +391,63 @@ describe('studio worker mutations', () => {
     expect(storedJob?.errorCode).toBe('MODEL_PROVIDER_ERROR')
     expect(storedJob?.errorMessage).toBe('Planner backend unavailable.')
     expect(storedJob?.failedAt).toEqual(expect.any(Number))
+    expect(storedJob?.refundedAt).toEqual(expect.any(Number))
+    expect(ledger.map((entry) => entry.idempotencyKey).sort()).toEqual([
+      `consume:${jobId}`,
+      `refund:${jobId}`,
+    ])
     expect(events.map((event) => event.type)).toEqual([
       'planning_started',
       'job_failed',
+      'credits_refunded',
     ])
+  })
+
+  it('updates the stored job summary from the validated render plan output', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await t.run(async (ctx) =>
+      ctx.db.insert('generationJobs', {
+        userId: 'studio-user-1',
+        status: 'queued',
+        prompt: 'Launch an AI analytics dashboard',
+        runtime: 'remotion',
+        aspectRatio: '16:9',
+        durationSeconds: 30,
+        templateId: p0StudioTemplateSeed.templateId,
+        templateVersion: p0StudioTemplateSeed.templateVersion,
+        propsSchemaVersion: p0StudioTemplateSeed.propsSchemaVersion,
+        assetIds: [],
+        attemptCount: 0,
+        progress: 5,
+        idempotencyKey: 'planning-summary-sync',
+        createdAt: 10,
+        updatedAt: 10,
+      }),
+    )
+    const renderPlan = createWorkerRenderPlan('Launch an AI analytics dashboard')
+
+    await t.mutation(api.studio.claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+    await t.mutation(api.studio.markModelStarted, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+    })
+    await t.mutation(api.studio.completePlanning, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderPlan,
+      modelRun: createModelRun(),
+    })
+
+    const storedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+    expect(storedJob?.aspectRatio).toBe(renderPlan.output.aspectRatio)
+    expect(storedJob?.durationSeconds).toBe(renderPlan.output.durationSeconds)
   })
 
   it('reclaims an expired planning lock and increments the attempt count', async () => {
@@ -500,6 +579,7 @@ describe('studio worker mutations', () => {
           updatedAt: 30,
         }),
       )
+      await seedConsumedCredit(t, staleJobId)
       const queuedJobId = await seedQueuedJob(t, `queued-after-${status}`)
 
       const claimedJob = await t.mutation(api.studio.claimNextGenerationJob, {
@@ -512,9 +592,29 @@ describe('studio worker mutations', () => {
       expect(claimedJob?.attemptCount).toBe(1)
 
       const staleJob = await t.run(async (ctx) => ctx.db.get(staleJobId))
+      const staleJobEvents = await t.run(async (ctx) =>
+        ctx.db
+          .query('generationJobEvents')
+          .withIndex('by_job_created', (q) => q.eq('jobId', staleJobId))
+          .collect(),
+      )
+      const ledger = await t.run(async (ctx) =>
+        ctx.db
+          .query('usageLedger')
+          .withIndex('by_user_created', (q) => q.eq('userId', 'studio-user-1'))
+          .collect(),
+      )
       expect(staleJob?.status).toBe('failed')
       expect(staleJob?.errorCode).toBe(errorCode)
       expect(staleJob?.workerId).toBe('worker-stale')
+      expect(staleJob?.refundedAt).toEqual(expect.any(Number))
+      expect(
+        ledger.filter((entry) => entry.idempotencyKey === `refund:${staleJobId}`),
+      ).toHaveLength(1)
+      expect(staleJobEvents.map((event) => event.type)).toEqual([
+        'job_failed',
+        'credits_refunded',
+      ])
     },
   )
 

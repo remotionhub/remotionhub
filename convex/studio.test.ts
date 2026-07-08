@@ -228,6 +228,33 @@ describe('studio queries and mutations', () => {
     ])
   })
 
+  it('normalizes client media metadata and ignores client asset allowlists on job creation', async () => {
+    const t = convexTest(schema, modules)
+    await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
+
+    const authed = t.withIdentity(studioIdentity)
+    const createdJob = await authed.mutation(api.studio.createGenerationJob, {
+      ...createGenerationArgs,
+      aspectRatio: '1:1',
+      durationSeconds: 45,
+      assetIds: [
+        'catalog:arbitrary-asset',
+        'https://evil.example/asset.png',
+        '../artifact.mp4',
+        'npm:react',
+      ],
+      idempotencyKey: 'idem-normalized',
+    })
+
+    expect(createdJob.aspectRatio).toBe('16:9')
+    expect(createdJob.durationSeconds).toBe(30)
+
+    const storedJob = await t.run(async (ctx) => ctx.db.get(createdJob.id))
+    expect(storedJob?.aspectRatio).toBe('16:9')
+    expect(storedJob?.durationSeconds).toBe(30)
+    expect(storedJob?.assetIds).toEqual([])
+  })
+
   it('blocks a second active job with a distinct idempotency key', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
