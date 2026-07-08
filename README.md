@@ -104,3 +104,49 @@ make e2e
 ```
 
 `PLAYWRIGHT_USE_SYSTEM_CHROME=1` uses the local Google Chrome installation when Playwright browser download is unavailable.
+
+## AI Studio P0
+
+The AI Studio MVP smoke path currently validates a local-only bridge:
+
+- planner stub in `scripts/studio-planner.ts`
+- fake renderer mode via `STUDIO_RENDER_MODE=fake`
+- local artifact serving through `/api/studio/artifacts/*`
+
+This is suitable for local development and Task 8 smoke coverage only. It does not mean production Remotion rendering or production object storage is wired.
+
+Required local env for the Studio smoke path:
+
+```bash
+VITE_CONVEX_URL=http://127.0.0.1:3210
+STUDIO_TEMPLATE_IMPORT_SECRET=dev-studio-template-import-secret
+STUDIO_WORKER_SECRET=dev-studio-worker-secret
+STUDIO_ARTIFACT_SIGNING_SECRET=dev-studio-artifact-signing-secret
+STUDIO_FAKE_ARTIFACT_DIR=/tmp/remotionhub-studio-artifacts
+```
+
+Seed the first Studio template:
+
+```bash
+npx tsx scripts/seed-studio-templates.ts
+```
+
+Run the worker in fake render mode:
+
+```bash
+STUDIO_RENDER_MODE=fake npx tsx scripts/studio-worker.ts
+```
+
+Run the app against local Convex:
+
+```bash
+make app
+```
+
+Open `/studio`, confirm the recommended template, submit a prompt, and wait for the job to move from queued/planning into a completed artifact with playback and download links.
+
+Run the focused Studio Playwright smoke once the local app, Convex backend, seeded template, and fake worker are all ready:
+
+```bash
+npm run test:e2e -- e2e/studio-smoke.pw.test.ts
+```
