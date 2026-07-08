@@ -13,7 +13,6 @@ import {
 } from './lib/studio/artifacts'
 import {
   canCancelGenerationJob,
-  canRefundCancellation,
   defaultProgressForStatus,
 } from './lib/studio/jobs'
 import { consumeKey, initialGrantKey, refundKey } from './lib/studio/ledger'
@@ -191,6 +190,7 @@ function studioError(code: string): never {
 
 function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
   storageKey: string
+  thumbnailStorageKey?: string
   fileSizeBytes: number
   mimeType: string
   width: number
@@ -222,6 +222,15 @@ function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
     artifact.storageKey.endsWith('.mp4')
 
   if (!hasValidStorageKey || artifact.fileSizeBytes <= 0) {
+    studioError('ARTIFACT_PROFILE_MISMATCH')
+  }
+
+  if (
+    artifact.thumbnailStorageKey &&
+    !new RegExp(
+      `^${artifact.storageKey.slice(0, artifact.storageKey.lastIndexOf('/') + 1)}artifact-thumbnail\\.(jpg|jpeg|png|webp)$`,
+    ).test(artifact.thumbnailStorageKey)
+  ) {
     studioError('ARTIFACT_PROFILE_MISMATCH')
   }
 
@@ -685,7 +694,7 @@ async function failExpiredWorkerJob(
       ? 'Rendering worker lock expired before completion.'
       : job.status === 'uploading'
         ? 'Upload worker lock expired before completion.'
-        : 'Planner output was produced, but rendering is not implemented in Task 5.'
+        : 'Planning worker lock expired before completion.'
 
   await ctx.db.patch(job._id, {
     status: 'failed',
@@ -731,6 +740,33 @@ async function findExpiredActiveJobs(
     .flat()
     .filter((job) => isExpiredWorkerLock(job, now, fallbackTtlMs))
     .sort((left, right) => left.createdAt - right.createdAt)
+}
+
+async function recoverExpiredActiveJobsForUser(
+  ctx: MutationCtx,
+  userId: string,
+  now: number,
+  fallbackTtlMs: number,
+) {
+  const activeJobs = await Promise.all(
+    ACTIVE_JOB_STATUSES.filter((status) => status !== 'queued').map((status) =>
+      ctx.db
+        .query('generationJobs')
+        .withIndex('by_user_status', (q) =>
+          q.eq('userId', userId).eq('status', status),
+        )
+        .collect(),
+    ),
+  )
+
+  const expiredJobs = activeJobs
+    .flat()
+    .filter((job) => isExpiredWorkerLock(job, now, fallbackTtlMs))
+    .sort((left, right) => left.createdAt - right.createdAt)
+
+  for (const job of expiredJobs) {
+    await failExpiredWorkerJob(ctx, job, now)
+  }
 }
 
 export const upsertStudioTemplate = mutation({
@@ -833,6 +869,13 @@ export const createGenerationJob = mutation({
       args.templateVersion,
     )
     validateTemplate(template)
+
+    await recoverExpiredActiveJobsForUser(
+      ctx,
+      userId,
+      Date.now(),
+      DEFAULT_STUDIO_WORKER_LOCK_TTL_MS,
+    )
 
     if (await hasActiveJob(ctx.db, userId)) {
       studioError('ACTIVE_JOB_LIMIT')
@@ -1076,18 +1119,6 @@ export const cancelGenerationJob = mutation({
       message: args.reason,
       createdAt: now,
     })
-
-    if (
-      canRefundCancellation({
-        status: job.status,
-        modelStartedAt: job.modelStartedAt,
-      })
-    ) {
-      await refundGenerationJobInMutation(ctx, {
-        job,
-        reason: `Refund for canceled job: ${args.reason}`,
-      })
-    }
 
     const canceledJob = await ctx.db.get(job._id)
     if (!canceledJob) {

@@ -344,6 +344,36 @@ describe('getGenerationArtifactAccess', () => {
         runtime: 'remotion' as const,
       },
     },
+    {
+      label: 'cross-job thumbnail key',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        thumbnailStorageKey: 'studio/job-3/artifact-thumbnail.jpg',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion' as const,
+      },
+    },
+    {
+      label: 'unsafe thumbnail filename',
+      artifact: {
+        storageKey: 'studio/job-2/artifact.mp4',
+        thumbnailStorageKey: 'studio/job-2/thumbnail.gif',
+        fileSizeBytes: 3291,
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        fps: 30,
+        durationSeconds: 15,
+        aspectRatio: '16:9',
+        runtime: 'remotion' as const,
+      },
+    },
   ])('rejects completed artifacts with $label before persisting them', async ({ artifact }) => {
     const t = convexTest(schema, modules)
     const { jobId } = await seedUploadingFixture(t)

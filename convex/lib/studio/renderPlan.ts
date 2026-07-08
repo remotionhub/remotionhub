@@ -154,5 +154,13 @@ export function validateRenderPlan(
     return { ok: false, errors: ['PROPS_VALIDATION_FAILED'] }
   }
 
+  const totalSceneDurationSeconds = plan.scenes.reduce(
+    (total, scene) => total + scene.durationSeconds,
+    0,
+  )
+  if (totalSceneDurationSeconds !== plan.output.durationSeconds) {
+    return { ok: false, errors: ['PLAN_VALIDATION_FAILED'] }
+  }
+
   return { ok: true, value: plan }
 }

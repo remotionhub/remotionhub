@@ -138,6 +138,7 @@ describe('studio artifact route', () => {
     })
 
     expect(response.status).toBe(200)
+    expect(response.headers.get('cache-control')).toBe('private, no-store')
     expect(response.headers.get('content-type')).toBe('video/mp4')
     expect(response.headers.get('content-disposition')).toContain('inline')
     expect(new Uint8Array(await response.arrayBuffer())).toEqual(bytes)
@@ -237,6 +238,7 @@ describe('studio artifact route', () => {
       })
 
       expect(response.status).toBe(200)
+      expect(response.headers.get('cache-control')).toBe('private, no-store')
       expect(response.headers.get('content-type')).toBe('image/svg+xml')
       expect(await response.text()).toBe(decodeURIComponent(DEFAULT_STUDIO_THUMBNAIL_URL.split(',')[1] ?? ''))
     },

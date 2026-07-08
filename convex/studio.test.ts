@@ -281,7 +281,7 @@ describe('studio queries and mutations', () => {
     ).rejects.toThrowError('ACTIVE_JOB_LIMIT')
   })
 
-  it('cancels queued jobs with a refund and keeps the refund idempotent across repeated cancellation', async () => {
+  it('cancels queued jobs without refunding credits and keeps the cancellation idempotent', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
@@ -298,7 +298,7 @@ describe('studio queries and mutations', () => {
     expect(canceledJob).not.toHaveProperty('refundedAt')
 
     const storedCanceledJob = await t.run(async (ctx) => ctx.db.get(job.id))
-    expect(storedCanceledJob?.refundedAt).toEqual(expect.any(Number))
+    expect(storedCanceledJob?.refundedAt).toBeUndefined()
 
     const secondCancel = await authed.mutation(api.studio.cancelGenerationJob, {
       jobId: job.id,
@@ -319,11 +319,22 @@ describe('studio queries and mutations', () => {
     expect(ledger.map((entry) => entry.idempotencyKey).sort()).toEqual([
       `consume:${job.id}`,
       `initial-grant-v1:${studioIdentity.subject}`,
-      `refund:${job.id}`,
+    ])
+
+    const events = await t.run(async (ctx) =>
+      ctx.db
+        .query('generationJobEvents')
+        .withIndex('by_job_created', (q) => q.eq('jobId', job.id))
+        .collect(),
+    )
+    expect(events.map((event) => event.type)).toEqual([
+      'job_created',
+      'credits_consumed',
+      'job_canceled',
     ])
   })
 
-  it('refunds planning cancellations only before model start', async () => {
+  it('does not refund planning cancellations regardless of model start timing', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
 
@@ -369,11 +380,103 @@ describe('studio queries and mutations', () => {
       ctx.db.get(otherJob.id),
     )
 
-    expect(storedRefundedPlanningJob?.refundedAt).toEqual(expect.any(Number))
+    expect(storedRefundedPlanningJob?.refundedAt).toBeUndefined()
     expect(storedNonRefundedPlanningJob?.refundedAt).toBeUndefined()
     expect(refundedPlanningJob).not.toHaveProperty('refundedAt')
     expect(nonRefundedPlanningJob).not.toHaveProperty('refundedAt')
+
+    const firstUserLedger = await t.run(async (ctx) =>
+      ctx.db
+        .query('usageLedger')
+        .withIndex('by_user_created', (q) =>
+          q.eq('userId', studioIdentity.subject),
+        )
+        .collect(),
+    )
+    const secondUserLedger = await t.run(async (ctx) =>
+      ctx.db
+        .query('usageLedger')
+        .withIndex('by_user_created', (q) =>
+          q.eq('userId', secondStudioIdentity.subject),
+        )
+        .collect(),
+    )
+    expect(firstUserLedger.map((entry) => entry.idempotencyKey).sort()).toEqual([
+      `consume:${job.id}`,
+      `initial-grant-v1:${studioIdentity.subject}`,
+    ])
+    expect(secondUserLedger.map((entry) => entry.idempotencyKey).sort()).toEqual([
+      `consume:${otherJob.id}`,
+      `initial-grant-v1:${secondStudioIdentity.subject}`,
+    ])
   })
+
+  it.each([
+    ['planning', { progress: 20 }],
+    ['rendering', { progress: 60, modelStartedAt: 20 }],
+    ['uploading', { progress: 90, modelStartedAt: 20 }],
+  ] as const)(
+    'recovers an expired %s job before enforcing the active job limit',
+    async (status, extraPatch) => {
+      const t = convexTest(schema, modules)
+      await t.mutation(api.studio.upsertStudioTemplate, approvedTemplate)
+
+      const authed = t.withIdentity(studioIdentity)
+      const staleJob = await authed.mutation(
+        api.studio.createGenerationJob,
+        createGenerationArgs,
+      )
+
+      await t.run(async (ctx) => {
+        await ctx.db.patch(staleJob.id, {
+          status,
+          workerId: 'worker-stale',
+          lockedAt: 10,
+          heartbeatAt: 20,
+          lockExpiresAt: 30,
+          startedAt: 10,
+          updatedAt: 30,
+          ...extraPatch,
+        })
+      })
+
+      const replacementJob = await authed.mutation(api.studio.createGenerationJob, {
+        ...createGenerationArgs,
+        idempotencyKey: `replacement-${status}`,
+      })
+
+      expect(replacementJob.id).not.toBe(staleJob.id)
+      expect(replacementJob.status).toBe('queued')
+
+      const storedStaleJob = await t.run(async (ctx) => ctx.db.get(staleJob.id))
+      const ledger = await t.run(async (ctx) =>
+        ctx.db
+          .query('usageLedger')
+          .withIndex('by_user_created', (q) =>
+            q.eq('userId', studioIdentity.subject),
+          )
+          .collect(),
+      )
+      const events = await t.run(async (ctx) =>
+        ctx.db
+          .query('generationJobEvents')
+          .withIndex('by_job_created', (q) => q.eq('jobId', staleJob.id))
+          .collect(),
+      )
+
+      expect(storedStaleJob?.status).toBe('failed')
+      expect(storedStaleJob?.refundedAt).toEqual(expect.any(Number))
+      expect(
+        ledger.filter((entry) => entry.idempotencyKey === `refund:${staleJob.id}`),
+      ).toHaveLength(1)
+      expect(events.map((event) => event.type)).toEqual([
+        'job_created',
+        'credits_consumed',
+        'job_failed',
+        'credits_refunded',
+      ])
+    },
+  )
 
   it('rejects cancellation for completed and failed jobs without rewriting them', async () => {
     const t = convexTest(schema, modules)

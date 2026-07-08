@@ -54,7 +54,7 @@ function createWorkerRenderPlan(prompt: string) {
 function createArtifact(durationSeconds: number) {
   return {
     storageKey: 'studio/job-1/artifact.mp4',
-    thumbnailStorageKey: 'studio/job-1/artifact.jpg',
+    thumbnailStorageKey: 'studio/job-1/artifact-thumbnail.jpg',
     fileSizeBytes: 1_024,
     mimeType: 'video/mp4',
     width: 1280,
@@ -449,6 +449,90 @@ describe('studio worker mutations', () => {
     expect(storedJob?.aspectRatio).toBe(renderPlan.output.aspectRatio)
     expect(storedJob?.durationSeconds).toBe(renderPlan.output.durationSeconds)
   })
+
+  it.each([
+    {
+      label: 'exceeds',
+      scenes: [
+        {
+          id: 'scene-1',
+          durationSeconds: 10,
+          headline: 'Scene one',
+          subtitle: 'Part one',
+          body: 'Body one',
+          visualHint: 'Hint one',
+        },
+        {
+          id: 'scene-2',
+          durationSeconds: 6,
+          headline: 'Scene two',
+          subtitle: 'Part two',
+          body: 'Body two',
+          visualHint: 'Hint two',
+        },
+      ],
+    },
+    {
+      label: 'falls short',
+      scenes: [
+        {
+          id: 'scene-1',
+          durationSeconds: 10,
+          headline: 'Scene one',
+          subtitle: 'Part one',
+          body: 'Body one',
+          visualHint: 'Hint one',
+        },
+        {
+          id: 'scene-2',
+          durationSeconds: 4,
+          headline: 'Scene two',
+          subtitle: 'Part two',
+          body: 'Body two',
+          visualHint: 'Hint two',
+        },
+      ],
+    },
+  ])(
+    'rejects planning completion when multi-scene duration $label output duration',
+    async ({ scenes }) => {
+      const t = convexTest(schema, modules)
+      await seedStudioTemplate(t)
+      const jobId = await seedQueuedJob(t, 'invalid-scene-duration')
+      const renderPlan = createWorkerRenderPlan(
+        'Launch an AI analytics dashboard',
+      )
+
+      renderPlan.scenes = scenes
+
+      await t.mutation(api.studio.claimNextGenerationJob, {
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        lockTtlMs: 30_000,
+      })
+
+      await expect(
+        t.mutation(api.studio.completePlanning, {
+          jobId,
+          workerId: 'worker-1',
+          workerSecret: WORKER_SECRET,
+          renderPlan,
+          modelRun: createModelRun(),
+        }),
+      ).rejects.toThrowError('PLAN_VALIDATION_FAILED')
+
+      const storedJob = await t.run(async (ctx) => ctx.db.get(jobId))
+      const modelRuns = await t.run(async (ctx) =>
+        ctx.db
+          .query('modelRuns')
+          .withIndex('by_job_created', (q) => q.eq('jobId', jobId))
+          .collect(),
+      )
+
+      expect(storedJob?.plannerOutput).toBeUndefined()
+      expect(modelRuns).toHaveLength(0)
+    },
+  )
 
   it('reclaims an expired planning lock and increments the attempt count', async () => {
     const t = convexTest(schema, modules)

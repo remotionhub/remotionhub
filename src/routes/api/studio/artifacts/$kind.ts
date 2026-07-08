@@ -9,6 +9,7 @@ import { readStudioLocalArtifact } from '../../../../../lib/studio/artifact-stor
 const DEFAULT_THUMBNAIL_SVG = decodeURIComponent(
   DEFAULT_STUDIO_THUMBNAIL_URL.split(',')[1] ?? '',
 )
+const PRIVATE_NO_STORE_CACHE_CONTROL = 'private, no-store'
 
 function isStudioArtifactKind(value: string): value is StudioArtifactUrlKind {
   return (
@@ -72,6 +73,7 @@ function getContentDisposition(kind: StudioArtifactUrlKind, storageKey: string) 
 function createDefaultThumbnailResponse() {
   return new Response(DEFAULT_THUMBNAIL_SVG, {
     headers: {
+      'cache-control': PRIVATE_NO_STORE_CACHE_CONTROL,
       'content-type': 'image/svg+xml',
       'content-disposition': 'inline; filename="thumbnail.svg"',
       'content-length': String(new TextEncoder().encode(DEFAULT_THUMBNAIL_SVG).byteLength),
@@ -135,6 +137,7 @@ export const Route = createFileRoute('/api/studio/artifacts/$kind')({
 
         return new Response(body, {
           headers: {
+            'cache-control': PRIVATE_NO_STORE_CACHE_CONTROL,
             'content-type': getContentType(kind, storageKey),
             'content-disposition': getContentDisposition(kind, storageKey),
             'content-length': String(artifactResult.bytes.byteLength),
