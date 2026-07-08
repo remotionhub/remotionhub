@@ -24,6 +24,7 @@ type RunWorkerResult =
   | { status: 'planned'; jobId: string }
   | { status: 'completed'; jobId: string }
   | { status: 'failed'; jobId: string }
+  | { status: 'canceled'; jobId: string }
 
 function getStudioApi() {
   return api as {
@@ -48,6 +49,10 @@ function getStudioWorkerFailureCode(message: string): StudioErrorCode {
   }
 
   return 'MODEL_PROVIDER_ERROR'
+}
+
+function isInvalidWorkerStateError(error: unknown) {
+  return error instanceof Error && error.message.includes('INVALID_WORKER_STATE')
 }
 
 function sleep(ms: number, signal?: AbortSignal) {
@@ -262,13 +267,27 @@ export async function runStudioWorkerOnce(
       error instanceof Error ? error.message : 'Unknown studio worker error.'
     const errorCode = getStudioWorkerFailureCode(errorMessage)
 
-    await client.mutation(studioApi.studio.failGenerationJob, {
-      jobId: claimedJob.id,
-      workerId,
-      workerSecret,
-      errorCode,
-      errorMessage: errorMessage.slice(0, 500),
-    })
+    try {
+      await client.mutation(studioApi.studio.failGenerationJob, {
+        jobId: claimedJob.id,
+        workerId,
+        workerSecret,
+        errorCode,
+        errorMessage: errorMessage.slice(0, 500),
+      })
+    } catch (failError) {
+      if (
+        isInvalidWorkerStateError(error) &&
+        isInvalidWorkerStateError(failError)
+      ) {
+        console.warn(
+          `Studio job ${claimedJob.id} was already terminal before failure handling completed.`,
+        )
+        return { status: 'canceled', jobId: claimedJob.id }
+      }
+
+      throw failError
+    }
 
     console.error(`Failed studio job ${claimedJob.id}: ${errorMessage}`)
     return { status: 'failed', jobId: claimedJob.id }

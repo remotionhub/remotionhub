@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import StudioPage from './StudioPage'
 
@@ -164,6 +164,7 @@ const mocks = vi.hoisted(() => {
     viewer: {
       userId: 'studio-user-1',
     } as { userId: string } | null | undefined,
+    artifactAccessQueryArgs: [] as unknown[],
     confirm: vi.fn(() => true),
   }
 })
@@ -200,6 +201,7 @@ vi.mock('convex/react', () => ({
       return args === 'skip' ? undefined : mocks.currentJob
     }
     if (reference === 'getGenerationArtifactAccess') {
+      mocks.artifactAccessQueryArgs.push(args)
       return args === 'skip' ? undefined : mocks.artifactAccess
     }
     return undefined
@@ -294,6 +296,7 @@ describe('StudioPage', () => {
     mocks.history = buildHistory()
     mocks.currentJob = buildCurrentJob()
     mocks.viewer = { userId: 'studio-user-1' }
+    mocks.artifactAccessQueryArgs = []
     mocks.createGenerationJob.mockReset().mockResolvedValue({
       id: 'job-created',
       status: 'queued',
@@ -316,6 +319,7 @@ describe('StudioPage', () => {
   })
 
   afterEach(() => {
+    vi.useRealTimers()
     cleanup()
   })
 
@@ -463,6 +467,61 @@ describe('StudioPage', () => {
     expect(
       screen.getByRole('link', { name: 'Download MP4' }).getAttribute('href'),
     ).toBe('https://cdn.example.com/download.mp4')
+  })
+
+  it('renews signed artifact URLs before they expire', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(1_720_000_000_000)
+    mocks.artifactAccess = {
+      ...mocks.artifactAccess,
+      playback: {
+        ...mocks.artifactAccess.playback,
+        expiresAt: 1_720_000_031_000,
+      },
+      download: {
+        ...mocks.artifactAccess.download,
+        expiresAt: 1_720_000_031_000,
+      },
+      thumbnail: {
+        ...mocks.artifactAccess.thumbnail,
+        expiresAt: 1_720_000_031_000,
+      },
+    }
+
+    renderStudioPage()
+
+    expect(mocks.artifactAccessQueryArgs).toContainEqual({
+      jobId: 'job-1',
+      refresh: 0,
+    })
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1_000)
+    })
+    expect(mocks.artifactAccessQueryArgs).toContainEqual('skip')
+
+    mocks.artifactAccess = {
+      ...mocks.artifactAccess,
+      playback: {
+        ...mocks.artifactAccess.playback,
+        expiresAt: 1_720_000_300_000,
+      },
+      download: {
+        ...mocks.artifactAccess.download,
+        expiresAt: 1_720_000_300_000,
+      },
+      thumbnail: {
+        ...mocks.artifactAccess.thumbnail,
+        expiresAt: 1_720_000_300_000,
+      },
+    }
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync()
+    })
+    expect(mocks.artifactAccessQueryArgs).toContainEqual({
+      jobId: 'job-1',
+      refresh: 1,
+    })
   })
 
   it('shows a pending artifact message when a completed job has no signed URLs yet', () => {

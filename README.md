@@ -156,5 +156,5 @@ Open `/studio`, confirm the recommended template, submit a prompt, and wait for 
 Run the focused Studio Playwright smoke once the local app, Convex backend, authenticated browser state, seeded template, and fake worker are all ready:
 
 ```bash
-STUDIO_E2E=1 npm run test:e2e -- e2e/studio-smoke.pw.test.ts
+PLAYWRIGHT_BASE_URL=http://127.0.0.1:3000 STUDIO_E2E=1 npm run test:e2e -- e2e/studio-smoke.pw.test.ts
 ```

@@ -9,6 +9,7 @@ import { Skeleton } from '#/components/ui/skeleton'
 const STUDIO_DEFAULT_ASPECT_RATIO = '16:9'
 const STUDIO_DEFAULT_DURATION_SECONDS = 15
 const STUDIO_CANCEL_REASON = 'Canceled from studio.'
+const STUDIO_ARTIFACT_RENEWAL_SAFETY_MS = 30_000
 
 type RetrySignature = {
   key: string
@@ -91,6 +92,8 @@ export default function StudioPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isCanceling, setIsCanceling] = useState(false)
   const [retrySignature, setRetrySignature] = useState<RetrySignature | null>(null)
+  const [artifactRefreshNonce, setArtifactRefreshNonce] = useState(0)
+  const [shouldFetchArtifactAccess, setShouldFetchArtifactAccess] = useState(true)
 
   const studioTemplates = templates as StudioTemplate[] | undefined
   const recommendedTemplate = studioTemplates?.[0] ?? null
@@ -116,8 +119,10 @@ export default function StudioPage() {
     : visibleHistory[0] ?? null
   const artifactAccess = useQuery(
     api.studio.getGenerationArtifactAccess,
-    currentJob?.status === 'completed' && currentJob.artifactId
-      ? { jobId: currentJob.id }
+    shouldFetchArtifactAccess &&
+      currentJob?.status === 'completed' &&
+      currentJob.artifactId
+      ? { jobId: currentJob.id, refresh: artifactRefreshNonce }
       : 'skip',
   )
   const selectedTemplateResolution = selectedTemplate?.supportedResolutions?.[0] ?? null
@@ -133,6 +138,36 @@ export default function StudioPage() {
       setSelectedJobId(visibleHistory[0].id)
     }
   }, [selectedJobId, visibleHistory])
+
+  useEffect(() => {
+    setShouldFetchArtifactAccess(true)
+    setArtifactRefreshNonce(0)
+  }, [currentJob?.id])
+
+  useEffect(() => {
+    if (!artifactAccess) {
+      return
+    }
+
+    const earliestExpiry = Math.min(
+      artifactAccess.playback.expiresAt,
+      artifactAccess.download.expiresAt,
+      artifactAccess.thumbnail?.expiresAt ?? artifactAccess.playback.expiresAt,
+    )
+    const renewalDelay = Math.max(
+      0,
+      earliestExpiry - Date.now() - STUDIO_ARTIFACT_RENEWAL_SAFETY_MS,
+    )
+    const timeout = window.setTimeout(() => {
+      setShouldFetchArtifactAccess(false)
+      window.setTimeout(() => {
+        setArtifactRefreshNonce((nonce) => nonce + 1)
+        setShouldFetchArtifactAccess(true)
+      }, 0)
+    }, renewalDelay)
+
+    return () => window.clearTimeout(timeout)
+  }, [artifactAccess])
 
   function applyTemplate(template: StudioTemplate) {
     setSelectedTemplateIdentity(templateIdentity(template))

@@ -277,4 +277,56 @@ describe('createStubRenderPlan', () => {
       },
     })
   })
+
+  it('treats already-canceled planning jobs as terminal during failure handling', async () => {
+    const calls: Array<{ step: string; args: Record<string, unknown> }> = []
+    const env = {
+      CONVEX_URL: 'https://example.convex.cloud',
+      STUDIO_WORKER_ID: 'worker-1',
+      STUDIO_WORKER_SECRET: 'studio-worker-secret',
+      STUDIO_RENDER_MODE: 'fake',
+    }
+
+    const result = await runStudioWorkerOnce(env, () => ({
+      async mutation<TArgs, TResult>(_mutation: unknown, args: TArgs): Promise<TResult> {
+        const sequence = [
+          'claim',
+          'markModelStarted',
+          'completePlanning',
+          'failGenerationJob',
+        ]
+        const step = sequence[calls.length]
+        calls.push({
+          step,
+          args: args as Record<string, unknown>,
+        })
+
+        if (step === 'claim') {
+          return {
+            id: 'job-1',
+            prompt: 'Launch an AI analytics dashboard',
+            templateId: p0StudioTemplateSeed.templateId,
+            templateVersion: p0StudioTemplateSeed.templateVersion,
+          } as TResult
+        }
+
+        if (step === 'completePlanning' || step === 'failGenerationJob') {
+          throw new Error('ConvexError: INVALID_WORKER_STATE')
+        }
+
+        return null as TResult
+      },
+    }))
+
+    expect(result).toEqual({
+      status: 'canceled',
+      jobId: 'job-1',
+    })
+    expect(calls.map((call) => call.step)).toEqual([
+      'claim',
+      'markModelStarted',
+      'completePlanning',
+      'failGenerationJob',
+    ])
+  })
 })

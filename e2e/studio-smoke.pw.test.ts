@@ -9,6 +9,10 @@ const IN_FLIGHT_OR_DONE_STATUS =
 
 test.describe('ai studio p0 smoke', () => {
   test.skip(
+    ({ browserName, isMobile }) => browserName !== 'chromium' || isMobile,
+    'Studio smoke uses one authenticated user and runs only in the desktop Chromium project.',
+  )
+  test.skip(
     process.env.STUDIO_E2E !== '1',
     'Studio smoke requires STUDIO_E2E=1 plus local auth, Convex, seeded template, fake worker, and app processes.',
   )

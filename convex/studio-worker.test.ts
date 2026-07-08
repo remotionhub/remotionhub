@@ -66,6 +66,14 @@ function createArtifact(durationSeconds: number) {
   }
 }
 
+function createArtifactForJob(jobId: string, durationSeconds: number) {
+  return {
+    ...createArtifact(durationSeconds),
+    storageKey: `studio/${jobId}/artifact.mp4`,
+    thumbnailStorageKey: `studio/${jobId}/artifact-thumbnail.jpg`,
+  }
+}
+
 async function seedStudioTemplate(t: ReturnType<typeof convexTest>) {
   await t.run(async (ctx) => {
     await ctx.db.insert('studioTemplates', {
@@ -180,12 +188,12 @@ describe('studio worker mutations', () => {
       jobId,
       workerId: 'worker-1',
       workerSecret: WORKER_SECRET,
-      artifact: createArtifact(renderPlan.output.durationSeconds),
+      artifact: createArtifactForJob(jobId, renderPlan.output.durationSeconds),
       renderRun: {
         completedAt: 200,
         durationMs: 100,
         exitCode: 0,
-        outputStorageKey: 'studio/job-1/artifact.mp4',
+        outputStorageKey: `studio/${jobId}/artifact.mp4`,
       },
     })
 
@@ -220,7 +228,7 @@ describe('studio worker mutations', () => {
       renderPlan,
     )
     expect(storedJob?.attemptCount).toBe(1)
-    expect(storedArtifact?.storageKey).toBe('studio/job-1/artifact.mp4')
+    expect(storedArtifact?.storageKey).toBe(`studio/${jobId}/artifact.mp4`)
     expect(modelRuns).toHaveLength(1)
     expect(renderRuns).toHaveLength(1)
     expect(renderRuns[0]?.completedAt).toBe(200)
@@ -499,6 +507,130 @@ describe('studio worker mutations', () => {
     ])
   })
 
+  it('rejects completed artifacts whose storage key belongs to another job', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await seedQueuedJob(t, 'artifact-key-binding')
+    const renderPlan = createWorkerRenderPlan('Launch an AI analytics dashboard')
+
+    await t.mutation(api.studio.claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+    await t.mutation(api.studio.markModelStarted, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+    })
+    await t.mutation(api.studio.completePlanning, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderPlan,
+      modelRun: createModelRun(),
+    })
+    await t.mutation(api.studio.startRendering, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderRun: createRenderRun(),
+    })
+    await t.mutation(api.studio.startUploading, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+    })
+
+    await expect(
+      t.mutation(api.studio.completeGenerationJob, {
+        jobId,
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        artifact: createArtifact(renderPlan.output.durationSeconds),
+        renderRun: {
+          completedAt: 200,
+          durationMs: 100,
+          exitCode: 0,
+          outputStorageKey: 'studio/job-1/artifact.mp4',
+        },
+      }),
+    ).rejects.toThrowError('ARTIFACT_PROFILE_MISMATCH')
+
+    await expect(
+      t.mutation(api.studio.completeGenerationJob, {
+        jobId,
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        artifact: {
+          ...createArtifactForJob(jobId, renderPlan.output.durationSeconds),
+          thumbnailStorageKey: `studio/${jobId}/artifact-thumbnail.gif`,
+        },
+        renderRun: {
+          completedAt: 200,
+          durationMs: 100,
+          exitCode: 0,
+          outputStorageKey: `studio/${jobId}/artifact.mp4`,
+        },
+      }),
+    ).rejects.toThrowError('ARTIFACT_PROFILE_MISMATCH')
+  })
+
+  it('marks the active render run failed when rendering fails', async () => {
+    const t = convexTest(schema, modules)
+    await seedStudioTemplate(t)
+    const jobId = await seedQueuedJob(t, 'render-run-failure')
+    await seedConsumedCredit(t, jobId)
+    const renderPlan = createWorkerRenderPlan('Launch an AI analytics dashboard')
+
+    await t.mutation(api.studio.claimNextGenerationJob, {
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      lockTtlMs: 30_000,
+    })
+    await t.mutation(api.studio.markModelStarted, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+    })
+    await t.mutation(api.studio.completePlanning, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderPlan,
+      modelRun: createModelRun(),
+    })
+    await t.mutation(api.studio.startRendering, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      renderRun: createRenderRun(),
+    })
+
+    await t.mutation(api.studio.failGenerationJob, {
+      jobId,
+      workerId: 'worker-1',
+      workerSecret: WORKER_SECRET,
+      errorCode: 'RENDER_FAILED',
+      errorMessage: 'Renderer exited early.',
+    })
+
+    const renderRuns = await t.run(async (ctx) =>
+      ctx.db
+        .query('renderRuns')
+        .withIndex('by_job_created', (q) => q.eq('jobId', jobId))
+        .collect(),
+    )
+    expect(renderRuns).toHaveLength(1)
+    expect(renderRuns[0]).toMatchObject({
+      completedAt: expect.any(Number),
+      exitCode: 1,
+      errorCode: 'RENDER_FAILED',
+      errorMessage: 'Renderer exited early.',
+    })
+    expect(renderRuns[0]?.durationMs).toBeGreaterThanOrEqual(0)
+  })
+
   it('updates the stored job summary from the validated render plan output', async () => {
     const t = convexTest(schema, modules)
     await seedStudioTemplate(t)
@@ -607,15 +739,14 @@ describe('studio worker mutations', () => {
         lockTtlMs: 30_000,
       })
 
-      await expect(
-        t.mutation(api.studio.completePlanning, {
-          jobId,
-          workerId: 'worker-1',
-          workerSecret: WORKER_SECRET,
-          renderPlan,
-          modelRun: createModelRun(),
-        }),
-      ).rejects.toThrowError('PLAN_VALIDATION_FAILED')
+      const planningResult = await t.mutation(api.studio.completePlanning, {
+        jobId,
+        workerId: 'worker-1',
+        workerSecret: WORKER_SECRET,
+        renderPlan,
+        modelRun: createModelRun(),
+      })
+      expect(planningResult.status).toBe('planning')
 
       const storedJob = await t.run(async (ctx) => ctx.db.get(jobId))
       const modelRuns = await t.run(async (ctx) =>
@@ -624,9 +755,19 @@ describe('studio worker mutations', () => {
           .withIndex('by_job_created', (q) => q.eq('jobId', jobId))
           .collect(),
       )
+      const events = await t.run(async (ctx) =>
+        ctx.db
+          .query('generationJobEvents')
+          .withIndex('by_job_created', (q) => q.eq('jobId', jobId))
+          .collect(),
+      )
 
       expect(storedJob?.plannerOutput).toBeUndefined()
-      expect(modelRuns).toHaveLength(0)
+      expect(modelRuns).toHaveLength(1)
+      expect(modelRuns[0]?.validationErrors).toContain('PLAN_VALIDATION_FAILED')
+      expect(events.map((event) => event.type)).toContain(
+        'plan_validation_failed',
+      )
     },
   )
 

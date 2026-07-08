@@ -217,9 +217,9 @@ function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
     studioError('ARTIFACT_PROFILE_MISMATCH')
   }
 
+  const expectedArtifactPrefix = `studio/${job._id}/`
   const hasValidStorageKey =
-    /^studio\/[^/]+\/artifact\.mp4$/.test(artifact.storageKey) &&
-    artifact.storageKey.endsWith('.mp4')
+    artifact.storageKey === `${expectedArtifactPrefix}artifact.mp4`
 
   if (!hasValidStorageKey || artifact.fileSizeBytes <= 0) {
     studioError('ARTIFACT_PROFILE_MISMATCH')
@@ -228,7 +228,7 @@ function assertStudioArtifactProfile(job: Doc<'generationJobs'>, artifact: {
   if (
     artifact.thumbnailStorageKey &&
     !new RegExp(
-      `^${artifact.storageKey.slice(0, artifact.storageKey.lastIndexOf('/') + 1)}artifact-thumbnail\\.(jpg|jpeg|png|webp)$`,
+      `^${expectedArtifactPrefix}artifact-thumbnail\\.(jpg|jpeg|png|webp)$`,
     ).test(artifact.thumbnailStorageKey)
   ) {
     studioError('ARTIFACT_PROFILE_MISMATCH')
@@ -986,6 +986,7 @@ export const getMyStudioHistory = query({
 export const getGenerationArtifactAccess = query({
   args: {
     jobId: v.id('generationJobs'),
+    refresh: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthenticatedUserId(ctx)
@@ -1270,7 +1271,37 @@ export const completePlanning = mutation({
       },
     )
     if (!planResult.ok) {
-      studioError(planResult.errors[0] ?? 'PLAN_VALIDATION_FAILED')
+      const now = Date.now()
+      const errorCode = planResult.errors[0] ?? 'PLAN_VALIDATION_FAILED'
+      await ctx.db.insert('modelRuns', {
+        ...(args.modelRun as StudioWorkerModelRunInput),
+        jobId: job._id,
+        validationErrors: planResult.errors,
+        errorCode,
+        errorMessage: planResult.errors.join('\n'),
+        createdAt: now,
+      })
+      await ctx.db.insert('generationJobEvents', {
+        jobId: job._id,
+        type: 'plan_validation_failed',
+        message: errorCode,
+        metadata: {
+          workerId: args.workerId,
+          errors: planResult.errors,
+        },
+        createdAt: now,
+      })
+      await ctx.db.patch(job._id, {
+        heartbeatAt: now,
+        lockExpiresAt: now + getWorkerLockTtlMs(job),
+        updatedAt: now,
+      })
+      const updatedJob = await ctx.db.get(job._id)
+      if (!updatedJob) {
+        throw new ConvexError('Invalid planned generation job lookup failed.')
+      }
+
+      return toWorkerGenerationJob(updatedJob)
     }
 
     const now = Date.now()
@@ -1530,6 +1561,24 @@ export const failGenerationJob = mutation({
     }
 
     const now = Date.now()
+    if (job.status === 'rendering' || job.status === 'uploading') {
+      const latestRenderRun = await ctx.db
+        .query('renderRuns')
+        .withIndex('by_job_created', (q) => q.eq('jobId', job._id))
+        .order('desc')
+        .first()
+
+      if (latestRenderRun && !latestRenderRun.completedAt) {
+        await ctx.db.patch(latestRenderRun._id, {
+          completedAt: now,
+          durationMs: Math.max(0, now - latestRenderRun.startedAt),
+          exitCode: 1,
+          errorCode: args.errorCode,
+          errorMessage: args.errorMessage,
+        })
+      }
+    }
+
     await ctx.db.patch(job._id, {
       status: 'failed',
       errorCode: args.errorCode,
