@@ -8,8 +8,13 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as components_ from "../components.js";
+import type * as http from "../http.js";
+import type * as lib_access from "../lib/access.js";
 import type * as lib_catalog from "../lib/catalog.js";
+import type * as lib_handles from "../lib/handles.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -18,8 +23,13 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   components: typeof components_;
+  http: typeof http;
+  "lib/access": typeof lib_access;
   "lib/catalog": typeof lib_catalog;
+  "lib/handles": typeof lib_handles;
+  users: typeof users;
 }>;
 
 /**
