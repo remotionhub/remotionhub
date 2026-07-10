@@ -21,3 +21,15 @@ export async function requireUser(
 
   return { userId, user }
 }
+
+export async function requireStudioProjectOwner(
+  ctx: QueryCtx | MutationCtx,
+  projectId: Id<'studioProjects'>,
+) {
+  const { userId } = await requireUser(ctx)
+  const project = await ctx.db.get(projectId)
+  if (!project || project.ownerId !== userId) {
+    throw new Error('Studio project unavailable')
+  }
+  return { project, userId }
+}
