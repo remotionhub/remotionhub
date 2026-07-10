@@ -76,10 +76,7 @@ export function applyExactEdits(
 ) {
   return edits.reduce((current, edit) => {
     const first = current.indexOf(edit.oldString)
-    const second = current.indexOf(
-      edit.oldString,
-      first + edit.oldString.length,
-    )
+    const second = current.indexOf(edit.oldString, first + 1)
     if (first < 0 || second >= 0) {
       throw new Error('old_string must match exactly once')
     }

@@ -68,6 +68,11 @@ describe('Studio generation contract', () => {
       ]),
     ).toThrow('exactly once')
     expect(() =>
+      applyExactEdits('aaa', [
+        { oldString: 'aa', newString: 'b', description: 'Overlap' },
+      ]),
+    ).toThrow('exactly once')
+    expect(() =>
       applyExactEdits('green', [
         { oldString: 'red', newString: 'blue', description: 'Color' },
       ]),
