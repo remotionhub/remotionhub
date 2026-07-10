@@ -34,14 +34,16 @@ vi.mock('@tanstack/react-router', () => ({
 
 function renderLanding({
   authenticated,
+  authLoading = false,
   projects = [],
 }: {
   authenticated: boolean
+  authLoading?: boolean
   projects?: Array<{ _id: string; title: string }>
 }) {
   mocks.useAuthStatus.mockReturnValue({
     isAuthenticated: authenticated,
-    isLoading: false,
+    isLoading: authLoading,
     me: authenticated ? { _id: 'users:1' } : null,
   })
   mocks.useQuery.mockReturnValue(authenticated ? projects : undefined)
@@ -146,6 +148,53 @@ describe('StudioLanding', () => {
       )
       expect(window.sessionStorage.getItem(PENDING_PROMPT_KEY)).toBeNull()
     })
+  })
+
+  it('keeps a restored draft after authenticated submission fails', async () => {
+    window.sessionStorage.setItem(
+      PENDING_PROMPT_KEY,
+      'Animate a product launch',
+    )
+    mocks.startPromptProject.mockRejectedValue(new Error('generation failed'))
+    renderLanding({ authenticated: true })
+
+    const textbox = (await screen.findByRole('textbox')) as HTMLTextAreaElement
+    await waitFor(() => {
+      expect(textbox.value).toBe('Animate a product launch')
+    })
+    fireEvent.click(screen.getByRole('button', { name: /生成|generate/i }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeTruthy()
+      expect(window.sessionStorage.getItem(PENDING_PROMPT_KEY)).toBe(
+        'Animate a product launch',
+      )
+      expect(textbox.value).toBe('Animate a product launch')
+    })
+  })
+
+  it('announces when authentication state is loading', () => {
+    renderLanding({ authenticated: false, authLoading: true })
+    enterPrompt('Animate a product launch')
+
+    const button = screen.getByRole('button', {
+      name: /正在加载登录状态|loading auth state/i,
+    }) as HTMLButtonElement
+    expect(button.disabled).toBe(true)
+    expect(button.getAttribute('aria-busy')).toBe('true')
+  })
+
+  it('announces while the project mutation is pending', async () => {
+    mocks.startPromptProject.mockReturnValue(new Promise(() => undefined))
+    renderLanding({ authenticated: true })
+
+    submitPrompt('Animate a product launch')
+
+    const button = (await screen.findByRole('button', {
+      name: /正在生成动画|generating motion/i,
+    })) as HTMLButtonElement
+    expect(button.disabled).toBe(true)
+    expect(button.getAttribute('aria-busy')).toBe('true')
   })
 
   it('does not put the prompt in navigation or redirect parameters', async () => {

@@ -32,6 +32,12 @@ export default function StudioLanding() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hasError, setHasError] = useState(false)
   const trimmedPrompt = prompt.trim()
+  const isBusy = isLoading || isSubmitting
+  const submitLabel = isLoading
+    ? t('auth.loading')
+    : isSubmitting
+      ? t('studio.status.generating')
+      : t('studio.landing.submit')
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -119,11 +125,12 @@ export default function StudioLanding() {
               <span />
             )}
             <button
+              aria-busy={isBusy}
               className="inline-flex min-h-10 items-center justify-center rounded-lg border border-transparent bg-[var(--brand-mark-bg)] px-5 text-sm font-semibold text-[var(--brand-mark-fg)] transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={!trimmedPrompt || isLoading || isSubmitting}
+              disabled={!trimmedPrompt || isBusy}
               type="submit"
             >
-              {t('studio.landing.submit')}
+              {submitLabel}
             </button>
           </div>
         </form>
