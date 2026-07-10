@@ -1,0 +1,288 @@
+import {
+  Component,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentType,
+  type ErrorInfo,
+  type ReactNode,
+} from 'react'
+import { Player } from '@remotion/player'
+import type { StudioComposition } from '../../../shared/studio'
+import { compileStudioComponent } from '../../lib/studio/compiler'
+
+type StudioCandidate = {
+  code: string
+  fingerprint: string
+  composition: StudioComposition
+}
+
+type CandidateResult = {
+  status: 'accepted' | 'rejected'
+  fingerprint: string
+  error?: string
+}
+
+type RevisionRuntimeError = {
+  revisionId: string
+  error: string
+}
+
+export type StudioPreviewProps = {
+  revisionId: string | null
+  revisionCode: string | null
+  revisionComposition: StudioComposition
+  candidate: StudioCandidate | null
+  onCandidateResult(result: CandidateResult): void
+  onRevisionRuntimeError(result: RevisionRuntimeError): void
+}
+
+type PreviewEntry = {
+  key: string
+  component: ComponentType<Record<string, never>>
+  composition: StudioComposition
+  source:
+    | { kind: 'candidate'; fingerprint: string }
+    | { kind: 'revision'; revisionId: string | null }
+  previous: PreviewEntry | null
+}
+
+type PreviewErrorBoundaryProps = {
+  children: ReactNode
+  onError(error: unknown): void
+}
+
+class PreviewErrorBoundary extends Component<
+  PreviewErrorBoundaryProps,
+  { failed: boolean }
+> {
+  state = { failed: false }
+
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+
+  componentDidCatch(error: Error, _info: ErrorInfo) {
+    this.props.onError(error)
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children
+  }
+}
+
+function PreviewCommitProbe({
+  entryKey,
+  onCommit,
+}: {
+  entryKey: string
+  onCommit(entryKey: string): void
+}) {
+  useEffect(() => onCommit(entryKey), [entryKey, onCommit])
+  return null
+}
+
+function normalizePreviewError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  const firstLine = message.split(/\r?\n/, 1)[0] ?? 'Studio preview failed'
+  return firstLine
+    .replace(/^studio-candidate\.tsx:\s*/, '')
+    .slice(0, 300)
+}
+
+export default function StudioPreview({
+  revisionId,
+  revisionCode,
+  revisionComposition,
+  candidate,
+  onCandidateResult,
+  onRevisionRuntimeError,
+}: StudioPreviewProps) {
+  const [active, setActive] = useState<PreviewEntry | null>(null)
+  const [lastGoodKey, setLastGoodKey] = useState<string | null>(null)
+  const [status, setStatus] = useState('Loading preview')
+  const activeRef = useRef<PreviewEntry | null>(null)
+  const lastGoodRef = useRef<PreviewEntry | null>(null)
+  const candidateRef = useRef(candidate)
+  const revisionCompositionRef = useRef(revisionComposition)
+  const onCandidateResultRef = useRef(onCandidateResult)
+  const onRevisionRuntimeErrorRef = useRef(onRevisionRuntimeError)
+  const processedCandidateFingerprintRef = useRef<string | null>(null)
+  const candidateResultsRef = useRef(new Map<string, CandidateResult['status']>())
+  const failedRevisionIdsRef = useRef(new Set<string>())
+  const entrySequenceRef = useRef(0)
+
+  candidateRef.current = candidate
+  revisionCompositionRef.current = revisionComposition
+  onCandidateResultRef.current = onCandidateResult
+  onRevisionRuntimeErrorRef.current = onRevisionRuntimeError
+
+  const showEntry = useCallback((entry: PreviewEntry | null) => {
+    activeRef.current = entry
+    setActive(entry)
+  }, [])
+
+  const notifyCandidate = useCallback((result: CandidateResult) => {
+    // Candidate results are terminal; after acceptance, recovery is revision-owned.
+    if (candidateResultsRef.current.has(result.fingerprint)) return
+    candidateResultsRef.current.set(result.fingerprint, result.status)
+    onCandidateResultRef.current(result)
+  }, [])
+
+  const notifyRevisionFailure = useCallback(
+    (failedRevisionId: string, error: string) => {
+      if (failedRevisionIdsRef.current.has(failedRevisionId)) return
+      failedRevisionIdsRef.current.add(failedRevisionId)
+      onRevisionRuntimeErrorRef.current({ revisionId: failedRevisionId, error })
+    },
+    [],
+  )
+
+  const handleCommit = useCallback(
+    (entryKey: string) => {
+      const entry = activeRef.current
+      if (!entry || entry.key !== entryKey) return
+
+      lastGoodRef.current = entry
+      setLastGoodKey(entry.key)
+      setStatus('')
+      if (entry.source.kind === 'candidate') {
+        notifyCandidate({
+          status: 'accepted',
+          fingerprint: entry.source.fingerprint,
+        })
+      }
+    },
+    [notifyCandidate],
+  )
+
+  const handleRuntimeError = useCallback(
+    (error: unknown) => {
+      const failedEntry = activeRef.current
+      if (!failedEntry) return
+
+      const normalizedError = normalizePreviewError(error)
+      if (lastGoodRef.current?.key === failedEntry.key) {
+        lastGoodRef.current = failedEntry.previous
+        setLastGoodKey(failedEntry.previous?.key ?? null)
+      }
+      showEntry(failedEntry.previous)
+      setStatus(`Preview error: ${normalizedError}`)
+
+      if (failedEntry.source.kind === 'candidate') {
+        notifyCandidate({
+          status: 'rejected',
+          fingerprint: failedEntry.source.fingerprint,
+          error: normalizedError,
+        })
+      } else if (failedEntry.source.revisionId) {
+        notifyRevisionFailure(failedEntry.source.revisionId, normalizedError)
+      }
+    },
+    [notifyCandidate, notifyRevisionFailure, showEntry],
+  )
+
+  useEffect(() => {
+    if (!revisionCode) {
+      lastGoodRef.current = null
+      setLastGoodKey(null)
+      showEntry(null)
+      setStatus('No preview source')
+      return
+    }
+
+    const previous = lastGoodRef.current
+    try {
+      const component = compileStudioComponent(revisionCode)
+      entrySequenceRef.current += 1
+      showEntry({
+        key: `revision-${entrySequenceRef.current}`,
+        component,
+        composition: revisionCompositionRef.current,
+        source: { kind: 'revision', revisionId },
+        previous,
+      })
+      setStatus('Loading preview')
+    } catch (error) {
+      const normalizedError = normalizePreviewError(error)
+      showEntry(previous)
+      setStatus(`Preview error: ${normalizedError}`)
+      if (revisionId) notifyRevisionFailure(revisionId, normalizedError)
+    }
+  }, [notifyRevisionFailure, revisionCode, revisionId, showEntry])
+
+  const candidateFingerprint = candidate?.fingerprint ?? null
+  useEffect(() => {
+    if (!candidateFingerprint) {
+      processedCandidateFingerprintRef.current = null
+      return
+    }
+    if (
+      !lastGoodKey ||
+      processedCandidateFingerprintRef.current === candidateFingerprint
+    ) {
+      return
+    }
+
+    const currentCandidate = candidateRef.current
+    const previous = lastGoodRef.current
+    if (
+      !currentCandidate ||
+      currentCandidate.fingerprint !== candidateFingerprint ||
+      !previous
+    ) {
+      return
+    }
+
+    processedCandidateFingerprintRef.current = candidateFingerprint
+    try {
+      const component = compileStudioComponent(currentCandidate.code)
+      entrySequenceRef.current += 1
+      showEntry({
+        key: `candidate-${entrySequenceRef.current}`,
+        component,
+        composition: currentCandidate.composition,
+        source: { kind: 'candidate', fingerprint: candidateFingerprint },
+        previous,
+      })
+      setStatus('Loading candidate preview')
+    } catch (error) {
+      const normalizedError = normalizePreviewError(error)
+      setStatus(`Preview error: ${normalizedError}`)
+      notifyCandidate({
+        status: 'rejected',
+        fingerprint: candidateFingerprint,
+        error: normalizedError,
+      })
+    }
+  }, [candidateFingerprint, lastGoodKey, notifyCandidate, showEntry])
+
+  return (
+    <section aria-label="Studio preview">
+      {status ? <p role="status">{status}</p> : null}
+      <div aria-label="Video preview">
+        {active ? (
+          <PreviewErrorBoundary
+            key={active.key}
+            onError={handleRuntimeError}
+          >
+            <Player
+              component={active.component}
+              durationInFrames={active.composition.durationInFrames}
+              fps={30}
+              compositionWidth={active.composition.width}
+              compositionHeight={active.composition.height}
+              controls
+              loop
+            />
+            <PreviewCommitProbe
+              entryKey={active.key}
+              onCommit={handleCommit}
+            />
+          </PreviewErrorBoundary>
+        ) : null}
+      </div>
+    </section>
+  )
+}
