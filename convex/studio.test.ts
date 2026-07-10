@@ -306,6 +306,32 @@ describe('studio ownership and revision history', () => {
     expect(result.run).toBeNull()
   })
 
+  it('trims and saves an owner project title', async () => {
+    const { t, ownerId, projectId } = await seedStudio()
+    const owner = t.withIdentity({ subject: ownerId })
+
+    await owner.mutation(api.studio.updateProjectTitle, {
+      projectId,
+      title: '  Product launch  ',
+    })
+
+    expect((await owner.query(api.studio.getProject, { projectId })).project.title).toBe(
+      'Product launch',
+    )
+  })
+
+  it('rejects an empty or oversized project title', async () => {
+    const { t, ownerId, projectId } = await seedStudio()
+    const owner = t.withIdentity({ subject: ownerId })
+    const updateTitle = (title: string) =>
+      owner.mutation(api.studio.updateProjectTitle, { projectId, title })
+
+    await expect(updateTitle('   ')).rejects.toThrow('Studio title is invalid')
+    await expect(updateTitle('x'.repeat(121))).rejects.toThrow(
+      'Studio title is invalid',
+    )
+  })
+
   it('returns messages chronologically and revisions newest first', async () => {
     const { t, ownerId, projectId } = await seedStudio()
     const owner = t.withIdentity({ subject: ownerId })
@@ -742,6 +768,11 @@ describe('studio generation runs', () => {
       expect(run?.candidateCode).toBeUndefined()
       expect(snapshot.project.currentRunId).toBeUndefined()
       expect(snapshot.project.currentRevisionId).toBe(secondRevisionId)
+      expect(snapshot.run).toMatchObject({
+        _id: started.runId,
+        status: 'failed',
+        errorCode: 'MODEL_FAILED',
+      })
       expect(revisions).toHaveLength(2)
     },
   )

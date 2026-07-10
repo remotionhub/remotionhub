@@ -18,13 +18,13 @@ type StudioCandidate = {
   composition: StudioComposition
 }
 
-type CandidateResult = {
+export type CandidateResult = {
   status: 'accepted' | 'rejected'
   fingerprint: string
   error?: string
 }
 
-type RevisionRuntimeError = {
+export type RevisionRuntimeError = {
   revisionId: string
   error: string
 }

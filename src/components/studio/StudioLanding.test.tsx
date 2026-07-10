@@ -29,6 +29,7 @@ vi.mock('convex/react', () => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
+  Link: ({ children }: React.PropsWithChildren) => <a href="/studio/project">{children}</a>,
   useNavigate: () => mocks.navigate,
 }))
 

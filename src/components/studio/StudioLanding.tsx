@@ -1,5 +1,5 @@
 import { useAuthActions } from '@convex-dev/auth/react'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
@@ -78,9 +78,7 @@ export default function StudioLanding() {
         // The project was created even if the stale draft cannot be removed.
       }
       await navigate({
-        // @ts-expect-error Task 7 registers the dynamic Studio project route.
         to: '/studio/$projectId',
-        // @ts-expect-error Task 7 registers the dynamic Studio project params.
         params: { projectId: result.projectId },
       })
     } catch {
@@ -176,12 +174,13 @@ export default function StudioLanding() {
               <ul className="m-0 mt-4 list-none border-t border-[var(--line)] p-0">
                 {recentProjects.map((project) => (
                   <li className="border-b border-[var(--line)]" key={project._id}>
-                    <a
+                    <Link
                       className="block py-4 text-sm font-medium no-underline transition hover:text-[var(--brand-mark-fg)]"
-                      href={`/studio/${project._id}`}
+                      params={{ projectId: project._id }}
+                      to="/studio/$projectId"
                     >
                       {project.title}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
