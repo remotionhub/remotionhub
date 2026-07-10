@@ -602,7 +602,9 @@ export const loadGenerationContext = internalQuery({
         )
         .order('desc')
         .take(12)
-        .then((items) => items.reverse()),
+        .then((items) =>
+          items.reverse().filter((message) => message.kind !== 'error'),
+        ),
       ctx.db
         .query('studioGenerationRuns')
         .withIndex('by_project_updated', (q) =>
@@ -810,14 +812,16 @@ export const runGeneration = internalAction({
         },
       )
       if (!selectingSkills) return
-      const detectedSkills = await detectSkillsWithFallback(async () => {
-        const call = await model.detectSkills({
-          prompt: snapshot.promptMessage.content,
-          system: studioSkillSystemPrompt,
-        })
-        addUsage(call.usage)
-        return call.data
-      })
+      const detectedSkills = isServerCorrection
+        ? snapshot.run.detectedSkills
+        : await detectSkillsWithFallback(async () => {
+            const call = await model.detectSkills({
+              prompt: snapshot.promptMessage.content,
+              system: studioSkillSystemPrompt,
+            })
+            addUsage(call.usage)
+            return call.data
+          })
       const usedSkills = Array.from(
         new Set(
           snapshot.recentRuns.flatMap((run) =>
@@ -825,7 +829,10 @@ export const runGeneration = internalAction({
           ),
         ),
       )
-      const selectedSkills = selectNewSkills(detectedSkills, usedSkills)
+      const selectedSkills = selectNewSkills(
+        detectedSkills,
+        isServerCorrection ? [] : usedSkills,
+      )
 
       const generating = await ctx.runMutation(
         internal.studio.advanceGenerationRun,
