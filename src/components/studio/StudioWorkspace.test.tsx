@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import { readFileSync } from 'node:fs'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { act, type ComponentProps } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -14,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   acceptCandidate: vi.fn(),
   rejectCandidate: vi.fn(),
   reportRuntimeFailure: vi.fn(),
+  retryFailedGeneration: vi.fn(),
   startFollowUp: vi.fn(),
   updateProjectTitle: vi.fn(),
   rollbackRevision: vi.fn(),
@@ -30,6 +32,7 @@ vi.mock('../../../convex/_generated/api', () => ({
       acceptCandidate: 'acceptCandidate',
       rejectCandidate: 'rejectCandidate',
       reportRuntimeFailure: 'reportRuntimeFailure',
+      retryFailedGeneration: 'retryFailedGeneration',
       startFollowUp: 'startFollowUp',
       updateProjectTitle: 'updateProjectTitle',
       rollbackRevision: 'rollbackRevision',
@@ -43,6 +46,7 @@ vi.mock('convex/react', () => ({
       acceptCandidate: mocks.acceptCandidate,
       rejectCandidate: mocks.rejectCandidate,
       reportRuntimeFailure: mocks.reportRuntimeFailure,
+      retryFailedGeneration: mocks.retryFailedGeneration,
       startFollowUp: mocks.startFollowUp,
       updateProjectTitle: mocks.updateProjectTitle,
       rollbackRevision: mocks.rollbackRevision,
@@ -151,6 +155,7 @@ describe('StudioWorkspace', () => {
       mocks.acceptCandidate,
       mocks.rejectCandidate,
       mocks.reportRuntimeFailure,
+      mocks.retryFailedGeneration,
       mocks.startFollowUp,
       mocks.updateProjectTitle,
       mocks.rollbackRevision,
@@ -330,6 +335,48 @@ describe('StudioWorkspace', () => {
     })
   })
 
+  it('keeps a failed candidate delivery available for an explicit retry', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-retry',
+      },
+    }
+    mocks.acceptCandidate
+      .mockRejectedValueOnce(new Error('Temporary network failure'))
+      .mockResolvedValueOnce({})
+    renderWorkspace()
+
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        fingerprint: 'candidate-retry',
+      }),
+    )
+
+    const retry = await screen.findByRole('button', {
+      name: /重试预览结果|retry preview result/i,
+    })
+    expect(screen.getByRole('alert')).toBeTruthy()
+    fireEvent.click(retry)
+
+    await waitFor(() => expect(mocks.acceptCandidate).toHaveBeenCalledTimes(2))
+    expect(mocks.acceptCandidate.mock.calls[1]?.[0]).toEqual(
+      mocks.acceptCandidate.mock.calls[0]?.[0],
+    )
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', {
+          name: /重试预览结果|retry preview result/i,
+        }),
+      ).toBeNull(),
+    )
+  })
+
   it('reports a committed runtime failure once and advances to the fallback revision', async () => {
     const view = renderWorkspace()
 
@@ -368,6 +415,33 @@ describe('StudioWorkspace', () => {
     expect(mocks.previewProps?.revisionCode).not.toContain('Committed')
   })
 
+  it('keeps a failed revision runtime delivery available for an explicit retry', async () => {
+    mocks.reportRuntimeFailure
+      .mockRejectedValueOnce(new Error('Temporary network failure'))
+      .mockResolvedValueOnce({})
+    renderWorkspace()
+
+    await act(async () =>
+      mocks.previewProps?.onRevisionRuntimeError({
+        revisionId,
+        error: 'Committed runtime failed',
+      }),
+    )
+
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: /重试预览结果|retry preview result/i,
+      }),
+    )
+
+    await waitFor(() =>
+      expect(mocks.reportRuntimeFailure).toHaveBeenCalledTimes(2),
+    )
+    expect(mocks.reportRuntimeFailure.mock.calls[1]?.[0]).toEqual(
+      mocks.reportRuntimeFailure.mock.calls[0]?.[0],
+    )
+  })
+
   it('keeps the last revision visible while the Run advances', () => {
     snapshot = {
       ...baseSnapshot,
@@ -381,9 +455,11 @@ describe('StudioWorkspace', () => {
     expect(mocks.previewProps?.candidate).toBeNull()
   })
 
-  it('retries the last prompt after the latest Run fails', async () => {
+  it('retries the failed Run by identity even when no Revision exists', async () => {
     snapshot = {
       ...baseSnapshot,
+      project: { ...baseSnapshot.project, currentRevisionId: undefined },
+      revision: null,
       run: {
         _id: runId,
         status: 'failed',
@@ -395,13 +471,51 @@ describe('StudioWorkspace', () => {
     fireEvent.click(screen.getByRole('button', { name: /重试|retry/i }))
 
     await waitFor(() =>
-      expect(mocks.startFollowUp).toHaveBeenCalledWith({
+      expect(mocks.retryFailedGeneration).toHaveBeenCalledWith({
         projectId,
-        prompt: 'Create a product launch',
-        expectedCurrentRevisionId: revisionId,
+        failedRunId: runId,
         idempotencyKey: expect.any(String),
       }),
     )
+    expect(mocks.startFollowUp).not.toHaveBeenCalled()
+  })
+
+  it('retries a failed runtime repair by Run identity after Revision rollback', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'failed',
+        inputRevisionId: 'studioRevisions:broken',
+        correctionAttempt: 1,
+        errorCode: 'MODEL_FAILED',
+      },
+    }
+
+    renderWorkspace()
+
+    fireEvent.click(screen.getByRole('button', { name: /^重试$|^retry$/i }))
+
+    await waitFor(() =>
+      expect(mocks.retryFailedGeneration).toHaveBeenCalledWith({
+        projectId,
+        failedRunId: runId,
+        idempotencyKey: expect.any(String),
+      }),
+    )
+  })
+
+  it('does not apply reduced-motion overrides to Preview descendants', () => {
+    const styles = readFileSync(`${process.cwd()}/src/styles.css`, 'utf8')
+    const reducedMotion = styles.match(
+      /@media \(prefers-reduced-motion: reduce\) \{([\s\S]*?)\n\}/,
+    )?.[1]
+
+    expect(reducedMotion).toBeTruthy()
+    expect(reducedMotion).not.toContain('.studio-workspace-shell *')
+    expect(reducedMotion).not.toContain('.studio-preview-stage')
+    expect(reducedMotion).not.toContain('.studio-preview-canvas')
+    expect(reducedMotion).not.toContain('[aria-label="Video preview"]')
   })
 
   it('shows Chat and Preview together on desktop', () => {

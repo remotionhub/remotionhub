@@ -68,19 +68,20 @@ const correctionContextValidator = v.object({
   normalizedError: v.string(),
 })
 
-function validatePromptAndIdempotencyKey(
-  prompt: string,
-  idempotencyKey: string,
-) {
-  if (prompt.length < 1 || prompt.length > promptMaxLength) {
-    throw new Error('Studio prompt must be 1..4000 characters')
-  }
+function validateIdempotencyKey(idempotencyKey: string) {
   if (
     idempotencyKey.length < idempotencyKeyMinLength ||
     idempotencyKey.length > idempotencyKeyMaxLength
   ) {
     throw new Error('Studio idempotency key must be 8..200 characters')
   }
+}
+
+function validatePromptAndIdempotencyKey(prompt: string, idempotencyKey: string) {
+  if (prompt.length < 1 || prompt.length > promptMaxLength) {
+    throw new Error('Studio prompt must be 1..4000 characters')
+  }
+  validateIdempotencyKey(idempotencyKey)
 }
 
 function sanitizeNormalizedError(normalizedError: string) {
@@ -251,6 +252,99 @@ export const startFollowUp = mutation({
     await ctx.db.patch(promptMessageId, { generationRunId: runId })
     await ctx.scheduler.runAfter(0, internal.studio.runGeneration, { runId })
     return queuedRunResult(args.projectId, runId)
+  },
+})
+
+export const retryFailedGeneration = mutation({
+  args: {
+    projectId: v.id('studioProjects'),
+    failedRunId: v.id('studioGenerationRuns'),
+    idempotencyKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { project, userId } = await requireStudioProjectOwner(
+      ctx,
+      args.projectId,
+    )
+    const failedRun = await ctx.db.get(args.failedRunId)
+    if (
+      !failedRun ||
+      failedRun.projectId !== project._id ||
+      failedRun.ownerId !== userId ||
+      failedRun.status !== 'failed'
+    ) {
+      throw new Error('Studio failed generation unavailable')
+    }
+
+    validateIdempotencyKey(args.idempotencyKey)
+    let correctionContext:
+      | {
+          code: string
+          composition: Doc<'studioRevisions'>['composition']
+          normalizedError: string
+        }
+      | undefined
+    if (project.currentRevisionId !== failedRun.inputRevisionId) {
+      const brokenRevision = failedRun.inputRevisionId
+        ? await ctx.db.get(failedRun.inputRevisionId)
+        : null
+      const errorMessage = await ctx.db.get(failedRun.promptMessageId)
+      if (
+        failedRun.correctionAttempt < 1 ||
+        !brokenRevision ||
+        brokenRevision.projectId !== project._id ||
+        brokenRevision.previousRunnableRevisionId !==
+          project.currentRevisionId ||
+        !errorMessage ||
+        errorMessage.projectId !== project._id ||
+        errorMessage.role !== 'system' ||
+        errorMessage.kind !== 'error'
+      ) {
+        throw new Error('Studio project changed')
+      }
+      correctionContext = {
+        code: brokenRevision.code.slice(0, 100_000),
+        composition: brokenRevision.composition,
+        normalizedError: sanitizeNormalizedError(errorMessage.content),
+      }
+    }
+
+    const existing = await getOwnerRunByIdempotency(
+      ctx,
+      userId,
+      args.idempotencyKey,
+    )
+    if (existing) {
+      if (existing.projectId !== project._id) {
+        throw new Error('Studio idempotency key conflict')
+      }
+      return queuedRunResult(existing.projectId, existing._id)
+    }
+
+    if (project.currentRunId) throw new Error('Studio generation in progress')
+
+    const now = Date.now()
+    const runId = await ctx.db.insert('studioGenerationRuns', {
+      projectId: project._id,
+      ownerId: userId,
+      status: 'queued',
+      inputRevisionId: failedRun.inputRevisionId,
+      promptMessageId: failedRun.promptMessageId,
+      modelAlias: failedRun.modelAlias,
+      detectedSkills: correctionContext ? failedRun.detectedSkills : [],
+      correctionAttempt: correctionContext
+        ? Math.max(1, failedRun.correctionAttempt)
+        : 0,
+      idempotencyKey: args.idempotencyKey,
+      createdAt: now,
+      updatedAt: now,
+    })
+    await ctx.db.patch(project._id, { currentRunId: runId, updatedAt: now })
+    await ctx.scheduler.runAfter(0, internal.studio.runGeneration, {
+      runId,
+      correctionContext,
+    })
+    return queuedRunResult(project._id, runId)
   },
 })
 

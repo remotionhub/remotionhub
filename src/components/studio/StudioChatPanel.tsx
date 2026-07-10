@@ -30,6 +30,7 @@ export type StudioChatPanelProps = {
   run: StudioChatRun | null
   disabled: boolean
   onSubmit(prompt: string): Promise<unknown> | unknown
+  onRetry?(): Promise<unknown> | unknown
 }
 
 export default function StudioChatPanel({
@@ -37,6 +38,7 @@ export default function StudioChatPanel({
   run,
   disabled,
   onSubmit,
+  onRetry,
 }: StudioChatPanelProps) {
   const { t } = useI18n()
   const [draft, setDraft] = useState('')
@@ -45,9 +47,6 @@ export default function StudioChatPanel({
   const draftRef = useRef(draft)
   draftRef.current = draft
   const isDisabled = disabled || isSubmitting
-  const lastUserMessage = [...messages]
-    .reverse()
-    .find((message) => message.role === 'user')?.content
 
   const submit = async (prompt: string) => {
     const normalized = prompt.trim()
@@ -80,6 +79,19 @@ export default function StudioChatPanel({
     }
     event.preventDefault()
     void submit(draft)
+  }
+
+  const retry = async () => {
+    if (!onRetry || isSubmitting) return
+    setSubmitFailed(false)
+    setIsSubmitting(true)
+    try {
+      await onRetry()
+    } catch {
+      setSubmitFailed(true)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const runError =
@@ -120,11 +132,11 @@ export default function StudioChatPanel({
         {runError ? (
           <div className="studio-run-error" role="alert">
             <p>{runError}</p>
-            {lastUserMessage ? (
+            {onRetry ? (
               <button
                 className="studio-text-button"
-                disabled={isDisabled}
-                onClick={() => void submit(lastUserMessage)}
+                disabled={isSubmitting}
+                onClick={() => void retry()}
                 type="button"
               >
                 {t('studio.retry')}

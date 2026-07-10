@@ -642,6 +642,7 @@ pre code {
 }
 
 .studio-preview-stage {
+  position: relative;
   display: grid;
   min-width: 0;
   min-height: 0;
@@ -651,6 +652,25 @@ pre code {
     radial-gradient(circle at 54% 24%, var(--studio-stage-glow), transparent 38%),
     var(--studio-stage);
   padding: clamp(20px, 4vw, 52px);
+}
+
+.studio-preview-delivery-error {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 50%;
+  width: min(420px, calc(100% - 24px));
+  border: 1px solid color-mix(in oklch, var(--destructive) 35%, var(--line));
+  border-radius: 8px;
+  background: var(--card);
+  padding: 9px 12px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  transform: translateX(-50%);
+}
+
+.studio-preview-delivery-error p {
+  margin: 0;
 }
 
 .studio-preview-canvas {
@@ -753,10 +773,16 @@ pre code {
 .studio-dialog-backdrop {
   position: fixed;
   z-index: 80;
+  inset: 0;
+  background: oklch(0.1 0.01 250 / 42%);
+}
+
+.studio-dialog-viewport {
+  position: fixed;
+  z-index: 81;
   display: grid;
   inset: 0;
   place-items: center;
-  background: oklch(0.1 0.01 250 / 42%);
   padding: 20px;
 }
 
@@ -891,8 +917,15 @@ pre code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .studio-workspace-shell *,
-  .studio-dialog-backdrop * {
+  .studio-project-title,
+  .studio-history-button,
+  .studio-send-button,
+  .studio-text-button,
+  .studio-confirm-button,
+  .studio-dialog-close,
+  .studio-mobile-tabs button,
+  .studio-history-dialog,
+  .studio-dialog-backdrop {
     scroll-behavior: auto;
     transition-duration: 0.01ms !important;
   }

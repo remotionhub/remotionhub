@@ -1,5 +1,6 @@
-import { XIcon } from 'lucide-react'
+import { Dialog } from '@base-ui/react/dialog'
 import { useMutation } from 'convex/react'
+import { XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { api } from '../../../convex/_generated/api'
 import type { Doc, Id } from '../../../convex/_generated/dataModel'
@@ -39,13 +40,13 @@ export default function StudioHistoryDialog({
   const [selectedRevisionId, setSelectedRevisionId] =
     useState<Id<'studioRevisions'> | null>(null)
   const [isRestoring, setIsRestoring] = useState(false)
-  const [restoreError, setRestoreError] = useState(false)
-
-  if (!open) return null
+  const [restoreError, setRestoreError] = useState<'stale' | 'failed' | null>(
+    null,
+  )
 
   const restore = async () => {
     if (!selectedRevisionId || isRestoring) return
-    setRestoreError(false)
+    setRestoreError(null)
     setIsRestoring(true)
     try {
       await rollbackRevision({
@@ -56,7 +57,9 @@ export default function StudioHistoryDialog({
       onClose()
     } catch (error) {
       if (error instanceof Error && error.message.includes('Studio project changed')) {
-        setRestoreError(true)
+        setRestoreError('stale')
+      } else {
+        setRestoreError('failed')
       }
     } finally {
       setIsRestoring(false)
@@ -64,72 +67,87 @@ export default function StudioHistoryDialog({
   }
 
   return (
-    <div className="studio-dialog-backdrop">
-      <section
-        aria-label={t('studio.history.label')}
-        aria-modal="true"
-        className="studio-history-dialog"
-        role="dialog"
-      >
-        <header className="studio-history-header">
-          <h2>{t('studio.history.label')}</h2>
-          <button
-            aria-label="Close"
-            className="studio-dialog-close"
-            onClick={onClose}
-            type="button"
+    <Dialog.Root
+      modal
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose()
+      }}
+      open={open}
+    >
+      <Dialog.Portal>
+        <Dialog.Backdrop className="studio-dialog-backdrop" />
+        <Dialog.Viewport className="studio-dialog-viewport">
+          <Dialog.Popup
+            aria-label={t('studio.history.label')}
+            className="studio-history-dialog"
           >
-            <XIcon aria-hidden="true" size={17} />
-          </button>
-        </header>
+            <header className="studio-history-header">
+              <Dialog.Title>{t('studio.history.label')}</Dialog.Title>
+              <Dialog.Close aria-label="Close" className="studio-dialog-close">
+                <XIcon aria-hidden="true" size={17} />
+              </Dialog.Close>
+            </header>
 
-        {restoreError ? (
-          <p className="studio-history-error" role="alert">
-            {t('studio.error.projectChanged')}
-          </p>
-        ) : null}
-
-        <ol className="studio-history-list">
-          {revisions.map((revision) => {
-            const selected = selectedRevisionId === revision._id
-            const current = revision._id === currentRevisionId
-            return (
-              <li className="studio-history-entry" key={revision._id}>
-                <div className="studio-history-entry-copy">
-                  <div>
-                    <strong>#{revision.sequence}</strong>
-                    <span>{t(originKey[revision.origin])}</span>
-                    <time dateTime={new Date(revision.createdAt).toISOString()}>
-                      {new Intl.DateTimeFormat(locale, {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      }).format(revision.createdAt)}
-                    </time>
-                  </div>
-                  <p>{revision.assistantSummary}</p>
-                </div>
-                {current ? null : (
-                  <button
-                    className={selected ? 'studio-confirm-button' : 'studio-text-button'}
-                    disabled={isRestoring}
-                    onClick={() => {
-                      if (selected) void restore()
-                      else setSelectedRevisionId(revision._id)
-                    }}
-                    type="button"
-                  >
-                    {t(
-                      selected
-                        ? 'studio.history.confirm'
-                        : 'studio.history.restore',
-                    )}
-                  </button>
+            {restoreError ? (
+              <p className="studio-history-error" role="alert">
+                {t(
+                  restoreError === 'stale'
+                    ? 'studio.error.projectChanged'
+                    : 'studio.error.restoreFailed',
                 )}
-              </li>
-            )
-          })}
-        </ol>
-      </section>
-    </div>
+              </p>
+            ) : null}
+
+            <ol className="studio-history-list">
+              {revisions.map((revision) => {
+                const selected = selectedRevisionId === revision._id
+                const current = revision._id === currentRevisionId
+                return (
+                  <li className="studio-history-entry" key={revision._id}>
+                    <div className="studio-history-entry-copy">
+                      <div>
+                        <strong>#{revision.sequence}</strong>
+                        <span>{t(originKey[revision.origin])}</span>
+                        <time dateTime={new Date(revision.createdAt).toISOString()}>
+                          {new Intl.DateTimeFormat(locale, {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                          }).format(revision.createdAt)}
+                        </time>
+                      </div>
+                      <p>{revision.assistantSummary}</p>
+                    </div>
+                    {current ? null : (
+                      <button
+                        className={
+                          selected
+                            ? 'studio-confirm-button'
+                            : 'studio-text-button'
+                        }
+                        disabled={isRestoring}
+                        onClick={() => {
+                          if (selected) void restore()
+                          else {
+                            setRestoreError(null)
+                            setSelectedRevisionId(revision._id)
+                          }
+                        }}
+                        type="button"
+                      >
+                        {t(
+                          selected
+                            ? 'studio.history.confirm'
+                            : 'studio.history.restore',
+                        )}
+                      </button>
+                    )}
+                  </li>
+                )
+              })}
+            </ol>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
   )
 }
