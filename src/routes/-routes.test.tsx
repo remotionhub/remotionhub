@@ -87,6 +87,9 @@ vi.mock('../components/catalog/DetailPage', () => ({
     <div data-testid="detail-page">{detail.component.displayName}</div>
   ),
 }))
+vi.mock('../components/studio/StudioLanding', () => ({
+  default: () => <main>Studio landing</main>,
+}))
 vi.mock('../components/AppProviders', () => ({
   default: ({ children }: React.PropsWithChildren) => <>{children}</>,
 }))
@@ -109,6 +112,7 @@ import './remotion/index'
 import './remotion/$owner.$slug'
 import './hyperframes/index'
 import './hyperframes/$owner.$slug'
+import './studio/index'
 
 function route(path: string) {
   const options = mocks.routes.get(path)
@@ -151,6 +155,14 @@ describe('application routes', () => {
     expect(metaValue(route('/hyperframes/'), 'title')).toBe(
       'HyperFrames Components | RemotionHub',
     )
+    expect(metaValue(route('/studio/'), 'title')).toBe('Studio · RemotionHub')
+    expect(metaValue(route('/studio/'), 'description')).toBe(
+      'Create motion graphics from a prompt with RemotionHub Studio.',
+    )
+  })
+
+  it('registers the Studio landing route', () => {
+    expect(route('/studio/').component).toBeTypeOf('function')
   })
 
   it.each([
