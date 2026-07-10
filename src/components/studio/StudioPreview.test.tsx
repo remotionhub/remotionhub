@@ -1,36 +1,65 @@
 // @vitest-environment jsdom
 
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { StudioComposition } from '../../../shared/studio'
-import StudioPreview from './StudioPreview'
+import StudioPreview, { type StudioPreviewProps } from './StudioPreview'
 
 const compileStudioComponent = vi.hoisted(() => vi.fn())
 
 vi.mock('../../lib/studio/compiler', () => ({ compileStudioComponent }))
-vi.mock('@remotion/player', () => ({
-  Player: ({
-    component: Component,
-    durationInFrames,
-    compositionWidth,
-    compositionHeight,
-  }: {
-    component: ComponentType
-    durationInFrames: number
-    compositionWidth: number
-    compositionHeight: number
-  }) => (
-    <div
-      data-testid="player"
-      data-duration={durationInFrames}
-      data-width={compositionWidth}
-      data-height={compositionHeight}
-    >
-      <Component />
-    </div>
-  ),
-}))
+vi.mock('@remotion/player', async () => {
+  const React = await vi.importActual<typeof import('react')>('react')
+
+  class InternalPlayerErrorBoundary extends React.Component<
+    {
+      children: ReactNode
+      errorFallback?: (info: { error: Error }) => ReactNode
+    },
+    { error: Error | null }
+  > {
+    state = { error: null }
+
+    static getDerivedStateFromError(error: Error) {
+      return { error }
+    }
+
+    render() {
+      if (this.state.error) {
+        return this.props.errorFallback?.({ error: this.state.error }) ?? '⚠️'
+      }
+      return this.props.children
+    }
+  }
+
+  return {
+    Player: ({
+      component: Component,
+      durationInFrames,
+      compositionWidth,
+      compositionHeight,
+      errorFallback,
+    }: {
+      component: ComponentType
+      durationInFrames: number
+      compositionWidth: number
+      compositionHeight: number
+      errorFallback?: (info: { error: Error }) => ReactNode
+    }) => (
+      <div
+        data-testid="player"
+        data-duration={durationInFrames}
+        data-width={compositionWidth}
+        data-height={compositionHeight}
+      >
+        <InternalPlayerErrorBoundary errorFallback={errorFallback}>
+          <Component />
+        </InternalPlayerErrorBoundary>
+      </div>
+    ),
+  }
+})
 
 const composition: StudioComposition = {
   aspectRatio: '16:9',
@@ -43,6 +72,7 @@ const composition: StudioComposition = {
 const sources = {
   good: 'export const MyAnimation = () => <div>Last good</div>',
   candidate: 'export const MyAnimation = () => <div>Candidate</div>',
+  candidateTwo: 'export const MyAnimation = () => <div>Candidate two</div>',
   compileFailure: 'export const MyAnimation = () => <',
   runtimeFailure: 'export const MyAnimation = () => { throw new Error() }',
 }
@@ -55,11 +85,15 @@ function Candidate() {
   return <div>Candidate</div>
 }
 
+function CandidateTwo() {
+  return <div>Candidate two</div>
+}
+
 function RuntimeFailure(): never {
   throw new Error('Candidate runtime failure\nfull stack detail')
 }
 
-function createProps() {
+function createProps(): StudioPreviewProps {
   return {
     revisionId: 'revision-1',
     revisionCode: sources.good,
@@ -164,6 +198,155 @@ describe('StudioPreview', () => {
       }),
     )
     expect(props.onCandidateResult).toHaveBeenCalledTimes(1)
+    expect(props.onCandidateResult).not.toHaveBeenCalledWith({
+      status: 'accepted',
+      fingerprint: 'runtime-bad',
+    })
+  })
+
+  it('accepts the first candidate when no committed revision exists', async () => {
+    const props = createProps()
+    props.revisionId = null
+    props.revisionCode = null
+    props.candidate = {
+      code: sources.candidate,
+      fingerprint: 'first-candidate',
+      composition,
+    }
+
+    render(<StudioPreview {...props} />)
+
+    expect(await screen.findByText('Candidate')).toBeTruthy()
+    await waitFor(() =>
+      expect(props.onCandidateResult).toHaveBeenCalledWith({
+        status: 'accepted',
+        fingerprint: 'first-candidate',
+      }),
+    )
+  })
+
+  it('rejects a failed first candidate without a fallback revision', async () => {
+    const props = createProps()
+    props.revisionId = null
+    props.revisionCode = null
+    props.candidate = {
+      code: sources.compileFailure,
+      fingerprint: 'first-bad',
+      composition,
+    }
+
+    render(<StudioPreview {...props} />)
+
+    await waitFor(() =>
+      expect(props.onCandidateResult).toHaveBeenCalledWith({
+        status: 'rejected',
+        fingerprint: 'first-bad',
+        error: 'Unexpected token',
+      }),
+    )
+    expect(screen.queryByTestId('player')).toBeNull()
+  })
+
+  it('preserves the candidate fallback when it becomes a committed revision', async () => {
+    const props = createProps()
+    let candidateCompiles = 0
+    compileStudioComponent.mockImplementation((source: string) => {
+      if (source === sources.good) return LastGood
+      if (source === sources.candidate) {
+        candidateCompiles += 1
+        return candidateCompiles === 1 ? Candidate : RuntimeFailure
+      }
+      throw new Error('Unexpected source')
+    })
+    const { rerender } = render(<StudioPreview {...props} />)
+    expect(await screen.findByText('Last good')).toBeTruthy()
+
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{
+          code: sources.candidate,
+          fingerprint: 'promoted-candidate',
+          composition,
+        }}
+      />,
+    )
+    expect(await screen.findByText('Candidate')).toBeTruthy()
+    await waitFor(() =>
+      expect(props.onCandidateResult).toHaveBeenCalledWith({
+        status: 'accepted',
+        fingerprint: 'promoted-candidate',
+      }),
+    )
+
+    rerender(
+      <StudioPreview
+        {...props}
+        revisionId="revision-2"
+        revisionCode={sources.candidate}
+        candidate={null}
+      />,
+    )
+
+    expect(await screen.findByText('Last good')).toBeTruthy()
+    await waitFor(() =>
+      expect(props.onRevisionRuntimeError).toHaveBeenCalledWith({
+        revisionId: 'revision-2',
+        error: 'Candidate runtime failure',
+      }),
+    )
+  })
+
+  it('unwraps every accepted candidate before committing a revision fallback', async () => {
+    const props = createProps()
+    let candidateTwoCompiles = 0
+    compileStudioComponent.mockImplementation((source: string) => {
+      if (source === sources.good) return LastGood
+      if (source === sources.candidate) return Candidate
+      if (source === sources.candidateTwo) {
+        candidateTwoCompiles += 1
+        return candidateTwoCompiles === 1 ? CandidateTwo : RuntimeFailure
+      }
+      throw new Error('Unexpected source')
+    })
+    const { rerender } = render(<StudioPreview {...props} />)
+    expect(await screen.findByText('Last good')).toBeTruthy()
+
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{
+          code: sources.candidate,
+          fingerprint: 'candidate-one',
+          composition,
+        }}
+      />,
+    )
+    expect(await screen.findByText('Candidate')).toBeTruthy()
+
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{
+          code: sources.candidateTwo,
+          fingerprint: 'candidate-two',
+          composition,
+        }}
+      />,
+    )
+    expect(await screen.findByText('Candidate two')).toBeTruthy()
+
+    rerender(
+      <StudioPreview
+        {...props}
+        revisionId="revision-3"
+        revisionCode={sources.candidateTwo}
+        candidate={null}
+      />,
+    )
+
+    expect(await screen.findByText('Last good')).toBeTruthy()
+    expect(screen.queryByText('Candidate')).toBeNull()
   })
 
   it('reports a committed revision runtime failure once', async () => {
@@ -194,6 +377,37 @@ describe('StudioPreview', () => {
 
     rerender(<StudioPreview {...props} candidate={candidate} />)
     expect(await screen.findByText('Candidate')).toBeTruthy()
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{ ...candidate, code: sources.compileFailure }}
+      />,
+    )
+
+    await waitFor(() => expect(compileStudioComponent).toHaveBeenCalledTimes(2))
+    expect(screen.getByText('Candidate')).toBeTruthy()
+  })
+
+  it('does not recompile a terminal candidate after it disappears and returns', async () => {
+    const props = createProps()
+    const candidate = {
+      code: sources.candidate,
+      fingerprint: 'terminal-fingerprint',
+      composition,
+    }
+    const { rerender } = render(<StudioPreview {...props} />)
+    expect(await screen.findByText('Last good')).toBeTruthy()
+
+    rerender(<StudioPreview {...props} candidate={candidate} />)
+    expect(await screen.findByText('Candidate')).toBeTruthy()
+    await waitFor(() =>
+      expect(props.onCandidateResult).toHaveBeenCalledWith({
+        status: 'accepted',
+        fingerprint: 'terminal-fingerprint',
+      }),
+    )
+
+    rerender(<StudioPreview {...props} candidate={null} />)
     rerender(
       <StudioPreview
         {...props}

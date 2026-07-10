@@ -13,7 +13,7 @@ describe('validateAndStripStudioImports', () => {
         ].join('\n'),
       ),
     ).toBe(
-      '\n\n\nexport const MyAnimation = () => <AbsoluteFill />',
+      '\nvar AbsoluteFill = __studioRemotion.AbsoluteFill;\n\nexport const MyAnimation = () => <AbsoluteFill />',
     )
   })
 
@@ -32,7 +32,18 @@ describe('validateAndStripStudioImports', () => {
     ].join('\n')
 
     expect(validateAndStripStudioImports(source)).toBe(
-      '\n'.repeat(9) + 'export const MyAnimation = () => null',
+      [
+        '',
+        'var AbsoluteFill = __studioRemotion.AbsoluteFill;',
+        'var Player = __studioRemotionPlayer.Player;',
+        'var Circle = __studioRemotionShapes.Circle;',
+        'var TransitionSeries = __studioRemotionTransitions.TransitionSeries;',
+        'var Lottie = __studioRemotionLottie.Lottie;',
+        'var ThreeCanvas = __studioRemotionThree.ThreeCanvas;',
+        'var Canvas = __studioReactThreeFiber.Canvas;',
+        'var Scene = __studioThree.Scene;',
+        'export const MyAnimation = () => null',
+      ].join('\n'),
     )
   })
 
@@ -76,11 +87,34 @@ describe('validateAndStripStudioImports', () => {
       ),
     ).toBe(
       [
-        'const Fill = AbsoluteFill',
-        'const THREE = __studioThree',
+        'var Fill = __studioRemotion.AbsoluteFill;',
+        'var THREE = __studioThree;',
         'export const MyAnimation = () => <Fill>{THREE.REVISION}</Fill>',
       ].join('\n'),
     )
+  })
+
+  it('binds every named import from its package namespace', () => {
+    expect(
+      validateAndStripStudioImports(
+        "import { Triangle } from 'three'\nexport const MyAnimation = () => Triangle",
+      ),
+    ).toBe(
+      'var Triangle = __studioThree.Triangle;\nexport const MyAnimation = () => Triangle',
+    )
+  })
+
+  it('does not treat import-like text in strings, templates, or comments as modules', () => {
+    const source = [
+      "const stringValue = \"import { nope } from 'left-pad'\"",
+      'const templateValue = `',
+      "import { alsoNope } from 'left-pad'",
+      '`',
+      "// import { stillNope } from 'left-pad'",
+      'export const MyAnimation = () => stringValue + templateValue',
+    ].join('\n')
+
+    expect(validateAndStripStudioImports(source)).toBe(source)
   })
 
   it('rejects packages outside the allowlist', () => {
@@ -96,6 +130,7 @@ describe('validateAndStripStudioImports', () => {
     "import 'react'",
     "export { AbsoluteFill } from 'remotion'",
     "export type { ComponentType } from 'react'",
+    "export * as THREE from 'three'",
   ])('rejects unsupported module syntax: %s', (moduleSyntax) => {
     expect(() =>
       validateAndStripStudioImports(
