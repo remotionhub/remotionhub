@@ -262,6 +262,7 @@ export default defineSchema({
     candidateCode: v.optional(v.string()),
     candidateComposition: v.optional(studioComposition),
     candidateFingerprint: v.optional(v.string()),
+    candidateSummary: v.optional(v.string()),
     errorCode: v.optional(v.string()),
     tokenUsage: v.optional(
       v.object({ inputTokens: v.number(), outputTokens: v.number() }),
