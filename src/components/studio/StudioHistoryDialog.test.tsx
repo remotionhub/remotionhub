@@ -144,4 +144,68 @@ describe('StudioHistoryDialog', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     expect(document.activeElement).toBe(trigger)
   })
+
+  it('resets selection and restore errors after close and reopen', async () => {
+    mocks.rollbackRevision.mockRejectedValueOnce(new Error('Network unavailable'))
+    render(<HistoryHarness />)
+    const trigger = screen.getByRole('button', { name: 'Open history' })
+
+    fireEvent.click(trigger)
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: /恢复此版本|restore this version/i,
+      }),
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: /确认恢复|confirm restore/i }),
+    )
+    expect(await screen.findByRole('alert')).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    fireEvent.click(trigger)
+
+    expect(await screen.findByRole('dialog')).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(
+      screen.getByRole('button', {
+        name: /恢复此版本|restore this version/i,
+      }),
+    ).toBeTruthy()
+    expect(
+      screen.queryByRole('button', { name: /确认恢复|confirm restore/i }),
+    ).toBeNull()
+  })
+
+  it('resets an in-flight restore after close and reopen', async () => {
+    mocks.rollbackRevision.mockReturnValue(new Promise(() => undefined))
+    render(<HistoryHarness />)
+    const trigger = screen.getByRole('button', { name: 'Open history' })
+
+    fireEvent.click(trigger)
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: /恢复此版本|restore this version/i,
+      }),
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: /确认恢复|confirm restore/i }),
+    )
+    expect(
+      (
+        screen.getByRole('button', {
+          name: /确认恢复|confirm restore/i,
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    fireEvent.click(trigger)
+
+    const restoreButton = await screen.findByRole('button', {
+      name: /恢复此版本|restore this version/i,
+    })
+    expect((restoreButton as HTMLButtonElement).disabled).toBe(false)
+  })
 })

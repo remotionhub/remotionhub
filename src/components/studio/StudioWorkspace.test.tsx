@@ -106,7 +106,7 @@ const messages = [
   },
 ]
 
-let snapshot: typeof baseSnapshot | Record<string, unknown> | null
+let snapshot: typeof baseSnapshot | Record<string, unknown> | null | undefined
 let queryError: Error | null
 
 function installMatchMedia(desktop: boolean) {
@@ -377,6 +377,146 @@ describe('StudioWorkspace', () => {
     )
   })
 
+  it.each([
+    {
+      name: 'the same Run reaches a terminal state and clears its candidate',
+      nextRun: { _id: runId, status: 'succeeded' as const },
+    },
+    {
+      name: 'the same Run advances out of its candidate status',
+      nextRun: {
+        _id: runId,
+        status: 'generating' as const,
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-stale',
+      },
+    },
+    {
+      name: 'the same Run exposes a new fingerprint',
+      nextRun: {
+        _id: runId,
+        status: 'compiling' as const,
+        candidateCode: 'new candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-new',
+      },
+    },
+    {
+      name: 'a new Run exposes the same fingerprint',
+      nextRun: {
+        _id: 'studioGenerationRuns:2' as Id<'studioGenerationRuns'>,
+        status: 'compiling' as const,
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-stale',
+      },
+    },
+  ])(
+    'drops a failed candidate delivery when another tab reports that $name',
+    async ({ nextRun }) => {
+      snapshot = {
+        ...baseSnapshot,
+        run: {
+          _id: runId,
+          status: 'compiling',
+          candidateCode: 'candidate source',
+          candidateComposition: composition,
+          candidateFingerprint: 'candidate-stale',
+        },
+      }
+      mocks.acceptCandidate.mockRejectedValue(new Error('Temporary network failure'))
+      const view = renderWorkspace()
+
+      await act(async () =>
+        mocks.previewProps?.onCandidateResult({
+          status: 'accepted',
+          fingerprint: 'candidate-stale',
+        }),
+      )
+      expect(
+        await screen.findByRole('button', {
+          name: /重试预览结果|retry preview result/i,
+        }),
+      ).toBeTruthy()
+
+      snapshot = { ...baseSnapshot, run: nextRun }
+      view.rerender(
+        <I18nProvider>
+          <StudioWorkspace projectId={projectId} />
+        </I18nProvider>,
+      )
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', {
+            name: /重试预览结果|retry preview result/i,
+          }),
+        ).toBeNull(),
+      )
+      expect(mocks.acceptCandidate).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  it('keeps a failed candidate delivery while the authoritative snapshot reloads', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-reload',
+      },
+    }
+    mocks.rejectCandidate.mockRejectedValue(new Error('Temporary network failure'))
+    const view = renderWorkspace()
+
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'rejected',
+        fingerprint: 'candidate-reload',
+        error: 'Compile failed',
+      }),
+    )
+    expect(
+      await screen.findByRole('button', {
+        name: /重试预览结果|retry preview result/i,
+      }),
+    ).toBeTruthy()
+
+    snapshot = undefined
+    view.rerender(
+      <I18nProvider>
+        <StudioWorkspace projectId={projectId} />
+      </I18nProvider>,
+    )
+    expect(screen.getByRole('status')).toBeTruthy()
+
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-reload',
+      },
+    }
+    view.rerender(
+      <I18nProvider>
+        <StudioWorkspace projectId={projectId} />
+      </I18nProvider>,
+    )
+
+    expect(
+      await screen.findByRole('button', {
+        name: /重试预览结果|retry preview result/i,
+      }),
+    ).toBeTruthy()
+    expect(mocks.rejectCandidate).toHaveBeenCalledTimes(1)
+  })
+
   it('reports a committed runtime failure once and advances to the fallback revision', async () => {
     const view = renderWorkspace()
 
@@ -441,6 +581,67 @@ describe('StudioWorkspace', () => {
       mocks.reportRuntimeFailure.mock.calls[0]?.[0],
     )
   })
+
+  it.each([
+    {
+      name: 'the project falls back from the failed Revision',
+      nextProjectRevisionId: 'studioRevisions:fallback' as Id<'studioRevisions'>,
+      nextRun: { _id: runId, status: 'generating' as const },
+    },
+    {
+      name: 'the server enters correction for the failed Revision',
+      nextProjectRevisionId: revisionId,
+      nextRun: {
+        _id: runId,
+        status: 'queued' as const,
+        inputRevisionId: revisionId,
+        correctionAttempt: 1,
+      },
+    },
+  ])(
+    'drops a failed runtime delivery when another tab reports that $name',
+    async ({ nextProjectRevisionId, nextRun }) => {
+      mocks.reportRuntimeFailure.mockRejectedValue(
+        new Error('Temporary network failure'),
+      )
+      const view = renderWorkspace()
+
+      await act(async () =>
+        mocks.previewProps?.onRevisionRuntimeError({
+          revisionId,
+          error: 'Committed runtime failed',
+        }),
+      )
+      expect(
+        await screen.findByRole('button', {
+          name: /重试预览结果|retry preview result/i,
+        }),
+      ).toBeTruthy()
+
+      snapshot = {
+        ...baseSnapshot,
+        project: {
+          ...baseSnapshot.project,
+          currentRevisionId: nextProjectRevisionId,
+        },
+        run: nextRun,
+      }
+      view.rerender(
+        <I18nProvider>
+          <StudioWorkspace projectId={projectId} />
+        </I18nProvider>,
+      )
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', {
+            name: /重试预览结果|retry preview result/i,
+          }),
+        ).toBeNull(),
+      )
+      expect(mocks.reportRuntimeFailure).toHaveBeenCalledTimes(1)
+    },
+  )
 
   it('keeps the last revision visible while the Run advances', () => {
     snapshot = {
