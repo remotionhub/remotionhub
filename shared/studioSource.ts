@@ -1,3 +1,6 @@
+import { packages as BabelPackages } from '@babel/standalone'
+import type { ImportDeclaration, ImportSpecifier } from '@babel/types'
+
 const ALLOWED_IMPORTS = new Set([
   'react',
   'remotion',
@@ -37,65 +40,63 @@ export const STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE = {
   three: '__studioThree',
 } as const
 
-const STATIC_IMPORT =
-  /(^|\n)([\t ]*import\s+((?:type\s+)?(?:[$\w]+(?:\s*,\s*(?:\*\s+as\s+[$\w]+|\{[^}]*\}))?|\*\s+as\s+[$\w]+|\{[^}]*\}))\s+from\s*(['"])([^'"\r\n]+)\4[\t ]*;?[\t ]*)(?=\r?\n|$)/g
-
-const UNRESOLVED_MODULE_SYNTAX =
-  /\bimport\s+(?:['"]|type\b|[$\w*{])|\bexport\s+(?:type\s+)?(?:\*|\{[^}]*\})\s+from\s*['"]/
-
 function preserveLineBreaks(value: string) {
   return value.replace(/[^\r\n]/g, '')
 }
 
-function buildInjectedBindings(importClause: string, pkg: string) {
-  let clause = importClause.trim()
-  if (clause.startsWith('type ')) return ''
+function getImportedAccess(
+  runtimeName: string,
+  specifier: ImportSpecifier,
+) {
+  return specifier.imported.type === 'Identifier'
+    ? `${runtimeName}.${specifier.imported.name}`
+    : `${runtimeName}[${JSON.stringify(specifier.imported.value)}]`
+}
 
+function buildInjectedBindings(declaration: ImportDeclaration, pkg: string) {
+  if (declaration.importKind === 'type') return ''
+
+  const runtimeName =
+    STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE[
+      pkg as keyof typeof STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE
+    ]
   const bindings: string[] = []
-  const defaultImport = clause.match(/^([$A-Z_a-z][$\w]*)(?:\s*,|$)/)
-  if (defaultImport) {
-    const localName = defaultImport[1]
-    if (pkg !== 'react' || localName !== 'React') {
-      const runtimeName =
-        STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE[
-          pkg as keyof typeof STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE
-        ]
-      bindings.push(
-        `${localName} = ${runtimeName}.default ?? ${runtimeName}`,
-      )
-    }
-    clause = clause.slice(defaultImport[0].length).trim()
-  }
-
-  const namespaceImport = clause.match(/^\*\s+as\s+([$A-Z_a-z][$\w]*)$/)
-  if (namespaceImport) {
-    const runtimeName =
-      STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE[
-        pkg as keyof typeof STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE
-      ]
-    bindings.push(`${namespaceImport[1]} = ${runtimeName}`)
-    clause = ''
-  }
-
-  if (clause.startsWith('{') && clause.endsWith('}')) {
-    for (const rawSpecifier of clause.slice(1, -1).split(',')) {
-      const specifier = rawSpecifier.trim()
-      if (!specifier || specifier.startsWith('type ')) continue
-      const match = specifier.match(
-        /^([$A-Z_a-z][$\w]*)(?:\s+as\s+([$A-Z_a-z][$\w]*))?$/,
-      )
-      if (!match) throw new Error('Unsupported Studio dependency')
-      const importedName = match[1]
-      const localName = match[2] ?? importedName
-      if (localName !== importedName) {
-        bindings.push(`${localName} = ${importedName}`)
+  for (const specifier of declaration.specifiers) {
+    if (specifier.type === 'ImportDefaultSpecifier') {
+      if (pkg !== 'react' || specifier.local.name !== 'React') {
+        bindings.push(
+          `${specifier.local.name} = ${runtimeName}.default ?? ${runtimeName}`,
+        )
       }
+      continue
     }
-    clause = ''
+    if (specifier.type === 'ImportNamespaceSpecifier') {
+      bindings.push(`${specifier.local.name} = ${runtimeName}`)
+      continue
+    }
+    if (specifier.importKind !== 'type') {
+      bindings.push(
+        `${specifier.local.name} = ${getImportedAccess(runtimeName, specifier)}`,
+      )
+    }
   }
 
-  if (clause) throw new Error('Unsupported Studio dependency')
-  return bindings.length > 0 ? `const ${bindings.join(', ')}` : ''
+  // `var` may intentionally shadow an injected factory parameter with the
+  // package-specific binding while retaining import-like local semantics.
+  return bindings.length > 0 ? `var ${bindings.join(', ')};` : ''
+}
+
+function getDeclarationRange(declaration: ImportDeclaration) {
+  const { start, end } = declaration
+  if (
+    start === null ||
+    start === undefined ||
+    end === null ||
+    end === undefined
+  ) {
+    throw new Error('Unsupported Studio dependency')
+  }
+  return { start, end }
 }
 
 export function validateAndStripStudioImports(
@@ -110,33 +111,42 @@ export function validateAndStripStudioImports(
   const declared = declaredDependencies
     ? new Set(declaredDependencies)
     : undefined
-  const withoutImports = source.replace(
-    STATIC_IMPORT,
-    (
-      _match: string,
-      leadingLineBreak: string,
-      declaration: string,
-      importClause: string,
-      _quote: string,
-      pkg: string,
-    ) => {
-      if (!ALLOWED_IMPORTS.has(pkg)) {
-        throw new Error('Unsupported Studio dependency')
-      }
-      if (declared && !declared.has(pkg)) {
-        throw new Error('Undeclared Studio dependency')
-      }
-      return (
-        leadingLineBreak +
-        buildInjectedBindings(importClause, pkg) +
-        preserveLineBreaks(declaration)
-      )
-    },
-  )
-
-  if (UNRESOLVED_MODULE_SYNTAX.test(withoutImports)) {
-    throw new Error('Unsupported Studio dependency')
+  const parsed = BabelPackages.parser.parse(source, {
+    sourceType: 'module',
+    plugins: ['typescript', 'jsx'],
+    ranges: true,
+  })
+  const imports: ImportDeclaration[] = []
+  for (const statement of parsed.program.body) {
+    if (statement.type === 'ImportDeclaration') {
+      imports.push(statement)
+      continue
+    }
+    if (
+      (statement.type === 'ExportNamedDeclaration' && statement.source) ||
+      statement.type === 'ExportAllDeclaration'
+    ) {
+      throw new Error('Unsupported Studio dependency')
+    }
   }
 
-  return withoutImports
+  let cursor = 0
+  let withoutImports = ''
+  for (const declaration of imports) {
+    const pkg = declaration.source.value
+    if (!ALLOWED_IMPORTS.has(pkg) || declaration.specifiers.length === 0) {
+      throw new Error('Unsupported Studio dependency')
+    }
+    if (declared && !declared.has(pkg)) {
+      throw new Error('Undeclared Studio dependency')
+    }
+
+    const { start, end } = getDeclarationRange(declaration)
+    withoutImports += source.slice(cursor, start)
+    withoutImports += buildInjectedBindings(declaration, pkg)
+    withoutImports += preserveLineBreaks(source.slice(start, end))
+    cursor = end
+  }
+
+  return withoutImports + source.slice(cursor)
 }

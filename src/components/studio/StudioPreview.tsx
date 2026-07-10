@@ -53,6 +53,14 @@ type PreviewErrorBoundaryProps = {
   onError(error: unknown): void
 }
 
+function getCommittedFallback(entry: PreviewEntry | null) {
+  let fallback = entry
+  while (fallback?.source.kind === 'candidate') {
+    fallback = fallback.previous
+  }
+  return fallback
+}
+
 class PreviewErrorBoundary extends Component<
   PreviewErrorBoundaryProps,
   { failed: boolean }
@@ -81,6 +89,12 @@ function PreviewCommitProbe({
 }) {
   useEffect(() => onCommit(entryKey), [entryKey, onCommit])
   return null
+}
+
+function PlayerErrorBridge({ error }: { error: Error }): never {
+  // Remotion Player catches composition errors internally. Rethrow from its
+  // fallback so the preview boundary can restore the correct previous entry.
+  throw error
 }
 
 function normalizePreviewError(error: unknown) {
@@ -192,7 +206,12 @@ export default function StudioPreview({
       return
     }
 
-    const previous = lastGoodRef.current
+    const currentLastGood = lastGoodRef.current
+    const previous = getCommittedFallback(currentLastGood)
+    if (currentLastGood?.source.kind === 'candidate') {
+      lastGoodRef.current = previous
+      setLastGoodKey(previous?.key ?? null)
+    }
     try {
       const component = compileStudioComponent(revisionCode)
       entrySequenceRef.current += 1
@@ -214,12 +233,10 @@ export default function StudioPreview({
 
   const candidateFingerprint = candidate?.fingerprint ?? null
   useEffect(() => {
-    if (!candidateFingerprint) {
-      processedCandidateFingerprintRef.current = null
-      return
-    }
+    if (!candidateFingerprint) return
     if (
-      !lastGoodKey ||
+      candidateResultsRef.current.has(candidateFingerprint) ||
+      (revisionCode !== null && !lastGoodKey) ||
       processedCandidateFingerprintRef.current === candidateFingerprint
     ) {
       return
@@ -229,8 +246,7 @@ export default function StudioPreview({
     const previous = lastGoodRef.current
     if (
       !currentCandidate ||
-      currentCandidate.fingerprint !== candidateFingerprint ||
-      !previous
+      currentCandidate.fingerprint !== candidateFingerprint
     ) {
       return
     }
@@ -256,7 +272,13 @@ export default function StudioPreview({
         error: normalizedError,
       })
     }
-  }, [candidateFingerprint, lastGoodKey, notifyCandidate, showEntry])
+  }, [
+    candidateFingerprint,
+    lastGoodKey,
+    notifyCandidate,
+    revisionCode,
+    showEntry,
+  ])
 
   return (
     <section aria-label="Studio preview">
@@ -273,6 +295,9 @@ export default function StudioPreview({
               fps={30}
               compositionWidth={active.composition.width}
               compositionHeight={active.composition.height}
+              errorFallback={({ error }) => (
+                <PlayerErrorBridge error={error} />
+              )}
               controls
               loop
             />

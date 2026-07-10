@@ -160,7 +160,11 @@ function normalizeValidationError(error: unknown): never {
   if (message === 'Unsupported Studio API') {
     throw new StudioCompileError('STUDIO_UNSUPPORTED_API', message)
   }
-  throw new StudioCompileError('STUDIO_TRANSFORM_FAILED', message)
+  throw new StudioCompileError(
+    'STUDIO_TRANSFORM_FAILED',
+    message,
+    getErrorLocation(error),
+  )
 }
 
 export function compileStudioComponent(

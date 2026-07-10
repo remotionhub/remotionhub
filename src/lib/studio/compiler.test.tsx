@@ -73,6 +73,32 @@ describe('compileStudioComponent', () => {
     expect(screen.getByTestId('aliased').textContent).toBe('1')
   })
 
+  it('resolves colliding named imports from the declared package', () => {
+    const Component = compileStudioComponent(
+      [
+        "import { Triangle } from 'three'",
+        'const triangle = new Triangle()',
+        'export const MyAnimation = () => (',
+        '  <div data-testid="triangle">{triangle.a.x}</div>',
+        ')',
+      ].join('\n'),
+    )
+
+    render(<Component />)
+
+    expect(screen.getByTestId('triangle').textContent).toBe('0')
+  })
+
+  it('preserves statement separators around same-line imports', () => {
+    const Component = compileStudioComponent(
+      "import { AbsoluteFill } from 'remotion'; import { Triangle } from 'three'; export const MyAnimation = () => <AbsoluteFill data-testid=\"inline\">{new Triangle().a.x}</AbsoluteFill>",
+    )
+
+    render(<Component />)
+
+    expect(screen.getByTestId('inline').textContent).toBe('0')
+  })
+
   it('accepts only allowlisted static imports', () => {
     expect(() =>
       compileStudioComponent(
