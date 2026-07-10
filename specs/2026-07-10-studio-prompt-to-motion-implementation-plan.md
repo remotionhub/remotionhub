@@ -260,6 +260,7 @@ studioRevisions: defineTable({
   projectId: v.id('studioProjects'),
   sequence: v.number(),
   parentRevisionId: v.optional(v.id('studioRevisions')),
+  previousRunnableRevisionId: v.optional(v.id('studioRevisions')),
   origin: v.union(
     v.literal('prompt'),
     v.literal('catalog-remix'),
@@ -534,6 +535,7 @@ export const rollbackRevision = mutation({
       projectId: args.projectId,
       sequence: (latest?.sequence ?? 0) + 1,
       parentRevisionId: args.expectedCurrentRevisionId,
+      previousRunnableRevisionId: project.lastRunnableRevisionId,
       origin: 'rollback',
       code: target.code,
       codeHash: target.codeHash,
@@ -833,7 +835,7 @@ Expected: all pure generation tests PASS and the commit succeeds.
 - Regenerate: `convex/_generated/api.d.ts`
 
 **Interfaces:**
-- Produces mutations: `startPromptProject`, `startFollowUp`, `acceptCandidate`, `rejectCandidate`.
+- Produces mutations: `startPromptProject`, `startFollowUp`, `acceptCandidate`, `rejectCandidate`, `reportRuntimeFailure`.
 - Produces internal Action: `runGeneration` plus internal read/write helpers.
 - Produces `createStudioModel(env)` with real OpenAI and deterministic stub modes.
 
@@ -886,6 +888,18 @@ it('preserves the last runnable revision after rejection', async () => {
   })
   const snapshot = await owner.query(api.studio.getProject, { projectId })
   expect(snapshot.project.lastRunnableRevisionId).toBe(previousRevisionId)
+})
+
+it('restores the previous runnable revision after a committed runtime error', async () => {
+  const result = await owner.mutation(api.studio.reportRuntimeFailure, {
+    projectId,
+    revisionId: failingRevisionId,
+    normalizedError: 'Runtime error at frame 90',
+  })
+  const snapshot = await owner.query(api.studio.getProject, { projectId })
+  expect(snapshot.project.currentRevisionId).toBe(previousRevisionId)
+  expect(snapshot.project.lastRunnableRevisionId).toBe(previousRevisionId)
+  expect(snapshot.project.currentRunId).toBe(result.runId)
 })
 ```
 
@@ -1115,7 +1129,7 @@ Do not log full Prompt, source, raw model response, or browser error. Log only R
 
 - [ ] **Step 7: Implement accept/reject with optimistic guards**
 
-`acceptCandidate` must re-check owner, `project.currentRunId`, Run ownership/project/status, and exact fingerprint. In one Mutation it must create the next immutable Revision, create the assistant response message, set Run `succeeded`, clear `candidateCode`, update both project Revision pointers and Composition, and clear `currentRunId`.
+`acceptCandidate` must re-check owner, `project.currentRunId`, Run ownership/project/status, and exact fingerprint. In one Mutation it must create the next immutable Revision with `previousRunnableRevisionId: project.lastRunnableRevisionId`, create the assistant response message, set Run `succeeded`, clear `candidateCode`, update both project Revision pointers and Composition, and clear `currentRunId`.
 
 `rejectCandidate` accepts a browser-normalized error capped at 2,000 characters. It must re-check the same identity/fingerprint constraints, increment `correctionAttempt`, clear the candidate, and either:
 
@@ -1123,6 +1137,10 @@ Do not log full Prompt, source, raw model response, or browser error. Log only R
 - mark failed and clear `currentRunId` after attempt `3` has already been used.
 
 Every correction remains part of the same Run; a successful correction creates a Revision with origin `correction`.
+
+Add `reportRuntimeFailure({ projectId, revisionId, normalizedError })`. It must be idempotent per owner and Revision using `idempotencyKey: runtime-failure:${revisionId}`. After owner and current-Revision checks, load `revision.previousRunnableRevisionId`, restore both project Revision pointers to that value, keep the failed Revision immutable, insert a system error message, create a queued Run with `inputRevisionId` set to the failed Revision and `correctionAttempt: 1`, set `currentRunId`, and schedule `runGeneration`. If there is no previous runnable Revision, clear both optional pointers while retaining the project Composition until correction succeeds. Repeated reports return the already-created Run.
+
+Cover cross-user reporting, stale Revision reporting, repeat idempotency, no-fallback initial generation, and successful correction creating a new Revision whose `previousRunnableRevisionId` is the restored project pointer.
 
 - [ ] **Step 8: Document backend-only environment values**
 
@@ -1342,6 +1360,7 @@ The component accepts:
 
 ```ts
 type StudioPreviewProps = {
+  revisionId: string | null
   revisionCode: string | null
   revisionComposition: StudioComposition
   candidate: {
@@ -1354,10 +1373,14 @@ type StudioPreviewProps = {
     fingerprint: string
     error?: string
   }): void
+  onRevisionRuntimeError(result: {
+    revisionId: string
+    error: string
+  }): void
 }
 ```
 
-Compile `revisionCode` on load and candidate source only when the complete fingerprint changes. Hold `lastGood` as `{ component, composition }`. Notify `accepted` only after compilation and the first error-free React commit. Wrap the Player in an Error Boundary; on candidate runtime failure restore `lastGood`, stop candidate playback, and notify one normalized rejection. Render textual loading/error states outside the video rectangle for accessibility.
+Compile `revisionCode` on load and candidate source only when the complete fingerprint changes. Hold `lastGood` as `{ component, composition }`. Notify `accepted` only after compilation and the first error-free React commit. Wrap the Player in an Error Boundary; on candidate runtime failure before acceptance, restore `lastGood`, stop candidate playback, and notify one normalized rejection. When the failing component belongs to a committed `revisionId`, call `onRevisionRuntimeError` once for that Revision so the backend restores `previousRunnableRevisionId` and starts correction. Render textual loading/error states outside the video rectangle for accessibility.
 
 Configure Player from Composition only:
 
@@ -1649,6 +1672,7 @@ Create `StudioWorkspace.test.tsx` with mocked Convex hooks and prove:
 - a Run candidate is passed to `StudioPreview`, never rendered as text or into a code editor;
 - an accepted fingerprint calls `acceptCandidate` once despite re-renders;
 - a rejected fingerprint calls `rejectCandidate` once with a normalized error;
+- a committed Revision runtime error calls `reportRuntimeFailure` once and keeps the failed Revision source out of the visible Preview;
 - the last revision remains in Preview while Run status advances;
 - desktop contains Chat and Preview simultaneously; mobile tab buttons have correct selected semantics.
 
@@ -1756,6 +1780,27 @@ async function handleCandidateResult(result: CandidateResult) {
 ```
 
 Clear processed entries only when the server exposes a different candidate fingerprint. Follow-up submission includes `expectedCurrentRevisionId`; disable it until an initial Revision exists and whenever a Run is active.
+
+Track reported runtime Revision IDs in a second ref and wire the committed callback separately from candidate fingerprints:
+
+```ts
+async function handleRevisionRuntimeError(result: {
+  revisionId: Id<'studioRevisions'>
+  error: string
+}) {
+  if (reportedRuntimeFailures.current.has(result.revisionId)) return
+  reportedRuntimeFailures.current.add(result.revisionId)
+  try {
+    await reportRuntimeFailure({
+      projectId,
+      revisionId: result.revisionId,
+      normalizedError: result.error,
+    })
+  } catch {
+    reportedRuntimeFailures.current.delete(result.revisionId)
+  }
+}
+```
 
 - [ ] **Step 8: Implement the refined responsive layout**
 
@@ -2289,6 +2334,7 @@ Final acceptance evidence must report the exact commands run, their exit status,
 - ownership is provider-neutral and every Studio read/write checks it;
 - generated source is never displayed or manually editable;
 - failed candidates preserve the last runnable Preview;
+- committed runtime failures restore `previousRunnableRevisionId` and start a Correction Run;
 - successful changes and rollback append immutable Revisions;
 - incompatible Catalog versions do not show Remix;
 - the MVP does not claim same-page execution is a sandbox.
