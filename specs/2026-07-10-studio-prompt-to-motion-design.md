@@ -384,6 +384,7 @@ old_string + new_string + description
 - 项目存在活动 Run 时拒绝第二次提交，并返回当前 Run。
 - 多标签页通过 Convex 订阅共享当前 Run 和 Revision；后到的页面不能覆盖新版本。
 - 回退和新生成都检查预期 `currentRevisionId`，避免基于过期版本写入。
+- 失败 Run 的 Retry 只提交 `projectId`、失败 Run ID 和新的幂等键；后端必须重新校验 owner、Run 归属、`failed` 状态与无活动 Run。普通失败 Run 的 `inputRevisionId` 必须与当前 Revision 完全一致（包括两者都不存在）。Runtime repair Run 允许项目已回退，但必须由后端确认 broken Revision 属于项目、其 `previousRunnableRevisionId` 等于当前 Revision，且原 Prompt Message 是同项目 `system/error`；correction context 只能从该 Revision 的 code/Composition 与持久化的截断 error message 重建。所有重试复用服务端保存的 `promptMessageId` 与 `inputRevisionId`，不能信任浏览器重传的 Prompt 或源码。
 
 ## 错误处理
 
@@ -393,6 +394,7 @@ old_string + new_string + description
 - 模型或网络错误：保留当前 Preview，允许重试。
 - 编译错误：显示自动修复进度；三次失败后提供 Retry。
 - Runtime Error：停止当前候选，恢复最后可运行 Preview。
+- Preview 终态上报 mutation 失败时，Workspace 保留完整候选或 Revision runtime delivery，并显示显式 Retry；失败时释放 Workspace 上报锁，成功时清除 delivery。不能依赖 Player 为同一终态再次发事件。
 - 所有权错误：显示统一不可用页面。
 - Catalog Bundle 被移除：已有项目继续使用快照，新 Remix 操作不可用。
 
@@ -408,6 +410,7 @@ old_string + new_string + description
 - 默认中文，英文切换沿用全局设置。
 - 生成阶段使用文本与图标，不只依赖颜色。
 - Chat、Preview 和 History 有明确可访问名称；只读 Composition 摘要有可理解的文本标签。
+- History 使用真正的 modal primitive：打开后移动并约束焦点、阻止背景交互、支持 Escape 关闭，并在关闭后恢复触发按钮焦点。
 - 移动端 Chat 与 Preview 页签保留键盘和屏幕阅读器语义。
 - Player 错误状态提供文本替代，不把错误只画在视频区域内。
 - `prefers-reduced-motion` 仅影响 Studio UI 动效，不改变用户生成的 Remotion 内容。

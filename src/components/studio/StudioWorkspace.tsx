@@ -23,6 +23,32 @@ import StudioProjectBar from './StudioProjectBar'
 
 const DESKTOP_QUERY = '(min-width: 900px)'
 
+type FailedPreviewDelivery =
+  | {
+      kind: 'candidate'
+      runId: Id<'studioGenerationRuns'>
+      result: CandidateResult
+    }
+  | { kind: 'revision-runtime'; result: RevisionRuntimeError }
+
+function isSamePreviewDelivery(
+  left: FailedPreviewDelivery,
+  right: FailedPreviewDelivery,
+) {
+  if (left.kind !== right.kind) return false
+  if (left.kind === 'candidate' && right.kind === 'candidate') {
+    return (
+      left.runId === right.runId &&
+      left.result.fingerprint === right.result.fingerprint
+    )
+  }
+  return (
+    left.kind === 'revision-runtime' &&
+    right.kind === 'revision-runtime' &&
+    left.result.revisionId === right.result.revisionId
+  )
+}
+
 function subscribeToDesktopQuery(onStoreChange: () => void) {
   if (typeof window === 'undefined' || !window.matchMedia) return () => undefined
   const media = window.matchMedia(DESKTOP_QUERY)
@@ -154,6 +180,8 @@ function StudioWorkspaceData({
   const isDesktop = useIsDesktop()
   const [mobileTab, setMobileTab] = useState<'chat' | 'preview'>('chat')
   const [historyOpen, setHistoryOpen] = useState(false)
+  const [failedPreviewDelivery, setFailedPreviewDelivery] =
+    useState<FailedPreviewDelivery | null>(null)
   const snapshot = useQuery(
     api.studio.getProject,
     isAuthenticated ? { projectId } : 'skip',
@@ -171,6 +199,7 @@ function StudioWorkspaceData({
   const acceptCandidate = useMutation(api.studio.acceptCandidate)
   const rejectCandidate = useMutation(api.studio.rejectCandidate)
   const reportRuntimeFailure = useMutation(api.studio.reportRuntimeFailure)
+  const retryFailedGeneration = useMutation(api.studio.retryFailedGeneration)
   const processedCandidateFingerprints = useRef(new Set<string>())
   const latestCandidateFingerprint = useRef<string | null>(null)
   const reportedRuntimeFailures = useRef(new Set<string>())
@@ -219,36 +248,37 @@ function StudioWorkspaceData({
         }
       : null
 
-  const handleCandidateResult = async (result: CandidateResult) => {
-    if (
-      !run ||
-      run.candidateFingerprint !== result.fingerprint ||
-      processedCandidateFingerprints.current.has(result.fingerprint)
-    ) {
+  const deliverPreviewResult = async (delivery: FailedPreviewDelivery) => {
+    if (delivery.kind === 'candidate') {
+      const { result, runId } = delivery
+      if (processedCandidateFingerprints.current.has(result.fingerprint)) return
+      processedCandidateFingerprints.current.add(result.fingerprint)
+      try {
+        if (result.status === 'accepted') {
+          await acceptCandidate({
+            projectId,
+            runId,
+            candidateFingerprint: result.fingerprint,
+          })
+        } else {
+          await rejectCandidate({
+            projectId,
+            runId,
+            candidateFingerprint: result.fingerprint,
+            normalizedError: normalizeWorkspaceError(result.error),
+          })
+        }
+        setFailedPreviewDelivery((current) =>
+          current && isSamePreviewDelivery(current, delivery) ? null : current,
+        )
+      } catch {
+        processedCandidateFingerprints.current.delete(result.fingerprint)
+        setFailedPreviewDelivery(delivery)
+      }
       return
     }
-    processedCandidateFingerprints.current.add(result.fingerprint)
-    try {
-      if (result.status === 'accepted') {
-        await acceptCandidate({
-          projectId,
-          runId: run._id,
-          candidateFingerprint: result.fingerprint,
-        })
-      } else {
-        await rejectCandidate({
-          projectId,
-          runId: run._id,
-          candidateFingerprint: result.fingerprint,
-          normalizedError: normalizeWorkspaceError(result.error),
-        })
-      }
-    } catch {
-      processedCandidateFingerprints.current.delete(result.fingerprint)
-    }
-  }
 
-  const handleRevisionRuntimeError = async (result: RevisionRuntimeError) => {
+    const { result } = delivery
     if (reportedRuntimeFailures.current.has(result.revisionId)) return
     reportedRuntimeFailures.current.add(result.revisionId)
     try {
@@ -257,9 +287,22 @@ function StudioWorkspaceData({
         revisionId: result.revisionId as Id<'studioRevisions'>,
         normalizedError: normalizeWorkspaceError(result.error),
       })
+      setFailedPreviewDelivery((current) =>
+        current && isSamePreviewDelivery(current, delivery) ? null : current,
+      )
     } catch {
       reportedRuntimeFailures.current.delete(result.revisionId)
+      setFailedPreviewDelivery(delivery)
     }
+  }
+
+  const handleCandidateResult = async (result: CandidateResult) => {
+    if (!run || run.candidateFingerprint !== result.fingerprint) return
+    await deliverPreviewResult({ kind: 'candidate', runId: run._id, result })
+  }
+
+  const handleRevisionRuntimeError = async (result: RevisionRuntimeError) => {
+    await deliverPreviewResult({ kind: 'revision-runtime', result })
   }
 
   const submitFollowUp = async (prompt: string) => {
@@ -272,16 +315,38 @@ function StudioWorkspaceData({
     })
   }
 
+  const retryFailedRun = async () => {
+    if (!run || run.status !== 'failed' || runIsActive) return
+    await retryFailedGeneration({
+      projectId,
+      failedRunId: run._id,
+      idempotencyKey: crypto.randomUUID(),
+    })
+  }
+
   const chatPanel = (
     <StudioChatPanel
       disabled={!revision || runIsActive}
       messages={messages ?? []}
+      onRetry={run?.status === 'failed' ? retryFailedRun : undefined}
       onSubmit={submitFollowUp}
       run={run}
     />
   )
   const previewPanel = (
     <section aria-label={t('studio.preview.label')} className="studio-preview-stage">
+      {failedPreviewDelivery ? (
+        <div className="studio-preview-delivery-error" role="alert">
+          <p>{t('studio.preview.deliveryFailed')}</p>
+          <button
+            className="studio-text-button"
+            onClick={() => void deliverPreviewResult(failedPreviewDelivery)}
+            type="button"
+          >
+            {t('studio.preview.retryDelivery')}
+          </button>
+        </div>
+      ) : null}
       <div
         className="studio-preview-canvas"
         data-aspect-ratio={(candidate?.composition ?? revisionComposition).aspectRatio}
@@ -336,11 +401,11 @@ function StudioWorkspaceData({
         </div>
       )}
 
-      {historyOpen && revision ? (
+      {revision ? (
         <StudioHistoryDialog
           currentRevisionId={revision._id}
           onClose={() => setHistoryOpen(false)}
-          open
+          open={historyOpen}
           projectId={projectId}
           revisions={revisions ?? []}
         />

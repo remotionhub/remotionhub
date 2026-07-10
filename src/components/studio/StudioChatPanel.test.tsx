@@ -26,18 +26,20 @@ function renderPanel(
   overrides: Partial<React.ComponentProps<typeof StudioChatPanel>> = {},
 ) {
   const onSubmit = vi.fn().mockResolvedValue(undefined)
+  const onRetry = vi.fn().mockResolvedValue(undefined)
   render(
     <I18nProvider>
       <StudioChatPanel
         disabled={false}
         messages={messages}
         onSubmit={onSubmit}
+        onRetry={onRetry}
         run={null}
         {...overrides}
       />
     </I18nProvider>,
   )
-  return { onSubmit }
+  return { onRetry, onSubmit }
 }
 
 afterEach(cleanup)
@@ -72,13 +74,14 @@ describe('StudioChatPanel', () => {
     )
   })
 
-  it('retries a failed run with the last user message', async () => {
-    const { onSubmit } = renderPanel({ run: { status: 'failed' } })
+  it('retries a failed run without resubmitting browser prompt text', async () => {
+    const { onRetry, onSubmit } = renderPanel({ run: { status: 'failed' } })
 
     fireEvent.click(screen.getByRole('button', { name: /重试|retry/i }))
 
     await waitFor(() =>
-      expect(onSubmit).toHaveBeenCalledWith('Make the title cyan'),
+      expect(onRetry).toHaveBeenCalledTimes(1),
     )
+    expect(onSubmit).not.toHaveBeenCalled()
   })
 })
