@@ -27,9 +27,22 @@ type FailedPreviewDelivery =
   | {
       kind: 'candidate'
       runId: Id<'studioGenerationRuns'>
+      runStatus: Doc<'studioGenerationRuns'>['status']
       result: CandidateResult
     }
   | { kind: 'revision-runtime'; result: RevisionRuntimeError }
+
+type PreviewDeliverySnapshot = {
+  project: Pick<Doc<'studioProjects'>, 'currentRevisionId'>
+  run: Pick<
+    Doc<'studioGenerationRuns'>,
+    | '_id'
+    | 'status'
+    | 'candidateFingerprint'
+    | 'inputRevisionId'
+    | 'correctionAttempt'
+  > | null
+}
 
 function isSamePreviewDelivery(
   left: FailedPreviewDelivery,
@@ -46,6 +59,28 @@ function isSamePreviewDelivery(
     left.kind === 'revision-runtime' &&
     right.kind === 'revision-runtime' &&
     left.result.revisionId === right.result.revisionId
+  )
+}
+
+function isPreviewDeliveryCurrent(
+  delivery: FailedPreviewDelivery,
+  snapshot: PreviewDeliverySnapshot,
+) {
+  if (delivery.kind === 'candidate') {
+    return (
+      snapshot.run?._id === delivery.runId &&
+      snapshot.run.status === delivery.runStatus &&
+      snapshot.run.candidateFingerprint === delivery.result.fingerprint
+    )
+  }
+
+  if (snapshot.project.currentRevisionId !== delivery.result.revisionId) {
+    return false
+  }
+  return !(
+    snapshot.run &&
+    snapshot.run.correctionAttempt > 0 &&
+    snapshot.run.inputRevisionId === delivery.result.revisionId
   )
 }
 
@@ -223,6 +258,16 @@ function StudioWorkspaceData({
     latestCandidateFingerprint.current = candidateFingerprint
   }, [candidateFingerprint])
 
+  useEffect(() => {
+    if (snapshot === undefined || !failedPreviewDelivery) return
+    if (
+      snapshot === null ||
+      !isPreviewDeliveryCurrent(failedPreviewDelivery, snapshot)
+    ) {
+      setFailedPreviewDelivery(null)
+    }
+  }, [failedPreviewDelivery, snapshot])
+
   if (!isAuthenticated) return <StudioUnavailable />
   if (isAuthLoading || snapshot === undefined) return <StudioLoading />
   if (snapshot === null) return <StudioUnavailable />
@@ -249,6 +294,15 @@ function StudioWorkspaceData({
       : null
 
   const deliverPreviewResult = async (delivery: FailedPreviewDelivery) => {
+    if (
+      snapshot === undefined ||
+      snapshot === null ||
+      !isPreviewDeliveryCurrent(delivery, snapshot)
+    ) {
+      if (snapshot !== undefined) setFailedPreviewDelivery(null)
+      return
+    }
+
     if (delivery.kind === 'candidate') {
       const { result, runId } = delivery
       if (processedCandidateFingerprints.current.has(result.fingerprint)) return
@@ -298,7 +352,12 @@ function StudioWorkspaceData({
 
   const handleCandidateResult = async (result: CandidateResult) => {
     if (!run || run.candidateFingerprint !== result.fingerprint) return
-    await deliverPreviewResult({ kind: 'candidate', runId: run._id, result })
+    await deliverPreviewResult({
+      kind: 'candidate',
+      runId: run._id,
+      runStatus: run.status,
+      result,
+    })
   }
 
   const handleRevisionRuntimeError = async (result: RevisionRuntimeError) => {

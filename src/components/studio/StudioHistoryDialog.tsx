@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog'
 import { useMutation } from 'convex/react'
 import { XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '../../../convex/_generated/api'
 import type { Doc, Id } from '../../../convex/_generated/dataModel'
 import type { TranslationKey } from '../../lib/i18n'
@@ -43,9 +43,18 @@ export default function StudioHistoryDialog({
   const [restoreError, setRestoreError] = useState<'stale' | 'failed' | null>(
     null,
   )
+  const restoreCycle = useRef(0)
+
+  useEffect(() => {
+    restoreCycle.current += 1
+    setSelectedRevisionId(null)
+    setRestoreError(null)
+    setIsRestoring(false)
+  }, [open])
 
   const restore = async () => {
     if (!selectedRevisionId || isRestoring) return
+    const cycle = ++restoreCycle.current
     setRestoreError(null)
     setIsRestoring(true)
     try {
@@ -54,15 +63,17 @@ export default function StudioHistoryDialog({
         revisionId: selectedRevisionId,
         expectedCurrentRevisionId: currentRevisionId,
       })
+      if (restoreCycle.current !== cycle) return
       onClose()
     } catch (error) {
+      if (restoreCycle.current !== cycle) return
       if (error instanceof Error && error.message.includes('Studio project changed')) {
         setRestoreError('stale')
       } else {
         setRestoreError('failed')
       }
     } finally {
-      setIsRestoring(false)
+      if (restoreCycle.current === cycle) setIsRestoring(false)
     }
   }
 
