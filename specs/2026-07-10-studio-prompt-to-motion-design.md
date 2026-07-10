@@ -2,7 +2,7 @@
 
 ## 状态
 
-设计已在对话中确认，等待书面规格复核。
+设计与书面规格已确认，实施计划已完成，等待执行。
 
 ## 背景
 
@@ -191,8 +191,7 @@ type GeneratedMotion = {
 - `ownerId`
 - `title`
 - `status`: `active | archived`
-- `sourceKind`: `prompt | catalog-remix`
-- 可选 Catalog 来源：`componentId`、`componentVersionId`、`ownerHandle`、`slug`、`version`、`commit`、`entryPoint`、`bundleHash`
+- `source`: `{ kind: 'prompt' }` 或 `{ kind: 'catalog-remix', componentId, componentVersionId, ownerHandle, slug, version, commit, entryPoint, bundleHash }`
 - 可选 `currentRevisionId`
 - 可选 `lastRunnableRevisionId`
 - 可选 `currentRunId`
