@@ -8,17 +8,36 @@ import {
   userDataFromAuthProfile,
 } from './auth'
 
+function restoreEnv(name: string, value: string | undefined) {
+  if (value === undefined) {
+    delete process.env[name]
+    return
+  }
+  process.env[name] = value
+}
+
 describe('normalizeWeChatProviderAccountId', () => {
-  it('prefers unionid when present', () => {
+  it('keeps the WebsiteApp openid account id stable when unionid is also present', () => {
+    expect(
+      normalizeWeChatProviderAccountId(
+        {
+          openid: 'openid-123',
+          unionid: 'unionid-456',
+        },
+        { allowOpenIdFallback: true, appId: 'wxabc123' },
+      ),
+    ).toBe('wechat:web:wxabc123:openid-123')
+  })
+
+  it('uses unionid when openid is unavailable', () => {
     expect(
       normalizeWeChatProviderAccountId({
-        openid: 'openid-123',
         unionid: 'unionid-456',
       }),
     ).toBe('unionid-456')
   })
 
-  it('uses a namespaced openid fallback when explicitly allowed', () => {
+  it('uses a namespaced WebsiteApp openid account id when explicitly allowed', () => {
     expect(
       normalizeWeChatProviderAccountId(
         { openid: 'openid-123' },
@@ -124,7 +143,7 @@ describe('authCallbacks.redirect', () => {
       authCallbacks.redirect({ redirectTo: '?tab=security' }),
     ).resolves.toBe('https://remotionhub.ai/?tab=security')
 
-    process.env.SITE_URL = siteUrl
+    restoreEnv('SITE_URL', siteUrl)
   })
 
   it('falls back to a safe same-origin root for unsafe redirects', async () => {
@@ -142,7 +161,24 @@ describe('authCallbacks.redirect', () => {
       }),
     ).resolves.toBe('https://remotionhub.ai/')
 
-    process.env.SITE_URL = siteUrl
+    restoreEnv('SITE_URL', siteUrl)
+  })
+
+  it('requires SITE_URL for final app redirects', async () => {
+    const siteUrl = process.env.SITE_URL
+    const convexSiteUrl = process.env.CONVEX_SITE_URL
+    const customAuthSiteUrl = process.env.CUSTOM_AUTH_SITE_URL
+    delete process.env.SITE_URL
+    process.env.CONVEX_SITE_URL = 'https://example.convex.site'
+    process.env.CUSTOM_AUTH_SITE_URL = 'https://auth.example.com'
+
+    await expect(
+      authCallbacks.redirect({ redirectTo: '/account/settings' }),
+    ).rejects.toThrow(/requires SITE_URL/)
+
+    restoreEnv('SITE_URL', siteUrl)
+    restoreEnv('CONVEX_SITE_URL', convexSiteUrl)
+    restoreEnv('CUSTOM_AUTH_SITE_URL', customAuthSiteUrl)
   })
 })
 

@@ -73,9 +73,9 @@ Authorization must be server-derived:
 - Convex functions authorize from `getAuthUserId(ctx)` or an equivalent helper.
 - Client-supplied user ids, provider ids, openids, unionids, nicknames, and avatars are never authorization proof.
 - WeChat account binding must use a stable provider account id stored through the auth layer.
-- Prefer `unionid` when WeChat returns it.
-- If `unionid` is missing, the first implementation may fall back to `openid` only under a provider/app namespace such as `wechat:web:<appid>:<openid>`.
-- The fallback must be documented because `openid` is app-scoped, while `unionid` is cross-application under the same WeChat Open Platform account.
+- Use the WebsiteApp `openid` under a provider/app namespace such as `wechat:web:<appid>:<openid>` when available.
+- Use `unionid` only when `openid` is unavailable, because switching from an earlier namespaced `openid` account id to `unionid` would create a second account.
+- This tradeoff must be documented because `openid` is app-scoped, while `unionid` is cross-application under the same WeChat Open Platform account.
 - Nickname and avatar are profile fields only.
 - Missing stable identity must fail closed and create no user or publisher.
 - Future account linking must be explicit and initiated by an already signed-in user.
@@ -131,8 +131,8 @@ The callback handler must:
 4. Exchange `code` for token data using server-side credentials.
 5. Validate the response shape and provider error codes.
 6. Fetch user profile data if needed.
-7. Choose `unionid` as the provider account id when present.
-8. Fall back to namespaced `openid` only when the design's single-app constraint holds.
+7. Choose namespaced WebsiteApp `openid` as the provider account id when present.
+8. Fall back to `unionid` only when `openid` is unavailable.
 9. Create or update the auth user.
 10. Ensure the personal publisher.
 11. Redirect only to a validated relative `redirectTo`.
@@ -195,7 +195,7 @@ Frontend environment:
 VITE_CONVEX_URL=https://example.convex.cloud
 ```
 
-Register the WeChat Open Platform website app callback as `${CONVEX_SITE_URL}/api/auth/callback/wechat`, or `${CUSTOM_AUTH_SITE_URL}/api/auth/callback/wechat` when overriding the Convex Auth site.
+Register the WeChat Open Platform website app callback as `${CONVEX_SITE_URL}/api/auth/callback/wechat`, or `${CUSTOM_AUTH_SITE_URL}/api/auth/callback/wechat` when overriding the Convex Auth site. `SITE_URL` is required separately for final app redirects and must point at the canonical frontend origin.
 
 Do not expose `AUTH_WECHAT_SECRET`, Convex deploy keys, token exchange results, or provider refresh tokens through `VITE_*` variables.
 
@@ -203,8 +203,8 @@ Do not expose `AUTH_WECHAT_SECRET`, Convex deploy keys, token exchange results, 
 
 Unit tests:
 
-- WeChat profile normalization chooses `unionid` when present.
-- WeChat profile normalization falls back to a namespaced `openid` only when allowed.
+- WeChat profile normalization keeps namespaced WebsiteApp `openid` stable when present.
+- WeChat profile normalization falls back to `unionid` only when `openid` is unavailable.
 - Missing `unionid` and `openid` fails closed.
 - `state` generation stores a hashed state and relative `redirectTo`.
 - Callback rejects expired, reused, missing, or mismatched `state`.

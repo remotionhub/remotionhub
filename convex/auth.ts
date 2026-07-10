@@ -41,9 +41,6 @@ export function normalizeWeChatProviderAccountId(
   profile: WeChatProfileLike,
   options: { allowOpenIdFallback?: boolean; appId?: string } = {},
 ) {
-  const unionid = normalizedString(profile.unionid)
-  if (unionid) return unionid
-
   const openid = normalizedString(profile.openid)
   if (openid && options.allowOpenIdFallback) {
     const appId = normalizedString(options.appId)
@@ -52,6 +49,9 @@ export function normalizeWeChatProviderAccountId(
     }
     return `wechat:web:${appId}:${openid}`
   }
+
+  const unionid = normalizedString(profile.unionid)
+  if (unionid) return unionid
 
   throw new Error('WeChat OAuth profile is missing a stable WeChat account id')
 }
@@ -141,15 +141,10 @@ export function normalizeRelativeRedirectTo(redirectTo: string) {
 }
 
 function getAuthSiteUrl() {
-  const siteUrl =
-    process.env.SITE_URL ??
-    process.env.CUSTOM_AUTH_SITE_URL ??
-    process.env.CONVEX_SITE_URL
+  const siteUrl = process.env.SITE_URL
   const normalizedSiteUrl = normalizedString(siteUrl)
   if (!normalizedSiteUrl) {
-    throw new Error(
-      'Convex Auth redirect callback requires SITE_URL, CUSTOM_AUTH_SITE_URL, or CONVEX_SITE_URL',
-    )
+    throw new Error('Convex Auth redirect callback requires SITE_URL')
   }
   return normalizedSiteUrl
 }
