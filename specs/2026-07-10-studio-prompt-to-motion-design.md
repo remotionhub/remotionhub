@@ -257,6 +257,7 @@ Generation Run 记录一次生成或纠错尝试：
 - 可选 `candidateCode`
 - 可选 `candidateComposition`
 - 可选 `candidateFingerprint`
+- 可选 `candidateSummary`，供候选接受时创建 Assistant Message；不参与执行指纹
 - 可选 `errorCode`
 - token 用量与耗时
 - `idempotencyKey`
@@ -343,6 +344,7 @@ old_string + new_string + description
 
 - 编译错误和 Player Runtime Error 都可以触发自动纠错。
 - 候选接受前的 Runtime Error 继续走 `rejectCandidate`；已接受 Revision 的后续 Runtime Error 走 `reportRuntimeFailure`，不能把失败 Revision 留在 `lastRunnableRevisionId`。
+- 浏览器上报的 Runtime diagnostic 只作为不可信 `normalizedError` 进入 correction；不得进入 `task`、最近消息上下文、Prompt validator 或 Skill detector。
 - 错误归一化后发送给模型，不发送无关浏览器或账户信息。
 - 最多自动纠错三次。
 - 每次纠错都关联原 Run 和尝试次数。
