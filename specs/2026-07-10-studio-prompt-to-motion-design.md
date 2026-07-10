@@ -213,6 +213,7 @@ Revision 是不可变的可回退快照：
 - `projectId`
 - `sequence`
 - 可选 `parentRevisionId`
+- 可选 `previousRunnableRevisionId`，记录该 Revision 成为当前版本前的最后可运行版本
 - `origin`: `prompt | catalog-remix | follow-up | correction | rollback`
 - `code`
 - `codeHash`
@@ -309,6 +310,7 @@ MVP 的首个登录 Provider 是 GitHub，但 Studio 只依赖 Convex `users` ID
 - 失败时提交 `rejectCandidate(runId, candidateFingerprint, normalizedError)`。
 - `acceptCandidate` 原子创建 Revision，并更新 `currentRevisionId` 与 `lastRunnableRevisionId`。
 - `rejectCandidate` 保留项目指针，并调度下一次纠错；达到三次上限后结束 Run。
+- 已接受 Revision 在后续帧发生 Player Runtime Error 时，客户端提交 `reportRuntimeFailure(projectId, revisionId, normalizedError)`；后端恢复 `previousRunnableRevisionId`，保留失败 Revision 作为纠错上下文，并创建新的 Correction Run。
 
 ### 首次生成
 
@@ -340,6 +342,7 @@ old_string + new_string + description
 ### 自动纠错
 
 - 编译错误和 Player Runtime Error 都可以触发自动纠错。
+- 候选接受前的 Runtime Error 继续走 `rejectCandidate`；已接受 Revision 的后续 Runtime Error 走 `reportRuntimeFailure`，不能把失败 Revision 留在 `lastRunnableRevisionId`。
 - 错误归一化后发送给模型，不发送无关浏览器或账户信息。
 - 最多自动纠错三次。
 - 每次纠错都关联原 Run 和尝试次数。
@@ -426,6 +429,7 @@ old_string + new_string + description
 - 同一项目只允许一个活动 Run。
 - 成功生成原子更新 Revision 和 Project 指针。
 - 失败候选不改变 `lastRunnableRevisionId`。
+- 已接受 Revision 的后续 Runtime Error 恢复 `previousRunnableRevisionId` 并创建 Correction Run。
 - 回退创建新 Revision，不删除历史。
 - Removed Studio Bundle 不能创建新 Remix。
 
