@@ -9,6 +9,7 @@ import { sha256Hex } from './studio'
 const studioModelHarness = vi.hoisted(() => ({
   mode: 'actual',
   validatedPrompts: [] as string[],
+  detectorInputs: [] as Array<{ prompt: string; system: string }>,
   correctionInputs: [] as Array<{ prompt: string; system: string }>,
 }))
 
@@ -35,6 +36,10 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
             studioModelHarness.correctionInputs.push(input)
             return await base.correct(input)
           },
+          async detectSkills(input: { prompt: string; system: string }) {
+            studioModelHarness.detectorInputs.push(input)
+            return await base.detectSkills(input)
+          },
         }
       }
       if (studioModelHarness.mode === 'detector-failure') {
@@ -46,7 +51,8 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
               usage: { inputTokens: 2, outputTokens: 1 },
             }
           },
-          async detectSkills() {
+          async detectSkills(input: { prompt: string; system: string }) {
+            studioModelHarness.detectorInputs.push(input)
             throw new Error('detector unavailable')
           },
           async generateInitial(input: { prompt: string; system: string }) {
@@ -60,6 +66,10 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
       }
       return {
         ...base,
+        async detectSkills(input: { prompt: string; system: string }) {
+          studioModelHarness.detectorInputs.push(input)
+          return await base.detectSkills(input)
+        },
         async generateFollowUp() {
           const source = 'export const Second = () => null'
           const newString =
@@ -430,6 +440,7 @@ describe('studio generation runs', () => {
     useIdentityAuthMock()
     studioModelHarness.mode = 'actual'
     studioModelHarness.validatedPrompts = []
+    studioModelHarness.detectorInputs = []
     studioModelHarness.correctionInputs = []
   })
 
@@ -546,6 +557,44 @@ describe('studio generation runs', () => {
     })
   })
 
+  it('reuses detected skills without detection for a rejected candidate correction', async () => {
+    vi.useFakeTimers()
+    studioModelHarness.mode = 'deny'
+    const {
+      t,
+      ownerId,
+      projectId,
+      runId,
+      candidateFingerprint,
+    } = await seedCompilingRun()
+    const owner = t.withIdentity({ subject: ownerId })
+
+    await owner.mutation(api.studio.rejectCandidate, {
+      projectId,
+      runId,
+      candidateFingerprint,
+      normalizedError: 'Rejected candidate skill sentinel',
+    })
+    await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+    const run = await t.run(async (ctx) => ctx.db.get(runId))
+    const correctionInput = studioModelHarness.correctionInputs.find(
+      (input) =>
+        JSON.parse(input.prompt).normalizedError ===
+        'Rejected candidate skill sentinel',
+    )
+    expect(run).toMatchObject({
+      status: 'compiling',
+      detectedSkills: ['Typography'],
+    })
+    expect(correctionInput?.system).toContain(
+      'frame-driven type animation',
+    )
+    expect(studioModelHarness.detectorInputs).not.toContainEqual(
+      expect.objectContaining({ prompt: 'Make the title cyan' }),
+    )
+  })
+
   it('fails with a stable code when the backend model is not configured', async () => {
     vi.useFakeTimers()
     process.env.OPENAI_API_KEY = ''
@@ -630,6 +679,9 @@ describe('studio generation runs', () => {
       detectedSkills: [],
       tokenUsage: { inputTokens: 7, outputTokens: 4 },
     })
+    expect(studioModelHarness.detectorInputs).toContainEqual(
+      expect.objectContaining({ prompt: 'Animate a cyan title' }),
+    )
   })
 
   it('applies unique exact edits and retains composition when omitted', async () => {
@@ -653,6 +705,9 @@ describe('studio generation runs', () => {
       candidateComposition: composition,
       candidateSummary: 'Applied an exact source edit',
     })
+    expect(studioModelHarness.detectorInputs).toContainEqual(
+      expect.objectContaining({ prompt: 'Rename the exported component' }),
+    )
   })
 
   it.each([
@@ -985,8 +1040,23 @@ describe('studio generation runs', () => {
         JSON.parse(input.prompt).normalizedError ===
         'Runtime correction validator sentinel',
     )
-    expect(JSON.parse(correctionInput?.prompt ?? '{}').task).toBe(
+    const correctionPayload = JSON.parse(correctionInput?.prompt ?? '{}')
+    expect(correctionPayload.task).toBe(
       'Repair the provided Remotion source using the diagnostic data.',
+    )
+    expect(correctionPayload.normalizedError).toBe(
+      'Runtime correction validator sentinel',
+    )
+    expect(JSON.stringify(correctionPayload.recentMessages)).not.toContain(
+      'Runtime correction validator sentinel',
+    )
+    expect(JSON.stringify(correctionPayload).split('Runtime correction validator sentinel')).toHaveLength(
+      2,
+    )
+    expect(studioModelHarness.detectorInputs).not.toContainEqual(
+      expect.objectContaining({
+        prompt: 'Runtime correction validator sentinel',
+      }),
     )
     expect(correctionInput?.system).toContain('untrusted diagnostic data')
   })
