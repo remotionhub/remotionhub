@@ -40,6 +40,35 @@ const githubSource = v.object({
   pinned: v.boolean(),
 })
 
+const studioAspectRatio = v.union(
+  v.literal('16:9'),
+  v.literal('9:16'),
+  v.literal('1:1'),
+)
+
+const studioComposition = v.object({
+  aspectRatio: studioAspectRatio,
+  width: v.number(),
+  height: v.number(),
+  fps: v.number(),
+  durationInFrames: v.number(),
+})
+
+const studioSource = v.union(
+  v.object({ kind: v.literal('prompt') }),
+  v.object({
+    kind: v.literal('catalog-remix'),
+    componentId: v.id('components'),
+    componentVersionId: v.id('componentVersions'),
+    ownerHandle: v.string(),
+    slug: v.string(),
+    version: v.string(),
+    commit: v.string(),
+    entryPoint: v.string(),
+    bundleHash: v.string(),
+  }),
+)
+
 export default defineSchema({
   ...authTables,
 
@@ -157,4 +186,104 @@ export default defineSchema({
     .index('by_active_name', ['isActive', 'displayName'])
     .index('by_active_runtime_updated', ['isActive', 'runtime', 'updatedAt'])
     .index('by_active_runtime_name', ['isActive', 'runtime', 'displayName']),
+
+  studioProjects: defineTable({
+    ownerId: v.id('users'),
+    title: v.string(),
+    status: v.union(v.literal('active'), v.literal('archived')),
+    source: studioSource,
+    currentRevisionId: v.optional(v.id('studioRevisions')),
+    lastRunnableRevisionId: v.optional(v.id('studioRevisions')),
+    currentRunId: v.optional(v.id('studioGenerationRuns')),
+    composition: studioComposition,
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_owner_updated', ['ownerId', 'updatedAt'])
+    .index('by_owner_status_updated', ['ownerId', 'status', 'updatedAt']),
+
+  studioRevisions: defineTable({
+    projectId: v.id('studioProjects'),
+    sequence: v.number(),
+    parentRevisionId: v.optional(v.id('studioRevisions')),
+    previousRunnableRevisionId: v.optional(v.id('studioRevisions')),
+    origin: v.union(
+      v.literal('prompt'),
+      v.literal('catalog-remix'),
+      v.literal('follow-up'),
+      v.literal('correction'),
+      v.literal('rollback'),
+    ),
+    code: v.string(),
+    codeHash: v.string(),
+    composition: studioComposition,
+    promptMessageId: v.optional(v.id('studioMessages')),
+    assistantSummary: v.string(),
+    createdAt: v.number(),
+  }).index('by_project_sequence', ['projectId', 'sequence']),
+
+  studioMessages: defineTable({
+    projectId: v.id('studioProjects'),
+    role: v.union(
+      v.literal('user'),
+      v.literal('assistant'),
+      v.literal('system'),
+    ),
+    kind: v.union(
+      v.literal('prompt'),
+      v.literal('response'),
+      v.literal('status'),
+      v.literal('error'),
+    ),
+    content: v.string(),
+    generationRunId: v.optional(v.id('studioGenerationRuns')),
+    revisionId: v.optional(v.id('studioRevisions')),
+    createdAt: v.number(),
+  }).index('by_project_created', ['projectId', 'createdAt']),
+
+  studioGenerationRuns: defineTable({
+    projectId: v.id('studioProjects'),
+    ownerId: v.id('users'),
+    status: v.union(
+      v.literal('queued'),
+      v.literal('validating'),
+      v.literal('selecting-skills'),
+      v.literal('generating'),
+      v.literal('compiling'),
+      v.literal('succeeded'),
+      v.literal('failed'),
+      v.literal('cancelled'),
+    ),
+    inputRevisionId: v.optional(v.id('studioRevisions')),
+    promptMessageId: v.id('studioMessages'),
+    modelAlias: v.string(),
+    detectedSkills: v.array(v.string()),
+    correctionAttempt: v.number(),
+    candidateCode: v.optional(v.string()),
+    candidateComposition: v.optional(studioComposition),
+    candidateFingerprint: v.optional(v.string()),
+    errorCode: v.optional(v.string()),
+    tokenUsage: v.optional(
+      v.object({ inputTokens: v.number(), outputTokens: v.number() }),
+    ),
+    durationMs: v.optional(v.number()),
+    idempotencyKey: v.string(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_project_updated', ['projectId', 'updatedAt'])
+    .index('by_owner_idempotency', ['ownerId', 'idempotencyKey']),
+
+  studioBundles: defineTable({
+    componentVersionId: v.id('componentVersions'),
+    entryPoint: v.string(),
+    code: v.string(),
+    allowedDependencies: v.array(v.string()),
+    composition: studioComposition,
+    commit: v.string(),
+    sourcePath: v.string(),
+    contentHash: v.string(),
+    status: v.union(v.literal('validated'), v.literal('removed')),
+    createdAt: v.number(),
+  }).index('by_version', ['componentVersionId']),
 })
