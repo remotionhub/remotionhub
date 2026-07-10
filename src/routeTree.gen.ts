@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudioIndexRouteImport } from './routes/studio/index'
 import { Route as RemotionIndexRouteImport } from './routes/remotion/index'
 import { Route as HyperframesIndexRouteImport } from './routes/hyperframes/index'
+import { Route as StudioProjectIdRouteImport } from './routes/studio/$projectId'
 import { Route as RemotionOwnerSlugRouteImport } from './routes/remotion/$owner.$slug'
 import { Route as HyperframesOwnerSlugRouteImport } from './routes/hyperframes/$owner.$slug'
 
@@ -42,6 +43,11 @@ const HyperframesIndexRoute = HyperframesIndexRouteImport.update({
   path: '/hyperframes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioProjectIdRoute = StudioProjectIdRouteImport.update({
+  id: '/studio/$projectId',
+  path: '/studio/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RemotionOwnerSlugRoute = RemotionOwnerSlugRouteImport.update({
   id: '/remotion/$owner/$slug',
   path: '/remotion/$owner/$slug',
@@ -56,6 +62,7 @@ const HyperframesOwnerSlugRoute = HyperframesOwnerSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio/$projectId': typeof StudioProjectIdRoute
   '/hyperframes/': typeof HyperframesIndexRoute
   '/remotion/': typeof RemotionIndexRoute
   '/studio/': typeof StudioIndexRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio/$projectId': typeof StudioProjectIdRoute
   '/hyperframes': typeof HyperframesIndexRoute
   '/remotion': typeof RemotionIndexRoute
   '/studio': typeof StudioIndexRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/studio/$projectId': typeof StudioProjectIdRoute
   '/hyperframes/': typeof HyperframesIndexRoute
   '/remotion/': typeof RemotionIndexRoute
   '/studio/': typeof StudioIndexRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/studio/$projectId'
     | '/hyperframes/'
     | '/remotion/'
     | '/studio/'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/studio/$projectId'
     | '/hyperframes'
     | '/remotion'
     | '/studio'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/studio/$projectId'
     | '/hyperframes/'
     | '/remotion/'
     | '/studio/'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  StudioProjectIdRoute: typeof StudioProjectIdRoute
   HyperframesIndexRoute: typeof HyperframesIndexRoute
   RemotionIndexRoute: typeof RemotionIndexRoute
   StudioIndexRoute: typeof StudioIndexRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HyperframesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/studio/$projectId': {
+      id: '/studio/$projectId'
+      path: '/studio/$projectId'
+      fullPath: '/studio/$projectId'
+      preLoaderRoute: typeof StudioProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/remotion/$owner/$slug': {
       id: '/remotion/$owner/$slug'
       path: '/remotion/$owner/$slug'
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  StudioProjectIdRoute: StudioProjectIdRoute,
   HyperframesIndexRoute: HyperframesIndexRoute,
   RemotionIndexRoute: RemotionIndexRoute,
   StudioIndexRoute: StudioIndexRoute,

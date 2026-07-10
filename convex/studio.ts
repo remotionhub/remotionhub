@@ -485,6 +485,19 @@ export const listRecentProjects = query({
   },
 })
 
+export const updateProjectTitle = mutation({
+  args: { projectId: v.id('studioProjects'), title: v.string() },
+  handler: async (ctx, { projectId, title }) => {
+    await requireStudioProjectOwner(ctx, projectId)
+    const normalized = title.trim()
+    if (!normalized || normalized.length > 120) {
+      throw new Error('Studio title is invalid')
+    }
+    await ctx.db.patch(projectId, { title: normalized, updatedAt: Date.now() })
+    return normalized
+  },
+})
+
 export const getProject = query({
   args: { projectId: v.id('studioProjects') },
   handler: async (ctx, { projectId }) => {
@@ -494,7 +507,11 @@ export const getProject = query({
       : null
     const run = project.currentRunId
       ? await ctx.db.get(project.currentRunId)
-      : null
+      : await ctx.db
+          .query('studioGenerationRuns')
+          .withIndex('by_project_updated', (q) => q.eq('projectId', projectId))
+          .order('desc')
+          .first()
     return { project, revision, run }
   },
 })
