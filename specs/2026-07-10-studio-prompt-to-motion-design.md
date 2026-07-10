@@ -15,7 +15,7 @@ RemotionHub 不引入参考项目的 Next.js 应用壳层。MVP 将这些能力�
 ## 目标
 
 - 在新的 `/studio` 命名空间提供 Prompt-to-Motion 功能。
-- 只有 GitHub 登录用户可以生成、修改和保存项目。
+- 只有已登录用户可以生成、修改和保存项目；Studio 授权不绑定具体登录 Provider。
 - 支持从 Prompt 新建项目，以及从兼容的 Catalog 版本创建 Remix 项目。
 - 使用对话与预览双栏工作台，保持 RemotionHub 现有 Geist、灰阶、轻青色强调和细边框视觉语言。
 - 用户只能通过对话修改动画；MVP 不展示或编辑生成源码。
@@ -29,6 +29,7 @@ RemotionHub 不引入参考项目的 Next.js 应用壳层。MVP 将这些能力�
 - 不提供 Monaco、源码查看、源码复制或手工源码编辑。
 - 不支持图片附件、拖放素材或当前帧作为模型输入。
 - 不提供模型选择器；客户端只使用服务端模型别名。
+- 不提供宽高、FPS 或帧数的直接表单配置；用户通过对话调整画幅和时长。
 - 不提供云端渲染、高清导出或视频下载。
 - 不提供项目分享、多人协作、公开预览或发布回 Catalog。
 - 不安装或执行任意 npm 依赖。
@@ -103,7 +104,7 @@ Generated TSX
 
 - 桌面端左侧为 Assistant 对话、生成状态和 Follow-up 输入。
 - 桌面端右侧为 Remotion Player 预览。
-- 顶部项目栏展示名称、自动保存状态、Catalog 来源、历史入口和低频 Composition 设置。
+- 顶部项目栏展示名称、自动保存状态、Catalog 来源、历史入口和只读 Composition 摘要。
 - 不显示 Code 页签或第三个属性栏。
 - 移动端使用 `Chat` 与 `Preview` 两个互斥页签。
 - Studio 页面保留 RemotionHub 全局 Header，但不显示 Footer。
@@ -133,7 +134,7 @@ Generated TSX
 - 项目栏与全局 Header 分层，避免把项目操作混入站点导航。
 - Prompt 输入固定在左栏底部。
 - History 作为项目栏入口打开，不常驻第三栏。
-- 时长、FPS、宽高等配置通过轻量 Dialog 修改。
+- 项目栏只读展示画幅和时长；用户通过对话提出 Composition 修改，不增加配置 Dialog。
 
 ### 生成阶段
 
@@ -148,6 +149,31 @@ Preview ready
 ```
 
 生成期间保留最后一次可运行 Preview。只有新候选代码完整、清理完成并编译成功后，才替换 Player 中的组件。
+
+### Composition 元数据
+
+MVP 不让用户直接输入宽高、FPS 或帧数。模型在源码之外返回结构化 Composition 元数据：
+
+```ts
+type GeneratedMotion = {
+  code: string
+  summary: string
+  composition: {
+    aspectRatio: '16:9' | '9:16' | '1:1'
+    durationInFrames: number
+  }
+}
+```
+
+服务端负责校验并派生最终配置：
+
+- FPS 固定为 `30`，不由模型或用户修改。
+- 默认画幅为 `16:9`，默认时长为 `240` 帧。
+- 支持 `16:9` (`1920x1080`)、`9:16` (`1080x1920`) 和 `1:1` (`1080x1080`)。
+- 时长限制为 `30` 到 `900` 帧，即 `1` 到 `30` 秒。
+- 模型不能返回任意像素宽高。
+- Follow-up 可以同时修改源码、画幅和时长；只有源码编译成功且元数据校验通过时才创建 Revision。
+- Catalog Remix 沿用 Studio Bundle 中经过验证的 Composition 元数据；超出这些预设的 Bundle 不标记为 Studio 兼容。
 
 ### 历史与回退
 
@@ -170,7 +196,7 @@ Preview ready
 - 可选 `currentRevisionId`
 - 可选 `lastRunnableRevisionId`
 - 可选 `currentRunId`
-- Composition 投影：`width`、`height`、`fps`、`durationInFrames`
+- Composition 投影：`aspectRatio`、派生的 `width`、`height`、固定 `fps`、`durationInFrames`
 - `createdAt`
 - `updatedAt`
 
@@ -191,7 +217,7 @@ Revision 是不可变的可回退快照：
 - `origin`: `prompt | catalog-remix | follow-up | correction | rollback`
 - `code`
 - `codeHash`
-- Composition：`width`、`height`、`fps`、`durationInFrames`
+- Composition：`aspectRatio`、派生的 `width`、`height`、固定 `fps`、`durationInFrames`
 - 可选 `promptMessageId`
 - `assistantSummary`
 - `createdAt`
@@ -229,7 +255,8 @@ Generation Run 记录一次生成或纠错尝试：
 - `detectedSkills`
 - `correctionAttempt`
 - 可选 `candidateCode`
-- 可选 `candidateHash`
+- 可选 `candidateComposition`
+- 可选 `candidateFingerprint`
 - 可选 `errorCode`
 - token 用量与耗时
 - `idempotencyKey`
@@ -238,7 +265,7 @@ Generation Run 记录一次生成或纠错尝试：
 
 同一项目最多有一个活动 Run。开始 Run 的 Mutation 必须在同一事务中完成所有权校验、并发检查、消息写入和 Run 创建。
 
-候选代码由后端生成并保存。客户端编译候选后调用带 `runId` 与 `candidateHash` 的确认 Mutation；后端重新校验所有权、Run 状态和哈希，才创建 Revision。客户端报告的“可编译”只影响该用户项目的 Preview 状态，不能作为安全、发布或计费依据。
+候选代码和 Composition 由后端生成、校验并保存。`candidateFingerprint` 覆盖清理后的源码与规范化 Composition。客户端编译候选后调用带 `runId` 与 `candidateFingerprint` 的确认 Mutation；后端重新校验所有权、Run 状态和指纹，才创建 Revision。客户端报告的“可编译”只影响该用户项目的 Preview 状态，不能作为安全、发布或计费依据。
 
 ### `studioBundles`
 
@@ -249,6 +276,7 @@ Studio Bundle 是 Catalog Version 到 Studio 的显式兼容层：
 - 自包含 TSX 源码
 - 允许的外部依赖列表
 - 固定 Git commit 和源路径
+- 经过验证的 `aspectRatio`、`fps` 和 `durationInFrames`
 - `contentHash`
 - `status`: `validated | removed`
 - `createdAt`
@@ -268,6 +296,8 @@ Studio Bundle 是 Catalog Version 到 Studio 的显式兼容层：
 
 内部 Action 和 Mutation 不能接受客户端传入的 `ownerId` 作为授权依据。异步任务通过 Run 反查 Project 和 Owner。
 
+MVP 的首个登录 Provider 是 GitHub，但 Studio 只依赖 Convex `users` ID 和认证状态，不在项目、Revision 或权限规则中保存 Provider 类型。后续接入微信登录时，新 Provider 必须先解析为稳定的 `users` 身份；账号关联与合并属于认证子系统的独立里程碑，不改变 Studio 的所有权模型。
+
 ## 生成与修改链路
 
 ### 后端编排
@@ -276,8 +306,8 @@ Studio Bundle 是 Catalog Version 到 Studio 的显式兼容层：
 
 浏览器取得完整候选后进行清理后的最终编译：
 
-- 成功时提交 `acceptCandidate(runId, candidateHash)`。
-- 失败时提交 `rejectCandidate(runId, candidateHash, normalizedError)`。
+- 成功时提交 `acceptCandidate(runId, candidateFingerprint)`。
+- 失败时提交 `rejectCandidate(runId, candidateFingerprint, normalizedError)`。
 - `acceptCandidate` 原子创建 Revision，并更新 `currentRevisionId` 与 `lastRunnableRevisionId`。
 - `rejectCandidate` 保留项目指针，并调度下一次纠错；达到三次上限后结束 Run。
 
@@ -300,7 +330,7 @@ Prompt 校验失败时保留用户输入和项目，Run 标为失败，不创建
 
 ### Follow-up 修改
 
-Follow-up 请求包含当前 Revision、最近对话和已使用 Skills。模型优先返回结构化精确编辑：
+Follow-up 请求包含当前 Revision、最近对话、当前 Composition 和已使用 Skills。模型优先返回结构化精确编辑，并可返回新的 `aspectRatio` 或 `durationInFrames`：
 
 ```text
 old_string + new_string + description
@@ -329,7 +359,7 @@ old_string + new_string + description
 - 完整响应到达前不编译。
 - 页面恢复时从当前 Revision 重新编译。
 
-编译器必须有明确的源码大小、Composition 尺寸、FPS 和时长上限。MVP 不解析任意 package、远程 module 或用户提供的构建配置。
+编译器必须有明确的源码大小和 Composition 上限。宽高只能由受支持的画幅预设派生，FPS 固定为 `30`，时长必须位于 `30` 到 `900` 帧。MVP 不解析任意 package、远程 module 或用户提供的构建配置。
 
 ## 模型与 Skills
 
@@ -344,7 +374,7 @@ old_string + new_string + description
 
 ## 自动保存与并发
 
-- 项目名称和 Composition 设置变更自动保存。
+- 项目名称自动保存；Composition 只随成功 Revision 原子更新，不存在独立设置草稿。
 - 生成源码只在成功形成 Revision 后保存为当前版本。
 - 相同 `idempotencyKey` 的重复提交返回已有 Run。
 - 项目存在活动 Run 时拒绝第二次提交，并返回当前 Run。
@@ -373,7 +403,7 @@ old_string + new_string + description
 - 所有 Studio UI 文案进入现有 `I18nProvider` 词条。
 - 默认中文，英文切换沿用全局设置。
 - 生成阶段使用文本与图标，不只依赖颜色。
-- Chat、Preview、History 和 Settings 有明确可访问名称。
+- Chat、Preview 和 History 有明确可访问名称；只读 Composition 摘要有可理解的文本标签。
 - 移动端 Chat 与 Preview 页签保留键盘和屏幕阅读器语义。
 - Player 错误状态提供文本替代，不把错误只画在视频区域内。
 - `prefers-reduced-motion` 仅影响 Studio UI 动效，不改变用户生成的 Remotion 内容。
@@ -388,7 +418,7 @@ old_string + new_string + description
 - Prompt 校验与 Skill 检测降级。
 - Revision 回退语义。
 - 生成并发和幂等键。
-- Composition 参数上下限。
+- Composition 画幅预设、固定 FPS、默认值和时长上下限。
 
 ### Convex 测试
 
@@ -431,8 +461,10 @@ old_string + new_string + description
 ## 验收标准
 
 - `/studio` 可访问，未登录用户不能生成。
-- 登录后可以从 Prompt 创建私有项目并看到 Remotion Player 预览。
+- 任一通过 Convex Auth 完成认证的用户都可以从 Prompt 创建私有项目；Studio 权限不依赖登录 Provider。
+- 成功生成后可以看到 Remotion Player 预览，并在项目栏看到只读画幅与时长。
 - 用户可以通过 Follow-up 修改动画，但无法查看或编辑源码。
+- 用户通过 Follow-up 修改画幅或时长；MVP 不提供直接 Composition 配置表单。
 - 每次成功修改形成可回退 Revision。
 - 编译和运行失败不会破坏最后一次可运行 Preview。
 - 兼容的 Catalog 版本可以创建固定源码快照的 Remix 项目。
