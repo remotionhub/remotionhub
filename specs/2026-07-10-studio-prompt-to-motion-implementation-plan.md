@@ -312,6 +312,7 @@ studioGenerationRuns: defineTable({
   candidateCode: v.optional(v.string()),
   candidateComposition: v.optional(studioComposition),
   candidateFingerprint: v.optional(v.string()),
+  candidateSummary: v.optional(v.string()),
   errorCode: v.optional(v.string()),
   tokenUsage: v.optional(
     v.object({ inputTokens: v.number(), outputTokens: v.number() }),
@@ -831,6 +832,7 @@ Expected: all pure generation tests PASS and the commit succeeds.
 - Create: `convex/lib/studioModel.test.ts`
 - Modify: `convex/studio.ts`
 - Modify: `convex/studio.test.ts`
+- Modify: `convex/schema.ts`
 - Modify: `.env.example`
 - Regenerate: `convex/_generated/api.d.ts`
 
