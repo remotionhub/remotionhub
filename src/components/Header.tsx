@@ -32,6 +32,13 @@ export default function Header() {
               {t('nav.catalog')}
             </Link>
             <Link
+              to="/studio"
+              className="nav-link"
+              activeProps={{ className: 'nav-link is-active' }}
+            >
+              {t('nav.studio')}
+            </Link>
+            <Link
               to="/remotion"
               className="nav-link"
               activeProps={{ className: 'nav-link is-active' }}
