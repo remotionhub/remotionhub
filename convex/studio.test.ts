@@ -6,7 +6,11 @@ import type { Id } from './_generated/dataModel'
 import schema from './schema'
 import { sha256Hex } from './studio'
 
-const studioModelHarness = vi.hoisted(() => ({ mode: 'actual' }))
+const studioModelHarness = vi.hoisted(() => ({
+  mode: 'actual',
+  validatedPrompts: [] as string[],
+  correctionInputs: [] as Array<{ prompt: string; system: string }>,
+}))
 
 vi.mock('./lib/studioModel', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./lib/studioModel')>()
@@ -20,11 +24,16 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
       if (studioModelHarness.mode === 'deny') {
         return {
           ...base,
-          async validatePrompt() {
+          async validatePrompt(input: { prompt: string; system: string }) {
+            studioModelHarness.validatedPrompts.push(input.prompt)
             return {
               data: { allow: false, reason: 'not-motion' },
               usage: { inputTokens: 2, outputTokens: 1 },
             }
+          },
+          async correct(input: { prompt: string; system: string }) {
+            studioModelHarness.correctionInputs.push(input)
+            return await base.correct(input)
           },
         }
       }
@@ -52,14 +61,25 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
       return {
         ...base,
         async generateFollowUp() {
+          const source = 'export const Second = () => null'
+          const newString =
+            studioModelHarness.mode === 'empty-edits'
+              ? ''
+              : studioModelHarness.mode === 'oversized-edits'
+                ? 'x'.repeat(100_001)
+                : 'export const MyAnimation = () => null'
           return {
             data: {
               kind: 'edits' as const,
               edits: [
                 {
-                  oldString: 'Second',
-                  newString: 'MyAnimation',
-                  description: 'Rename the exported component',
+                  oldString:
+                    studioModelHarness.mode === 'edits' ? 'Second' : source,
+                  newString:
+                    studioModelHarness.mode === 'edits'
+                      ? 'MyAnimation'
+                      : newString,
+                  description: 'Apply an exact source edit',
                 },
               ],
               summary: 'Applied an exact source edit',
@@ -409,6 +429,8 @@ describe('studio generation runs', () => {
   beforeEach(() => {
     useIdentityAuthMock()
     studioModelHarness.mode = 'actual'
+    studioModelHarness.validatedPrompts = []
+    studioModelHarness.correctionInputs = []
   })
 
   afterEach(() => {
@@ -580,6 +602,9 @@ describe('studio generation runs', () => {
     expect(messages.map((message) => message.content)).toEqual([
       'Write a backend migration plan',
     ])
+    expect(studioModelHarness.validatedPrompts).toContain(
+      'Write a backend migration plan',
+    )
   })
 
   it('degrades detector failure to no skills and preserves per-call usage', async () => {
@@ -629,6 +654,42 @@ describe('studio generation runs', () => {
       candidateSummary: 'Applied an exact source edit',
     })
   })
+
+  it.each([
+    ['empty', 'empty-edits'],
+    ['oversized', 'oversized-edits'],
+  ])(
+    'fails without persisting an %s exact-edit candidate',
+    async (_description, mode) => {
+      vi.useFakeTimers()
+      studioModelHarness.mode = mode
+      const { t, ownerId, projectId, secondRevisionId } = await seedStudio()
+      const owner = t.withIdentity({ subject: ownerId })
+      const started = await owner.mutation(api.studio.startFollowUp, {
+        projectId,
+        prompt: 'Replace the complete source',
+        idempotencyKey: `invalid-${mode}`,
+        expectedCurrentRevisionId: secondRevisionId,
+      })
+
+      await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+      const run = await t.run(async (ctx) => ctx.db.get(started.runId))
+      const snapshot = await owner.query(api.studio.getProject, { projectId })
+      const revisions = await owner.query(api.studio.listRevisions, {
+        projectId,
+        limit: 10,
+      })
+      expect(run).toMatchObject({
+        status: 'failed',
+        errorCode: 'MODEL_FAILED',
+      })
+      expect(run?.candidateCode).toBeUndefined()
+      expect(snapshot.project.currentRunId).toBeUndefined()
+      expect(snapshot.project.currentRevisionId).toBe(secondRevisionId)
+      expect(revisions).toHaveLength(2)
+    },
+  )
 
   it('creates the project, prompt message, and run atomically', async () => {
     const t = convexTest(schema, modules)
@@ -862,6 +923,72 @@ describe('studio generation runs', () => {
       correctionAttempt: 1,
       inputRevisionId: secondRevisionId,
     })
+  })
+
+  it('restores the fallback revision composition after a runtime error', async () => {
+    const {
+      t,
+      ownerId,
+      projectId,
+      firstRevisionId,
+      secondRevisionId,
+    } = await seedStudio()
+    const fallbackComposition = {
+      aspectRatio: '9:16' as const,
+      width: 1080,
+      height: 1920,
+      fps: 30,
+      durationInFrames: 450,
+    }
+    await t.run(async (ctx) => {
+      await ctx.db.patch(firstRevisionId, {
+        composition: fallbackComposition,
+      })
+    })
+    const owner = t.withIdentity({ subject: ownerId })
+
+    await owner.mutation(api.studio.reportRuntimeFailure, {
+      projectId,
+      revisionId: secondRevisionId,
+      normalizedError: 'Runtime error at frame 90',
+    })
+    const snapshot = await owner.query(api.studio.getProject, { projectId })
+
+    expect(snapshot.project.currentRevisionId).toBe(firstRevisionId)
+    expect(snapshot.project.lastRunnableRevisionId).toBe(firstRevisionId)
+    expect(snapshot.project.composition).toEqual(fallbackComposition)
+  })
+
+  it('bypasses prompt denial for a server-created runtime correction', async () => {
+    vi.useFakeTimers()
+    studioModelHarness.mode = 'deny'
+    const { t, ownerId, projectId, secondRevisionId } = await seedStudio()
+    const owner = t.withIdentity({ subject: ownerId })
+    const reported = await owner.mutation(api.studio.reportRuntimeFailure, {
+      projectId,
+      revisionId: secondRevisionId,
+      normalizedError: 'Runtime correction validator sentinel',
+    })
+
+    await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+    const run = await t.run(async (ctx) => ctx.db.get(reported.runId))
+    expect(run).toMatchObject({
+      status: 'compiling',
+      correctionAttempt: 1,
+    })
+    expect(studioModelHarness.validatedPrompts).not.toContain(
+      'Runtime correction validator sentinel',
+    )
+    const correctionInput = studioModelHarness.correctionInputs.find(
+      (input) =>
+        JSON.parse(input.prompt).normalizedError ===
+        'Runtime correction validator sentinel',
+    )
+    expect(JSON.parse(correctionInput?.prompt ?? '{}').task).toBe(
+      'Repair the provided Remotion source using the diagnostic data.',
+    )
+    expect(correctionInput?.system).toContain('untrusted diagnostic data')
   })
 
   it('rejects cross-user and stale runtime failure reports', async () => {
