@@ -1,0 +1,134 @@
+import { GithubIcon, XIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { toast } from 'sonner'
+import { useI18n } from './I18nProvider'
+
+export type AuthProvider = 'github' | 'wechat'
+
+type AuthDialogProps = {
+  open: boolean
+  onClose: () => void
+  onSignIn: (provider: AuthProvider) => Promise<unknown>
+}
+
+function WeChatIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8.2 5.5c-3.43 0-6.2 2.27-6.2 5.08 0 1.62.94 3.06 2.4 3.99L3.75 17l2.83-1.4c.51.13 1.06.2 1.62.2 3.43 0 6.2-2.27 6.2-5.08S11.63 5.5 8.2 5.5Z"
+        fill="#07C160"
+      />
+      <path
+        d="M15.8 9.25c-3.43 0-6.2 2.27-6.2 5.08s2.77 5.07 6.2 5.07c.56 0 1.1-.07 1.62-.2l2.83 1.4-.65-2.43c1.46-.93 2.4-2.37 2.4-3.99 0-2.81-2.77-5.08-6.2-5.08Z"
+        fill="#07C160"
+      />
+      <circle cx="6.2" cy="9.9" fill="white" r=".8" />
+      <circle cx="10.2" cy="9.9" fill="white" r=".8" />
+      <circle cx="13.8" cy="13.45" fill="white" r=".8" />
+      <circle cx="17.8" cy="13.45" fill="white" r=".8" />
+    </svg>
+  )
+}
+
+export default function AuthDialog({ open, onClose, onSignIn }: AuthDialogProps) {
+  const { t } = useI18n()
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
+
+  useEffect(() => {
+    if (!open) {
+      setPendingProvider(null)
+      return
+    }
+
+    closeButtonRef.current?.focus()
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose, open])
+
+  if (!open || typeof document === 'undefined') return null
+
+  const startSignIn = (provider: AuthProvider) => {
+    if (pendingProvider) return
+    setPendingProvider(provider)
+    void onSignIn(provider).catch(() => {
+      setPendingProvider(null)
+      toast.error(t('auth.signInFailed'))
+    })
+  }
+
+  return createPortal(
+    <div
+      data-testid="auth-dialog-overlay"
+      className="fixed inset-0 z-[200] grid place-items-center bg-black/45 px-4 py-8"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
+    >
+      <section
+        aria-label={t('auth.loginToRemotionHub')}
+        aria-modal="true"
+        role="dialog"
+        className="relative w-full max-w-[420px] rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-7 py-8 text-[var(--sea-ink)] shadow-2xl sm:px-10"
+      >
+        <button
+          ref={closeButtonRef}
+          type="button"
+          aria-label={t('auth.close')}
+          className="absolute top-4 right-4 rounded-md p-2 text-[var(--sea-ink-soft)] hover:bg-[var(--link-bg-hover)]"
+          onClick={onClose}
+        >
+          <XIcon aria-hidden="true" size={20} />
+        </button>
+
+        <h2 className="m-0 text-center text-xl font-semibold">
+          {t('auth.loginToRemotionHub')}
+        </h2>
+
+        <div className="my-8 flex items-center gap-4 text-xs text-[var(--sea-ink-soft)]">
+          <span className="h-px flex-1 bg-[var(--line)]" />
+          <span>{t('auth.otherMethods')}</span>
+          <span className="h-px flex-1 bg-[var(--line)]" />
+        </div>
+
+        <div className="flex justify-center gap-4">
+          <button
+            type="button"
+            aria-label={t('auth.signInWithGitHub')}
+            className="grid h-14 w-20 place-items-center rounded-lg border border-[var(--line)] hover:bg-[var(--link-bg-hover)] disabled:cursor-wait disabled:opacity-50"
+            disabled={pendingProvider !== null}
+            onClick={() => startSignIn('github')}
+          >
+            <GithubIcon aria-hidden="true" size={22} />
+          </button>
+          <button
+            type="button"
+            aria-label={t('auth.signInWithWeChat')}
+            className="grid h-14 w-20 place-items-center rounded-lg border border-[var(--line)] hover:bg-[var(--link-bg-hover)] disabled:cursor-wait disabled:opacity-50"
+            disabled={pendingProvider !== null}
+            onClick={() => startSignIn('wechat')}
+          >
+            <WeChatIcon />
+          </button>
+        </div>
+
+        <p className="mt-8 mb-0 text-center text-xs leading-5 text-[var(--sea-ink-soft)]">
+          {t('auth.agreementText')}
+        </p>
+      </section>
+    </div>,
+    document.body,
+  )
+}

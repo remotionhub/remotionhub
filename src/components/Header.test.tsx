@@ -132,36 +132,100 @@ describe('Header', () => {
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
   })
 
-  it('starts GitHub sign-in with the current relative URL', async () => {
+  it('opens one provider-neutral login dialog from the header', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    const trigger = screen.getByRole('button', { name: 'Log in' })
+    expect(screen.queryByRole('button', { name: 'Sign in with GitHub' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Log in with WeChat' })).toBeNull()
+
+    fireEvent.click(trigger)
+
+    const dialog = screen.getByRole('dialog', { name: 'Log in to RemotionHub' })
+    expect(dialog).toBeTruthy()
+    expect(dialog.parentElement?.parentElement).toBe(document.body)
+    expect(screen.getByRole('button', { name: 'Sign in with GitHub' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Log in with WeChat' })).toBeTruthy()
+  })
+
+  it.each([
+    ['github', 'Sign in with GitHub'],
+    ['wechat', 'Log in with WeChat'],
+  ] as const)('starts %s sign-in from the dialog', async (provider, label) => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     window.history.pushState(null, '', '/remotion?tag=card#top')
     authMocks.signIn.mockResolvedValue({ signingIn: true })
     renderHeader()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: label }))
 
     await waitFor(() => {
-      expect(authMocks.signIn).toHaveBeenCalledWith('github', {
+      expect(authMocks.signIn).toHaveBeenCalledWith(provider, {
         redirectTo: '/remotion?tag=card#top',
       })
     })
   })
 
-  it('reports sign-in failures without changing the auth state', async () => {
+  it('disables both providers while OAuth is starting', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
-    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockReturnValue(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    expect(
+      screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
+    ).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(true)
+  })
+
+  it('restores provider controls after OAuth startup fails', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
     renderHeader()
 
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
     fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
 
     await waitFor(() => {
       expect(authMocks.toastError).toHaveBeenCalledWith('Sign in failed. Please try again.')
     })
-    expect(authMocks.signIn).toHaveBeenCalledWith('github', {
-      redirectTo: '/remotion?tag=card#top',
-    })
-    expect(screen.getByRole('button', { name: 'Sign in with GitHub' })).toBeTruthy()
+    expect(
+      screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
+    ).toBe(false)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(false)
+  })
+
+  it('closes on Escape and restores focus to the header trigger', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    const trigger = screen.getByRole('button', { name: 'Log in' })
+    fireEvent.click(trigger)
+    fireEvent.keyDown(document, { key: 'Escape' })
+
+    expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it('closes with the close button and backdrop', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.mouseDown(screen.getByTestId('auth-dialog-overlay'))
+    expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
   })
 
   it('shows a stable auth loading skeleton', () => {
