@@ -70,6 +70,25 @@ export type CatalogDetail = {
 
 export const PENDING_REMIX_KEY = 'remotionhub.studio.pendingRemix'
 
+function removePendingRemix() {
+  try {
+    window.sessionStorage.removeItem(PENDING_REMIX_KEY)
+  } catch {
+    // Storage cleanup must not override a successful mutation or navigation.
+  }
+}
+
+function writePendingRemix(componentVersionId: string) {
+  try {
+    window.sessionStorage.setItem(
+      PENDING_REMIX_KEY,
+      JSON.stringify({ componentVersionId }),
+    )
+  } catch {
+    // Authentication can continue even when the browser denies storage access.
+  }
+}
+
 function readPendingRemix() {
   try {
     const value = JSON.parse(
@@ -77,7 +96,7 @@ function readPendingRemix() {
     )
     return typeof value?.componentVersionId === 'string' ? value : null
   } catch {
-    window.sessionStorage.removeItem(PENDING_REMIX_KEY)
+    removePendingRemix()
     return null
   }
 }
@@ -115,7 +134,7 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
       const result = await createRemixProject({
         componentVersionId: detail.selectedVersion._id,
       })
-      window.sessionStorage.removeItem(PENDING_REMIX_KEY)
+      removePendingRemix()
       await navigate({
         to: '/studio/$projectId',
         params: { projectId: result.projectId },
@@ -150,11 +169,8 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
       await createAndOpenRemix()
       return
     }
+    writePendingRemix(detail.selectedVersion._id)
     try {
-      window.sessionStorage.setItem(
-        PENDING_REMIX_KEY,
-        JSON.stringify({ componentVersionId: detail.selectedVersion._id }),
-      )
       await signIn('github', {
         redirectTo: `/remotion/${detail.publisher.handle}/${detail.component.slug}`,
       })

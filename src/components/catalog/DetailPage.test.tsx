@@ -134,6 +134,32 @@ function installLocalStorage() {
   })
 }
 
+function installThrowingSessionStorage(method: 'setItem' | 'removeItem') {
+  const storage = {
+    get length() {
+      return 0
+    },
+    clear() {},
+    getItem() {
+      return null
+    },
+    key() {
+      return null
+    },
+    removeItem() {
+      if (method === 'removeItem') throw new DOMException('Storage denied')
+    },
+    setItem() {
+      if (method === 'setItem') throw new DOMException('Storage denied')
+    },
+  } satisfies Storage
+
+  Object.defineProperty(window, 'sessionStorage', {
+    configurable: true,
+    value: storage,
+  })
+}
+
 describe('DetailPage', () => {
   beforeEach(() => {
     installLocalStorage()
@@ -323,6 +349,22 @@ describe('DetailPage', () => {
     })
   })
 
+  it('navigates after Remix creation when pending-intent cleanup is unavailable', async () => {
+    installThrowingSessionStorage('removeItem')
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith({
+        to: '/studio/$projectId',
+        params: { projectId: 'studioProjects:remix' },
+      })
+    })
+    expect(mocks.createRemixProject).toHaveBeenCalledTimes(1)
+    expect(mocks.toastError).not.toHaveBeenCalled()
+  })
+
   it('persists a signed-out Remix intent and resumes it after authentication', async () => {
     mocks.isAuthenticated = false
     renderDetailPage()
@@ -343,6 +385,21 @@ describe('DetailPage', () => {
     renderDetailPage()
     await waitFor(() => expect(mocks.createRemixProject).toHaveBeenCalledTimes(1))
     expect(window.sessionStorage.getItem('remotionhub.studio.pendingRemix')).toBeNull()
+  })
+
+  it('starts sign-in when pending-intent persistence is unavailable', async () => {
+    mocks.isAuthenticated = false
+    installThrowingSessionStorage('setItem')
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+
+    await waitFor(() => {
+      expect(mocks.signIn).toHaveBeenCalledWith('github', {
+        redirectTo: '/remotion/terence/card-avatar',
+      })
+    })
+    expect(mocks.toastError).not.toHaveBeenCalled()
   })
 
   it('hides the Remix action for incompatible versions', () => {

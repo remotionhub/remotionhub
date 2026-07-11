@@ -409,6 +409,12 @@ describe('studio ownership and revision history', () => {
 
     expect(messages.map((message) => message.createdAt)).toEqual([13, 14])
     expect(revisions.map((revision) => revision.sequence)).toEqual([2, 1])
+    expect(revisions[0]).not.toHaveProperty('code')
+    expect(revisions[0]).not.toHaveProperty('codeHash')
+    expect(revisions[0]).not.toHaveProperty('width')
+    expect(revisions[0]).not.toHaveProperty('height')
+    expect(revisions[0]).not.toHaveProperty('fps')
+    expect(revisions[0]).not.toHaveProperty('durationInFrames')
   })
 
   it('protects message and revision history with project ownership', async () => {
