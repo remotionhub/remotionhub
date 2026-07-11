@@ -268,6 +268,32 @@ describe('loadStudioBundle', () => {
     )).rejects.toThrow()
   })
 
+  it('rejects a direct ambient MyAnimation declaration', async () => {
+    const root = await createBundleFixture(
+      'export declare const MyAnimation: () => unknown',
+    )
+
+    await expect(
+      loadStudioBundle('catalog/studio/fixture.tsx', root, [], {
+        aspectRatio: '16:9',
+        durationInFrames: 120,
+      }),
+    ).rejects.toThrow('MyAnimation export is required')
+  })
+
+  it('rejects an ambient local binding exported as MyAnimation', async () => {
+    const root = await createBundleFixture(
+      'const marker = true\ndeclare const Animation: () => unknown\nexport { Animation as MyAnimation }',
+    )
+
+    await expect(
+      loadStudioBundle('catalog/studio/fixture.tsx', root, [], {
+        aspectRatio: '16:9',
+        durationInFrames: 120,
+      }),
+    ).rejects.toThrow('MyAnimation export is required')
+  })
+
   it.each([
     '../secret.tsx',
     'catalog/components/card-avatar.json',
