@@ -272,6 +272,22 @@ describe('Header', () => {
     expect(screen.queryByRole('alert')).toBeNull()
   })
 
+  it('clears the sign-in failure when reopening the dialog', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    await screen.findByRole('alert')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+
   it('closes on Escape and restores focus to the header trigger', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     renderHeader()

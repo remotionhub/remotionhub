@@ -29,6 +29,10 @@ export default function HeaderAuth() {
     wasDialogOpen.current = isDialogOpen
   }, [isDialogOpen])
 
+  const openDialog = useCallback(() => {
+    setSignInError(null)
+    setIsDialogOpen(true)
+  }, [])
   const closeDialog = useCallback(() => setIsDialogOpen(false), [])
   const startSignIn = useCallback(
     (provider: AuthProvider) => {
@@ -65,7 +69,7 @@ export default function HeaderAuth() {
           type="button"
           aria-label={t('auth.login')}
           className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
-          onClick={() => setIsDialogOpen(true)}
+          onClick={openDialog}
         >
           <CircleUserRoundIcon aria-hidden="true" size={20} />
         </button>
