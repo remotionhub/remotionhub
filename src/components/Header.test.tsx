@@ -276,8 +276,9 @@ describe('Header', () => {
     expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
 
     fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
-    fireEvent.mouseDown(screen.getByTestId('auth-dialog-overlay'))
+    fireEvent.click(screen.getByTestId('auth-dialog-overlay'))
     expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Log in' }))
   })
 
   it('shows a stable auth loading skeleton', () => {

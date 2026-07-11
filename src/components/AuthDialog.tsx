@@ -120,7 +120,7 @@ export default function AuthDialog({ open, pendingProvider, onClose, onSignIn }:
       data-testid="auth-dialog-overlay"
       className="fixed inset-0 z-[200] grid place-items-center bg-black/45 px-4 py-8"
       role="presentation"
-      onMouseDown={(event) => {
+      onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
     >

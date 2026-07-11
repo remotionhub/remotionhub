@@ -167,3 +167,30 @@ Additional handoff note:
 
 - `npx convex codegen` prints Node's `ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.` in this environment, but the command still succeeds and does not affect generated output.
 - No generated `_generated` file changed on the final rerun, so the review fix here is evidence + tsconfig narrowing, not a regenerated artifact diff.
+
+## Task 5 Backdrop Focus Restoration TDD Evidence
+
+### RED
+
+命令：`npm run test -- src/components/Header.test.tsx`
+
+精确结果：
+
+```text
+❯ src/components/Header.test.tsx (14 tests | 1 failed) 458ms
+× closes with the close button and backdrop 36ms
+Test Files  1 failed (1)
+Tests  1 failed | 13 passed (14)
+AssertionError: expected <section …(4)>…(5)</section> to be null
+```
+
+### GREEN
+
+命令：`npm run test -- src/components/Header.test.tsx src/lib/authRedirect.test.ts src/components/AppProviders.test.tsx`
+
+精确结果：
+
+```text
+Test Files  3 passed (3)
+Tests  18 passed (18)
+```
