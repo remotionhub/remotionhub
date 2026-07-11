@@ -6,6 +6,7 @@ import { useI18n } from './I18nProvider'
 export type AuthProvider = 'github' | 'wechat'
 
 type AuthDialogProps = {
+  errorMessage: string | null
   open: boolean
   pendingProvider: AuthProvider | null
   onClose: () => void
@@ -46,7 +47,7 @@ function WeChatIcon() {
   )
 }
 
-export default function AuthDialog({ open, pendingProvider, onClose, onSignIn }: AuthDialogProps) {
+export default function AuthDialog({ errorMessage, open, pendingProvider, onClose, onSignIn }: AuthDialogProps) {
   const { t } = useI18n()
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
   const dialogRef = useRef<HTMLElement | null>(null)
@@ -171,6 +172,12 @@ export default function AuthDialog({ open, pendingProvider, onClose, onSignIn }:
             <WeChatIcon />
           </button>
         </div>
+
+        {errorMessage ? (
+          <p role="alert" className="mt-4 mb-0 text-center text-sm text-red-700">
+            {errorMessage}
+          </p>
+        ) : null}
 
         <p className="mt-8 mb-0 text-center text-xs leading-5 text-[var(--sea-ink-soft)]">
           {t('auth.agreementText')}

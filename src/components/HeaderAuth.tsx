@@ -17,6 +17,7 @@ export default function HeaderAuth() {
   const { signIn, signOut } = useAuthActions()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
+  const [signInError, setSignInError] = useState<string | null>(null)
   const loginButtonRef = useRef<HTMLButtonElement | null>(null)
   const pendingProviderRef = useRef<AuthProvider | null>(null)
   const wasDialogOpen = useRef(false)
@@ -33,12 +34,15 @@ export default function HeaderAuth() {
     (provider: AuthProvider) => {
       if (pendingProviderRef.current) return
 
+      setSignInError(null)
       pendingProviderRef.current = provider
       setPendingProvider(provider)
       void signIn(provider, { redirectTo: getCurrentRelativeUrl() }).catch(() => {
         pendingProviderRef.current = null
         setPendingProvider(null)
-        toast.error(t('auth.signInFailed'))
+        const errorMessage = t('auth.signInFailed')
+        setSignInError(errorMessage)
+        toast.error(errorMessage)
       })
     },
     [signIn, t],
@@ -66,6 +70,7 @@ export default function HeaderAuth() {
           <CircleUserRoundIcon aria-hidden="true" size={20} />
         </button>
         <AuthDialog
+          errorMessage={signInError}
           open={isDialogOpen}
           pendingProvider={pendingProvider}
           onClose={closeDialog}

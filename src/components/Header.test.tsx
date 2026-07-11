@@ -246,6 +246,7 @@ describe('Header', () => {
 
     await waitFor(() => {
       expect(authMocks.toastError).toHaveBeenCalledWith('Sign in failed. Please try again.')
+      expect(screen.getByRole('alert').textContent).toBe('Sign in failed. Please try again.')
     })
     expect(
       screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
@@ -253,6 +254,22 @@ describe('Header', () => {
     expect(
       screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
     ).toBe(false)
+  })
+
+  it('clears the sign-in failure before retrying', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockRejectedValueOnce(new Error('sign-in failed')).mockReturnValueOnce(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    const error = await screen.findByRole('alert')
+    expect(error.textContent).toBe('Sign in failed. Please try again.')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+
+    expect(screen.queryByRole('alert')).toBeNull()
   })
 
   it('closes on Escape and restores focus to the header trigger', () => {
