@@ -77,7 +77,11 @@ function collectStudioComponentBindings(statements: Statement[]) {
       bindings.add(declaration.id.name)
       continue
     }
-    if (declaration?.type !== 'VariableDeclaration' || declaration.kind !== 'const') {
+    if (
+      declaration?.type !== 'VariableDeclaration' ||
+      declaration.kind !== 'const' ||
+      declaration.declare === true
+    ) {
       continue
     }
     for (const variable of declaration.declarations) {
@@ -105,6 +109,7 @@ export function assertStudioMyAnimationExport(source: string) {
     if (
       declaration?.type === 'VariableDeclaration' &&
       declaration.kind === 'const' &&
+      declaration.declare !== true &&
       declaration.declarations.some(
         (variable) =>
           variable.id.type === 'Identifier' &&
