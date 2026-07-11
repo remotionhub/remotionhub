@@ -1,5 +1,10 @@
 import { packages as BabelPackages } from '@babel/standalone'
-import type { ImportDeclaration, ImportSpecifier } from '@babel/types'
+import type {
+  ExportNamedDeclaration,
+  ImportDeclaration,
+  ImportSpecifier,
+  Statement,
+} from '@babel/types'
 
 const ALLOWED_IMPORTS = new Set([
   'react',
@@ -42,6 +47,87 @@ export const STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE = {
 
 function preserveLineBreaks(value: string) {
   return value.replace(/[^\r\n]/g, '')
+}
+
+function parseStudioSource(source: string) {
+  return BabelPackages.parser.parse(source, {
+    sourceType: 'module',
+    plugins: ['typescript', 'jsx'],
+    ranges: true,
+  })
+}
+
+function getExportedName(
+  specifier: ExportNamedDeclaration['specifiers'][number],
+) {
+  if (specifier.type !== 'ExportSpecifier') return undefined
+  return specifier.exported.type === 'Identifier'
+    ? specifier.exported.name
+    : specifier.exported.value
+}
+
+function collectStudioComponentBindings(statements: Statement[]) {
+  const bindings = new Set<string>()
+  for (const statement of statements) {
+    const declaration =
+      statement.type === 'ExportNamedDeclaration'
+        ? statement.declaration
+        : statement
+    if (declaration?.type === 'FunctionDeclaration' && declaration.id) {
+      bindings.add(declaration.id.name)
+      continue
+    }
+    if (declaration?.type !== 'VariableDeclaration' || declaration.kind !== 'const') {
+      continue
+    }
+    for (const variable of declaration.declarations) {
+      if (variable.id.type === 'Identifier') bindings.add(variable.id.name)
+    }
+  }
+  return bindings
+}
+
+export function assertStudioMyAnimationExport(source: string) {
+  const statements = parseStudioSource(source).program.body
+  const componentBindings = collectStudioComponentBindings(statements)
+
+  for (const statement of statements) {
+    if (statement.type !== 'ExportNamedDeclaration' || statement.source) {
+      continue
+    }
+    const declaration = statement.declaration
+    if (
+      declaration?.type === 'FunctionDeclaration' &&
+      declaration.id?.name === 'MyAnimation'
+    ) {
+      return
+    }
+    if (
+      declaration?.type === 'VariableDeclaration' &&
+      declaration.kind === 'const' &&
+      declaration.declarations.some(
+        (variable) =>
+          variable.id.type === 'Identifier' &&
+          variable.id.name === 'MyAnimation',
+      )
+    ) {
+      return
+    }
+    if (statement.exportKind === 'type') continue
+    for (const specifier of statement.specifiers) {
+      if (
+        getExportedName(specifier) === 'MyAnimation' &&
+        specifier.type === 'ExportSpecifier' &&
+        specifier.exportKind !== 'type' &&
+        specifier.local.type === 'Identifier' &&
+        componentBindings.has(specifier.local.name)
+      ) {
+        return
+      }
+    }
+  }
+
+  throw new Error('MyAnimation export is required')
 }
 
 function getImportedAccess(
@@ -111,11 +197,7 @@ export function validateAndStripStudioImports(
   const declared = declaredDependencies
     ? new Set(declaredDependencies)
     : undefined
-  const parsed = BabelPackages.parser.parse(source, {
-    sourceType: 'module',
-    plugins: ['typescript', 'jsx'],
-    ranges: true,
-  })
+  const parsed = parseStudioSource(source)
   const imports: ImportDeclaration[] = []
   for (const statement of parsed.program.body) {
     if (statement.type === 'ImportDeclaration') {

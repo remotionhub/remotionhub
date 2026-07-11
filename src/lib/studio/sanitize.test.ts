@@ -40,4 +40,14 @@ describe('sanitizeGeneratedSource', () => {
       sanitizeGeneratedSource('export const OtherAnimation = () => null'),
     ).toThrow('MyAnimation export is required')
   })
+
+  it('accepts a named MyAnimation export backed by a local component', () => {
+    expect(
+      sanitizeGeneratedSource(
+        'const Animation = () => null\nexport { Animation as MyAnimation }',
+      ),
+    ).toBe(
+      'const Animation = () => null\nexport { Animation as MyAnimation }',
+    )
+  })
 })
