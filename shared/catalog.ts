@@ -57,8 +57,10 @@ export const studioBundleDeclarationSchema = z.object({
   sourcePath: z.string().regex(/^catalog\/studio\/[a-z0-9-]+\.tsx$/),
   allowedDependencies: z.array(z.enum([
     'react', 'remotion', '@remotion/shapes', '@remotion/transitions',
-    '@remotion/lottie', '@remotion/three', '@react-three/fiber', 'three',
-  ])).max(8),
+    '@remotion/transitions/fade', '@remotion/transitions/slide',
+    '@remotion/transitions/wipe', '@remotion/lottie', '@remotion/three',
+    '@react-three/fiber', 'three',
+  ])).max(11),
   composition: studioCompositionInputSchema,
 })
 

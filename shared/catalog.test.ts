@@ -250,6 +250,25 @@ describe('catalog validation', () => {
     )
   })
 
+  it('accepts transition presentation subpaths in Studio Bundles', () => {
+    const parsed = catalogVersionSchema.parse({
+      ...baseVersion,
+      studioBundle: {
+        ...validBundleDeclaration,
+        allowedDependencies: [
+          '@remotion/transitions',
+          '@remotion/transitions/fade',
+          '@remotion/transitions/slide',
+          '@remotion/transitions/wipe',
+        ],
+      },
+    })
+
+    expect(parsed.studioBundle?.allowedDependencies).toContain(
+      '@remotion/transitions/wipe',
+    )
+  })
+
   it('keeps the immutable version fingerprint stable when a bundle is attached', () => {
     expect(buildCatalogVersionFingerprint(baseVersion)).toBe(
       buildCatalogVersionFingerprint({

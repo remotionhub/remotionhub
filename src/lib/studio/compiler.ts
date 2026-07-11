@@ -6,6 +6,9 @@ import * as RemotionPlayerRuntime from '@remotion/player'
 import * as RemotionShapesRuntime from '@remotion/shapes'
 import * as RemotionThreeRuntime from '@remotion/three'
 import * as RemotionTransitionsRuntime from '@remotion/transitions'
+import * as RemotionTransitionsFadeRuntime from '@remotion/transitions/fade'
+import * as RemotionTransitionsSlideRuntime from '@remotion/transitions/slide'
+import * as RemotionTransitionsWipeRuntime from '@remotion/transitions/wipe'
 import * as RemotionRuntime from 'remotion'
 import * as ThreeRuntime from 'three'
 import { STUDIO_MAX_SOURCE_LENGTH } from '../../../shared/studio'
@@ -86,6 +89,12 @@ const studioRuntime = Object.freeze({
     RemotionShapesRuntime,
   [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions']]:
     RemotionTransitionsRuntime,
+  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/fade']]:
+    RemotionTransitionsFadeRuntime,
+  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/slide']]:
+    RemotionTransitionsSlideRuntime,
+  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/wipe']]:
+    RemotionTransitionsWipeRuntime,
   [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/lottie']]:
     RemotionLottieRuntime,
   [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/three']]:

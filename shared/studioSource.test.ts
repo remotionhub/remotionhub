@@ -47,6 +47,24 @@ describe('validateAndStripStudioImports', () => {
     )
   })
 
+  it('injects the supported transition presentation subpaths', () => {
+    const source = [
+      "import { fade } from '@remotion/transitions/fade'",
+      "import { slide } from '@remotion/transitions/slide'",
+      "import { wipe } from '@remotion/transitions/wipe'",
+      'export const MyAnimation = () => null',
+    ].join('\n')
+
+    expect(validateAndStripStudioImports(source)).toBe(
+      [
+        'var fade = __studioRemotionTransitionsFade.fade;',
+        'var slide = __studioRemotionTransitionsSlide.slide;',
+        'var wipe = __studioRemotionTransitionsWipe.wipe;',
+        'export const MyAnimation = () => null',
+      ].join('\n'),
+    )
+  })
+
   it('removes multiline static imports without shifting source lines', () => {
     const source = [
       'import React, {',

@@ -94,12 +94,12 @@ test.describe('authenticated Studio', () => {
     await page.getByRole('button', { name: /生成|Generate/i }).click()
 
     await expect(page).toHaveURL(/\/studio\/[^/]+$/)
-    await showPreviewOnMobile(page, isMobile)
     await expect(
       page.locator('.studio-run-phase').getByText(/^(已就绪|Ready)$/i),
     ).toBeVisible({
       timeout: 45_000,
     })
+    await showPreviewOnMobile(page, isMobile)
     await expectRunnablePreview(page)
 
     await showChatOnMobile(page, isMobile)

@@ -208,6 +208,7 @@ describe('StudioWorkspace', () => {
     expect(mocks.previewProps?.candidate).toEqual({
       code: candidateCode,
       composition,
+      deliveryId: '["studioGenerationRuns:1",null,"candidate-1"]',
       fingerprint: 'candidate-1',
     })
     expect(screen.queryByText(candidateCode)).toBeNull()
@@ -226,7 +227,11 @@ describe('StudioWorkspace', () => {
       },
     }
     const view = renderWorkspace()
-    const result = { status: 'accepted' as const, fingerprint: 'candidate-1' }
+    const result = {
+      status: 'accepted' as const,
+      deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
+      fingerprint: 'candidate-1',
+    }
 
     await act(async () => {
       mocks.previewProps?.onCandidateResult(result)
@@ -262,6 +267,7 @@ describe('StudioWorkspace', () => {
     await act(async () =>
       mocks.previewProps?.onCandidateResult({
         status: 'accepted',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-1',
       }),
     )
@@ -284,10 +290,12 @@ describe('StudioWorkspace', () => {
     await act(async () => {
       mocks.previewProps?.onCandidateResult({
         status: 'accepted',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-2',
       })
       mocks.previewProps?.onCandidateResult({
         status: 'accepted',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-2',
       })
     })
@@ -298,6 +306,114 @@ describe('StudioWorkspace', () => {
       runId,
       candidateFingerprint: 'candidate-2',
     })
+  })
+
+  it('accepts the same fingerprint for distinct Run deliveries', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        correctionAttempt: 0,
+        candidateCode: 'same candidate',
+        candidateComposition: composition,
+        candidateFingerprint: 'same-fingerprint',
+      },
+    }
+    const view = renderWorkspace()
+    const firstDeliveryId = mocks.previewProps?.candidate?.deliveryId
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        deliveryId: firstDeliveryId ?? '',
+        fingerprint: 'same-fingerprint',
+      }),
+    )
+
+    const nextRunId = 'studioGenerationRuns:2' as Id<'studioGenerationRuns'>
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: nextRunId,
+        status: 'compiling',
+        correctionAttempt: 0,
+        candidateCode: 'same candidate',
+        candidateComposition: composition,
+        candidateFingerprint: 'same-fingerprint',
+      },
+    }
+    view.rerender(
+      <I18nProvider>
+        <StudioWorkspace projectId={projectId} />
+      </I18nProvider>,
+    )
+    const secondDeliveryId = mocks.previewProps?.candidate?.deliveryId
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        deliveryId: secondDeliveryId ?? '',
+        fingerprint: 'same-fingerprint',
+      }),
+    )
+
+    expect(firstDeliveryId).not.toBe(secondDeliveryId)
+    expect(mocks.acceptCandidate).toHaveBeenCalledTimes(2)
+    expect(mocks.acceptCandidate).toHaveBeenLastCalledWith({
+      projectId,
+      runId: nextRunId,
+      candidateFingerprint: 'same-fingerprint',
+    })
+  })
+
+  it('accepts the same fingerprint after a Run advances correction attempt', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        correctionAttempt: 0,
+        candidateCode: 'same candidate',
+        candidateComposition: composition,
+        candidateFingerprint: 'same-fingerprint',
+      },
+    }
+    const view = renderWorkspace()
+    const firstDeliveryId = mocks.previewProps?.candidate?.deliveryId
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        deliveryId: firstDeliveryId ?? '',
+        fingerprint: 'same-fingerprint',
+      }),
+    )
+
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        correctionAttempt: 1,
+        candidateCode: 'same candidate',
+        candidateComposition: composition,
+        candidateFingerprint: 'same-fingerprint',
+      },
+    }
+    view.rerender(
+      <I18nProvider>
+        <StudioWorkspace projectId={projectId} />
+      </I18nProvider>,
+    )
+    const correctionDeliveryId = mocks.previewProps?.candidate?.deliveryId
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        deliveryId: correctionDeliveryId ?? '',
+        fingerprint: 'same-fingerprint',
+      }),
+    )
+
+    expect(firstDeliveryId).not.toBe(correctionDeliveryId)
+    expect(mocks.acceptCandidate).toHaveBeenCalledTimes(2)
   })
 
   it('rejects a fingerprint once with a normalized error', async () => {
@@ -316,11 +432,13 @@ describe('StudioWorkspace', () => {
     await act(async () => {
       mocks.previewProps?.onCandidateResult({
         status: 'rejected',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-bad',
         error: 'Compile failed\nprivate stack',
       })
       mocks.previewProps?.onCandidateResult({
         status: 'rejected',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-bad',
         error: 'Compile failed\nprivate stack',
       })
@@ -354,6 +472,7 @@ describe('StudioWorkspace', () => {
     await act(async () =>
       mocks.previewProps?.onCandidateResult({
         status: 'accepted',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-retry',
       }),
     )
@@ -431,6 +550,7 @@ describe('StudioWorkspace', () => {
       await act(async () =>
         mocks.previewProps?.onCandidateResult({
           status: 'accepted',
+          deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
           fingerprint: 'candidate-stale',
         }),
       )
@@ -475,6 +595,7 @@ describe('StudioWorkspace', () => {
     await act(async () =>
       mocks.previewProps?.onCandidateResult({
         status: 'rejected',
+        deliveryId: mocks.previewProps?.candidate?.deliveryId ?? '',
         fingerprint: 'candidate-reload',
         error: 'Compile failed',
       }),
@@ -727,7 +848,7 @@ describe('StudioWorkspace', () => {
     expect(screen.queryByRole('tablist')).toBeNull()
   })
 
-  it('uses semantic mutually exclusive mobile tabs and mounts one Preview', async () => {
+  it('keeps one Preview mounted behind semantic mutually exclusive mobile tabs', async () => {
     installMatchMedia(false)
     renderWorkspace()
 
@@ -735,7 +856,8 @@ describe('StudioWorkspace', () => {
     const previewTab = screen.getByRole('tab', { name: /预览|preview/i })
     expect(chatTab.getAttribute('aria-selected')).toBe('true')
     expect(previewTab.getAttribute('aria-selected')).toBe('false')
-    expect(screen.queryByTestId('studio-preview')).toBeNull()
+    expect(screen.getAllByTestId('studio-preview')).toHaveLength(1)
+    expect(screen.getAllByRole('tabpanel')).toHaveLength(1)
 
     fireEvent.click(previewTab)
 
@@ -744,6 +866,40 @@ describe('StudioWorkspace', () => {
       expect(previewTab.getAttribute('aria-selected')).toBe('true')
       expect(screen.getAllByTestId('studio-preview')).toHaveLength(1)
       expect(screen.getAllByRole('tabpanel')).toHaveLength(1)
+    })
+  })
+
+  it('delivers a mobile candidate while Chat remains selected', async () => {
+    installMatchMedia(false)
+    snapshot = {
+      ...baseSnapshot,
+      run: {
+        _id: runId,
+        status: 'compiling',
+        correctionAttempt: 1,
+        candidateCode: 'candidate source',
+        candidateComposition: composition,
+        candidateFingerprint: 'candidate-mobile',
+      },
+    }
+    renderWorkspace()
+
+    expect(
+      screen.getByRole('tab', { name: /对话|chat/i }).getAttribute('aria-selected'),
+    ).toBe('true')
+    expect(screen.getByTestId('studio-preview')).toBeTruthy()
+    await act(async () =>
+      mocks.previewProps?.onCandidateResult({
+        status: 'accepted',
+        deliveryId: mocks.previewProps.candidate?.deliveryId ?? '',
+        fingerprint: 'candidate-mobile',
+      }),
+    )
+
+    expect(mocks.acceptCandidate).toHaveBeenCalledWith({
+      projectId,
+      runId,
+      candidateFingerprint: 'candidate-mobile',
     })
   })
 })
