@@ -51,6 +51,25 @@ const artifact = v.object({
   agentPrompt: v.string(),
 })
 
+const studioComposition = v.object({
+  aspectRatio: v.union(v.literal('16:9'), v.literal('9:16'), v.literal('1:1')),
+  width: v.number(),
+  height: v.number(),
+  fps: v.number(),
+  durationInFrames: v.number(),
+})
+
+const importedStudioBundle = v.object({
+  entryPoint: v.string(),
+  code: v.string(),
+  allowedDependencies: v.array(v.string()),
+  composition: studioComposition,
+  commit: v.string(),
+  sourcePath: v.string(),
+  contentHash: v.string(),
+  status: v.literal('validated'),
+})
+
 const importVersion = v.object({
   version: v.string(),
   changelog: v.string(),
@@ -59,6 +78,7 @@ const importVersion = v.object({
   tags: v.array(v.string()),
   fingerprint: v.string(),
   artifact,
+  studioBundle: v.optional(importedStudioBundle),
 })
 
 type Runtime = 'remotion' | 'hyperframes'
@@ -90,6 +110,37 @@ function hasCompatibleArtifactSource(
     existingSource.path === importedSource.path &&
     existingSource.pinned === importedSource.pinned
   )
+}
+
+function studioBundlesMatch(
+  existing: Doc<'studioBundles'>,
+  imported: Infer<typeof importedStudioBundle>,
+) {
+  return existing.contentHash === imported.contentHash &&
+    existing.commit === imported.commit &&
+    existing.entryPoint === imported.entryPoint &&
+    existing.sourcePath === imported.sourcePath &&
+    JSON.stringify(existing.allowedDependencies) === JSON.stringify(imported.allowedDependencies) &&
+    JSON.stringify(existing.composition) === JSON.stringify(imported.composition)
+}
+
+async function persistStudioBundle(
+  db: DatabaseWriter,
+  componentVersionId: Id<'componentVersions'>,
+  bundle: Infer<typeof importedStudioBundle> | undefined,
+  now: number,
+) {
+  if (!bundle) return
+  const existing = await db.query('studioBundles')
+    .withIndex('by_version', (q) => q.eq('componentVersionId', componentVersionId))
+    .unique()
+  if (existing) {
+    if (!studioBundlesMatch(existing, bundle)) {
+      throw new ConvexError('Studio Bundle is immutable.')
+    }
+    return
+  }
+  await db.insert('studioBundles', { componentVersionId, ...bundle, createdAt: now })
 }
 
 async function getPublisherByHandle(db: DbReader, handle: string) {
@@ -299,6 +350,7 @@ export const importCatalogComponent = mutation({
             )
           }
         }
+        await persistStudioBundle(ctx.db, existing._id, versionInput.studioBundle, now)
         skippedVersions += 1
         continue
       }
@@ -326,6 +378,7 @@ export const importCatalogComponent = mutation({
         ...versionInput.artifact,
         createdAt: now,
       })
+      await persistStudioBundle(ctx.db, versionId, versionInput.studioBundle, now)
       createdVersions += 1
     }
 
@@ -500,6 +553,9 @@ export const getCatalogDetail = query({
     if (!artifactDoc) {
       return null
     }
+    const studioBundle = await ctx.db.query('studioBundles')
+      .withIndex('by_version', (q) => q.eq('componentVersionId', selectedVersion._id))
+      .unique()
 
     return {
       publisher,
@@ -509,6 +565,10 @@ export const getCatalogDetail = query({
       ),
       selectedVersion,
       artifact: artifactDoc,
+      studioCompatible:
+        component.status === 'published' &&
+        component.isActive &&
+        studioBundle?.status === 'validated',
     }
   },
 })

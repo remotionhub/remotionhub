@@ -65,6 +65,7 @@ const zhDictionary = {
   'detail.commit': 'Commit',
   'detail.path': 'Path',
   'detail.remixInStudio': '在 Studio 中再创作',
+  'detail.remixFailed': '无法创建 Studio 再创作项目，请稍后重试。',
   'studio.landing.eyebrow': 'Studio',
   'studio.landing.title': '描述画面，让动画开始。',
   'studio.landing.description': '输入一个想法，RemotionHub Studio 会为你生成可继续调整的动画。',
@@ -184,6 +185,7 @@ const enDictionary = {
   'detail.commit': 'Commit',
   'detail.path': 'Path',
   'detail.remixInStudio': 'Remix in Studio',
+  'detail.remixFailed': 'The Studio Remix could not be created. Please retry.',
   'studio.landing.eyebrow': 'Studio',
   'studio.landing.title': 'Describe the scene. Start the motion.',
   'studio.landing.description':

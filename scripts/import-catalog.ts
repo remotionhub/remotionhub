@@ -1,15 +1,25 @@
 import fs from 'node:fs/promises'
+import crypto from 'node:crypto'
 import path from 'node:path'
 import process from 'node:process'
 import { pathToFileURL } from 'node:url'
+import * as Babel from '@babel/standalone'
 import { ConvexHttpClient } from 'convex/browser'
 import type { FunctionArgs, FunctionReturnType } from 'convex/server'
 import { api } from '../convex/_generated/api'
 import {
-  buildVersionFingerprint,
+  buildCatalogVersionFingerprint,
   catalogComponentSchema,
   type CatalogComponent,
 } from '../shared/catalog'
+import {
+  normalizeStudioComposition,
+  serializeStudioCandidate,
+  STUDIO_MAX_SOURCE_LENGTH,
+  type StudioCompositionInput,
+} from '../shared/studio'
+import { validateAndStripStudioImports } from '../shared/studioSource'
+import { sanitizeGeneratedSource } from '../src/lib/studio/sanitize'
 
 export type Args = {
   apply: boolean
@@ -93,11 +103,87 @@ export async function readCatalogFiles(
   )
 }
 
-export function toImportPayload(
+const MAX_STUDIO_BUNDLE_BYTES = 200_000
+
+function isWithin(root: string, candidate: string) {
+  const relative = path.relative(root, candidate)
+  return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative)
+}
+
+export async function loadStudioBundle(
+  sourcePath: string,
+  repoRoot: string,
+  allowedDependencies: readonly string[],
+  compositionInput: StudioCompositionInput,
+) {
+  const realRepoRoot = await fs.realpath(repoRoot)
+  const studioRoot = path.join(realRepoRoot, 'catalog/studio')
+  const realStudioRoot = await fs.realpath(studioRoot)
+  const lexicalPath = path.resolve(realRepoRoot, sourcePath)
+  if (!isWithin(studioRoot, lexicalPath)) throw new Error('Unsafe Studio Bundle path.')
+  const stat = await fs.lstat(lexicalPath)
+  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error('Studio Bundle must be a regular file.')
+  if (stat.size > MAX_STUDIO_BUNDLE_BYTES) throw new Error('Studio Bundle is too large.')
+  const realPath = await fs.realpath(lexicalPath)
+  if (!isWithin(realStudioRoot, realPath)) throw new Error('Unsafe Studio Bundle real path.')
+  const code = sanitizeGeneratedSource(await fs.readFile(realPath, 'utf8'))
+  if (code.length > STUDIO_MAX_SOURCE_LENGTH) {
+    throw new Error('Studio source is too large')
+  }
+  const stripped = validateAndStripStudioImports(code, allowedDependencies)
+  const transformed = Babel.transform(stripped, {
+    filename: sourcePath,
+    presets: ['typescript', 'react'],
+    plugins: ['transform-modules-commonjs'],
+    sourceType: 'module',
+  })
+  if (!transformed.code) throw new Error('Studio Bundle could not be transformed.')
+  const composition = normalizeStudioComposition(compositionInput)
+  const contentHash = crypto.createHash('sha256')
+    .update(serializeStudioCandidate(code, composition)).digest('hex')
+  return { code, composition, contentHash }
+}
+
+export async function toImportPayload(
   component: CatalogComponent,
   catalogFile: string,
   importSecret: string,
 ) {
+  const versions = await Promise.all(component.versions.map(async (version) => {
+    let studioBundle
+    if (version.studioBundle) {
+      const source = version.artifact.githubSource
+      if (component.runtime !== 'remotion' || version.metadata.runtime !== 'remotion' ||
+        version.artifact.kind !== 'github-source' || !source || !version.metadata.entryPoint ||
+        !/^[a-f0-9]{6,40}$/i.test(source.commit)) {
+        throw new Error('Studio Bundle requires a pinned Remotion source.')
+      }
+      const hydrated = await loadStudioBundle(version.studioBundle.sourcePath, process.cwd(),
+        version.studioBundle.allowedDependencies, version.studioBundle.composition)
+      studioBundle = {
+        entryPoint: version.metadata.entryPoint,
+        sourcePath: version.studioBundle.sourcePath,
+        code: hydrated.code,
+        allowedDependencies: version.studioBundle.allowedDependencies,
+        composition: hydrated.composition,
+        commit: source.commit,
+        contentHash: hydrated.contentHash,
+        status: 'validated' as const,
+      }
+    }
+    return {
+      ...version,
+      fingerprint: buildCatalogVersionFingerprint(version),
+      artifact: {
+        ...version.artifact,
+        githubSource: version.artifact.githubSource ? {
+          ...version.artifact.githubSource,
+          pinned: /^[a-f0-9]{6,40}$/i.test(version.artifact.githubSource.commit),
+        } : undefined,
+      },
+      studioBundle,
+    }
+  }))
   return {
     importSecret,
     publisher: component.publisher,
@@ -115,21 +201,7 @@ export function toImportPayload(
     tags: component.tags,
     status: component.status,
     catalogFile,
-    versions: component.versions.map((version) => ({
-      ...version,
-      fingerprint: buildVersionFingerprint(version),
-      artifact: {
-        ...version.artifact,
-        githubSource: version.artifact.githubSource
-          ? {
-              ...version.artifact.githubSource,
-              pinned: /^[a-f0-9]{6,40}$/i.test(
-                version.artifact.githubSource.commit,
-              ),
-            }
-          : undefined,
-      },
-    })),
+    versions,
   }
 }
 
@@ -160,10 +232,10 @@ export async function runImportCatalog(
   }
 
   const files = await dependencies.readFiles()
-  const payloads = files.map(({ filePath, json }) => {
+  const payloads = await Promise.all(files.map(async ({ filePath, json }) => {
     const parsed = catalogComponentSchema.parse(json)
-    return toImportPayload(parsed, filePath, importSecret ?? '')
-  })
+    return await toImportPayload(parsed, filePath, importSecret ?? '')
+  }))
 
   dependencies.log(`Validated ${payloads.length} catalog component(s).`)
   for (const payload of payloads) {

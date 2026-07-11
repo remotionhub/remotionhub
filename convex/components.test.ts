@@ -53,6 +53,23 @@ const component = {
   ],
 }
 
+const studioBundle = {
+  entryPoint: 'src/CardAvatar.tsx',
+  sourcePath: 'catalog/studio/card-avatar.tsx',
+  code: 'export const MyAnimation = () => null',
+  allowedDependencies: ['remotion'],
+  composition: {
+    aspectRatio: '16:9' as const,
+    width: 1920,
+    height: 1080,
+    fps: 30,
+    durationInFrames: 120,
+  },
+  commit: '48f2401399f8e68ef2f8e04403d407102d0251a8',
+  contentHash: 'bundle-hash',
+  status: 'validated' as const,
+}
+
 describe('components catalog mutations and queries', () => {
   beforeEach(() => {
     process.env.CATALOG_IMPORT_SECRET = importSecret
@@ -552,5 +569,72 @@ describe('components catalog mutations and queries', () => {
       'Runtime Alpha',
       'Runtime Beta',
     ])
+  })
+
+  it('persists validated bundles immutably and exposes only compatibility', async () => {
+    const t = convexTest(schema, modules)
+    const bundled = {
+      ...component,
+      versions: [{ ...component.versions[0], studioBundle }],
+    }
+    await t.mutation(api.components.importCatalogComponent, bundled)
+    await t.mutation(api.components.importCatalogComponent, bundled)
+
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+    expect(detail?.studioCompatible).toBe(true)
+    expect(detail).not.toHaveProperty('studioBundle')
+    expect(JSON.stringify(detail)).not.toContain('MyAnimation')
+
+    const [storedBundle] = await t.run((ctx) =>
+      ctx.db.query('studioBundles').collect(),
+    )
+    expect(storedBundle).toMatchObject(studioBundle)
+    if (!storedBundle) throw new Error('Expected stored Studio Bundle')
+    await t.run((ctx) => ctx.db.patch(storedBundle._id, { status: 'removed' }))
+    const removedDetail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+    expect(removedDetail?.studioCompatible).toBe(false)
+
+    await expect(t.mutation(api.components.importCatalogComponent, {
+      ...bundled,
+      versions: [{
+        ...component.versions[0],
+        studioBundle: { ...studioBundle, contentHash: 'different-hash' },
+      }],
+    })).rejects.toThrow('Studio Bundle is immutable')
+  })
+
+  it('attaches a bundle to an existing immutable version', async () => {
+    const t = convexTest(schema, modules)
+    await t.mutation(api.components.importCatalogComponent, component)
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [{ ...component.versions[0], studioBundle }],
+    })
+    const bundles = await t.run((ctx) => ctx.db.query('studioBundles').collect())
+    expect(bundles).toHaveLength(1)
+  })
+
+  it('does not advertise Remix for an unlisted component', async () => {
+    const t = convexTest(schema, modules)
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      status: 'unlisted',
+      versions: [{ ...component.versions[0], studioBundle }],
+    })
+
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+    expect(detail?.studioCompatible).toBe(false)
   })
 })

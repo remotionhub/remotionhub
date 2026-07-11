@@ -32,6 +32,16 @@
       "tags": [
         "personal"
       ],
+      "studioBundle": {
+        "sourcePath": "catalog/studio/card-avatar.tsx",
+        "allowedDependencies": [
+          "remotion"
+        ],
+        "composition": {
+          "aspectRatio": "16:9",
+          "durationInFrames": 120
+        }
+      },
       "artifact": {
         "kind": "github-source",
         "githubSource": {
