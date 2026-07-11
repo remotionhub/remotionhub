@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { validateAndStripStudioImports } from './studioSource'
+import {
+  assertStudioMyAnimationExport,
+  validateAndStripStudioImports,
+} from './studioSource'
 
 describe('validateAndStripStudioImports', () => {
   it('removes allowlisted static imports', () => {
@@ -179,11 +182,25 @@ describe('validateAndStripStudioImports', () => {
     'require(',
     'eval(',
     'Function(',
+    'setTimeout(',
+    'setInterval(',
+    'requestAnimationFrame(',
   ])('rejects forbidden source token %s', (token) => {
     expect(() =>
       validateAndStripStudioImports(
         `export const MyAnimation = () => { ${token}; return null }`,
       ),
     ).toThrow('Unsupported Studio API')
+  })
+
+  it('requires MyAnimation to be backed by a function component', () => {
+    expect(() =>
+      assertStudioMyAnimationExport('export const MyAnimation = 1'),
+    ).toThrow('MyAnimation export is required')
+    expect(() =>
+      assertStudioMyAnimationExport(
+        'const Animation = 1\nexport { Animation as MyAnimation }',
+      ),
+    ).toThrow('MyAnimation export is required')
   })
 })

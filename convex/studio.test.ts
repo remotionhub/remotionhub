@@ -64,6 +64,21 @@ vi.mock('./lib/studioModel', async (importOriginal) => {
           },
         }
       }
+      if (studioModelHarness.mode === 'fenced-code') {
+        return {
+          ...base,
+          async generateInitial(input: { prompt: string; system: string }) {
+            const generated = await base.generateInitial(input)
+            return {
+              ...generated,
+              data: {
+                ...generated.data,
+                code: `\`\`\`tsx\n${generated.data.code}\n\`\`\``,
+              },
+            }
+          },
+        }
+      }
       return {
         ...base,
         async detectSkills(input: { prompt: string; system: string }) {
@@ -466,6 +481,49 @@ describe('studio ownership and revision history', () => {
     expect(history.project?.lastRunnableRevisionId).toBe(result?._id)
   })
 
+  it('does not return a failed run made stale by rollback', async () => {
+    const {
+      t,
+      ownerId,
+      projectId,
+      firstRevisionId,
+      secondRevisionId,
+    } = await seedStudio()
+    await t.run(async (ctx) => {
+      const promptMessageId = await ctx.db.insert('studioMessages', {
+        projectId,
+        role: 'user',
+        kind: 'prompt',
+        content: 'Make the title cyan',
+        createdAt: 20,
+      })
+      await ctx.db.insert('studioGenerationRuns', {
+        projectId,
+        ownerId,
+        status: 'failed',
+        inputRevisionId: secondRevisionId,
+        promptMessageId,
+        modelAlias: 'studio-default',
+        detectedSkills: [],
+        correctionAttempt: 0,
+        errorCode: 'MODEL_FAILED',
+        idempotencyKey: 'failed-before-rollback',
+        createdAt: 21,
+        updatedAt: 21,
+      })
+    })
+    const owner = t.withIdentity({ subject: ownerId })
+
+    await owner.mutation(api.studio.rollbackRevision, {
+      projectId,
+      revisionId: firstRevisionId,
+      expectedCurrentRevisionId: secondRevisionId,
+    })
+    const snapshot = await owner.query(api.studio.getProject, { projectId })
+
+    expect(snapshot.run).toBeNull()
+  })
+
   it('rejects a rollback based on a stale current revision', async () => {
     const {
       t,
@@ -864,6 +922,28 @@ describe('studio generation runs', () => {
     expect(snapshot.run?.candidateComposition).toEqual(composition)
     expect(snapshot.run?.candidateFingerprint).toMatch(/^[a-f0-9]{64}$/)
     expect(revisions).toEqual([])
+  })
+
+  it('sanitizes fenced model source before saving the candidate', async () => {
+    vi.useFakeTimers()
+    studioModelHarness.mode = 'fenced-code'
+    const t = convexTest(schema, modules)
+    const ownerId = await t.run(async (ctx) =>
+      ctx.db.insert('users', { name: 'Owner', createdAt: 1, updatedAt: 1 }),
+    )
+    const owner = t.withIdentity({ subject: ownerId })
+    const started = await owner.mutation(api.studio.startPromptProject, {
+      prompt: 'Animate a cyan title entering with spring motion',
+      idempotencyKey: 'fenced-source-run',
+    })
+
+    await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+    const snapshot = await owner.query(api.studio.getProject, {
+      projectId: started.projectId,
+    })
+    expect(snapshot.run?.candidateCode).toContain('export const MyAnimation')
+    expect(snapshot.run?.candidateCode).not.toContain('```')
   })
 
   it('generates a complete replacement for a follow-up', async () => {

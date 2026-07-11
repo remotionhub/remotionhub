@@ -134,13 +134,21 @@ async function persistStudioBundle(
   bundle: Infer<typeof importedStudioBundle> | undefined,
   now: number,
 ) {
-  if (!bundle) return
   const existing = await db.query('studioBundles')
     .withIndex('by_version', (q) => q.eq('componentVersionId', componentVersionId))
     .unique()
+  if (!bundle) {
+    if (existing?.status === 'validated') {
+      await db.patch(existing._id, { status: 'removed' })
+    }
+    return
+  }
   if (existing) {
     if (!studioBundlesMatch(existing, bundle)) {
       throw new ConvexError('Studio Bundle is immutable.')
+    }
+    if (existing.status !== bundle.status) {
+      await db.patch(existing._id, { status: bundle.status })
     }
     return
   }
