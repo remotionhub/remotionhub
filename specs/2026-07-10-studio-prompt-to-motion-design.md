@@ -331,7 +331,7 @@ submit prompt
   -> update project pointers
 ```
 
-Prompt 校验失败时保留用户输入和项目，Run 标为失败，不创建 Revision。
+Prompt 校验失败时保留用户输入和项目，Run 标为失败，不创建 Revision。用户既可以重试原 Run，也可以在同一项目中改写 Prompt；改写会创建新的 Message 与无 `inputRevisionId` 的初始 Run。前端只对没有 `inputRevisionId` 的失败 Run 开放改写；后端只允许 owner 在 Revision 表中没有该项目的任何历史、无活动 Run、最近 Run 已失败的 Prompt 项目执行该操作，不能只依据 `currentRevisionId` 投影是否为空。
 
 ### Follow-up 修改
 
@@ -360,6 +360,7 @@ old_string + new_string + description
 - 支持 React、Remotion、Remotion Shapes、Transitions（包含 `fade`、`slide`、`wipe` 公共子路径）、Lottie 和明确允许的 Three.js 能力。
 - Compiler 只能通过 TanStack Start 的客户端边界动态加载，不得进入 Cloudflare Worker SSR 模块图。
 - 静态 import 校验与浏览器 Runtime 注入共享逐包 API 白名单；不允许 namespace import，也不把依赖包的全部公开导出注入生成代码。
+- 静态校验拒绝 async/generator Composition、Web Crypto 随机源、浏览器媒体或 frame 标签、CSS `url(...)` 资源，以及 keyframes、animation、transition 等墙钟驱动动画。
 - 移除静态 import，并由 Runtime 注入允许 API。
 - 使用 Babel Standalone 转换 TypeScript 与 JSX。
 - 从约定导出的组件中提取组件体。

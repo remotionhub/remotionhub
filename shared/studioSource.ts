@@ -92,6 +92,11 @@ const FORBIDDEN_PATTERNS = [
   /\bDate\s*\(/,
   /\bperformance\s*\.\s*now\s*\(/,
   /\bMath\s*\.\s*random\s*\(/,
+  /\bcrypto\s*\.\s*(?:randomUUID|getRandomValues)\s*\(/,
+  /<\s*(?:audio|embed|iframe|image|img|link|object|picture|source|style|video)\b/i,
+  /@keyframes\b/i,
+  /\burl\s*\(/i,
+  /\b(?:animation|animationDelay|animationDirection|animationDuration|animationFillMode|animationIterationCount|animationName|animationPlayState|animationTimingFunction|transition|transitionDelay|transitionDuration|transitionProperty|transitionTimingFunction)\s*:/,
 ]
 
 const FENCED_SOURCE = /^```(?:tsx|ts|jsx|javascript)?\s*\n([\s\S]*?)\n```$/
@@ -135,8 +140,10 @@ function getExportedName(
 
 function isComponentInitializer(initializer: Expression | null | undefined) {
   return (
-    initializer?.type === 'ArrowFunctionExpression' ||
-    initializer?.type === 'FunctionExpression'
+    (initializer?.type === 'ArrowFunctionExpression' ||
+      initializer?.type === 'FunctionExpression') &&
+    initializer.async !== true &&
+    ('generator' in initializer ? initializer.generator !== true : true)
   )
 }
 
@@ -147,7 +154,12 @@ function collectStudioComponentBindings(statements: Statement[]) {
       statement.type === 'ExportNamedDeclaration'
         ? statement.declaration
         : statement
-    if (declaration?.type === 'FunctionDeclaration' && declaration.id) {
+    if (
+      declaration?.type === 'FunctionDeclaration' &&
+      declaration.id &&
+      declaration.async !== true &&
+      declaration.generator !== true
+    ) {
       bindings.add(declaration.id.name)
       continue
     }
@@ -181,7 +193,9 @@ export function assertStudioMyAnimationExport(source: string) {
     const declaration = statement.declaration
     if (
       declaration?.type === 'FunctionDeclaration' &&
-      declaration.id?.name === 'MyAnimation'
+      declaration.id?.name === 'MyAnimation' &&
+      declaration.async !== true &&
+      declaration.generator !== true
     ) {
       return
     }

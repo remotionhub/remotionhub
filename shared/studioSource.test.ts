@@ -199,6 +199,8 @@ describe('validateAndStripStudioImports', () => {
     'new Date(',
     'performance.now(',
     'Math.random(',
+    'crypto.randomUUID(',
+    'crypto.getRandomValues(',
   ])('rejects forbidden source token %s', (token) => {
     expect(() =>
       validateAndStripStudioImports(
@@ -216,5 +218,31 @@ describe('validateAndStripStudioImports', () => {
         'const Animation = 1\nexport { Animation as MyAnimation }',
       ),
     ).toThrow('MyAnimation export is required')
+  })
+
+  it.each([
+    'export async function MyAnimation() { return null }',
+    'export function* MyAnimation() { yield null }',
+    'export const MyAnimation = async () => null',
+    'const Animation = async function () { return null }; export { Animation as MyAnimation }',
+  ])('rejects asynchronous or generator component exports: %s', (source) => {
+    expect(() => assertStudioMyAnimationExport(source)).toThrow(
+      'MyAnimation export is required',
+    )
+  })
+
+  it.each([
+    'export const MyAnimation = () => <img src="https://example.com/a.png" />',
+    'export const MyAnimation = () => <video />',
+    'export const MyAnimation = () => <iframe />',
+    'export const MyAnimation = () => <svg><image href="https://example.com/a.svg" /></svg>',
+    "export const MyAnimation = () => <div style={{backgroundImage: 'url(https://example.com/a.png)'}} />",
+    "export const MyAnimation = () => <div style={{animation: 'spin 2s infinite'}} />",
+    "export const MyAnimation = () => <div style={{transition: 'opacity 1s'}} />",
+    'export const MyAnimation = () => <style>{`@keyframes spin {}`}</style>',
+  ])('rejects browser asset loads and CSS time-based animation: %s', (source) => {
+    expect(() => validateAndStripStudioImports(source)).toThrow(
+      'Unsupported Studio API',
+    )
   })
 })

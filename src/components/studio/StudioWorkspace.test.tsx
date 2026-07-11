@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   rejectCandidate: vi.fn(),
   reportRuntimeFailure: vi.fn(),
   retryFailedGeneration: vi.fn(),
+  restartPromptGeneration: vi.fn(),
   startFollowUp: vi.fn(),
   updateProjectTitle: vi.fn(),
   rollbackRevision: vi.fn(),
@@ -33,6 +34,7 @@ vi.mock('../../../convex/_generated/api', () => ({
       rejectCandidate: 'rejectCandidate',
       reportRuntimeFailure: 'reportRuntimeFailure',
       retryFailedGeneration: 'retryFailedGeneration',
+      restartPromptGeneration: 'restartPromptGeneration',
       startFollowUp: 'startFollowUp',
       updateProjectTitle: 'updateProjectTitle',
       rollbackRevision: 'rollbackRevision',
@@ -47,6 +49,7 @@ vi.mock('convex/react', () => ({
       rejectCandidate: mocks.rejectCandidate,
       reportRuntimeFailure: mocks.reportRuntimeFailure,
       retryFailedGeneration: mocks.retryFailedGeneration,
+      restartPromptGeneration: mocks.restartPromptGeneration,
       startFollowUp: mocks.startFollowUp,
       updateProjectTitle: mocks.updateProjectTitle,
       rollbackRevision: mocks.rollbackRevision,
@@ -156,6 +159,7 @@ describe('StudioWorkspace', () => {
       mocks.rejectCandidate,
       mocks.reportRuntimeFailure,
       mocks.retryFailedGeneration,
+      mocks.restartPromptGeneration,
       mocks.startFollowUp,
       mocks.updateProjectTitle,
       mocks.rollbackRevision,
@@ -800,6 +804,62 @@ describe('StudioWorkspace', () => {
       }),
     )
     expect(mocks.startFollowUp).not.toHaveBeenCalled()
+  })
+
+  it('submits a rephrased prompt after the initial Run fails', async () => {
+    snapshot = {
+      ...baseSnapshot,
+      project: { ...baseSnapshot.project, currentRevisionId: undefined },
+      revision: null,
+      run: {
+        _id: runId,
+        status: 'failed',
+        errorCode: 'INVALID_PROMPT',
+      },
+    }
+    renderWorkspace()
+    const textbox = screen.getByRole('textbox', {
+      name: /描述你想调整的内容|describe what to adjust/i,
+    })
+
+    fireEvent.change(textbox, {
+      target: { value: 'Animate a migration timeline with moving steps' },
+    })
+    fireEvent.keyDown(textbox, { key: 'Enter' })
+
+    await waitFor(() =>
+      expect(mocks.restartPromptGeneration).toHaveBeenCalledWith({
+        projectId,
+        prompt: 'Animate a migration timeline with moving steps',
+        idempotencyKey: expect.any(String),
+      }),
+    )
+    expect(mocks.startFollowUp).not.toHaveBeenCalled()
+  })
+
+  it('keeps rephrasing disabled for a failed runtime repair without a current Revision', () => {
+    snapshot = {
+      ...baseSnapshot,
+      project: { ...baseSnapshot.project, currentRevisionId: undefined },
+      revision: null,
+      run: {
+        _id: runId,
+        status: 'failed',
+        inputRevisionId: revisionId,
+        correctionAttempt: 1,
+        errorCode: 'MODEL_FAILED',
+      },
+    }
+
+    renderWorkspace()
+
+    expect(
+      (
+        screen.getByRole('textbox', {
+          name: /描述你想调整的内容|describe what to adjust/i,
+        }) as HTMLTextAreaElement
+      ).disabled,
+    ).toBe(true)
   })
 
   it('retries a failed runtime repair by Run identity after Revision rollback', async () => {
