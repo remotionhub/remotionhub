@@ -1,27 +1,26 @@
 import { useMutation } from 'convex/react'
 import { useEffect, useRef } from 'react'
-import { api } from '../../convex/_generated/api'
-import { useAuthStatus } from '#/lib/useAuthStatus'
+import { bootstrapUsersApi, useAuthStatus } from '#/lib/useAuthStatus'
 
 export function UserBootstrap() {
   const { isAuthenticated, isLoading, me } = useAuthStatus()
-  const ensureUser = useMutation(api.users.ensure)
-  const lastBootstrappedSession = useRef<string | null>(null)
+  const ensureUser = useMutation(bootstrapUsersApi.users.ensure)
+  const lastEnsuredUserId = useRef<string | null>(null)
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || me === undefined) {
-      lastBootstrappedSession.current = null
+    if (!isAuthenticated) {
+      lastEnsuredUserId.current = null
       return
     }
 
-    const sessionKey = me?._id ?? 'authenticated-without-user'
-    if (lastBootstrappedSession.current === sessionKey) return
+    if (isLoading || !me || lastEnsuredUserId.current === me._id) return
 
-    lastBootstrappedSession.current = sessionKey
+    lastEnsuredUserId.current = me._id
     void ensureUser({}).catch(() => {
-      if (lastBootstrappedSession.current === sessionKey) {
-        lastBootstrappedSession.current = null
+      if (lastEnsuredUserId.current === me._id) {
+        lastEnsuredUserId.current = null
       }
+      // Best-effort repair. Broken bootstrap state should not crash public browsing.
     })
   }, [ensureUser, isAuthenticated, isLoading, me])
 

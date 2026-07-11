@@ -1,7 +1,12 @@
 import { v } from 'convex/values'
 import type { Doc, Id } from './_generated/dataModel'
 import type { MutationCtx, QueryCtx } from './_generated/server'
-import { internalMutation, mutation, query } from './_generated/server'
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from './_generated/server'
 import { getOptionalAuthUserId, requireUser } from './lib/access'
 import {
   fallbackHandleForUserId,
@@ -38,31 +43,100 @@ function imageUrlForUser(user: UserDoc) {
   return user.image?.trim() || undefined
 }
 
-function shortUserSuffix(userId: Id<'users'>) {
-  return fallbackHandleForUserId(userId.toString()).replace(/^user-/, '')
+function canReuseAsPersonalPublisher(
+  publisher: Doc<'publishers'>,
+  userId: Id<'users'>,
+  allowUnlinked = false,
+) {
+  if (publisher.kind === 'org' || publisher.kind === 'system') return false
+  if (publisher.linkedUserId && publisher.linkedUserId !== userId) return false
+  if (!allowUnlinked) return publisher.linkedUserId === userId
+  return publisher.kind === 'user' || publisher.kind === undefined
+}
+
+async function syncPersonalPublisherFromUser(
+  ctx: MutationCtx,
+  user: UserDoc,
+  publisher: Doc<'publishers'>,
+) {
+  const now = Date.now()
+  const displayName = displayNameForUser(user)
+  const imageUrl = imageUrlForUser(user)
+  const publisherPatch: {
+    displayName?: string
+    imageUrl?: string
+    kind?: 'user'
+    linkedUserId?: Id<'users'>
+    updatedAt?: number
+  } = {}
+
+  if (publisher.displayName !== displayName) {
+    publisherPatch.displayName = displayName
+  }
+  if (publisher.imageUrl !== imageUrl) publisherPatch.imageUrl = imageUrl
+  if (publisher.kind !== 'user') publisherPatch.kind = 'user'
+  if (publisher.linkedUserId !== user._id) publisherPatch.linkedUserId = user._id
+
+  if (Object.keys(publisherPatch).length > 0) {
+    await ctx.db.patch(publisher._id, {
+      ...publisherPatch,
+      updatedAt: now,
+    })
+  }
+
+  if (
+    user.personalPublisherId !== publisher._id ||
+    user.handle !== publisher.handle
+  ) {
+    await ctx.db.patch(user._id, {
+      handle: publisher.handle,
+      personalPublisherId: publisher._id,
+      updatedAt: now,
+    })
+  }
+
+  return publisher._id
 }
 
 async function choosePersonalPublisherHandle(
   ctx: Pick<MutationCtx, 'db'>,
   user: UserDoc,
 ) {
-  const base =
+  const userIdText = user._id.toString()
+  const preferredBase =
     normalizeHandleCandidate(user.handle) ??
-    normalizeHandleCandidate(user.name) ??
-    fallbackHandleForUserId(user._id.toString())
+    normalizeHandleCandidate(user.name)
+  const fallback = fallbackHandleForUserId(userIdText)
+  const base = preferredBase ?? fallback
+  const suffix = userIdText
+    .replace(/^[^:]+:/, '')
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .slice(0, 8)
+    .toLowerCase()
+  const candidates = [base, ...buildHandleVariants(base, suffix)]
 
-  const existing = await getPublisherByHandle(ctx, base)
-  if (!existing) return base
-  if (existing.linkedUserId === user._id) return base
-
-  const fallbackBase = `${base}-${shortUserSuffix(user._id)}`
-  const fallback = fallbackBase.slice(0, 39).replace(/-+$/g, '')
-  const fallbackExisting = await getPublisherByHandle(ctx, fallback)
-  if (!fallbackExisting || fallbackExisting.linkedUserId === user._id) {
-    return fallback
+  for (const candidate of candidates) {
+    const existing = await getPublisherByHandle(ctx, candidate)
+    if (!existing || canReuseAsPersonalPublisher(existing, user._id)) {
+      return candidate
+    }
   }
 
-  return fallbackHandleForUserId(user._id.toString())
+  throw new Error('Could not choose a unique personal publisher handle')
+}
+
+function buildHandleVariants(base: string, suffix: string) {
+  const variants = new Set<string>()
+  for (let attempt = 1; attempt <= 100; attempt += 1) {
+    const tail = attempt === 1 ? suffix : `${suffix}-${attempt}`
+    const maxBaseLength = Math.max(2, 39 - tail.length - 1)
+    const candidate = `${base.slice(0, maxBaseLength)}-${tail}`
+    const normalized = normalizeHandleCandidate(candidate)
+    if (normalized) {
+      variants.add(normalized)
+    }
+  }
+  return [...variants]
 }
 
 async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {
@@ -70,40 +144,32 @@ async function ensurePersonalPublisher(ctx: MutationCtx, userId: Id<'users'>) {
   if (!user) throw new Error('User not found')
 
   if (user.personalPublisherId) {
-    const existing = await ctx.db.get(user.personalPublisherId)
-    if (existing) {
-      await ctx.db.patch(existing._id, {
-        displayName: displayNameForUser(user),
-        imageUrl: imageUrlForUser(user),
-        updatedAt: Date.now(),
-      })
-      return existing._id
+    const publisher = await ctx.db.get(user.personalPublisherId)
+    if (publisher && canReuseAsPersonalPublisher(publisher, userId, true)) {
+      return await syncPersonalPublisherFromUser(ctx, user, publisher)
     }
   }
 
   const linkedPublisher = await getPublisherByLinkedUser(ctx, userId)
-  if (linkedPublisher) {
-    await ctx.db.patch(userId, {
-      personalPublisherId: linkedPublisher._id,
-      updatedAt: Date.now(),
-    })
-    return linkedPublisher._id
+  if (linkedPublisher && canReuseAsPersonalPublisher(linkedPublisher, userId)) {
+    return await syncPersonalPublisherFromUser(ctx, user, linkedPublisher)
   }
 
   const now = Date.now()
   const handle = await choosePersonalPublisherHandle(ctx, user)
   const publisherId = await ctx.db.insert('publishers', {
+    kind: 'user',
+    linkedUserId: userId,
     handle,
     displayName: displayNameForUser(user),
     imageUrl: imageUrlForUser(user),
-    kind: 'user',
-    linkedUserId: userId,
     createdAt: now,
     updatedAt: now,
   })
 
   await ctx.db.patch(userId, {
     handle,
+    displayName: user.displayName ?? displayNameForUser(user),
     personalPublisherId: publisherId,
     updatedAt: now,
   })
@@ -136,5 +202,14 @@ export const ensurePersonalPublisherInternal = internalMutation({
   handler: async (ctx, args) => {
     const publisherId = await ensurePersonalPublisher(ctx, args.userId)
     return { publisherId }
+  },
+})
+
+export const getByIdInternal = internalQuery({
+  args: {
+    userId: v.id('users'),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId)
   },
 })

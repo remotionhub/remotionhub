@@ -1,114 +1,49 @@
-import WeChat from '@auth/core/providers/wechat'
+import GitHub from '@auth/core/providers/github'
 import { convexAuth } from '@convex-dev/auth/server'
+import { anyApi, type GenericMutationCtx } from 'convex/server'
+import type { DataModel } from './_generated/dataModel'
 import type { Id } from './_generated/dataModel'
-import { internal } from './_generated/api'
 
 type AuthProfile = Record<string, unknown> & {
-  email?: string | null
-  phone?: string | null
+  email?: string
+  phone?: string
   emailVerified?: boolean
   phoneVerified?: boolean
 }
 
-type UserProfileData = {
-  name?: string
-  image?: string
-  email?: string
-  phone?: string
-  isAnonymous?: boolean
-  handle?: string
-  displayName?: string
-}
+export function normalizeGitHubProfileId(profileId: unknown) {
+  const id =
+    typeof profileId === 'number' && Number.isSafeInteger(profileId)
+      ? String(profileId)
+      : typeof profileId === 'string'
+        ? profileId.trim()
+        : null
 
-export type WeChatProfileLike = {
-  openid?: unknown
-  unionid?: unknown
-  nickname?: unknown
-  headimgurl?: unknown
-}
-
-function normalizedString(value: unknown) {
-  if (typeof value !== 'string') return null
-  const trimmed = value.trim()
-  return trimmed.length > 0 ? trimmed : null
-}
-
-function optionalBoolean(value: unknown) {
-  return typeof value === 'boolean' ? value : undefined
-}
-
-export function normalizeWeChatProviderAccountId(
-  profile: WeChatProfileLike,
-  options: { allowOpenIdFallback?: boolean; appId?: string } = {},
-) {
-  const openid = normalizedString(profile.openid)
-  if (openid && options.allowOpenIdFallback) {
-    const appId = normalizedString(options.appId)
-    if (!appId) {
-      throw new Error('WeChat openid fallback requires a WeChat app id')
-    }
-    return `wechat:web:${appId}:${openid}`
+  if (!id || !/^\d+$/.test(id)) {
+    throw new Error('GitHub OAuth profile is missing a valid numeric id')
   }
 
-  const unionid = normalizedString(profile.unionid)
-  if (unionid) return unionid
-
-  throw new Error('WeChat OAuth profile is missing a stable WeChat account id')
+  return id
 }
 
-function profileName(profile: WeChatProfileLike) {
-  return normalizedString(profile.nickname) ?? 'WeChat User'
-}
+export function createGitHubAuthProvider() {
+  const provider = GitHub({
+    clientId: process.env.AUTH_GITHUB_ID ?? '',
+    clientSecret: process.env.AUTH_GITHUB_SECRET ?? '',
+    allowDangerousEmailAccountLinking: false,
+  })
 
-function profileImage(profile: WeChatProfileLike) {
-  return normalizedString(profile.headimgurl) ?? undefined
-}
-
-export function createWeChatAuthProvider() {
-  const appId = process.env.AUTH_WECHAT_ID ?? ''
-  return WeChat({
-    clientId: appId,
-    clientSecret: process.env.AUTH_WECHAT_SECRET ?? '',
-    platformType: 'WebsiteApp',
-    profile(profile) {
+  return {
+    ...provider,
+    profile(profile: { id?: unknown; login: string; email?: string | null; avatar_url: string }) {
       return {
-        id: normalizeWeChatProviderAccountId(profile, {
-          allowOpenIdFallback: true,
-          appId,
-        }),
-        name: profileName(profile),
-        email: null,
-        image: profileImage(profile),
+        id: normalizeGitHubProfileId(profile.id),
+        name: profile.login,
+        email: profile.email ?? undefined,
+        image: profile.avatar_url,
       }
     },
-  })
-}
-
-function sanitizeUserProfile(profile: AuthProfile): UserProfileData {
-  const userData: UserProfileData = {}
-
-  const name = normalizedString(profile.name)
-  if (name) userData.name = name
-
-  const image = normalizedString(profile.image)
-  if (image) userData.image = image
-
-  const email = normalizedString(profile.email)
-  if (email) userData.email = email
-
-  const phone = normalizedString(profile.phone)
-  if (phone) userData.phone = phone
-
-  const handle = normalizedString(profile.handle)
-  if (handle) userData.handle = handle
-
-  const displayName = normalizedString(profile.displayName)
-  if (displayName) userData.displayName = displayName
-
-  const isAnonymous = optionalBoolean(profile.isAnonymous)
-  if (isAnonymous !== undefined) userData.isAnonymous = isAnonymous
-
-  return userData
+  }
 }
 
 export function userDataFromAuthProfile(args: {
@@ -116,104 +51,62 @@ export function userDataFromAuthProfile(args: {
   profile: AuthProfile
 }) {
   const {
+    name,
+    email,
+    image,
+    phone,
     emailVerified: profileEmailVerified,
     phoneVerified: profilePhoneVerified,
   } = args.profile
-  const emailVerified = profileEmailVerified === true
-  const phoneVerified = profilePhoneVerified === true
-  const userProfile = sanitizeUserProfile(args.profile)
+  const emailVerified =
+    profileEmailVerified ??
+    ((args.provider.type === 'oauth' || args.provider.type === 'oidc') &&
+      args.provider.allowDangerousEmailAccountLinking !== false)
+  const phoneVerified = profilePhoneVerified ?? false
 
   return {
+    ...(typeof name === 'string' ? { name } : null),
+    ...(typeof email === 'string' ? { email } : null),
+    ...(typeof image === 'string' ? { image } : null),
+    ...(typeof phone === 'string' ? { phone } : null),
     ...(emailVerified ? { emailVerificationTime: Date.now() } : null),
     ...(phoneVerified ? { phoneVerificationTime: Date.now() } : null),
-    ...userProfile,
   }
-}
-
-export function normalizeRelativeRedirectTo(redirectTo: string) {
-  const trimmed = redirectTo.trim()
-  if (!trimmed) return '/'
-  if (/[\\\u0000-\u001F\u007F]/.test(trimmed)) return '/'
-  if (/%(?:0[0-9a-f]|1[0-9a-f]|2f|5c|7f)/i.test(trimmed)) return '/'
-  if (trimmed.startsWith('?')) return trimmed
-  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return trimmed
-  return '/'
-}
-
-function getAuthSiteUrl() {
-  const siteUrl = process.env.SITE_URL
-  const normalizedSiteUrl = normalizedString(siteUrl)
-  if (!normalizedSiteUrl) {
-    throw new Error('Convex Auth redirect callback requires SITE_URL')
-  }
-  return normalizedSiteUrl
-}
-
-export function createAbsoluteRedirectUrl(
-  redirectTo: string,
-  options: { siteUrl?: string } = {},
-) {
-  const safeRedirectTo = normalizeRelativeRedirectTo(redirectTo)
-  return new URL(safeRedirectTo, options.siteUrl ?? getAuthSiteUrl()).toString()
-}
-
-export const authCallbacks = {
-  async redirect({ redirectTo }: { redirectTo: string }) {
-    return createAbsoluteRedirectUrl(redirectTo)
-  },
-  async createOrUpdateUser(
-    ctx: Parameters<
-      NonNullable<
-        NonNullable<Parameters<typeof convexAuth>[0]['callbacks']>['createOrUpdateUser']
-      >
-    >[0],
-    args: Parameters<
-      NonNullable<
-        NonNullable<Parameters<typeof convexAuth>[0]['callbacks']>['createOrUpdateUser']
-      >
-    >[1],
-  ) {
-    const userData = userDataFromAuthProfile(args)
-    if (args.existingUserId !== null) {
-      const userId = args.existingUserId as Id<'users'>
-      await ctx.db.patch(userId, {
-        ...userData,
-        updatedAt: Date.now(),
-      })
-      await schedulePostUserCreatedOrUpdated(ctx, userId)
-      return userId
-    }
-
-    const now = Date.now()
-    const userId = await ctx.db.insert('users', {
-      ...userData,
-      role: 'user',
-      createdAt: now,
-      updatedAt: now,
-    })
-    await schedulePostUserCreatedOrUpdated(ctx, userId)
-    return userId
-  },
 }
 
 async function schedulePostUserCreatedOrUpdated(
-  ctx: {
-    scheduler: {
-      runAfter: (
-        delayMs: number,
-        functionReference: typeof internal.users.ensurePersonalPublisherInternal,
-        args: { userId: Id<'users'> },
-      ) => Promise<unknown>
-    }
-  },
+  ctx: GenericMutationCtx<DataModel>,
   userId: Id<'users'>,
 ) {
-  await ctx.scheduler.runAfter(0, internal.users.ensurePersonalPublisherInternal, {
+  await ctx.scheduler.runAfter(0, anyApi.users.ensurePersonalPublisherInternal, {
     userId,
   })
 }
 
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
-  providers: [createWeChatAuthProvider()],
-  callbacks: authCallbacks,
+  providers: [createGitHubAuthProvider()],
+  callbacks: {
+    async createOrUpdateUser(ctx, args) {
+      const userData = userDataFromAuthProfile(args)
+      if (args.existingUserId !== null) {
+        const userId = args.existingUserId as Id<'users'>
+        await ctx.db.patch(userId, {
+          ...userData,
+          updatedAt: Date.now(),
+        })
+        await schedulePostUserCreatedOrUpdated(ctx, userId)
+        return userId
+      }
+
+      const now = Date.now()
+      const userId = await ctx.db.insert('users', {
+        ...userData,
+        role: 'user',
+        createdAt: now,
+        updatedAt: now,
+      })
+      await schedulePostUserCreatedOrUpdated(ctx, userId)
+      return userId
+    },
+  },
 })

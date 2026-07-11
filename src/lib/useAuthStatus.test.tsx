@@ -74,7 +74,7 @@ describe('useAuthStatus', () => {
   })
 
   it('returns the current user when authenticated', () => {
-    const me = { _id: 'users:1', handle: 'wechat-user' }
+    const me = { _id: 'users:1', handle: 'octocat' }
     mocks.useConvexAuth.mockReturnValue({
       isLoading: false,
       isAuthenticated: true,

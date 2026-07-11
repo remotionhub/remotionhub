@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { cleanup, render, waitFor } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { UserBootstrap } from './UserBootstrap'
 
 const mocks = vi.hoisted(() => ({
@@ -14,101 +14,51 @@ vi.mock('convex/react', () => ({
 }))
 
 vi.mock('#/lib/useAuthStatus', () => ({
-  useAuthStatus: mocks.useAuthStatus,
-}))
-
-vi.mock('../../convex/_generated/api', () => ({
-  api: {
+  bootstrapUsersApi: {
     users: {
       ensure: 'users.ensure',
     },
   },
+  useAuthStatus: mocks.useAuthStatus,
 }))
 
 describe('UserBootstrap', () => {
+  const ensureUser = vi.fn()
+
+  beforeEach(() => {
+    ensureUser.mockReset()
+    ensureUser.mockResolvedValue({ publisherId: 'publishers:1' })
+    mocks.useMutation.mockReset()
+    mocks.useMutation.mockReturnValue(ensureUser)
+    mocks.useAuthStatus.mockReset()
+  })
+
   afterEach(() => {
     cleanup()
-    mocks.useAuthStatus.mockReset()
-    mocks.useMutation.mockReset()
   })
 
-  it('does not call ensure while auth is loading', async () => {
-    const ensureUser = vi.fn().mockResolvedValue(undefined)
-    mocks.useAuthStatus.mockReturnValue({
-      isAuthenticated: false,
-      isLoading: true,
-      me: undefined,
-    })
-    mocks.useMutation.mockReturnValue(ensureUser)
-
-    render(<UserBootstrap />)
-
-    await waitFor(() => {
-      expect(ensureUser).not.toHaveBeenCalled()
-    })
-  })
-
-  it('does not call ensure when signed out', async () => {
-    const ensureUser = vi.fn().mockResolvedValue(undefined)
-    mocks.useAuthStatus.mockReturnValue({
-      isAuthenticated: false,
-      isLoading: false,
-      me: null,
-    })
-    mocks.useMutation.mockReturnValue(ensureUser)
-
-    render(<UserBootstrap />)
-
-    await waitFor(() => {
-      expect(ensureUser).not.toHaveBeenCalled()
-    })
-  })
-
-  it('calls ensure when authenticated with me === null', async () => {
-    const ensureUser = vi.fn().mockResolvedValue(undefined)
+  it('triggers ensure once for an authenticated user', async () => {
     mocks.useAuthStatus.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-      me: null,
+      me: { _id: 'users:1' },
     })
-    mocks.useMutation.mockReturnValue(ensureUser)
 
     render(<UserBootstrap />)
 
     await waitFor(() => {
-      expect(ensureUser).toHaveBeenCalledWith({})
+      expect(ensureUser).toHaveBeenCalledTimes(1)
     })
+    expect(ensureUser).toHaveBeenCalledWith({})
   })
 
-  it('calls ensure when authenticated with a user object', async () => {
-    const ensureUser = vi.fn().mockResolvedValue(undefined)
-    mocks.useAuthStatus.mockReturnValue({
+  it('does not retrigger for the same user id across rerenders', async () => {
+    let currentStatus = {
       isAuthenticated: true,
       isLoading: false,
-      me: { _id: 'users:1', handle: 'wechat-user' },
-    })
-    mocks.useMutation.mockReturnValue(ensureUser)
-
-    render(<UserBootstrap />)
-
-    await waitFor(() => {
-      expect(ensureUser).toHaveBeenCalledWith({})
-    })
-  })
-
-  it('bootstraps again after signing out and signing in as another user', async () => {
-    const ensureUser = vi.fn().mockResolvedValue(undefined)
-    const authState: {
-      isAuthenticated: boolean
-      isLoading: boolean
-      me: { _id: string; handle: string } | null
-    } = {
-      isAuthenticated: true,
-      isLoading: false,
-      me: { _id: 'users:1', handle: 'wechat-user-1' },
+      me: { _id: 'users:1' },
     }
-    mocks.useAuthStatus.mockImplementation(() => authState)
-    mocks.useMutation.mockReturnValue(ensureUser)
+    mocks.useAuthStatus.mockImplementation(() => currentStatus)
 
     const view = render(<UserBootstrap />)
 
@@ -116,27 +66,99 @@ describe('UserBootstrap', () => {
       expect(ensureUser).toHaveBeenCalledTimes(1)
     })
 
+    currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
     view.rerender(<UserBootstrap />)
 
     await waitFor(() => {
       expect(ensureUser).toHaveBeenCalledTimes(1)
     })
+  })
 
-    authState.isAuthenticated = false
-    authState.me = null
-    view.rerender(<UserBootstrap />)
+  it('retries the same user id after a failed ensure', async () => {
+    let currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
+    mocks.useAuthStatus.mockImplementation(() => currentStatus)
+    ensureUser
+      .mockRejectedValueOnce(new Error('transient ensure failure'))
+      .mockResolvedValueOnce({ publisherId: 'publishers:1' })
+
+    const view = render(<UserBootstrap />)
 
     await waitFor(() => {
       expect(ensureUser).toHaveBeenCalledTimes(1)
     })
+    await Promise.resolve()
 
-    authState.isAuthenticated = true
-    authState.me = { _id: 'users:2', handle: 'wechat-user-2' }
+    currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
     view.rerender(<UserBootstrap />)
 
     await waitFor(() => {
       expect(ensureUser).toHaveBeenCalledTimes(2)
-      expect(ensureUser).toHaveBeenNthCalledWith(2, {})
+    })
+  })
+
+  it('retriggers when the authenticated user id changes', async () => {
+    let currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:1' },
+    }
+    mocks.useAuthStatus.mockImplementation(() => currentStatus)
+
+    const view = render(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).toHaveBeenCalledTimes(1)
+    })
+
+    currentStatus = {
+      isAuthenticated: true,
+      isLoading: false,
+      me: { _id: 'users:2' },
+    }
+    view.rerender(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  it('does not trigger while signed out', async () => {
+    mocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      me: null,
+    })
+
+    render(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).not.toHaveBeenCalled()
+    })
+  })
+
+  it('does not trigger while auth state is loading', async () => {
+    mocks.useAuthStatus.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: true,
+      me: undefined,
+    })
+
+    render(<UserBootstrap />)
+
+    await waitFor(() => {
+      expect(ensureUser).not.toHaveBeenCalled()
     })
   })
 })

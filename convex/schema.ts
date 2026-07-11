@@ -57,6 +57,8 @@ const users = defineTable({
 })
   .index('by_handle', ['handle'])
   .index('by_email', ['email'])
+  .index('email', ['email'])
+  .index('phone', ['phone'])
 
 export default defineSchema({
   ...authTables,

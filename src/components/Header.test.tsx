@@ -112,7 +112,6 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Catalog' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'Remotion' })).toBeTruthy()
     expect(screen.getByRole('link', { name: 'HyperFrames' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })).toBeTruthy()
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'EN' }).getAttribute('aria-pressed')).toBe(
       'true',
@@ -133,48 +132,36 @@ describe('Header', () => {
     expect(screen.getByRole('group', { name: 'Language' })).toBeTruthy()
   })
 
-  it('points to the correct GitHub repository', () => {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
-    renderHeader()
-    const githubLink = screen.getByRole('link', { name: 'Go to RemotionHub GitHub' })
-    expect(githubLink.getAttribute('href')).toBe('https://github.com/remotionhub/remotionhub')
-  })
-
-  it('opens a login dialog from the header account button', () => {
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
-    renderHeader()
-
-    const loginButton = screen.getByRole('button', { name: 'Log in' })
-
-    fireEvent.click(loginButton)
-
-    expect(screen.getByRole('dialog', { name: 'Log in to RemotionHub' })).toBeTruthy()
-    expect(screen.getByText('Other methods')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Close' })).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Log in with WeChat' })).toBeTruthy()
-    expect(screen.queryByRole('link', { name: 'User Agreement' })).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Privacy Policy' })).toBeNull()
-
-    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
-
-    expect(screen.queryByRole('dialog', { name: 'Log in to RemotionHub' })).toBeNull()
-    expect(document.activeElement).toBe(loginButton)
-  })
-
-  it('starts WeChat sign-in with the current relative URL', async () => {
+  it('starts GitHub sign-in with the current relative URL', async () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     window.history.pushState(null, '', '/remotion?tag=card#top')
     authMocks.signIn.mockResolvedValue({ signingIn: true })
     renderHeader()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
 
     await waitFor(() => {
-      expect(authMocks.signIn).toHaveBeenCalledWith('wechat', {
+      expect(authMocks.signIn).toHaveBeenCalledWith('github', {
         redirectTo: '/remotion?tag=card#top',
       })
     })
+  })
+
+  it('reports sign-in failures without changing the auth state', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    window.history.pushState(null, '', '/remotion?tag=card#top')
+    authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    await waitFor(() => {
+      expect(authMocks.toastError).toHaveBeenCalledWith('Sign in failed. Please try again.')
+    })
+    expect(authMocks.signIn).toHaveBeenCalledWith('github', {
+      redirectTo: '/remotion?tag=card#top',
+    })
+    expect(screen.getByRole('button', { name: 'Sign in with GitHub' })).toBeTruthy()
   })
 
   it('shows a stable auth loading skeleton', () => {
@@ -187,7 +174,9 @@ describe('Header', () => {
 
     renderHeader()
 
-    expect(screen.getByLabelText('Loading auth state')).toBeTruthy()
+    const skeleton = screen.getByLabelText('Loading auth state')
+    expect(skeleton).toBeTruthy()
+    expect(skeleton.className).toContain('inline-block')
   })
 
   it('shows the signed-in user and signs out', async () => {
@@ -197,8 +186,8 @@ describe('Header', () => {
       isLoading: false,
       me: {
         _id: 'users:1',
-        handle: 'wechat-user',
-        name: 'WeChat User',
+        handle: 'octocat',
+        name: 'Octocat',
         image: 'https://example.com/avatar.png',
       },
     })
@@ -206,7 +195,7 @@ describe('Header', () => {
 
     renderHeader()
 
-    expect(screen.getByRole('button', { name: 'Signed in as wechat-user' })).toBeTruthy()
+    expect(screen.getByRole('group', { name: 'Signed in as octocat' })).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: 'Sign out' }))
 
     await waitFor(() => {

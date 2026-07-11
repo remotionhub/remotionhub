@@ -5,7 +5,7 @@ import {
 } from './handles'
 
 describe('normalizeHandleCandidate', () => {
-  it('normalizes ascii profile names', () => {
+  it('normalizes GitHub-style handles', () => {
     expect(normalizeHandleCandidate(' Terence.Dev_01 ')).toBe('terence-dev-01')
   })
 
@@ -13,6 +13,13 @@ describe('normalizeHandleCandidate', () => {
     expect(normalizeHandleCandidate('')).toBeNull()
     expect(normalizeHandleCandidate('用户')).toBeNull()
     expect(normalizeHandleCandidate('a')).toBeNull()
+  })
+
+  it('rejects reserved top-level route names', () => {
+    expect(normalizeHandleCandidate('api')).toBeNull()
+    expect(normalizeHandleCandidate('About')).toBeNull()
+    expect(normalizeHandleCandidate(' remotion ')).toBeNull()
+    expect(normalizeHandleCandidate('hyperframes')).toBeNull()
   })
 
   it('trims repeated separators and caps length', () => {
