@@ -9,8 +9,11 @@ import {
 } from '../scripts/playwright-auth-storage-state'
 
 const EMPTY_STORAGE_STATE: StorageState = { cookies: [], origins: [] }
+const playwrightPort = Number(process.env.PLAYWRIGHT_PORT || 4173)
+const studioBaseUrl =
+  process.env.PLAYWRIGHT_BASE_URL || `http://127.0.0.1:${playwrightPort}`
 
-const authStorageState = readAuthStorageState()
+const authStorageState = readAuthStorageState(undefined, studioBaseUrl)
 
 async function requireAuthenticatedStudio(page: Page) {
   await page.goto('/studio')
@@ -18,14 +21,7 @@ async function requireAuthenticatedStudio(page: Page) {
   const signedIn = page.getByRole('group', {
     name: /已登录为|Signed in as/i,
   })
-  const signIn = page.getByRole('button', {
-    name: /使用 GitHub 登录|Sign in with GitHub/i,
-  })
-  await expect(signedIn.or(signIn)).toBeVisible({ timeout: 45_000 })
-
-  if (await signIn.isVisible()) {
-    test.skip(true, 'storage state is not authenticated for this deployment')
-  }
+  await expect(signedIn).toBeVisible({ timeout: 45_000 })
 }
 
 async function showPreviewOnMobile(page: Page, isMobile: boolean) {

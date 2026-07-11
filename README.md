@@ -82,7 +82,9 @@ The browser cannot select the model mode. `make studio-smoke` sets the local
 Convex deployment to stub mode, seeds the catalog, builds the application, and
 always runs the signed-out desktop/mobile checks. Authenticated generation,
 follow-up, refresh/history, and Card Avatar Remix checks run only when a valid
-Playwright storage state is supplied:
+Playwright storage state is supplied. Expired or target-mismatched state is
+treated as unavailable; once state passes preflight, a signed-out page fails
+the authenticated suite instead of silently skipping it:
 
 ```bash
 export PLAYWRIGHT_AUTH_STORAGE_STATE_JSON="$(< /absolute/path/to/local-auth-storage-state.json)"

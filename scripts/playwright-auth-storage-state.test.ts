@@ -17,6 +17,22 @@ const expiredCookieState = JSON.stringify({
   origins: [],
 })
 
+const currentCookieState = JSON.stringify({
+  cookies: [
+    {
+      name: 'session',
+      value: 'current',
+      domain: '127.0.0.1',
+      path: '/',
+      expires: Math.floor(Date.now() / 1000) + 3600,
+      httpOnly: true,
+      secure: false,
+      sameSite: 'Lax',
+    },
+  ],
+  origins: [],
+})
+
 describe('readAuthStorageState', () => {
   it('rejects malformed JSON', () => {
     expect(readAuthStorageState('{')).toBeUndefined()
@@ -38,8 +54,22 @@ describe('readAuthStorageState', () => {
     ).toBeUndefined()
   })
 
-  it('accepts structurally valid material without guessing session validity', () => {
-    expect(readAuthStorageState(expiredCookieState)).toBeDefined()
+  it('rejects expired authentication cookies', () => {
+    expect(
+      readAuthStorageState(expiredCookieState, 'http://127.0.0.1:4173'),
+    ).toBeUndefined()
+  })
+
+  it('rejects authentication material for a different target host', () => {
+    expect(
+      readAuthStorageState(currentCookieState, 'http://localhost:4173'),
+    ).toBeUndefined()
+  })
+
+  it('accepts current authentication material for the target deployment', () => {
+    expect(
+      readAuthStorageState(currentCookieState, 'http://127.0.0.1:4173'),
+    ).toBeDefined()
     expect(
       readAuthStorageState(
         JSON.stringify({
@@ -51,6 +81,7 @@ describe('readAuthStorageState', () => {
             },
           ],
         }),
+        'http://127.0.0.1:4173',
       ),
     ).toBeDefined()
   })

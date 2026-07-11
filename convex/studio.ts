@@ -690,11 +690,20 @@ export const listRevisions = query({
   args: { projectId: v.id('studioProjects'), limit: v.number() },
   handler: async (ctx, { projectId, limit }) => {
     await requireStudioProjectOwner(ctx, projectId)
-    return await ctx.db
+    const revisions = await ctx.db
       .query('studioRevisions')
       .withIndex('by_project_sequence', (q) => q.eq('projectId', projectId))
       .order('desc')
       .take(Math.min(Math.max(limit, 1), 100))
+    return revisions.map(
+      ({ _id, sequence, origin, assistantSummary, createdAt }) => ({
+        _id,
+        sequence,
+        origin,
+        assistantSummary,
+        createdAt,
+      }),
+    )
   },
 })
 
