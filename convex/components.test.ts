@@ -611,6 +611,40 @@ describe('components catalog mutations and queries', () => {
     })).rejects.toThrow('Studio Bundle is immutable')
   })
 
+  it('removes Studio compatibility when a trusted declaration disappears', async () => {
+    const t = convexTest(schema, modules)
+    const bundled = {
+      ...component,
+      versions: [{ ...component.versions[0], studioBundle }],
+    }
+    await t.mutation(api.components.importCatalogComponent, bundled)
+
+    await t.mutation(api.components.importCatalogComponent, component)
+
+    const [storedBundle] = await t.run((ctx) =>
+      ctx.db.query('studioBundles').collect(),
+    )
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+    expect(storedBundle?.status).toBe('removed')
+    expect(detail?.studioCompatible).toBe(false)
+
+    await t.mutation(api.components.importCatalogComponent, bundled)
+    const [restoredBundle] = await t.run((ctx) =>
+      ctx.db.query('studioBundles').collect(),
+    )
+    const restoredDetail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+    expect(restoredBundle?.status).toBe('validated')
+    expect(restoredDetail?.studioCompatible).toBe(true)
+  })
+
   it('rejects trusted imports that attach a Studio Bundle to HyperFrames', async () => {
     const t = convexTest(schema, modules)
 

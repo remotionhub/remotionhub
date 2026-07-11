@@ -14,6 +14,10 @@ import {
   serializeStudioCandidate,
 } from '../shared/studio'
 import {
+  sanitizeGeneratedSource,
+  validateAndStripStudioImports,
+} from '../shared/studioSource'
+import {
   applyExactEdits,
   buildStudioContext,
   detectSkillsWithFallback,
@@ -662,13 +666,20 @@ export const getProject = query({
     const revision = project.currentRevisionId
       ? await ctx.db.get(project.currentRevisionId)
       : null
-    const run = project.currentRunId
-      ? await ctx.db.get(project.currentRunId)
+    const fallbackRun = project.currentRunId
+      ? null
       : await ctx.db
           .query('studioGenerationRuns')
           .withIndex('by_project_updated', (q) => q.eq('projectId', projectId))
           .order('desc')
           .first()
+    const run = project.currentRunId
+      ? await ctx.db.get(project.currentRunId)
+      : fallbackRun?.status === 'failed' &&
+          (fallbackRun.inputRevisionId ?? null) !==
+            (project.currentRevisionId ?? null)
+        ? null
+        : fallbackRun
     return { project, revision, run }
   },
 })
@@ -1105,17 +1116,19 @@ export const runGeneration = internalAction({
       }
 
       const validatedGenerated = generatedMotionSchema.parse(generated)
+      const candidateCode = sanitizeGeneratedSource(validatedGenerated.code)
+      validateAndStripStudioImports(candidateCode)
       const candidateComposition = normalizeStudioComposition(
         validatedGenerated.composition,
       )
       const candidateFingerprint = await sha256Hex(
-        serializeStudioCandidate(validatedGenerated.code, candidateComposition),
+        serializeStudioCandidate(candidateCode, candidateComposition),
       )
       const saved = await ctx.runMutation(
         internal.studio.saveGenerationCandidate,
         {
           runId: args.runId,
-          candidateCode: validatedGenerated.code,
+          candidateCode,
           candidateComposition,
           candidateFingerprint,
           candidateSummary: validatedGenerated.summary,

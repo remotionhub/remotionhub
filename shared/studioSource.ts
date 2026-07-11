@@ -1,5 +1,6 @@
 import { packages as BabelPackages } from '@babel/standalone'
 import type {
+  Expression,
   ExportNamedDeclaration,
   ImportDeclaration,
   ImportSpecifier,
@@ -34,7 +35,14 @@ const FORBIDDEN_PATTERNS = [
   /\brequire\s*\(/,
   /\beval\s*\(/,
   /\bFunction\s*\(/,
+  /\bsetTimeout\s*\(/,
+  /\bsetInterval\s*\(/,
+  /\brequestAnimationFrame\s*\(/,
 ]
+
+const FENCED_SOURCE = /^```(?:tsx|ts|jsx|javascript)?\s*\n([\s\S]*?)\n```$/
+const SOURCE_PREFIX =
+  /^(?:import|export|const|let|var|function|class|type|interface|enum|namespace)\b|^(?:\/\/|\/\*)/
 
 export const STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE = {
   react: '__studioReact',
@@ -72,6 +80,13 @@ function getExportedName(
     : specifier.exported.value
 }
 
+function isComponentInitializer(initializer: Expression | null | undefined) {
+  return (
+    initializer?.type === 'ArrowFunctionExpression' ||
+    initializer?.type === 'FunctionExpression'
+  )
+}
+
 function collectStudioComponentBindings(statements: Statement[]) {
   const bindings = new Set<string>()
   for (const statement of statements) {
@@ -91,7 +106,12 @@ function collectStudioComponentBindings(statements: Statement[]) {
       continue
     }
     for (const variable of declaration.declarations) {
-      if (variable.id.type === 'Identifier') bindings.add(variable.id.name)
+      if (
+        variable.id.type === 'Identifier' &&
+        isComponentInitializer(variable.init)
+      ) {
+        bindings.add(variable.id.name)
+      }
     }
   }
   return bindings
@@ -119,7 +139,8 @@ export function assertStudioMyAnimationExport(source: string) {
       declaration.declarations.some(
         (variable) =>
           variable.id.type === 'Identifier' &&
-          variable.id.name === 'MyAnimation',
+          variable.id.name === 'MyAnimation' &&
+          isComponentInitializer(variable.init),
       )
     ) {
       return
@@ -139,6 +160,19 @@ export function assertStudioMyAnimationExport(source: string) {
   }
 
   throw new Error('MyAnimation export is required')
+}
+
+export function sanitizeGeneratedSource(raw: string) {
+  const normalized = raw.replace(/\r\n?/g, '\n').trim()
+  const fenceMatch = normalized.match(FENCED_SOURCE)
+  const source = (fenceMatch ? fenceMatch[1] : normalized).trim()
+
+  if (!source || source.includes('```') || !SOURCE_PREFIX.test(source)) {
+    throw new Error('Generated response must contain source only')
+  }
+  assertStudioMyAnimationExport(source)
+
+  return source
 }
 
 function getImportedAccess(
