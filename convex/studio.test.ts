@@ -1519,6 +1519,15 @@ describe('studio generation runs', () => {
     )).rejects.toThrow('Studio Remix unavailable')
   })
 
+  it('rejects invalid stored HyperFrames catalog remix data', async () => {
+    const { t, ownerId, componentId, componentVersionId } = await seedRemixCatalog()
+    await t.run((ctx) => ctx.db.patch(componentId, { runtime: 'hyperframes' }))
+
+    await expect(t.withIdentity({ subject: ownerId }).mutation(
+      api.studio.createRemixProject, { componentVersionId },
+    )).rejects.toThrow('Studio Remix unavailable')
+  })
+
   it('keeps catalog remix projects private to their creator', async () => {
     const { t, ownerId, componentVersionId } = await seedRemixCatalog()
     const project = await t.withIdentity({ subject: ownerId }).mutation(

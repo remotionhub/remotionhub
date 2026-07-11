@@ -1,4 +1,8 @@
 import semver from 'semver'
+import {
+  hasStudioRemixRuntime,
+  isStudioRemixAvailable,
+} from './lib/catalogStudio'
 import { paginationOptsValidator } from 'convex/server'
 import { ConvexError, v } from 'convex/values'
 import type { Infer } from 'convex/values'
@@ -291,6 +295,12 @@ export const importCatalogComponent = mutation({
     let skippedVersions = 0
 
     for (const versionInput of args.versions) {
+      if (
+        versionInput.studioBundle &&
+        !hasStudioRemixRuntime(args.runtime, versionInput.metadata.runtime)
+      ) {
+        throw new ConvexError('Studio Bundle requires the Remotion runtime.')
+      }
       if (versionInput.artifact.kind === 'github-source' && !versionInput.artifact.githubSource) {
         throw new ConvexError('githubSource is required when kind is github-source')
       }
@@ -565,10 +575,11 @@ export const getCatalogDetail = query({
       ),
       selectedVersion,
       artifact: artifactDoc,
-      studioCompatible:
-        component.status === 'published' &&
-        component.isActive &&
-        studioBundle?.status === 'validated',
+      studioCompatible: isStudioRemixAvailable(
+        component,
+        selectedVersion,
+        studioBundle,
+      ),
     }
   },
 })

@@ -225,6 +225,49 @@ describe('loadStudioBundle', () => {
     expect(result.contentHash).toMatch(/^[a-f0-9]{64}$/)
   })
 
+  it('accepts a named MyAnimation export backed by a local component', async () => {
+    const root = await createBundleFixture(
+      'const Animation = () => null\nexport { Animation as MyAnimation }',
+    )
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).resolves.toMatchObject({
+      code: 'const Animation = () => null\nexport { Animation as MyAnimation }',
+    })
+  })
+
+  it.each([
+    '// export const MyAnimation = () => null\nexport const Other = () => null',
+    'const example = "export const MyAnimation = () => null"\nexport const Other = () => null',
+    'const Animation = () => null\nexport type { Animation as MyAnimation }',
+  ])('rejects a fake non-runtime MyAnimation export', async (source) => {
+    const root = await createBundleFixture(source)
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).rejects.toThrow('MyAnimation export is required')
+  })
+
+  it('rejects invalid syntax after a real MyAnimation export', async () => {
+    const root = await createBundleFixture(
+      'export const MyAnimation = () => null\nconst trailing =',
+    )
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).rejects.toThrow()
+  })
+
   it.each([
     '../secret.tsx',
     'catalog/components/card-avatar.json',

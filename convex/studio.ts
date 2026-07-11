@@ -24,6 +24,7 @@ import {
   validatePromptWithFallback,
 } from './lib/studioGeneration'
 import { createStudioModel } from './lib/studioModel'
+import { isStudioRemixAvailable } from './lib/catalogStudio'
 
 const promptMaxLength = 4_000
 const idempotencyKeyMinLength = 8
@@ -167,15 +168,7 @@ export const createRemixProject = mutation({
         )
         .unique(),
     ])
-    if (
-      !component ||
-      component.status !== 'published' ||
-      !component.isActive ||
-      component.runtime !== 'remotion' ||
-      version.metadata.runtime !== 'remotion' ||
-      !bundle ||
-      bundle.status !== 'validated'
-    ) {
+    if (!component || !isStudioRemixAvailable(component, version, bundle)) {
       throw new Error(studioRemixUnavailable)
     }
     const publisher = await ctx.db.get(component.publisherId)

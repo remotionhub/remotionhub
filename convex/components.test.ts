@@ -611,6 +611,46 @@ describe('components catalog mutations and queries', () => {
     })).rejects.toThrow('Studio Bundle is immutable')
   })
 
+  it('rejects trusted imports that attach a Studio Bundle to HyperFrames', async () => {
+    const t = convexTest(schema, modules)
+
+    await expect(t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      runtime: 'hyperframes',
+      versions: [{
+        ...component.versions[0],
+        metadata: {
+          ...component.versions[0].metadata,
+          runtime: 'hyperframes',
+        },
+        studioBundle,
+      }],
+    })).rejects.toThrow('Studio Bundle requires the Remotion runtime')
+  })
+
+  it('does not advertise Remix for invalid stored HyperFrames metadata', async () => {
+    const t = convexTest(schema, modules)
+    await t.mutation(api.components.importCatalogComponent, {
+      ...component,
+      versions: [{ ...component.versions[0], studioBundle }],
+    })
+    const [storedVersion] = await t.run((ctx) =>
+      ctx.db.query('componentVersions').collect(),
+    )
+    if (!storedVersion) throw new Error('Expected stored component version')
+    await t.run((ctx) => ctx.db.patch(storedVersion._id, {
+      metadata: { ...storedVersion.metadata, runtime: 'hyperframes' },
+    }))
+
+    const detail = await t.query(api.components.getCatalogDetail, {
+      runtime: 'remotion',
+      owner: 'terence',
+      slug: 'card-avatar',
+    })
+
+    expect(detail?.studioCompatible).toBe(false)
+  })
+
   it('attaches a bundle to an existing immutable version', async () => {
     const t = convexTest(schema, modules)
     await t.mutation(api.components.importCatalogComponent, component)
