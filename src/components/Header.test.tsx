@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { LOCALE_STORAGE_KEY } from '#/lib/i18n'
@@ -83,6 +83,12 @@ function renderHeader() {
       <Header />
     </I18nProvider>,
   )
+}
+
+function firePageShow(persisted: boolean) {
+  const event = new Event('pageshow')
+  Object.defineProperty(event, 'persisted', { value: persisted })
+  fireEvent(window, event)
 }
 
 describe('Header', () => {
@@ -199,6 +205,72 @@ describe('Header', () => {
     expect(
       screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
     ).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(true)
+  })
+
+  it('restores provider controls when returning from OAuth history', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockReturnValue(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    firePageShow(true)
+
+    expect(
+      screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
+    ).toBe(false)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(false)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+    expect(authMocks.signIn).toHaveBeenCalledTimes(2)
+  })
+
+  it('keeps provider controls pending during the initial page show', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockReturnValue(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    firePageShow(false)
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+
+    expect(authMocks.signIn).toHaveBeenCalledTimes(1)
+    expect(
+      screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
+    ).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(true)
+  })
+
+  it('ignores a stale OAuth rejection after starting another provider', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    let rejectFirstSignIn: ((reason: Error) => void) | undefined
+    authMocks.signIn
+      .mockImplementationOnce(
+        () =>
+          new Promise((_, reject) => {
+            rejectFirstSignIn = reject
+          }),
+      )
+      .mockReturnValueOnce(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    firePageShow(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+    await act(async () => {
+      rejectFirstSignIn?.(new Error('cancelled GitHub sign-in'))
+    })
+
+    expect(authMocks.toastError).not.toHaveBeenCalled()
     expect(
       screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
     ).toBe(true)

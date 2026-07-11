@@ -19,6 +19,7 @@ export default function HeaderAuth() {
   const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
   const [signInError, setSignInError] = useState<string | null>(null)
   const loginButtonRef = useRef<HTMLButtonElement | null>(null)
+  const signInAttemptRef = useRef(0)
   const pendingProviderRef = useRef<AuthProvider | null>(null)
   const wasDialogOpen = useRef(false)
 
@@ -29,6 +30,19 @@ export default function HeaderAuth() {
     wasDialogOpen.current = isDialogOpen
   }, [isDialogOpen])
 
+  useEffect(() => {
+    const resetPendingProvider = (event: PageTransitionEvent) => {
+      if (!event.persisted) return
+
+      signInAttemptRef.current += 1
+      pendingProviderRef.current = null
+      setPendingProvider(null)
+    }
+
+    window.addEventListener('pageshow', resetPendingProvider)
+    return () => window.removeEventListener('pageshow', resetPendingProvider)
+  }, [])
+
   const openDialog = useCallback(() => {
     setSignInError(null)
     setIsDialogOpen(true)
@@ -38,10 +52,13 @@ export default function HeaderAuth() {
     (provider: AuthProvider) => {
       if (pendingProviderRef.current) return
 
+      const attemptId = ++signInAttemptRef.current
       setSignInError(null)
       pendingProviderRef.current = provider
       setPendingProvider(provider)
       void signIn(provider, { redirectTo: getCurrentRelativeUrl() }).catch(() => {
+        if (signInAttemptRef.current !== attemptId) return
+
         pendingProviderRef.current = null
         setPendingProvider(null)
         const errorMessage = t('auth.signInFailed')
