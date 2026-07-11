@@ -40,7 +40,11 @@ export default function HeaderAuth() {
     }
 
     window.addEventListener('pageshow', resetPendingProvider)
-    return () => window.removeEventListener('pageshow', resetPendingProvider)
+    return () => {
+      window.removeEventListener('pageshow', resetPendingProvider)
+      signInAttemptRef.current += 1
+      pendingProviderRef.current = null
+    }
   }, [])
 
   const openDialog = useCallback(() => {

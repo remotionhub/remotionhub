@@ -78,7 +78,7 @@ function installLocalStorage() {
 }
 
 function renderHeader() {
-  render(
+  return render(
     <I18nProvider>
       <Header />
     </I18nProvider>,
@@ -265,6 +265,36 @@ describe('Header', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
     fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
     firePageShow(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+    await act(async () => {
+      rejectFirstSignIn?.(new Error('cancelled GitHub sign-in'))
+    })
+
+    expect(authMocks.toastError).not.toHaveBeenCalled()
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(true)
+  })
+
+  it('ignores an OAuth rejection from an unmounted header instance', async () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    let rejectFirstSignIn: ((reason: Error) => void) | undefined
+    authMocks.signIn
+      .mockImplementationOnce(
+        () =>
+          new Promise((_, reject) => {
+            rejectFirstSignIn = reject
+          }),
+      )
+      .mockReturnValueOnce(new Promise(() => {}))
+
+    const firstHeader = renderHeader()
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    firstHeader.unmount()
+
+    renderHeader()
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
     fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
     await act(async () => {
       rejectFirstSignIn?.(new Error('cancelled GitHub sign-in'))
