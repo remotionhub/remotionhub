@@ -294,6 +294,83 @@ export const startPromptProject = mutation({
   },
 })
 
+export const restartPromptGeneration = mutation({
+  args: {
+    projectId: v.id('studioProjects'),
+    prompt: v.string(),
+    idempotencyKey: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { project, userId } = await requireStudioProjectOwner(
+      ctx,
+      args.projectId,
+    )
+    const existing = await getOwnerRunByIdempotency(
+      ctx,
+      userId,
+      args.idempotencyKey,
+    )
+    if (existing) {
+      if (existing.projectId !== project._id) {
+        throw new Error('Studio idempotency key conflict')
+      }
+      return queuedRunResult(existing.projectId, existing._id)
+    }
+
+    validatePromptAndIdempotencyKey(args.prompt, args.idempotencyKey)
+    if (
+      project.source.kind !== 'prompt' ||
+      project.currentRevisionId ||
+      project.currentRunId
+    ) {
+      throw new Error('Studio project changed')
+    }
+    const existingRevision = await ctx.db
+      .query('studioRevisions')
+      .withIndex('by_project_sequence', (q) =>
+        q.eq('projectId', project._id),
+      )
+      .first()
+    if (existingRevision) throw new Error('Studio project changed')
+
+    const latestRun = await ctx.db
+      .query('studioGenerationRuns')
+      .withIndex('by_project_updated', (q) =>
+        q.eq('projectId', project._id),
+      )
+      .order('desc')
+      .first()
+    if (!latestRun || latestRun.status !== 'failed') {
+      throw new Error('Studio failed generation unavailable')
+    }
+
+    const now = Date.now()
+    const promptMessageId = await ctx.db.insert('studioMessages', {
+      projectId: project._id,
+      role: 'user',
+      kind: 'prompt',
+      content: args.prompt,
+      createdAt: now,
+    })
+    const runId = await ctx.db.insert('studioGenerationRuns', {
+      projectId: project._id,
+      ownerId: userId,
+      status: 'queued',
+      promptMessageId,
+      modelAlias: 'studio-default',
+      detectedSkills: [],
+      correctionAttempt: 0,
+      idempotencyKey: args.idempotencyKey,
+      createdAt: now,
+      updatedAt: now,
+    })
+    await ctx.db.patch(project._id, { currentRunId: runId, updatedAt: now })
+    await ctx.db.patch(promptMessageId, { generationRunId: runId })
+    await ctx.scheduler.runAfter(0, internal.studio.runGeneration, { runId })
+    return queuedRunResult(project._id, runId)
+  },
+})
+
 export const startFollowUp = mutation({
   args: {
     projectId: v.id('studioProjects'),

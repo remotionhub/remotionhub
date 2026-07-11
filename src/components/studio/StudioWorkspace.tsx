@@ -250,6 +250,9 @@ function StudioWorkspaceData({
   const rejectCandidate = useMutation(api.studio.rejectCandidate)
   const reportRuntimeFailure = useMutation(api.studio.reportRuntimeFailure)
   const retryFailedGeneration = useMutation(api.studio.retryFailedGeneration)
+  const restartPromptGeneration = useMutation(
+    api.studio.restartPromptGeneration,
+  )
   const processedCandidateDeliveries = useRef(new Set<string>())
   const reportedRuntimeFailures = useRef(new Set<string>())
 
@@ -288,6 +291,8 @@ function StudioWorkspaceData({
           fingerprint: run.candidateFingerprint,
         }
       : null
+  const canRestartInitialGeneration =
+    !revision && run?.status === 'failed' && !run.inputRevisionId
 
   const deliverPreviewResult = async (delivery: FailedPreviewDelivery) => {
     if (
@@ -364,11 +369,20 @@ function StudioWorkspaceData({
   }
 
   const submitFollowUp = async (prompt: string) => {
-    if (!revision || runIsActive) return
-    await startFollowUp({
+    if (runIsActive) return
+    if (revision) {
+      await startFollowUp({
+        projectId,
+        prompt,
+        expectedCurrentRevisionId: revision._id,
+        idempotencyKey: crypto.randomUUID(),
+      })
+      return
+    }
+    if (!canRestartInitialGeneration) return
+    await restartPromptGeneration({
       projectId,
       prompt,
-      expectedCurrentRevisionId: revision._id,
       idempotencyKey: crypto.randomUUID(),
     })
   }
@@ -384,7 +398,7 @@ function StudioWorkspaceData({
 
   const chatPanel = (
     <StudioChatPanel
-      disabled={!revision || runIsActive}
+      disabled={runIsActive || (!revision && !canRestartInitialGeneration)}
       messages={messages ?? []}
       onRetry={run?.status === 'failed' ? retryFailedRun : undefined}
       onSubmit={submitFollowUp}

@@ -1109,6 +1109,111 @@ describe('studio generation runs', () => {
     )
   })
 
+  it('restarts an initial failed project with a rephrased prompt', async () => {
+    vi.useFakeTimers()
+    studioModelHarness.mode = 'deny'
+    const t = convexTest(schema, modules)
+    const ownerId = await t.run(async (ctx) =>
+      ctx.db.insert('users', { name: 'Owner', createdAt: 1, updatedAt: 1 }),
+    )
+    const otherUserId = await t.run(async (ctx) =>
+      ctx.db.insert('users', {
+        name: 'Other User',
+        createdAt: 1,
+        updatedAt: 1,
+      }),
+    )
+    const owner = t.withIdentity({ subject: ownerId })
+    const other = t.withIdentity({ subject: otherUserId })
+    const started = await owner.mutation(api.studio.startPromptProject, {
+      prompt: 'Write a backend migration plan',
+      idempotencyKey: 'initial-invalid-prompt',
+    })
+    await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+    studioModelHarness.mode = 'stub'
+    await expect(
+      other.mutation(api.studio.restartPromptGeneration, {
+        projectId: started.projectId,
+        prompt: 'Animate someone else\'s project',
+        idempotencyKey: 'foreign-rephrased-prompt',
+      }),
+    ).rejects.toThrow('Studio project unavailable')
+    const restarted = await owner.mutation(
+      api.studio.restartPromptGeneration,
+      {
+        projectId: started.projectId,
+        prompt: 'Animate a migration timeline with moving steps',
+        idempotencyKey: 'rephrased-prompt',
+      },
+    )
+    await t.finishAllScheduledFunctions(vi.runAllTimers)
+
+    const snapshot = await owner.query(api.studio.getProject, {
+      projectId: started.projectId,
+    })
+    const messages = await owner.query(api.studio.listMessages, {
+      projectId: started.projectId,
+      limit: 10,
+    })
+    expect(restarted.projectId).toBe(started.projectId)
+    expect(snapshot.run).toMatchObject({
+      _id: restarted.runId,
+      status: 'compiling',
+    })
+    expect(snapshot.run?.inputRevisionId).toBeUndefined()
+    expect(messages.map((message) => message.content)).toEqual([
+      'Write a backend migration plan',
+      'Animate a migration timeline with moving steps',
+    ])
+    await expect(
+      owner.mutation(api.studio.restartPromptGeneration, {
+        projectId: started.projectId,
+        prompt: 'Start another generation concurrently',
+        idempotencyKey: 'concurrent-rephrased-prompt',
+      }),
+    ).rejects.toThrow('Studio project changed')
+  })
+
+  it('does not restart a project that already has a Revision', async () => {
+    const { t, ownerId, projectId } = await seedStudio()
+    const owner = t.withIdentity({ subject: ownerId })
+    await t.run(async (ctx) => {
+      const promptMessageId = await ctx.db.insert('studioMessages', {
+        projectId,
+        role: 'system',
+        kind: 'error',
+        content: 'First revision failed at runtime',
+        createdAt: 50,
+      })
+      await ctx.db.insert('studioGenerationRuns', {
+        projectId,
+        ownerId,
+        status: 'failed',
+        promptMessageId,
+        modelAlias: 'studio-default',
+        detectedSkills: [],
+        correctionAttempt: 1,
+        errorCode: 'MODEL_FAILED',
+        idempotencyKey: 'failed-first-revision-repair',
+        createdAt: 50,
+        updatedAt: 50,
+      })
+      await ctx.db.patch(projectId, {
+        currentRevisionId: undefined,
+        lastRunnableRevisionId: undefined,
+      })
+    })
+
+    await expect(
+      owner.mutation(api.studio.restartPromptGeneration, {
+        projectId,
+        prompt: 'Replace the existing project from scratch',
+        idempotencyKey: 'restart-existing-revision',
+      }),
+    ).rejects.toThrow('Studio project changed')
+  })
+
   it('degrades detector failure to no skills and preserves per-call usage', async () => {
     vi.useFakeTimers()
     studioModelHarness.mode = 'detector-failure'
