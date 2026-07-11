@@ -2,7 +2,6 @@ import * as Babel from '@babel/standalone'
 import * as ReactRuntime from 'react'
 import * as ReactThreeFiberRuntime from '@react-three/fiber'
 import * as RemotionLottieRuntime from '@remotion/lottie'
-import * as RemotionPlayerRuntime from '@remotion/player'
 import * as RemotionShapesRuntime from '@remotion/shapes'
 import * as RemotionThreeRuntime from '@remotion/three'
 import * as RemotionTransitionsRuntime from '@remotion/transitions'
@@ -13,6 +12,7 @@ import * as RemotionRuntime from 'remotion'
 import * as ThreeRuntime from 'three'
 import { STUDIO_MAX_SOURCE_LENGTH } from '../../../shared/studio'
 import {
+  STUDIO_ALLOWED_APIS_BY_PACKAGE,
   STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE,
   validateAndStripStudioImports,
 } from '../../../shared/studioSource'
@@ -70,38 +70,77 @@ const INVALID_RUNTIME_NAMES = new Set([
   'yield',
 ])
 
-const studioRuntime = Object.freeze({
-  ...ThreeRuntime,
-  ...ReactThreeFiberRuntime,
-  ...RemotionThreeRuntime,
-  ...RemotionLottieRuntime,
-  ...RemotionTransitionsRuntime,
-  ...RemotionShapesRuntime,
-  ...RemotionPlayerRuntime,
-  ...RemotionRuntime,
-  ...ReactRuntime,
-  React: ReactRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE.react]: ReactRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE.remotion]: RemotionRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/player']]:
-    RemotionPlayerRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/shapes']]:
+type RuntimeModule = Record<string, unknown>
+
+function pickRuntimeApis(
+  runtime: RuntimeModule,
+  pkg: keyof typeof STUDIO_ALLOWED_APIS_BY_PACKAGE,
+) {
+  return Object.freeze(
+    Object.fromEntries(
+      STUDIO_ALLOWED_APIS_BY_PACKAGE[pkg].flatMap((name) =>
+        name in runtime ? [[name, runtime[name]]] : [],
+      ),
+    ),
+  )
+}
+
+const runtimeByPackage = {
+  react: pickRuntimeApis(ReactRuntime, 'react'),
+  remotion: pickRuntimeApis(RemotionRuntime, 'remotion'),
+  '@remotion/shapes': pickRuntimeApis(
     RemotionShapesRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions']]:
+    '@remotion/shapes',
+  ),
+  '@remotion/transitions': pickRuntimeApis(
     RemotionTransitionsRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/fade']]:
+    '@remotion/transitions',
+  ),
+  '@remotion/transitions/fade': pickRuntimeApis(
     RemotionTransitionsFadeRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/slide']]:
+    '@remotion/transitions/fade',
+  ),
+  '@remotion/transitions/slide': pickRuntimeApis(
     RemotionTransitionsSlideRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/transitions/wipe']]:
+    '@remotion/transitions/slide',
+  ),
+  '@remotion/transitions/wipe': pickRuntimeApis(
     RemotionTransitionsWipeRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/lottie']]:
+    '@remotion/transitions/wipe',
+  ),
+  '@remotion/lottie': pickRuntimeApis(
     RemotionLottieRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@remotion/three']]:
+    '@remotion/lottie',
+  ),
+  '@remotion/three': pickRuntimeApis(
     RemotionThreeRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE['@react-three/fiber']]:
+    '@remotion/three',
+  ),
+  '@react-three/fiber': pickRuntimeApis(
     ReactThreeFiberRuntime,
-  [STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE.three]: ThreeRuntime,
+    '@react-three/fiber',
+  ),
+  three: pickRuntimeApis(ThreeRuntime, 'three'),
+}
+
+const studioRuntime = Object.freeze({
+  ...runtimeByPackage.three,
+  ...runtimeByPackage['@react-three/fiber'],
+  ...runtimeByPackage['@remotion/three'],
+  ...runtimeByPackage['@remotion/lottie'],
+  ...runtimeByPackage['@remotion/transitions'],
+  ...runtimeByPackage['@remotion/shapes'],
+  ...runtimeByPackage.remotion,
+  ...runtimeByPackage.react,
+  React: runtimeByPackage.react,
+  ...Object.fromEntries(
+    Object.entries(STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE).map(
+      ([pkg, runtimeName]) => [
+        runtimeName,
+        runtimeByPackage[pkg as keyof typeof runtimeByPackage],
+      ],
+    ),
+  ),
 })
 
 const runtimeEntries = Object.entries(studioRuntime).filter(

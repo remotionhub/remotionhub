@@ -73,4 +73,40 @@ describe('StudioProjectBar', () => {
 
     expect(screen.getByRole('status').textContent).toMatch(/正在保存|saving/i)
   })
+
+  it('serializes overlapping saves so the latest title persists last', async () => {
+    let resolveFirst: ((value: string) => void) | undefined
+    let resolveLatest: ((value: string) => void) | undefined
+    const onSaveTitle = vi
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveFirst = resolve
+          }),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveLatest = resolve
+          }),
+      )
+    renderBar(onSaveTitle)
+    const input = screen.getByRole('textbox', { name: /title/i })
+
+    fireEvent.change(input, { target: { value: 'First edit' } })
+    await act(async () => vi.advanceTimersByTime(600))
+    fireEvent.change(input, { target: { value: 'Latest edit' } })
+    await act(async () => vi.advanceTimersByTime(600))
+
+    expect(onSaveTitle).toHaveBeenCalledTimes(1)
+    expect(onSaveTitle).toHaveBeenNthCalledWith(1, 'First edit')
+
+    await act(async () => resolveFirst?.('First edit'))
+    expect(onSaveTitle).toHaveBeenCalledTimes(2)
+    expect(onSaveTitle).toHaveBeenNthCalledWith(2, 'Latest edit')
+
+    await act(async () => resolveLatest?.('Latest edit'))
+    expect(screen.getByRole('status').textContent).toMatch(/已保存|saved/i)
+  })
 })

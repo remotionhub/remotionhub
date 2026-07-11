@@ -57,13 +57,23 @@ describe('compileStudioComponent', () => {
     expect(screen.getByText('Ready')).toBeTruthy()
   })
 
-  it('preserves named aliases and package namespace imports', () => {
+  it('does not expose unsupported Remotion APIs as globals', () => {
+    const Component = compileStudioComponent(
+      "export const MyAnimation = () => <div data-testid='apis'>{typeof delayRender},{typeof Img}</div>",
+    )
+
+    render(<Component />)
+
+    expect(screen.getByTestId('apis').textContent).toBe('undefined,undefined')
+  })
+
+  it('preserves named aliases from allowlisted packages', () => {
     const Component = compileStudioComponent(
       [
         "import { AbsoluteFill as Fill } from 'remotion'",
-        "import * as THREE from 'three'",
+        "import { MathUtils as ThreeMath } from 'three'",
         'export const MyAnimation = () => (',
-        '  <Fill data-testid="aliased">{THREE.MathUtils.clamp(2, 0, 1)}</Fill>',
+        '  <Fill data-testid="aliased">{ThreeMath.clamp(2, 0, 1)}</Fill>',
         ')',
       ].join('\n'),
     )

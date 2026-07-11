@@ -7,20 +7,69 @@ import type {
   Statement,
 } from '@babel/types'
 
-const ALLOWED_IMPORTS = new Set([
-  'react',
-  'remotion',
-  '@remotion/player',
-  '@remotion/shapes',
-  '@remotion/transitions',
-  '@remotion/transitions/fade',
-  '@remotion/transitions/slide',
-  '@remotion/transitions/wipe',
-  '@remotion/lottie',
-  '@remotion/three',
-  '@react-three/fiber',
-  'three',
-])
+export const STUDIO_ALLOWED_APIS_BY_PACKAGE = {
+  react: ['Fragment', 'createElement', 'useMemo'],
+  remotion: [
+    'AbsoluteFill',
+    'Easing',
+    'Freeze',
+    'Loop',
+    'Sequence',
+    'Series',
+    'interpolate',
+    'interpolateColors',
+    'measureSpring',
+    'spring',
+    'useCurrentFrame',
+    'useVideoConfig',
+  ],
+  '@remotion/shapes': ['Circle', 'Ellipse', 'Pie', 'Polygon', 'Rect', 'Star'],
+  '@remotion/transitions': [
+    'TransitionSeries',
+    'linearTiming',
+    'springTiming',
+  ],
+  '@remotion/transitions/fade': ['fade'],
+  '@remotion/transitions/slide': ['slide'],
+  '@remotion/transitions/wipe': ['wipe'],
+  '@remotion/lottie': ['Lottie'],
+  '@remotion/three': ['ThreeCanvas'],
+  '@react-three/fiber': ['Canvas', 'useThree'],
+  three: [
+    'AmbientLight',
+    'BoxGeometry',
+    'Color',
+    'DirectionalLight',
+    'Euler',
+    'Group',
+    'MathUtils',
+    'Matrix3',
+    'Matrix4',
+    'Mesh',
+    'MeshBasicMaterial',
+    'MeshStandardMaterial',
+    'PerspectiveCamera',
+    'Quaternion',
+    'Scene',
+    'SphereGeometry',
+    'Triangle',
+    'Vector2',
+    'Vector3',
+  ],
+} as const
+
+type StudioRuntimePackage = keyof typeof STUDIO_ALLOWED_APIS_BY_PACKAGE
+
+const ALLOWED_IMPORTS = new Set<StudioRuntimePackage>(
+  Object.keys(STUDIO_ALLOWED_APIS_BY_PACKAGE) as StudioRuntimePackage[],
+)
+
+const ALLOWED_APIS = Object.fromEntries(
+  Object.entries(STUDIO_ALLOWED_APIS_BY_PACKAGE).map(([pkg, apis]) => [
+    pkg,
+    new Set<string>(apis),
+  ]),
+) as Record<StudioRuntimePackage, Set<string>>
 
 const FORBIDDEN_PATTERNS = [
   /\bwindow\b/,
@@ -52,7 +101,6 @@ const SOURCE_PREFIX =
 export const STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE = {
   react: '__studioReact',
   remotion: '__studioRemotion',
-  '@remotion/player': '__studioRemotionPlayer',
   '@remotion/shapes': '__studioRemotionShapes',
   '@remotion/transitions': '__studioRemotionTransitions',
   '@remotion/transitions/fade': '__studioRemotionTransitionsFade',
@@ -199,18 +247,25 @@ function buildInjectedBindings(declaration: ImportDeclaration, pkg: string) {
   const bindings: string[] = []
   for (const specifier of declaration.specifiers) {
     if (specifier.type === 'ImportDefaultSpecifier') {
-      if (pkg !== 'react' || specifier.local.name !== 'React') {
-        bindings.push(
-          `${specifier.local.name} = ${runtimeName}.default ?? ${runtimeName}`,
-        )
+      if (pkg !== 'react') {
+        throw new Error('Unsupported Studio API')
+      }
+      if (specifier.local.name !== 'React') {
+        bindings.push(`${specifier.local.name} = ${runtimeName}`)
       }
       continue
     }
     if (specifier.type === 'ImportNamespaceSpecifier') {
-      bindings.push(`${specifier.local.name} = ${runtimeName}`)
-      continue
+      throw new Error('Unsupported Studio API')
     }
     if (specifier.importKind !== 'type') {
+      const importedName =
+        specifier.imported.type === 'Identifier'
+          ? specifier.imported.name
+          : specifier.imported.value
+      if (!ALLOWED_APIS[pkg as StudioRuntimePackage].has(importedName)) {
+        throw new Error('Unsupported Studio API')
+      }
       bindings.push(
         `${specifier.local.name} = ${getImportedAccess(runtimeName, specifier)}`,
       )
@@ -266,7 +321,10 @@ export function validateAndStripStudioImports(
   let withoutImports = ''
   for (const declaration of imports) {
     const pkg = declaration.source.value
-    if (!ALLOWED_IMPORTS.has(pkg) || declaration.specifiers.length === 0) {
+    if (
+      !ALLOWED_IMPORTS.has(pkg as StudioRuntimePackage) ||
+      declaration.specifiers.length === 0
+    ) {
       throw new Error('Unsupported Studio dependency')
     }
     if (declared && !declared.has(pkg)) {

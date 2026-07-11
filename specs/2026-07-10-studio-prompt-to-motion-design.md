@@ -358,6 +358,8 @@ old_string + new_string + description
 运行时选择性适配参考项目的 Compiler 行为：
 
 - 支持 React、Remotion、Remotion Shapes、Transitions（包含 `fade`、`slide`、`wipe` 公共子路径）、Lottie 和明确允许的 Three.js 能力。
+- Compiler 只能通过 TanStack Start 的客户端边界动态加载，不得进入 Cloudflare Worker SSR 模块图。
+- 静态 import 校验与浏览器 Runtime 注入共享逐包 API 白名单；不允许 namespace import，也不把依赖包的全部公开导出注入生成代码。
 - 移除静态 import，并由 Runtime 注入允许 API。
 - 使用 Babel Standalone 转换 TypeScript 与 JSX。
 - 从约定导出的组件中提取组件体。
