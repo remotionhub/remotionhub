@@ -1,15 +1,23 @@
 import { GithubIcon, XIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { toast } from 'sonner'
 import { useI18n } from './I18nProvider'
 
 export type AuthProvider = 'github' | 'wechat'
 
 type AuthDialogProps = {
   open: boolean
+  pendingProvider: AuthProvider | null
   onClose: () => void
-  onSignIn: (provider: AuthProvider) => Promise<unknown>
+  onSignIn: (provider: AuthProvider) => void
+}
+
+function getFocusableElements(dialog: HTMLElement) {
+  return Array.from(
+    dialog.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  )
 }
 
 function WeChatIcon() {
@@ -38,38 +46,77 @@ function WeChatIcon() {
   )
 }
 
-export default function AuthDialog({ open, onClose, onSignIn }: AuthDialogProps) {
+export default function AuthDialog({ open, pendingProvider, onClose, onSignIn }: AuthDialogProps) {
   const { t } = useI18n()
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
-  const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
+  const dialogRef = useRef<HTMLElement | null>(null)
+  const overlayRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (!open) {
-      setPendingProvider(null)
-      return
-    }
+    if (!open) return
 
     closeButtonRef.current?.focus()
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (event.key !== 'Tab' || !dialogRef.current) return
+
+      const focusableElements = getFocusableElements(dialogRef.current)
+      if (focusableElements.length === 0) {
+        event.preventDefault()
+        return
+      }
+
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+      const activeElement = document.activeElement
+      const hasFocusWithinDialog = activeElement instanceof Node && dialogRef.current.contains(activeElement)
+
+      if (event.shiftKey && (!hasFocusWithinDialog || activeElement === firstElement)) {
+        event.preventDefault()
+        lastElement.focus()
+      } else if (!event.shiftKey && (!hasFocusWithinDialog || activeElement === lastElement)) {
+        event.preventDefault()
+        firstElement.focus()
+      }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose, open])
 
-  if (!open || typeof document === 'undefined') return null
+  useEffect(() => {
+    if (!open || !overlayRef.current) return
 
-  const startSignIn = (provider: AuthProvider) => {
-    if (pendingProvider) return
-    setPendingProvider(provider)
-    void onSignIn(provider).catch(() => {
-      setPendingProvider(null)
-      toast.error(t('auth.signInFailed'))
-    })
-  }
+    const backgroundElements = Array.from(document.body.children).filter(
+      (element) => element !== overlayRef.current,
+    )
+    const previousStates = backgroundElements.map((element) => ({
+      ariaHidden: element.getAttribute('aria-hidden'),
+      element,
+      hadInert: element.hasAttribute('inert'),
+    }))
+
+    for (const { element } of previousStates) {
+      element.setAttribute('aria-hidden', 'true')
+      element.setAttribute('inert', '')
+    }
+
+    return () => {
+      for (const { ariaHidden, element, hadInert } of previousStates) {
+        if (ariaHidden === null) element.removeAttribute('aria-hidden')
+        else element.setAttribute('aria-hidden', ariaHidden)
+        if (!hadInert) element.removeAttribute('inert')
+      }
+    }
+  }, [open])
+
+  if (!open || typeof document === 'undefined') return null
 
   return createPortal(
     <div
+      ref={overlayRef}
       data-testid="auth-dialog-overlay"
       className="fixed inset-0 z-[200] grid place-items-center bg-black/45 px-4 py-8"
       role="presentation"
@@ -78,6 +125,7 @@ export default function AuthDialog({ open, onClose, onSignIn }: AuthDialogProps)
       }}
     >
       <section
+        ref={dialogRef}
         aria-label={t('auth.loginToRemotionHub')}
         aria-modal="true"
         role="dialog"
@@ -109,7 +157,7 @@ export default function AuthDialog({ open, onClose, onSignIn }: AuthDialogProps)
             aria-label={t('auth.signInWithGitHub')}
             className="grid h-14 w-20 place-items-center rounded-lg border border-[var(--line)] hover:bg-[var(--link-bg-hover)] disabled:cursor-wait disabled:opacity-50"
             disabled={pendingProvider !== null}
-            onClick={() => startSignIn('github')}
+            onClick={() => onSignIn('github')}
           >
             <GithubIcon aria-hidden="true" size={22} />
           </button>
@@ -118,7 +166,7 @@ export default function AuthDialog({ open, onClose, onSignIn }: AuthDialogProps)
             aria-label={t('auth.signInWithWeChat')}
             className="grid h-14 w-20 place-items-center rounded-lg border border-[var(--line)] hover:bg-[var(--link-bg-hover)] disabled:cursor-wait disabled:opacity-50"
             disabled={pendingProvider !== null}
-            onClick={() => startSignIn('wechat')}
+            onClick={() => onSignIn('wechat')}
           >
             <WeChatIcon />
           </button>

@@ -1,6 +1,7 @@
 import { useAuthActions } from '@convex-dev/auth/react'
 import { CircleUserRoundIcon, LogOutIcon } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import { getCurrentRelativeUrl } from '#/lib/authRedirect'
 import { useAuthStatus } from '#/lib/useAuthStatus'
 import AuthDialog, { type AuthProvider } from './AuthDialog'
@@ -15,7 +16,9 @@ export default function HeaderAuth() {
   const { isAuthenticated, isLoading, me } = useAuthStatus()
   const { signIn, signOut } = useAuthActions()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
   const loginButtonRef = useRef<HTMLButtonElement | null>(null)
+  const pendingProviderRef = useRef<AuthProvider | null>(null)
   const wasDialogOpen = useRef(false)
 
   useEffect(() => {
@@ -27,8 +30,18 @@ export default function HeaderAuth() {
 
   const closeDialog = useCallback(() => setIsDialogOpen(false), [])
   const startSignIn = useCallback(
-    (provider: AuthProvider) => signIn(provider, { redirectTo: getCurrentRelativeUrl() }),
-    [signIn],
+    (provider: AuthProvider) => {
+      if (pendingProviderRef.current) return
+
+      pendingProviderRef.current = provider
+      setPendingProvider(provider)
+      void signIn(provider, { redirectTo: getCurrentRelativeUrl() }).catch(() => {
+        pendingProviderRef.current = null
+        setPendingProvider(null)
+        toast.error(t('auth.signInFailed'))
+      })
+    },
+    [signIn, t],
   )
 
   if (isLoading) {
@@ -54,6 +67,7 @@ export default function HeaderAuth() {
         </button>
         <AuthDialog
           open={isDialogOpen}
+          pendingProvider={pendingProvider}
           onClose={closeDialog}
           onSignIn={startSignIn}
         />

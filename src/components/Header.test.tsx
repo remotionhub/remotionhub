@@ -184,6 +184,58 @@ describe('Header', () => {
     ).toBe(true)
   })
 
+  it('keeps provider mutual exclusion after closing and reopening during OAuth startup', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockReturnValue(new Promise(() => {}))
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Log in with WeChat' }))
+
+    expect(authMocks.signIn).toHaveBeenCalledTimes(1)
+    expect(
+      screen.getByRole('button', { name: 'Sign in with GitHub' }).hasAttribute('disabled'),
+    ).toBe(true)
+    expect(
+      screen.getByRole('button', { name: 'Log in with WeChat' }).hasAttribute('disabled'),
+    ).toBe(true)
+  })
+
+  it('cycles focus within the login dialog', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    const closeButton = screen.getByRole('button', { name: 'Close' })
+    const weChatButton = screen.getByRole('button', { name: 'Log in with WeChat' })
+
+    closeButton.focus()
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(weChatButton)
+
+    fireEvent.keyDown(document, { key: 'Tab' })
+    expect(document.activeElement).toBe(closeButton)
+  })
+
+  it('isolates the page while the login dialog is open and restores it on close', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    renderHeader()
+
+    const appRoot = document.body.firstElementChild
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+
+    expect(appRoot?.hasAttribute('inert')).toBe(true)
+    expect(appRoot?.getAttribute('aria-hidden')).toBe('true')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+
+    expect(appRoot?.hasAttribute('inert')).toBe(false)
+    expect(appRoot?.hasAttribute('aria-hidden')).toBe(false)
+  })
+
   it('restores provider controls after OAuth startup fails', async () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     authMocks.signIn.mockRejectedValue(new Error('sign-in failed'))
