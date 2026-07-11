@@ -7,6 +7,8 @@ import {
   internalQuery,
   mutation,
   query,
+  type MutationCtx,
+  type QueryCtx,
 } from './_generated/server'
 import { requireStudioProjectOwner, requireUser } from './lib/access'
 import {
@@ -91,6 +93,34 @@ function validatePromptAndIdempotencyKey(prompt: string, idempotencyKey: string)
 
 function sanitizeNormalizedError(normalizedError: string) {
   return normalizedError.slice(0, normalizedErrorMaxLength)
+}
+
+async function loadRuntimeRepairContext(
+  db: QueryCtx['db'] | MutationCtx['db'],
+  project: Doc<'studioProjects'>,
+  run: Doc<'studioGenerationRuns'>,
+) {
+  const brokenRevision = run.inputRevisionId
+    ? await db.get(run.inputRevisionId)
+    : null
+  const errorMessage = await db.get(run.promptMessageId)
+  if (
+    run.correctionAttempt < 1 ||
+    !brokenRevision ||
+    brokenRevision.projectId !== project._id ||
+    brokenRevision.previousRunnableRevisionId !== project.currentRevisionId ||
+    !errorMessage ||
+    errorMessage.projectId !== project._id ||
+    errorMessage.role !== 'system' ||
+    errorMessage.kind !== 'error'
+  ) {
+    return null
+  }
+  return {
+    code: brokenRevision.code.slice(0, 100_000),
+    composition: brokenRevision.composition,
+    normalizedError: sanitizeNormalizedError(errorMessage.content),
+  }
 }
 
 function queuedRunResult(
@@ -352,27 +382,10 @@ export const retryFailedGeneration = mutation({
         }
       | undefined
     if (project.currentRevisionId !== failedRun.inputRevisionId) {
-      const brokenRevision = failedRun.inputRevisionId
-        ? await ctx.db.get(failedRun.inputRevisionId)
-        : null
-      const errorMessage = await ctx.db.get(failedRun.promptMessageId)
-      if (
-        failedRun.correctionAttempt < 1 ||
-        !brokenRevision ||
-        brokenRevision.projectId !== project._id ||
-        brokenRevision.previousRunnableRevisionId !==
-          project.currentRevisionId ||
-        !errorMessage ||
-        errorMessage.projectId !== project._id ||
-        errorMessage.role !== 'system' ||
-        errorMessage.kind !== 'error'
-      ) {
+      correctionContext =
+        (await loadRuntimeRepairContext(ctx.db, project, failedRun)) ?? undefined
+      if (!correctionContext) {
         throw new Error('Studio project changed')
-      }
-      correctionContext = {
-        code: brokenRevision.code.slice(0, 100_000),
-        composition: brokenRevision.composition,
-        normalizedError: sanitizeNormalizedError(errorMessage.content),
       }
     }
 
@@ -673,13 +686,16 @@ export const getProject = query({
           .withIndex('by_project_updated', (q) => q.eq('projectId', projectId))
           .order('desc')
           .first()
-    const run = project.currentRunId
+    let run = project.currentRunId
       ? await ctx.db.get(project.currentRunId)
-      : fallbackRun?.status === 'failed' &&
-          (fallbackRun.inputRevisionId ?? null) !==
-            (project.currentRevisionId ?? null)
-        ? null
-        : fallbackRun
+      : fallbackRun
+    if (
+      run?.status === 'failed' &&
+      (run.inputRevisionId ?? null) !== (project.currentRevisionId ?? null) &&
+      !(await loadRuntimeRepairContext(ctx.db, project, run))
+    ) {
+      run = null
+    }
     return { project, revision, run }
   },
 })
