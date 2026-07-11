@@ -1,9 +1,53 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
+  authCallbacks,
+  createAbsoluteRedirectUrl,
   createGitHubAuthProvider,
+  createWeChatAuthProvider,
   normalizeGitHubProfileId,
+  normalizeRelativeRedirectTo,
+  normalizeWeChatProviderAccountId,
   userDataFromAuthProfile,
 } from './auth'
+
+describe('create auth providers', () => {
+  it('keeps GitHub and WeChat as independent providers', () => {
+    expect(createGitHubAuthProvider().id).toBe('github')
+    expect(createWeChatAuthProvider().id).toBe('wechat')
+  })
+})
+
+describe('normalizeWeChatProviderAccountId', () => {
+  it('keeps the WebsiteApp openid stable when unionid later appears', () => {
+    expect(
+      normalizeWeChatProviderAccountId(
+        { openid: 'openid-123', unionid: 'unionid-456' },
+        { allowOpenIdFallback: true, appId: 'wx-test-app' },
+      ),
+    ).toBe('wechat:web:wx-test-app:openid-123')
+  })
+
+  it('uses unionid only when openid is unavailable', () => {
+    expect(normalizeWeChatProviderAccountId({ unionid: 'unionid-456' })).toBe(
+      'unionid-456',
+    )
+  })
+
+  it('rejects openid without an app namespace', () => {
+    expect(() =>
+      normalizeWeChatProviderAccountId(
+        { openid: 'openid-123' },
+        { allowOpenIdFallback: true },
+      ),
+    ).toThrow(/requires a WeChat app id/)
+  })
+
+  it('rejects profiles without a stable account id', () => {
+    expect(() => normalizeWeChatProviderAccountId({})).toThrow(
+      /missing a stable WeChat account id/,
+    )
+  })
+})
 
 describe('normalizeGitHubProfileId', () => {
   it('accepts a numeric GitHub profile id', () => {
@@ -102,5 +146,75 @@ describe('userDataFromAuthProfile', () => {
     })
 
     vi.useRealTimers()
+  })
+})
+
+function restoreEnv(name: string, value: string | undefined) {
+  if (value === undefined) delete process.env[name]
+  else process.env[name] = value
+}
+
+describe('userDataFromAuthProfile verification', () => {
+  it('does not infer verification from an OAuth provider', () => {
+    expect(
+      userDataFromAuthProfile({
+        provider: { type: 'oauth', allowDangerousEmailAccountLinking: true },
+        profile: { email: 'user@example.com' },
+      }),
+    ).toEqual({ email: 'user@example.com' })
+  })
+})
+
+describe('normalizeRelativeRedirectTo', () => {
+  it('keeps safe relative redirects', () => {
+    expect(normalizeRelativeRedirectTo('/remotion?tag=card#top')).toBe(
+      '/remotion?tag=card#top',
+    )
+    expect(normalizeRelativeRedirectTo('?tab=security')).toBe('?tab=security')
+  })
+
+  it('rejects external and escaped redirects', () => {
+    expect(normalizeRelativeRedirectTo('https://evil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('//evil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/\\\\evil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/%2f%2fevil.example/path')).toBe('/')
+    expect(normalizeRelativeRedirectTo('/safe\ndanger')).toBe('/')
+  })
+})
+
+describe('authCallbacks.redirect', () => {
+  it('uses SITE_URL and rejects external redirect targets', async () => {
+    const previous = process.env.SITE_URL
+    process.env.SITE_URL = 'https://remotionhub.ai'
+
+    await expect(
+      authCallbacks.redirect({ redirectTo: '/account/settings' }),
+    ).resolves.toBe('https://remotionhub.ai/account/settings')
+    await expect(
+      authCallbacks.redirect({ redirectTo: 'https://evil.example/path' }),
+    ).resolves.toBe('https://remotionhub.ai/')
+
+    restoreEnv('SITE_URL', previous)
+  })
+
+  it('requires SITE_URL for final app redirects', async () => {
+    const previous = process.env.SITE_URL
+    delete process.env.SITE_URL
+
+    await expect(
+      authCallbacks.redirect({ redirectTo: '/account/settings' }),
+    ).rejects.toThrow(/requires SITE_URL/)
+
+    restoreEnv('SITE_URL', previous)
+  })
+})
+
+describe('createAbsoluteRedirectUrl', () => {
+  it('supports an explicit site URL in tests', () => {
+    expect(
+      createAbsoluteRedirectUrl('/account/settings', {
+        siteUrl: 'https://preview.remotionhub.ai/base',
+      }),
+    ).toBe('https://preview.remotionhub.ai/account/settings')
   })
 })
