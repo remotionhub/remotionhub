@@ -185,6 +185,10 @@ describe('validateAndStripStudioImports', () => {
     'setTimeout(',
     'setInterval(',
     'requestAnimationFrame(',
+    'Date.now(',
+    'new Date(',
+    'performance.now(',
+    'Math.random(',
   ])('rejects forbidden source token %s', (token) => {
     expect(() =>
       validateAndStripStudioImports(

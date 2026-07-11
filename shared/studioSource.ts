@@ -38,6 +38,11 @@ const FORBIDDEN_PATTERNS = [
   /\bsetTimeout\s*\(/,
   /\bsetInterval\s*\(/,
   /\brequestAnimationFrame\s*\(/,
+  /\bDate\s*\.\s*now\s*\(/,
+  /\bnew\s+Date\s*\(/,
+  /\bDate\s*\(/,
+  /\bperformance\s*\.\s*now\s*\(/,
+  /\bMath\s*\.\s*random\s*\(/,
 ]
 
 const FENCED_SOURCE = /^```(?:tsx|ts|jsx|javascript)?\s*\n([\s\S]*?)\n```$/

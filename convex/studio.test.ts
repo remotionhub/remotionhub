@@ -1438,6 +1438,39 @@ describe('studio generation runs', () => {
     })
   })
 
+  it('keeps a failed runtime repair visible after restoring its fallback', async () => {
+    const {
+      t,
+      ownerId,
+      projectId,
+      firstRevisionId,
+      secondRevisionId,
+    } = await seedStudio()
+    const owner = t.withIdentity({ subject: ownerId })
+    const reported = await owner.mutation(api.studio.reportRuntimeFailure, {
+      projectId,
+      revisionId: secondRevisionId,
+      normalizedError: 'Runtime error at frame 90',
+    })
+    await t.run(async (ctx) => {
+      await ctx.db.patch(reported.runId, {
+        status: 'failed',
+        errorCode: 'MODEL_FAILED',
+      })
+      await ctx.db.patch(projectId, { currentRunId: undefined })
+    })
+
+    const snapshot = await owner.query(api.studio.getProject, { projectId })
+
+    expect(snapshot.project.currentRevisionId).toBe(firstRevisionId)
+    expect(snapshot.run).toMatchObject({
+      _id: reported.runId,
+      status: 'failed',
+      inputRevisionId: secondRevisionId,
+      correctionAttempt: 1,
+    })
+  })
+
   it('restores the fallback revision composition after a runtime error', async () => {
     const {
       t,
