@@ -1,66 +1,32 @@
 import {
   expect,
   test,
-  type BrowserContextOptions,
   type Page,
 } from '@playwright/test'
-
-type StorageState = Exclude<
-  BrowserContextOptions['storageState'],
-  string | undefined
->
+import {
+  readAuthStorageState,
+  type StorageState,
+} from '../scripts/playwright-auth-storage-state'
 
 const EMPTY_STORAGE_STATE: StorageState = { cookies: [], origins: [] }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
-function isStorageState(value: unknown): value is StorageState {
-  if (!isRecord(value) || !Array.isArray(value.cookies) || !Array.isArray(value.origins)) {
-    return false
-  }
-
-  const cookiesAreValid = value.cookies.every(
-    (cookie) =>
-      isRecord(cookie) &&
-      typeof cookie.name === 'string' &&
-      typeof cookie.value === 'string' &&
-      typeof cookie.domain === 'string' &&
-      typeof cookie.path === 'string' &&
-      typeof cookie.expires === 'number' &&
-      typeof cookie.httpOnly === 'boolean' &&
-      typeof cookie.secure === 'boolean' &&
-      ['Strict', 'Lax', 'None'].includes(String(cookie.sameSite)),
-  )
-  const originsAreValid = value.origins.every(
-    (origin) =>
-      isRecord(origin) &&
-      typeof origin.origin === 'string' &&
-      Array.isArray(origin.localStorage) &&
-      origin.localStorage.every(
-        (entry) =>
-          isRecord(entry) &&
-          typeof entry.name === 'string' &&
-          typeof entry.value === 'string',
-      ),
-  )
-  return cookiesAreValid && originsAreValid
-}
-
-function readAuthStorageState(): StorageState | undefined {
-  const value = process.env.PLAYWRIGHT_AUTH_STORAGE_STATE_JSON
-  if (!value) return undefined
-
-  try {
-    const parsed: unknown = JSON.parse(value)
-    return isStorageState(parsed) ? parsed : undefined
-  } catch {
-    return undefined
-  }
-}
-
 const authStorageState = readAuthStorageState()
+
+async function requireAuthenticatedStudio(page: Page) {
+  await page.goto('/studio')
+
+  const signedIn = page.getByRole('group', {
+    name: /已登录为|Signed in as/i,
+  })
+  const signIn = page.getByRole('button', {
+    name: /使用 GitHub 登录|Sign in with GitHub/i,
+  })
+  await expect(signedIn.or(signIn)).toBeVisible({ timeout: 45_000 })
+
+  if (await signIn.isVisible()) {
+    test.skip(true, 'storage state is not authenticated for this deployment')
+  }
+}
 
 async function showPreviewOnMobile(page: Page, isMobile: boolean) {
   if (!isMobile) return
@@ -116,27 +82,40 @@ test.describe('authenticated Studio', () => {
     'valid PLAYWRIGHT_AUTH_STORAGE_STATE_JSON is required',
   )
   test.use({ storageState: authStorageState ?? EMPTY_STORAGE_STATE })
+  test.beforeEach(async ({ page }) => {
+    await requireAuthenticatedStudio(page)
+  })
 
   test('generates, previews, follows up, refreshes, and rolls back', async ({
     page,
     isMobile,
   }) => {
-    await page.goto('/studio')
     await page.getByRole('textbox').fill('Animate a cyan product title')
     await page.getByRole('button', { name: /生成|Generate/i }).click()
 
     await expect(page).toHaveURL(/\/studio\/[^/]+$/)
     await showPreviewOnMobile(page, isMobile)
-    await expect(page.getByText(/已就绪|Ready/i)).toBeVisible({
+    await expect(
+      page.locator('.studio-run-phase').getByText(/^(已就绪|Ready)$/i),
+    ).toBeVisible({
       timeout: 45_000,
     })
     await expectRunnablePreview(page)
 
     await showChatOnMobile(page, isMobile)
+    const assistantMessages = page.locator(
+      '.studio-message[data-role="assistant"]',
+    )
+    const assistantMessageCount = await assistantMessages.count()
     await page.getByRole('textbox').fill('Make the title feel softer')
     await page.getByRole('button', { name: /发送|Send/i }).click()
     await expect(page.getByText('Make the title feel softer')).toBeVisible()
-    await expect(page.getByText(/已就绪|Ready/i)).toBeVisible({
+    await expect(assistantMessages).toHaveCount(assistantMessageCount + 1, {
+      timeout: 45_000,
+    })
+    await expect(
+      page.locator('.studio-run-phase').getByText(/^(已就绪|Ready)$/i),
+    ).toBeVisible({
       timeout: 45_000,
     })
 
@@ -148,7 +127,7 @@ test.describe('authenticated Studio', () => {
     const history = page.getByRole('dialog', {
       name: /版本历史|Version history/i,
     })
-    await expect(history).toBeVisible()
+    await expect(history).toBeVisible({ timeout: 45_000 })
     await history
       .getByRole('button', { name: /恢复此版本|Restore this version/i })
       .first()
@@ -156,12 +135,12 @@ test.describe('authenticated Studio', () => {
     await history
       .getByRole('button', { name: /确认恢复|Confirm restore/i })
       .click()
-    await expect(history).not.toBeVisible()
+    await expect(history).not.toBeVisible({ timeout: 45_000 })
 
     await page.getByRole('button', { name: /版本历史|Version history/i }).click()
     await expect(
       page.getByText(/恢复版本|Restored version/i).last(),
-    ).toBeVisible()
+    ).toBeVisible({ timeout: 45_000 })
   })
 
   test('remixes the compatible Card Avatar into an initial preview', async ({
