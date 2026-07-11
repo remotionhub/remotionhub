@@ -9,8 +9,12 @@ import {
   type ReactNode,
 } from 'react'
 import { Player } from '@remotion/player'
+import { createClientOnlyFn } from '@tanstack/react-start'
 import type { StudioComposition } from '../../../shared/studio'
-import { compileStudioComponent } from '../../lib/studio/compiler'
+
+const loadStudioCompiler = createClientOnlyFn(
+  () => import('../../lib/studio/compiler'),
+)
 
 type StudioCandidate = {
   code: string
@@ -217,22 +221,31 @@ export default function StudioPreview({
       lastGoodRef.current = previous
       setLastGoodKey(previous?.key ?? null)
     }
-    try {
-      const component = compileStudioComponent(revisionCode)
-      entrySequenceRef.current += 1
-      showEntry({
-        key: `revision-${entrySequenceRef.current}`,
-        component,
-        composition: revisionCompositionRef.current,
-        source: { kind: 'revision', revisionId },
-        previous,
+    let cancelled = false
+    void loadStudioCompiler()
+      .then(({ compileStudioComponent }) => {
+        if (cancelled) return
+        const component = compileStudioComponent(revisionCode)
+        if (cancelled) return
+        entrySequenceRef.current += 1
+        showEntry({
+          key: `revision-${entrySequenceRef.current}`,
+          component,
+          composition: revisionCompositionRef.current,
+          source: { kind: 'revision', revisionId },
+          previous,
+        })
+        setStatus('Loading preview')
       })
-      setStatus('Loading preview')
-    } catch (error) {
-      const normalizedError = normalizePreviewError(error)
-      showEntry(previous)
-      setStatus(`Preview error: ${normalizedError}`)
-      if (revisionId) notifyRevisionFailure(revisionId, normalizedError)
+      .catch((error) => {
+        if (cancelled) return
+        const normalizedError = normalizePreviewError(error)
+        showEntry(previous)
+        setStatus(`Preview error: ${normalizedError}`)
+        if (revisionId) notifyRevisionFailure(revisionId, normalizedError)
+      })
+    return () => {
+      cancelled = true
     }
   }, [notifyRevisionFailure, revisionCode, revisionId, showEntry])
 
@@ -257,30 +270,45 @@ export default function StudioPreview({
     }
 
     processedCandidateDeliveryRef.current = candidateDeliveryId
-    try {
-      const component = compileStudioComponent(currentCandidate.code)
-      entrySequenceRef.current += 1
-      showEntry({
-        key: `candidate-${entrySequenceRef.current}`,
-        component,
-        composition: currentCandidate.composition,
-        source: {
-          kind: 'candidate',
+    let cancelled = false
+    void loadStudioCompiler()
+      .then(({ compileStudioComponent }) => {
+        if (cancelled) return
+        const component = compileStudioComponent(currentCandidate.code)
+        if (cancelled) return
+        entrySequenceRef.current += 1
+        showEntry({
+          key: `candidate-${entrySequenceRef.current}`,
+          component,
+          composition: currentCandidate.composition,
+          source: {
+            kind: 'candidate',
+            deliveryId: candidateDeliveryId,
+            fingerprint: currentCandidate.fingerprint,
+          },
+          previous,
+        })
+        setStatus('Loading candidate preview')
+      })
+      .catch((error) => {
+        if (cancelled) return
+        const normalizedError = normalizePreviewError(error)
+        setStatus(`Preview error: ${normalizedError}`)
+        notifyCandidate({
+          status: 'rejected',
           deliveryId: candidateDeliveryId,
           fingerprint: currentCandidate.fingerprint,
-        },
-        previous,
+          error: normalizedError,
+        })
       })
-      setStatus('Loading candidate preview')
-    } catch (error) {
-      const normalizedError = normalizePreviewError(error)
-      setStatus(`Preview error: ${normalizedError}`)
-      notifyCandidate({
-        status: 'rejected',
-        deliveryId: candidateDeliveryId,
-        fingerprint: currentCandidate.fingerprint,
-        error: normalizedError,
-      })
+    return () => {
+      cancelled = true
+      if (
+        !candidateResultsRef.current.has(candidateDeliveryId) &&
+        processedCandidateDeliveryRef.current === candidateDeliveryId
+      ) {
+        processedCandidateDeliveryRef.current = null
+      }
     }
   }, [
     candidateDeliveryId,

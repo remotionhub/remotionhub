@@ -24,7 +24,6 @@ describe('validateAndStripStudioImports', () => {
     const source = [
       "import React from 'react'",
       "import { AbsoluteFill } from 'remotion'",
-      "import { Player } from '@remotion/player'",
       "import { Circle } from '@remotion/shapes'",
       "import { TransitionSeries } from '@remotion/transitions'",
       "import { Lottie } from '@remotion/lottie'",
@@ -38,7 +37,6 @@ describe('validateAndStripStudioImports', () => {
       [
         '',
         'var AbsoluteFill = __studioRemotion.AbsoluteFill;',
-        'var Player = __studioRemotionPlayer.Player;',
         'var Circle = __studioRemotionShapes.Circle;',
         'var TransitionSeries = __studioRemotionTransitions.TransitionSeries;',
         'var Lottie = __studioRemotionLottie.Lottie;',
@@ -97,20 +95,20 @@ describe('validateAndStripStudioImports', () => {
     )
   })
 
-  it('preserves named aliases and namespace bindings after stripping imports', () => {
+  it('preserves named aliases after stripping imports', () => {
     expect(
       validateAndStripStudioImports(
         [
           "import { AbsoluteFill as Fill } from 'remotion'",
-          "import * as THREE from 'three'",
-          'export const MyAnimation = () => <Fill>{THREE.REVISION}</Fill>',
+          "import { MathUtils as ThreeMath } from 'three'",
+          'export const MyAnimation = () => <Fill>{ThreeMath.clamp(2, 0, 1)}</Fill>',
         ].join('\n'),
       ),
     ).toBe(
       [
         'var Fill = __studioRemotion.AbsoluteFill;',
-        'var THREE = __studioThree;',
-        'export const MyAnimation = () => <Fill>{THREE.REVISION}</Fill>',
+        'var ThreeMath = __studioThree.MathUtils;',
+        'export const MyAnimation = () => <Fill>{ThreeMath.clamp(2, 0, 1)}</Fill>',
       ].join('\n'),
     )
   })
@@ -123,6 +121,18 @@ describe('validateAndStripStudioImports', () => {
     ).toBe(
       'var Triangle = __studioThree.Triangle;\nexport const MyAnimation = () => Triangle',
     )
+  })
+
+  it.each([
+    "import { delayRender } from 'remotion'",
+    "import { Img } from 'remotion'",
+    "import * as Remotion from 'remotion'",
+  ])('rejects unsupported runtime APIs: %s', (moduleSyntax) => {
+    expect(() =>
+      validateAndStripStudioImports(
+        `${moduleSyntax}\nexport const MyAnimation = () => null`,
+      ),
+    ).toThrow('Unsupported Studio API')
   })
 
   it('does not treat import-like text in strings, templates, or comments as modules', () => {

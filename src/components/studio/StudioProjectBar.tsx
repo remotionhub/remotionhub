@@ -22,32 +22,59 @@ export default function StudioProjectBar({
   const { t } = useI18n()
   const [draft, setDraft] = useState(title)
   const [savedValue, setSavedValue] = useState(title.trim())
+  const savedValueRef = useRef(title.trim())
   const latestInputRef = useRef(title)
   const previousTitleRef = useRef(title)
   const saveTitleRef = useRef(onSaveTitle)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saveInFlightRef = useRef<string | null>(null)
+  const queuedTitleRef = useRef<string | null>(null)
   saveTitleRef.current = onSaveTitle
 
   useEffect(() => {
     if (latestInputRef.current === previousTitleRef.current) {
       latestInputRef.current = title
       setDraft(title)
+      savedValueRef.current = title.trim()
       setSavedValue(title.trim())
     }
     previousTitleRef.current = title
   }, [title])
 
-  const save = async (value: string) => {
+  const drainSaveQueue = async () => {
+    if (saveInFlightRef.current !== null) return
+
+    while (queuedTitleRef.current !== null) {
+      const nextTitle = queuedTitleRef.current
+      queuedTitleRef.current = null
+      saveInFlightRef.current = nextTitle
+      try {
+        const saved = await saveTitleRef.current(nextTitle)
+        if (latestInputRef.current.trim() === saved) {
+          savedValueRef.current = saved
+          setSavedValue(saved)
+        }
+      } catch {
+        // Keep the unsaved state visible so the next edit or blur can retry.
+      } finally {
+        saveInFlightRef.current = null
+      }
+    }
+  }
+
+  const save = (value: string) => {
     const normalized = value.trim()
-    if (!normalized || normalized.length > 120 || normalized === savedValue) {
+    if (
+      !normalized ||
+      normalized.length > 120 ||
+      (normalized === savedValueRef.current &&
+        saveInFlightRef.current === null)
+    ) {
       return
     }
-    try {
-      const saved = await saveTitleRef.current(normalized)
-      if (latestInputRef.current.trim() === saved) setSavedValue(saved)
-    } catch {
-      // Keep the unsaved state visible so the next edit or blur can retry.
-    }
+    queuedTitleRef.current =
+      normalized === saveInFlightRef.current ? null : normalized
+    void drainSaveQueue()
   }
 
   useEffect(() => {
