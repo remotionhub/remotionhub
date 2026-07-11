@@ -4,6 +4,7 @@ export const STUDIO_FPS = 30
 export const STUDIO_DEFAULT_DURATION_IN_FRAMES = 240
 export const STUDIO_MIN_DURATION_IN_FRAMES = 30
 export const STUDIO_MAX_DURATION_IN_FRAMES = 900
+export const STUDIO_MAX_SOURCE_LENGTH = 100_000
 
 export const studioAspectRatioSchema = z.enum(['16:9', '9:16', '1:1'])
 export type StudioAspectRatio = z.infer<typeof studioAspectRatioSchema>

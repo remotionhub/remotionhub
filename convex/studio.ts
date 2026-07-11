@@ -149,6 +149,76 @@ export async function sha256Hex(value: string) {
   ).join('')
 }
 
+const studioRemixUnavailable = 'Studio Remix unavailable'
+
+export const createRemixProject = mutation({
+  args: { componentVersionId: v.id('componentVersions') },
+  handler: async (ctx, { componentVersionId }) => {
+    const { userId } = await requireUser(ctx)
+    const version = await ctx.db.get(componentVersionId)
+    if (!version) throw new Error(studioRemixUnavailable)
+
+    const [component, bundle] = await Promise.all([
+      ctx.db.get(version.componentId),
+      ctx.db
+        .query('studioBundles')
+        .withIndex('by_version', (q) =>
+          q.eq('componentVersionId', componentVersionId),
+        )
+        .unique(),
+    ])
+    if (
+      !component ||
+      component.status !== 'published' ||
+      !component.isActive ||
+      component.runtime !== 'remotion' ||
+      version.metadata.runtime !== 'remotion' ||
+      !bundle ||
+      bundle.status !== 'validated'
+    ) {
+      throw new Error(studioRemixUnavailable)
+    }
+    const publisher = await ctx.db.get(component.publisherId)
+    if (!publisher) throw new Error(studioRemixUnavailable)
+
+    const now = Date.now()
+    const projectId = await ctx.db.insert('studioProjects', {
+      ownerId: userId,
+      title: `${component.displayName} Remix`,
+      status: 'active',
+      source: {
+        kind: 'catalog-remix',
+        componentId: component._id,
+        componentVersionId: version._id,
+        ownerHandle: publisher.handle,
+        slug: component.slug,
+        version: version.version,
+        commit: bundle.commit,
+        entryPoint: bundle.entryPoint,
+        bundleHash: bundle.contentHash,
+      },
+      composition: bundle.composition,
+      createdAt: now,
+      updatedAt: now,
+    })
+    const revisionId = await ctx.db.insert('studioRevisions', {
+      projectId,
+      sequence: 1,
+      origin: 'catalog-remix',
+      code: bundle.code,
+      codeHash: bundle.contentHash,
+      composition: bundle.composition,
+      assistantSummary: `Remixed ${publisher.handle}/${component.slug}@${version.version}`,
+      createdAt: now,
+    })
+    await ctx.db.patch(projectId, {
+      currentRevisionId: revisionId,
+      lastRunnableRevisionId: revisionId,
+    })
+    return { projectId }
+  },
+})
+
 export const startPromptProject = mutation({
   args: { prompt: v.string(), idempotencyKey: v.string() },
   handler: async (ctx, args) => {

@@ -284,6 +284,38 @@ async function seedFailedRun(input?: {
   return { ...fixture, runId }
 }
 
+async function seedRemixCatalog() {
+  const t = convexTest(schema, modules)
+  return {
+    t,
+    ...(await t.run(async (ctx) => {
+      const ownerId = await ctx.db.insert('users', { name: 'Owner' })
+      const publisherId = await ctx.db.insert('publishers', {
+        handle: 'terence', displayName: 'Terence', createdAt: 1, updatedAt: 1,
+      })
+      const componentId = await ctx.db.insert('components', {
+        runtime: 'remotion', publisherId, slug: 'card-avatar',
+        displayName: 'Card Avatar', summary: 'Avatar', categories: ['card'], tags: [],
+        status: 'published', isActive: true,
+        stats: { views: 0, downloads: 0, stars: 0 }, createdAt: 1, updatedAt: 1,
+      })
+      const componentVersionId = await ctx.db.insert('componentVersions', {
+        componentId, version: '1.0.2', changelog: 'Initial', preview: {},
+        metadata: { runtime: 'remotion', entryPoint: 'src/CardAvatar.tsx', aspectRatios: ['16:9'] },
+        sourceProvenance: { catalogFile: 'catalog/components/card-avatar.json', importedAt: 1, fingerprint: 'v1' },
+        tags: [], isPrerelease: false, fingerprint: 'v1', createdAt: 1, updatedAt: 1,
+      })
+      const bundleId = await ctx.db.insert('studioBundles', {
+        componentVersionId, entryPoint: 'src/CardAvatar.tsx',
+        code: 'export const MyAnimation = () => null', allowedDependencies: ['remotion'],
+        composition, commit: 'abc123', sourcePath: 'catalog/studio/card-avatar.tsx',
+        contentHash: 'bundle-hash', status: 'validated', createdAt: 1,
+      })
+      return { ownerId, componentId, componentVersionId, bundleId }
+    })),
+  }
+}
+
 describe('studio ownership and revision history', () => {
   beforeEach(() => {
     useIdentityAuthMock()
@@ -1449,6 +1481,54 @@ describe('studio generation runs', () => {
     expect(snapshot.project.currentRevisionId).toBeUndefined()
     expect(snapshot.project.lastRunnableRevisionId).toBeUndefined()
     expect(snapshot.project.composition).toEqual(composition)
+  })
+
+  it('creates an owner-private immutable catalog remix snapshot', async () => {
+    const { t, ownerId, componentId, componentVersionId, bundleId } = await seedRemixCatalog()
+    await expect(t.mutation(api.studio.createRemixProject, { componentVersionId }))
+      .rejects.toThrow('Unauthorized')
+    const owner = t.withIdentity({ subject: ownerId })
+    const result = await owner.mutation(api.studio.createRemixProject, { componentVersionId })
+    await t.run((ctx) => ctx.db.patch(bundleId, { status: 'removed' }))
+    const snapshot = await owner.query(api.studio.getProject, { projectId: result.projectId })
+
+    expect(snapshot.project.ownerId).toBe(ownerId)
+    expect(snapshot.project.source).toMatchObject({
+      kind: 'catalog-remix', componentId, componentVersionId, bundleHash: 'bundle-hash',
+    })
+    expect(snapshot.revision).toMatchObject({
+      origin: 'catalog-remix', sequence: 1,
+      code: 'export const MyAnimation = () => null', codeHash: 'bundle-hash',
+    })
+  })
+
+  it('rejects removed catalog remix bundles uniformly', async () => {
+    const { t, ownerId, componentVersionId, bundleId } = await seedRemixCatalog()
+    await t.run((ctx) => ctx.db.patch(bundleId, { status: 'removed' }))
+    await expect(t.withIdentity({ subject: ownerId }).mutation(
+      api.studio.createRemixProject, { componentVersionId },
+    )).rejects.toThrow('Studio Remix unavailable')
+  })
+
+  it('rejects catalog versions whose component is no longer published', async () => {
+    const { t, ownerId, componentId, componentVersionId } = await seedRemixCatalog()
+    await t.run((ctx) => ctx.db.patch(componentId, { status: 'draft' }))
+
+    await expect(t.withIdentity({ subject: ownerId }).mutation(
+      api.studio.createRemixProject, { componentVersionId },
+    )).rejects.toThrow('Studio Remix unavailable')
+  })
+
+  it('keeps catalog remix projects private to their creator', async () => {
+    const { t, ownerId, componentVersionId } = await seedRemixCatalog()
+    const project = await t.withIdentity({ subject: ownerId }).mutation(
+      api.studio.createRemixProject, { componentVersionId },
+    )
+    const strangerId = await t.run((ctx) => ctx.db.insert('users', { name: 'Stranger' }))
+
+    await expect(t.withIdentity({ subject: strangerId }).query(
+      api.studio.getProject, { projectId: project.projectId },
+    )).rejects.toThrow('Studio project unavailable')
   })
 
   it('creates a correction revision against the restored runnable pointer', async () => {

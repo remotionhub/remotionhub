@@ -8,12 +8,12 @@ import * as RemotionThreeRuntime from '@remotion/three'
 import * as RemotionTransitionsRuntime from '@remotion/transitions'
 import * as RemotionRuntime from 'remotion'
 import * as ThreeRuntime from 'three'
+import { STUDIO_MAX_SOURCE_LENGTH } from '../../../shared/studio'
 import {
   STUDIO_RUNTIME_NAMESPACE_BY_PACKAGE,
   validateAndStripStudioImports,
 } from '../../../shared/studioSource'
 
-const MAX_STUDIO_SOURCE_LENGTH = 100_000
 const VALID_RUNTIME_NAME = /^[$A-Z_a-z][$\w]*$/
 const INVALID_RUNTIME_NAMES = new Set([
   'arguments',
@@ -170,7 +170,7 @@ function normalizeValidationError(error: unknown): never {
 export function compileStudioComponent(
   source: string,
 ): React.ComponentType<Record<string, never>> {
-  if (source.length > MAX_STUDIO_SOURCE_LENGTH) {
+  if (source.length > STUDIO_MAX_SOURCE_LENGTH) {
     throw new StudioCompileError(
       'STUDIO_SOURCE_TOO_LARGE',
       'Studio source is too large',
