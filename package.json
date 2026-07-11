@@ -15,6 +15,7 @@
     "catalog:validate": "tsx scripts/import-catalog.ts --dry-run --local-only",
     "catalog:import": "tsx scripts/import-catalog.ts",
     "test:e2e": "playwright test",
+    "test:e2e:studio": "playwright test e2e/studio-smoke.pw.test.ts",
     "ci:unit": "npm run coverage",
     "ci:types-build": "tsc --noEmit && npm run build",
     "ci:playwright-smoke": "npm run build && npm run test:e2e",

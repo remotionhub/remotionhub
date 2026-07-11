@@ -9,7 +9,7 @@ CONVEX_BACKEND_VERSION ?= precompiled-2026-06-09-b6aaa1a
 STATIC_CONVEX_URL ?= https://example.invalid
 PLAYWRIGHT_USE_SYSTEM_CHROME ?= 1
 
-.PHONY: help install dev local up convex app open validate seed test coverage typecheck build build-local check e2e smoke preview routes clean ensure-convex
+.PHONY: help install dev local up convex app open validate seed test coverage typecheck build build-local check e2e studio-smoke smoke preview routes clean ensure-convex
 
 help: ## Show available make targets.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nRemotionHub make targets:\n\n"} /^[a-zA-Z0-9_.-]+:.*##/ {printf "  %-14s %s\n", $$1, $$2} END {printf "\nVariables: APP_PORT=%s CONVEX_URL=%s PREVIEW_PORT=%s\n\n", "$(APP_PORT)", "$(CONVEX_URL)", "$(PREVIEW_PORT)"}' $(MAKEFILE_LIST)
@@ -85,6 +85,10 @@ ensure-convex: ## Verify local Convex is reachable.
 
 e2e: ensure-convex seed build-local ## Run Playwright smoke tests against local Convex.
 	PLAYWRIGHT_USE_SYSTEM_CHROME="$(PLAYWRIGHT_USE_SYSTEM_CHROME)" VITE_CONVEX_URL="$(CONVEX_URL)" npm run test:e2e
+
+studio-smoke: ensure-convex seed build-local ## Run deterministic Studio browser smoke.
+	npx convex env set --deployment local STUDIO_MODEL_MODE stub
+	PLAYWRIGHT_USE_SYSTEM_CHROME="$(PLAYWRIGHT_USE_SYSTEM_CHROME)" VITE_CONVEX_URL="$(CONVEX_URL)" npm run test:e2e:studio
 
 smoke: e2e ## Alias for e2e.
 
