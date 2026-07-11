@@ -194,3 +194,16 @@ AssertionError: expected <section …(4)>…(5)</section> to be null
 Test Files  3 passed (3)
 Tests  18 passed (18)
 ```
+
+## Controller Real-Browser Evidence
+
+- Chrome desktop at 1374x782 before `cacc349`: repeated backdrop clicks closed the dialog, but after 100ms `document.activeElement` was `BODY` with no `aria-label`.
+- Chrome desktop at 1374x782 after `cacc349` and reload: the same backdrop click closed the dialog; after 100ms `document.activeElement` was a `BUTTON` with `aria-label` `登录`.
+- Playwright CLI mobile at 390x844: `bodyScrollWidth` was `390`; the overlay was `390x844` and its parent was `document.body`; GitHub and WeChat controls were each `80x56`; Escape closed the dialog and restored `activeLabel` `登录`.
+- Chrome app logs had no app-origin errors; one chrome-extension fetch error was unrelated.
+- Playwright console errors repeatedly reported `ws://127.0.0.1:3212` Convex connection-refused errors, explaining why live OAuth route initiation could not complete locally.
+- The local Chrome Provider click entered pending but remained on localhost because the Convex backend was unavailable; no query strings or credential values were logged.
+
+### Evidence Scope
+
+`fireEvent.click` is a component regression test for the `target === currentTarget` guard: clicking a provider-area child keeps the dialog open. It does not reproduce the browser's full native event-ordering behavior. That exact ordering is proven by the real Chrome before/after evidence above, where the same backdrop interaction changed focus restoration from `BODY` before `cacc349` to the Header login `BUTTON` after `cacc349`.

@@ -281,6 +281,18 @@ describe('Header', () => {
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Log in' }))
   })
 
+  it('keeps the login dialog open when a provider button is clicked', () => {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
+    authMocks.signIn.mockResolvedValue({ signingIn: true })
+    renderHeader()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    const dialog = screen.getByRole('dialog', { name: 'Log in to RemotionHub' })
+    fireEvent.click(screen.getByRole('button', { name: 'Sign in with GitHub' }))
+
+    expect(screen.getByRole('dialog', { name: 'Log in to RemotionHub' })).toBe(dialog)
+  })
+
   it('shows a stable auth loading skeleton', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en')
     authMocks.useAuthStatus.mockReturnValue({
