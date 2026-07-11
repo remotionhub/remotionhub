@@ -73,6 +73,25 @@ describe('compileStudioComponent', () => {
     expect(screen.getByTestId('aliased').textContent).toBe('1')
   })
 
+  it('injects transition presentation functions from their public subpaths', () => {
+    const Component = compileStudioComponent(
+      [
+        "import { fade } from '@remotion/transitions/fade'",
+        "import { slide } from '@remotion/transitions/slide'",
+        "import { wipe } from '@remotion/transitions/wipe'",
+        'export const MyAnimation = () => (',
+        "  <div data-testid='transitions'>{[typeof fade, typeof slide, typeof wipe].join(',')}</div>",
+        ')',
+      ].join('\n'),
+    )
+
+    render(<Component />)
+
+    expect(screen.getByTestId('transitions').textContent).toBe(
+      'function,function,function',
+    )
+  })
+
   it('resolves colliding named imports from the declared package', () => {
     const Component = compileStudioComponent(
       [

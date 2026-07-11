@@ -28,6 +28,7 @@ type FailedPreviewDelivery =
       kind: 'candidate'
       runId: Id<'studioGenerationRuns'>
       runStatus: Doc<'studioGenerationRuns'>['status']
+      deliveryId: string
       result: CandidateResult
     }
   | { kind: 'revision-runtime'; result: RevisionRuntimeError }
@@ -52,7 +53,7 @@ function isSamePreviewDelivery(
   if (left.kind === 'candidate' && right.kind === 'candidate') {
     return (
       left.runId === right.runId &&
-      left.result.fingerprint === right.result.fingerprint
+      left.deliveryId === right.deliveryId
     )
   }
   return (
@@ -70,6 +71,7 @@ function isPreviewDeliveryCurrent(
     return (
       snapshot.run?._id === delivery.runId &&
       snapshot.run.status === delivery.runStatus &&
+      getCandidateDeliveryId(snapshot.run) === delivery.deliveryId &&
       snapshot.run.candidateFingerprint === delivery.result.fingerprint
     )
   }
@@ -107,6 +109,19 @@ function useIsDesktop() {
 
 function normalizeWorkspaceError(error: string | undefined) {
   return (error ?? 'Preview failed').split(/\r?\n/, 1)[0].slice(0, 300)
+}
+
+function getCandidateDeliveryId(
+  run: Pick<
+    Doc<'studioGenerationRuns'>,
+    '_id' | 'candidateFingerprint' | 'correctionAttempt'
+  >,
+) {
+  return JSON.stringify([
+    run._id,
+    run.correctionAttempt,
+    run.candidateFingerprint,
+  ])
 }
 
 function toStudioComposition(
@@ -235,28 +250,8 @@ function StudioWorkspaceData({
   const rejectCandidate = useMutation(api.studio.rejectCandidate)
   const reportRuntimeFailure = useMutation(api.studio.reportRuntimeFailure)
   const retryFailedGeneration = useMutation(api.studio.retryFailedGeneration)
-  const processedCandidateFingerprints = useRef(new Set<string>())
-  const latestCandidateFingerprint = useRef<string | null>(null)
+  const processedCandidateDeliveries = useRef(new Set<string>())
   const reportedRuntimeFailures = useRef(new Set<string>())
-
-  const candidateFingerprint = snapshot?.run?.candidateFingerprint ?? null
-  useEffect(() => {
-    if (
-      !candidateFingerprint ||
-      latestCandidateFingerprint.current === candidateFingerprint
-    ) {
-      return
-    }
-    if (latestCandidateFingerprint.current !== null) {
-      const alreadyProcessedCurrent =
-        processedCandidateFingerprints.current.has(candidateFingerprint)
-      processedCandidateFingerprints.current.clear()
-      if (alreadyProcessedCurrent) {
-        processedCandidateFingerprints.current.add(candidateFingerprint)
-      }
-    }
-    latestCandidateFingerprint.current = candidateFingerprint
-  }, [candidateFingerprint])
 
   useEffect(() => {
     if (snapshot === undefined || !failedPreviewDelivery) return
@@ -289,6 +284,7 @@ function StudioWorkspaceData({
       ? {
           code: run.candidateCode,
           composition: toStudioComposition(run.candidateComposition),
+          deliveryId: getCandidateDeliveryId(run),
           fingerprint: run.candidateFingerprint,
         }
       : null
@@ -304,9 +300,9 @@ function StudioWorkspaceData({
     }
 
     if (delivery.kind === 'candidate') {
-      const { result, runId } = delivery
-      if (processedCandidateFingerprints.current.has(result.fingerprint)) return
-      processedCandidateFingerprints.current.add(result.fingerprint)
+      const { deliveryId, result, runId } = delivery
+      if (processedCandidateDeliveries.current.has(deliveryId)) return
+      processedCandidateDeliveries.current.add(deliveryId)
       try {
         if (result.status === 'accepted') {
           await acceptCandidate({
@@ -326,7 +322,7 @@ function StudioWorkspaceData({
           current && isSamePreviewDelivery(current, delivery) ? null : current,
         )
       } catch {
-        processedCandidateFingerprints.current.delete(result.fingerprint)
+        processedCandidateDeliveries.current.delete(deliveryId)
         setFailedPreviewDelivery(delivery)
       }
       return
@@ -352,8 +348,11 @@ function StudioWorkspaceData({
 
   const handleCandidateResult = async (result: CandidateResult) => {
     if (!run || run.candidateFingerprint !== result.fingerprint) return
+    const deliveryId = getCandidateDeliveryId(run)
+    if (result.deliveryId !== deliveryId) return
     await deliverPreviewResult({
       kind: 'candidate',
+      deliveryId,
       runId: run._id,
       runStatus: run.status,
       result,
@@ -440,23 +439,22 @@ function StudioWorkspaceData({
       ) : (
         <div className="studio-mobile-workspace">
           <MobileTabs selected={mobileTab} onSelect={setMobileTab} />
-          {mobileTab === 'chat' ? (
-            <div
-              aria-labelledby="studio-mobile-chat-tab"
-              id="studio-mobile-chat-panel"
-              role="tabpanel"
-            >
-              {chatPanel}
-            </div>
-          ) : (
-            <div
-              aria-labelledby="studio-mobile-preview-tab"
-              id="studio-mobile-preview-panel"
-              role="tabpanel"
-            >
-              {previewPanel}
-            </div>
-          )}
+          <div
+            aria-labelledby="studio-mobile-chat-tab"
+            hidden={mobileTab !== 'chat'}
+            id="studio-mobile-chat-panel"
+            role="tabpanel"
+          >
+            {chatPanel}
+          </div>
+          <div
+            aria-labelledby="studio-mobile-preview-tab"
+            hidden={mobileTab !== 'preview'}
+            id="studio-mobile-preview-panel"
+            role="tabpanel"
+          >
+            {previewPanel}
+          </div>
         </div>
       )}
 

@@ -269,7 +269,7 @@ Generation Run 记录一次生成或纠错尝试：
 
 同一项目最多有一个活动 Run。开始 Run 的 Mutation 必须在同一事务中完成所有权校验、并发检查、消息写入和 Run 创建。
 
-候选代码和 Composition 由后端生成、校验并保存。`candidateFingerprint` 覆盖清理后的源码与规范化 Composition。客户端编译候选后调用带 `runId` 与 `candidateFingerprint` 的确认 Mutation；后端重新校验所有权、Run 状态和指纹，才创建 Revision。客户端报告的“可编译”只影响该用户项目的 Preview 状态，不能作为安全、发布或计费依据。
+候选代码和 Composition 由后端生成、校验并保存。`candidateFingerprint` 覆盖清理后的源码与规范化 Composition。浏览器以 `runId + correctionAttempt + candidateFingerprint` 形成一次候选交付身份；Preview 编译与 Workspace 终态上报都按该身份去重，而不能只按内容指纹去重。这样，同内容的 Follow-up 仍可形成新 Revision，同一 Run 的后续纠错也不会被旧终态吞掉。客户端编译候选后调用带 `runId` 与 `candidateFingerprint` 的确认 Mutation；后端重新校验所有权、Run 状态和指纹，才创建 Revision。客户端报告的“可编译”只影响该用户项目的 Preview 状态，不能作为安全、发布或计费依据。
 
 ### `studioBundles`
 
@@ -357,7 +357,7 @@ old_string + new_string + description
 
 运行时选择性适配参考项目的 Compiler 行为：
 
-- 支持 React、Remotion、Remotion Shapes、Transitions、Lottie 和明确允许的 Three.js 能力。
+- 支持 React、Remotion、Remotion Shapes、Transitions（包含 `fade`、`slide`、`wipe` 公共子路径）、Lottie 和明确允许的 Three.js 能力。
 - 移除静态 import，并由 Runtime 注入允许 API。
 - 使用 Babel Standalone 转换 TypeScript 与 JSX。
 - 从约定导出的组件中提取组件体。
@@ -415,6 +415,7 @@ old_string + new_string + description
 - Chat、Preview 和 History 有明确可访问名称；只读 Composition 摘要有可理解的文本标签。
 - History 使用真正的 modal primitive：打开后移动并约束焦点、阻止背景交互、支持 Escape 关闭，并在关闭后恢复触发按钮焦点。
 - 移动端 Chat 与 Preview 页签保留键盘和屏幕阅读器语义。
+- 移动端两个页签保持互斥可见，但 Preview Runtime 始终挂载，使候选编译与终态交付不依赖用户主动切换到 Preview。
 - Player 错误状态提供文本替代，不把错误只画在视频区域内。
 - `prefers-reduced-motion` 仅影响 Studio UI 动效，不改变用户生成的 Remotion 内容。
 

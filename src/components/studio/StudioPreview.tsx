@@ -14,12 +14,14 @@ import { compileStudioComponent } from '../../lib/studio/compiler'
 
 type StudioCandidate = {
   code: string
+  deliveryId: string
   fingerprint: string
   composition: StudioComposition
 }
 
 export type CandidateResult = {
   status: 'accepted' | 'rejected'
+  deliveryId: string
   fingerprint: string
   error?: string
 }
@@ -43,7 +45,7 @@ type PreviewEntry = {
   component: ComponentType<Record<string, never>>
   composition: StudioComposition
   source:
-    | { kind: 'candidate'; fingerprint: string }
+    | { kind: 'candidate'; deliveryId: string; fingerprint: string }
     | { kind: 'revision'; revisionId: string | null }
   previous: PreviewEntry | null
 }
@@ -122,7 +124,7 @@ export default function StudioPreview({
   const revisionCompositionRef = useRef(revisionComposition)
   const onCandidateResultRef = useRef(onCandidateResult)
   const onRevisionRuntimeErrorRef = useRef(onRevisionRuntimeError)
-  const processedCandidateFingerprintRef = useRef<string | null>(null)
+  const processedCandidateDeliveryRef = useRef<string | null>(null)
   const candidateResultsRef = useRef(new Map<string, CandidateResult['status']>())
   const failedRevisionIdsRef = useRef(new Set<string>())
   const entrySequenceRef = useRef(0)
@@ -139,8 +141,9 @@ export default function StudioPreview({
 
   const notifyCandidate = useCallback((result: CandidateResult) => {
     // Candidate results are terminal; after acceptance, recovery is revision-owned.
-    if (candidateResultsRef.current.has(result.fingerprint)) return
-    candidateResultsRef.current.set(result.fingerprint, result.status)
+    const { deliveryId } = result
+    if (candidateResultsRef.current.has(deliveryId)) return
+    candidateResultsRef.current.set(deliveryId, result.status)
     onCandidateResultRef.current(result)
   }, [])
 
@@ -164,6 +167,7 @@ export default function StudioPreview({
       if (entry.source.kind === 'candidate') {
         notifyCandidate({
           status: 'accepted',
+          deliveryId: entry.source.deliveryId,
           fingerprint: entry.source.fingerprint,
         })
       }
@@ -187,6 +191,7 @@ export default function StudioPreview({
       if (failedEntry.source.kind === 'candidate') {
         notifyCandidate({
           status: 'rejected',
+          deliveryId: failedEntry.source.deliveryId,
           fingerprint: failedEntry.source.fingerprint,
           error: normalizedError,
         })
@@ -231,13 +236,13 @@ export default function StudioPreview({
     }
   }, [notifyRevisionFailure, revisionCode, revisionId, showEntry])
 
-  const candidateFingerprint = candidate?.fingerprint ?? null
+  const candidateDeliveryId = candidate?.deliveryId ?? null
   useEffect(() => {
-    if (!candidateFingerprint) return
+    if (!candidateDeliveryId) return
     if (
-      candidateResultsRef.current.has(candidateFingerprint) ||
+      candidateResultsRef.current.has(candidateDeliveryId) ||
       (revisionCode !== null && !lastGoodKey) ||
-      processedCandidateFingerprintRef.current === candidateFingerprint
+      processedCandidateDeliveryRef.current === candidateDeliveryId
     ) {
       return
     }
@@ -246,12 +251,12 @@ export default function StudioPreview({
     const previous = lastGoodRef.current
     if (
       !currentCandidate ||
-      currentCandidate.fingerprint !== candidateFingerprint
+      currentCandidate.deliveryId !== candidateDeliveryId
     ) {
       return
     }
 
-    processedCandidateFingerprintRef.current = candidateFingerprint
+    processedCandidateDeliveryRef.current = candidateDeliveryId
     try {
       const component = compileStudioComponent(currentCandidate.code)
       entrySequenceRef.current += 1
@@ -259,7 +264,11 @@ export default function StudioPreview({
         key: `candidate-${entrySequenceRef.current}`,
         component,
         composition: currentCandidate.composition,
-        source: { kind: 'candidate', fingerprint: candidateFingerprint },
+        source: {
+          kind: 'candidate',
+          deliveryId: candidateDeliveryId,
+          fingerprint: currentCandidate.fingerprint,
+        },
         previous,
       })
       setStatus('Loading candidate preview')
@@ -268,12 +277,13 @@ export default function StudioPreview({
       setStatus(`Preview error: ${normalizedError}`)
       notifyCandidate({
         status: 'rejected',
-        fingerprint: candidateFingerprint,
+        deliveryId: candidateDeliveryId,
+        fingerprint: currentCandidate.fingerprint,
         error: normalizedError,
       })
     }
   }, [
-    candidateFingerprint,
+    candidateDeliveryId,
     lastGoodKey,
     notifyCandidate,
     revisionCode,

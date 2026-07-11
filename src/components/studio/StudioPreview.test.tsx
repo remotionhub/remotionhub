@@ -131,6 +131,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.compileFailure,
+          deliveryId: 'bad',
           fingerprint: 'bad',
           composition,
         }}
@@ -141,6 +142,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'rejected',
+        deliveryId: 'bad',
         fingerprint: 'bad',
         error: 'Unexpected token',
       }),
@@ -157,6 +159,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.candidate,
+          deliveryId: 'candidate-1',
           fingerprint: 'candidate-1',
           composition: { ...composition, width: 1080, height: 1080 },
         }}
@@ -168,6 +171,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'accepted',
+        deliveryId: 'candidate-1',
         fingerprint: 'candidate-1',
       }),
     )
@@ -183,6 +187,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.runtimeFailure,
+          deliveryId: 'runtime-bad',
           fingerprint: 'runtime-bad',
           composition,
         }}
@@ -193,6 +198,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'rejected',
+        deliveryId: 'runtime-bad',
         fingerprint: 'runtime-bad',
         error: 'Candidate runtime failure',
       }),
@@ -200,6 +206,7 @@ describe('StudioPreview', () => {
     expect(props.onCandidateResult).toHaveBeenCalledTimes(1)
     expect(props.onCandidateResult).not.toHaveBeenCalledWith({
       status: 'accepted',
+      deliveryId: 'runtime-bad',
       fingerprint: 'runtime-bad',
     })
   })
@@ -210,6 +217,7 @@ describe('StudioPreview', () => {
     props.revisionCode = null
     props.candidate = {
       code: sources.candidate,
+      deliveryId: 'first-candidate',
       fingerprint: 'first-candidate',
       composition,
     }
@@ -220,6 +228,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'accepted',
+        deliveryId: 'first-candidate',
         fingerprint: 'first-candidate',
       }),
     )
@@ -231,6 +240,7 @@ describe('StudioPreview', () => {
     props.revisionCode = null
     props.candidate = {
       code: sources.compileFailure,
+      deliveryId: 'first-bad',
       fingerprint: 'first-bad',
       composition,
     }
@@ -240,6 +250,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'rejected',
+        deliveryId: 'first-bad',
         fingerprint: 'first-bad',
         error: 'Unexpected token',
       }),
@@ -266,6 +277,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.candidate,
+          deliveryId: 'promoted-candidate',
           fingerprint: 'promoted-candidate',
           composition,
         }}
@@ -275,6 +287,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'accepted',
+        deliveryId: 'promoted-candidate',
         fingerprint: 'promoted-candidate',
       }),
     )
@@ -317,6 +330,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.candidate,
+          deliveryId: 'candidate-one',
           fingerprint: 'candidate-one',
           composition,
         }}
@@ -329,6 +343,7 @@ describe('StudioPreview', () => {
         {...props}
         candidate={{
           code: sources.candidateTwo,
+          deliveryId: 'candidate-two',
           fingerprint: 'candidate-two',
           composition,
         }}
@@ -369,6 +384,7 @@ describe('StudioPreview', () => {
     const props = createProps()
     const candidate = {
       code: sources.candidate,
+      deliveryId: 'stable-fingerprint',
       fingerprint: 'stable-fingerprint',
       composition,
     }
@@ -392,6 +408,7 @@ describe('StudioPreview', () => {
     const props = createProps()
     const candidate = {
       code: sources.candidate,
+      deliveryId: 'terminal-fingerprint',
       fingerprint: 'terminal-fingerprint',
       composition,
     }
@@ -403,6 +420,7 @@ describe('StudioPreview', () => {
     await waitFor(() =>
       expect(props.onCandidateResult).toHaveBeenCalledWith({
         status: 'accepted',
+        deliveryId: 'terminal-fingerprint',
         fingerprint: 'terminal-fingerprint',
       }),
     )
@@ -417,5 +435,44 @@ describe('StudioPreview', () => {
 
     await waitFor(() => expect(compileStudioComponent).toHaveBeenCalledTimes(2))
     expect(screen.getByText('Candidate')).toBeTruthy()
+  })
+
+  it('processes identical source fingerprints for distinct candidate deliveries', async () => {
+    const props = createProps()
+    const { rerender } = render(<StudioPreview {...props} />)
+    expect(await screen.findByText('Last good')).toBeTruthy()
+
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{
+          code: sources.candidate,
+          deliveryId: 'run-1:attempt-0',
+          fingerprint: 'same-fingerprint',
+          composition,
+        }}
+      />,
+    )
+    await waitFor(() => expect(props.onCandidateResult).toHaveBeenCalledTimes(1))
+
+    rerender(
+      <StudioPreview
+        {...props}
+        candidate={{
+          code: sources.candidate,
+          deliveryId: 'run-2:attempt-0',
+          fingerprint: 'same-fingerprint',
+          composition,
+        }}
+      />,
+    )
+
+    await waitFor(() => expect(props.onCandidateResult).toHaveBeenCalledTimes(2))
+    expect(compileStudioComponent).toHaveBeenCalledTimes(3)
+    expect(props.onCandidateResult).toHaveBeenLastCalledWith({
+      status: 'accepted',
+      deliveryId: 'run-2:attempt-0',
+      fingerprint: 'same-fingerprint',
+    })
   })
 })
