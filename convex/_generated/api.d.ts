@@ -13,6 +13,7 @@ import type * as components_ from "../components.js";
 import type * as http from "../http.js";
 import type * as lib_access from "../lib/access.js";
 import type * as lib_catalog from "../lib/catalog.js";
+import type * as lib_catalogStudio from "../lib/catalogStudio.js";
 import type * as lib_handles from "../lib/handles.js";
 import type * as lib_studioGeneration from "../lib/studioGeneration.js";
 import type * as lib_studioModel from "../lib/studioModel.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   "lib/access": typeof lib_access;
   "lib/catalog": typeof lib_catalog;
+  "lib/catalogStudio": typeof lib_catalogStudio;
   "lib/handles": typeof lib_handles;
   "lib/studioGeneration": typeof lib_studioGeneration;
   "lib/studioModel": typeof lib_studioModel;
