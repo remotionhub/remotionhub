@@ -233,6 +233,8 @@ erDiagram
 
 `Publisher` represents the catalog owner. The first MVP can seed only Terence, but the schema should keep the owner relationship explicit to avoid future migration when more publishers are introduced.
 
+Catalog publisher handles are declared in a shared registry before catalog data is imported. Personal publisher allocation must skip every registered catalog handle, even when no corresponding system publisher exists in Convex yet. Catalog validation must reject unregistered publisher handles so adding a publisher requires updating the registry in the same change.
+
 Required fields:
 
 - `handle`

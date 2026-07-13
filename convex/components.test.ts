@@ -108,6 +108,31 @@ describe('components catalog mutations and queries', () => {
     expect(page.page[0]?.slug).toBe('card-avatar')
   })
 
+  it('does not attach catalog imports to personal publishers with the same handle', async () => {
+    const t = convexTest(schema, modules)
+    await t.run(async (ctx) => {
+      const userId = await ctx.db.insert('users', {
+        name: 'Terence',
+        handle: 'terence',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+      await ctx.db.insert('publishers', {
+        handle: 'terence',
+        displayName: 'Terence',
+        kind: 'user',
+        linkedUserId: userId,
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    await expect(
+      t.mutation(api.components.importCatalogComponent, component),
+    ).rejects.toThrow(/reserved by a user publisher/)
+  })
+
   it('returns localized catalog fields from list and detail queries', async () => {
     const t = convexTest(schema, modules)
 

@@ -40,6 +40,25 @@ const githubSource = v.object({
   pinned: v.boolean(),
 })
 
+const users = defineTable({
+  name: v.optional(v.string()),
+  image: v.optional(v.string()),
+  email: v.optional(v.string()),
+  emailVerificationTime: v.optional(v.number()),
+  phone: v.optional(v.string()),
+  phoneVerificationTime: v.optional(v.number()),
+  isAnonymous: v.optional(v.boolean()),
+  handle: v.optional(v.string()),
+  displayName: v.optional(v.string()),
+  role: v.optional(v.union(v.literal('admin'), v.literal('user'))),
+  personalPublisherId: v.optional(v.id('publishers')),
+  createdAt: v.optional(v.number()),
+  updatedAt: v.optional(v.number()),
+})
+  .index('by_handle', ['handle'])
+  .index('email', ['email'])
+  .index('phone', ['phone'])
+
 const studioAspectRatio = v.union(
   v.literal('16:9'),
   v.literal('9:16'),
@@ -71,25 +90,7 @@ const studioSource = v.union(
 
 export default defineSchema({
   ...authTables,
-
-  users: defineTable({
-    name: v.optional(v.string()),
-    image: v.optional(v.string()),
-    email: v.optional(v.string()),
-    emailVerificationTime: v.optional(v.number()),
-    phone: v.optional(v.string()),
-    phoneVerificationTime: v.optional(v.number()),
-    isAnonymous: v.optional(v.boolean()),
-    handle: v.optional(v.string()),
-    displayName: v.optional(v.string()),
-    role: v.optional(v.union(v.literal('admin'), v.literal('user'))),
-    personalPublisherId: v.optional(v.id('publishers')),
-    createdAt: v.optional(v.number()),
-    updatedAt: v.optional(v.number()),
-  })
-    .index('email', ['email'])
-    .index('phone', ['phone'])
-    .index('by_handle', ['handle']),
+  users,
 
   publishers: defineTable({
     handle: v.string(),

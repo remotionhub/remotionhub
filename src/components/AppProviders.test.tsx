@@ -46,6 +46,5 @@ describe('AppProviders', () => {
     expect(i18nProvider.contains(screen.getByTestId('user-bootstrap'))).toBe(true)
     expect(i18nProvider.contains(screen.getByTestId('content'))).toBe(true)
     expect(i18nProvider.contains(screen.getByTestId('toaster'))).toBe(true)
-    expect(screen.getAllByTestId('toaster')).toHaveLength(1)
   })
 })

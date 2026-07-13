@@ -12,6 +12,7 @@ import {
   fallbackHandleForUserId,
   normalizeHandleCandidate,
 } from './lib/handles'
+import { isCatalogPublisherHandle } from '../shared/catalogPublishers'
 
 type UserDoc = Doc<'users'>
 
@@ -116,6 +117,7 @@ async function choosePersonalPublisherHandle(
   const candidates = [base, ...buildHandleVariants(base, suffix)]
 
   for (const candidate of candidates) {
+    if (isCatalogPublisherHandle(candidate)) continue
     const existing = await getPublisherByHandle(ctx, candidate)
     if (!existing || canReuseAsPersonalPublisher(existing, user._id)) {
       return candidate

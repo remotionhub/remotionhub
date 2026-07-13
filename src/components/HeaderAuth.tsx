@@ -1,13 +1,11 @@
 import { useAuthActions } from '@convex-dev/auth/react'
-import { GithubIcon, LogOutIcon } from 'lucide-react'
+import { CircleUserRoundIcon, LogOutIcon } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
+import { getCurrentRelativeUrl } from '#/lib/authRedirect'
 import { useAuthStatus } from '#/lib/useAuthStatus'
+import AuthDialog, { type AuthProvider } from './AuthDialog'
 import { useI18n } from './I18nProvider'
-
-function getCurrentRelativeUrl() {
-  if (typeof window === 'undefined') return '/'
-  return `${window.location.pathname}${window.location.search}${window.location.hash}`
-}
 
 function getDisplayHandle(me: { handle?: string; name?: string } | null | undefined) {
   return me?.handle?.trim() || me?.name?.trim() || 'user'
@@ -17,6 +15,63 @@ export default function HeaderAuth() {
   const { t } = useI18n()
   const { isAuthenticated, isLoading, me } = useAuthStatus()
   const { signIn, signOut } = useAuthActions()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [pendingProvider, setPendingProvider] = useState<AuthProvider | null>(null)
+  const [signInError, setSignInError] = useState<string | null>(null)
+  const loginButtonRef = useRef<HTMLButtonElement | null>(null)
+  const signInAttemptRef = useRef(0)
+  const pendingProviderRef = useRef<AuthProvider | null>(null)
+  const wasDialogOpen = useRef(false)
+
+  useEffect(() => {
+    if (wasDialogOpen.current && !isDialogOpen) {
+      loginButtonRef.current?.focus()
+    }
+    wasDialogOpen.current = isDialogOpen
+  }, [isDialogOpen])
+
+  useEffect(() => {
+    const resetPendingProvider = (event: PageTransitionEvent) => {
+      if (!event.persisted) return
+
+      signInAttemptRef.current += 1
+      pendingProviderRef.current = null
+      setPendingProvider(null)
+    }
+
+    window.addEventListener('pageshow', resetPendingProvider)
+    return () => {
+      window.removeEventListener('pageshow', resetPendingProvider)
+      signInAttemptRef.current += 1
+      pendingProviderRef.current = null
+    }
+  }, [])
+
+  const openDialog = useCallback(() => {
+    setSignInError(null)
+    setIsDialogOpen(true)
+  }, [])
+  const closeDialog = useCallback(() => setIsDialogOpen(false), [])
+  const startSignIn = useCallback(
+    (provider: AuthProvider) => {
+      if (pendingProviderRef.current) return
+
+      const attemptId = ++signInAttemptRef.current
+      setSignInError(null)
+      pendingProviderRef.current = provider
+      setPendingProvider(provider)
+      void signIn(provider, { redirectTo: getCurrentRelativeUrl() }).catch(() => {
+        if (signInAttemptRef.current !== attemptId) return
+
+        pendingProviderRef.current = null
+        setPendingProvider(null)
+        const errorMessage = t('auth.signInFailed')
+        setSignInError(errorMessage)
+        toast.error(errorMessage)
+      })
+    },
+    [signIn, t],
+  )
 
   if (isLoading) {
     return (
@@ -29,19 +84,24 @@ export default function HeaderAuth() {
 
   if (!isAuthenticated || !me) {
     return (
-      <button
-        type="button"
-        aria-label={t('auth.signInWithGitHub')}
-        className="inline-flex h-9 items-center gap-2 rounded-lg border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 text-sm font-semibold text-[var(--sea-ink)] shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:bg-[var(--link-bg-hover)]"
-        onClick={() => {
-          void signIn('github', { redirectTo: getCurrentRelativeUrl() }).catch(() => {
-            toast.error(t('auth.signInFailed'))
-          })
-        }}
-      >
-        <GithubIcon aria-hidden="true" size={16} />
-        <span className="hidden sm:inline">{t('auth.signInWithGitHub')}</span>
-      </button>
+      <>
+        <button
+          ref={loginButtonRef}
+          type="button"
+          aria-label={t('auth.login')}
+          className="rounded-md p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+          onClick={openDialog}
+        >
+          <CircleUserRoundIcon aria-hidden="true" size={20} />
+        </button>
+        <AuthDialog
+          errorMessage={signInError}
+          open={isDialogOpen}
+          pendingProvider={pendingProvider}
+          onClose={closeDialog}
+          onSignIn={startSignIn}
+        />
+      </>
     )
   }
 
