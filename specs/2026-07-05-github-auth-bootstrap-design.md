@@ -63,7 +63,7 @@ Provider account id expectations:
 
 - GitHub: numeric OAuth profile `id`.
 - Google: OIDC `sub`.
-- WeChat WebsiteApp: use namespaced app-scoped `openid` when present to keep the account id stable for the single configured website app. Use `unionid` only when `openid` is unavailable; any future cross-WeChat-app identity unification needs an explicit account linking or migration design.
+- WeChat WebsiteApp: require the namespaced app-scoped `openid` for the single configured website app. Fail closed when `openid` is unavailable so profile shape changes cannot switch an existing account to or from `unionid`; any future cross-WeChat-app identity unification needs an explicit account linking or migration design.
 - Weibo: stable user id/uid returned by the provider or custom OAuth profile mapper.
 
 Future multi-provider linking must be explicit. A user who is already signed in may link another provider through a dedicated flow. RemotionHub must not silently merge users because two providers expose the same email address or display name.

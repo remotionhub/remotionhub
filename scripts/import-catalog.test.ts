@@ -7,6 +7,7 @@ import {
   type ImportCatalogClient,
   type ImportCatalogDependencies,
   loadLocalEnv,
+  loadStudioBundle,
   parseArgs,
   readCatalogFiles,
   runImportCatalog,
@@ -199,17 +200,167 @@ describe('readCatalogFiles', () => {
   })
 })
 
+describe('loadStudioBundle', () => {
+  async function createBundleFixture(source: string) {
+    const root = await createTemporaryDirectory()
+    const studioRoot = path.join(root, 'catalog/studio')
+    await fs.mkdir(studioRoot, { recursive: true })
+    await fs.writeFile(path.join(studioRoot, 'fixture.tsx'), source)
+    return root
+  }
+
+  it('loads and hashes a valid bundle without executing it', async () => {
+    const root = await createBundleFixture(
+      "import { AbsoluteFill } from 'remotion'\nexport const MyAnimation = () => <AbsoluteFill />",
+    )
+
+    const result = await loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      ['remotion'],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )
+
+    expect(result.code).toContain('export const MyAnimation')
+    expect(result.contentHash).toMatch(/^[a-f0-9]{64}$/)
+  })
+
+  it('accepts a named MyAnimation export backed by a local component', async () => {
+    const root = await createBundleFixture(
+      'const Animation = () => null\nexport { Animation as MyAnimation }',
+    )
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).resolves.toMatchObject({
+      code: 'const Animation = () => null\nexport { Animation as MyAnimation }',
+    })
+  })
+
+  it.each([
+    '// export const MyAnimation = () => null\nexport const Other = () => null',
+    'const example = "export const MyAnimation = () => null"\nexport const Other = () => null',
+    'const Animation = () => null\nexport type { Animation as MyAnimation }',
+  ])('rejects a fake non-runtime MyAnimation export', async (source) => {
+    const root = await createBundleFixture(source)
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).rejects.toThrow('MyAnimation export is required')
+  })
+
+  it('rejects invalid syntax after a real MyAnimation export', async () => {
+    const root = await createBundleFixture(
+      'export const MyAnimation = () => null\nconst trailing =',
+    )
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).rejects.toThrow()
+  })
+
+  it('rejects a direct ambient MyAnimation declaration', async () => {
+    const root = await createBundleFixture(
+      'export declare const MyAnimation: () => unknown',
+    )
+
+    await expect(
+      loadStudioBundle('catalog/studio/fixture.tsx', root, [], {
+        aspectRatio: '16:9',
+        durationInFrames: 120,
+      }),
+    ).rejects.toThrow('MyAnimation export is required')
+  })
+
+  it('rejects an ambient local binding exported as MyAnimation', async () => {
+    const root = await createBundleFixture(
+      'const marker = true\ndeclare const Animation: () => unknown\nexport { Animation as MyAnimation }',
+    )
+
+    await expect(
+      loadStudioBundle('catalog/studio/fixture.tsx', root, [], {
+        aspectRatio: '16:9',
+        durationInFrames: 120,
+      }),
+    ).rejects.toThrow('MyAnimation export is required')
+  })
+
+  it.each([
+    '../secret.tsx',
+    'catalog/components/card-avatar.json',
+  ])('rejects unsafe bundle path %s', async (sourcePath) => {
+    const root = await createTemporaryDirectory()
+    await fs.mkdir(path.join(root, 'catalog/studio'), { recursive: true })
+    await expect(
+      loadStudioBundle(sourcePath, root, ['remotion'], {
+        aspectRatio: '16:9',
+        durationInFrames: 120,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('rejects symlinks, oversized files, invalid TSX, relative imports, undeclared dependencies, and missing exports', async () => {
+    const root = await createTemporaryDirectory()
+    const studioRoot = path.join(root, 'catalog/studio')
+    await fs.mkdir(studioRoot, { recursive: true })
+    const outside = path.join(root, 'outside.tsx')
+    await fs.writeFile(outside, 'export const MyAnimation = () => null')
+    await fs.symlink(outside, path.join(studioRoot, 'link.tsx'))
+    const invalidSources = new Map([
+      ['large.tsx', 'x'.repeat(200_001)],
+      ['invalid.tsx', 'export const MyAnimation = () => <div>'],
+      ['relative.tsx', "import './local'\nexport const MyAnimation = () => null"],
+      ['undeclared.tsx', "import { AbsoluteFill } from 'remotion'\nexport const MyAnimation = () => null"],
+      ['missing.tsx', 'export const Other = () => null'],
+    ])
+    for (const [name, source] of invalidSources) {
+      await fs.writeFile(path.join(studioRoot, name), source)
+    }
+
+    for (const name of ['link.tsx', ...invalidSources.keys()]) {
+      await expect(
+        loadStudioBundle(`catalog/studio/${name}`, root, [], {
+          aspectRatio: '16:9',
+          durationInFrames: 120,
+        }),
+      ).rejects.toThrow()
+    }
+  })
+
+  it('rejects source that exceeds the Studio compiler limit', async () => {
+    const root = await createBundleFixture(
+      `export const MyAnimation = () => null\n/*${'x'.repeat(100_000)}*/`,
+    )
+
+    await expect(loadStudioBundle(
+      'catalog/studio/fixture.tsx',
+      root,
+      [],
+      { aspectRatio: '16:9', durationInFrames: 120 },
+    )).rejects.toThrow('Studio source is too large')
+  })
+})
+
 describe('toImportPayload', () => {
-  it('maps publisher display names and version fingerprints', () => {
+  it('maps publisher display names and version fingerprints', async () => {
     const remotionLab = createCatalogComponent()
     const publisher = createCatalogComponent({ publisher: 'terence' })
 
-    const remotionLabPayload = toImportPayload(
+    const remotionLabPayload = await toImportPayload(
       remotionLab,
       '/catalog/remotionlab.json',
       'secret',
     )
-    const publisherPayload = toImportPayload(
+    const publisherPayload = await toImportPayload(
       publisher,
       '/catalog/terence.json',
       'secret',
@@ -222,7 +373,7 @@ describe('toImportPayload', () => {
     )
   })
 
-  it('keeps githubSource absent for source-free artifacts', () => {
+  it('keeps githubSource absent for source-free artifacts', async () => {
     const component = createCatalogComponent({
       versions: [
         {
@@ -244,7 +395,7 @@ describe('toImportPayload', () => {
       ],
     })
 
-    const payload = toImportPayload(component, '/catalog/no-source.json', '')
+    const payload = await toImportPayload(component, '/catalog/no-source.json', '')
 
     expect(payload.versions[0]?.artifact.githubSource).toBeUndefined()
   })
@@ -254,7 +405,7 @@ describe('toImportPayload', () => {
     ['0123456789abcdef0123456789abcdef01234567', true],
     ['zzzzzz', false],
     ['0123456789abcdef0123456789abcdef012345678', false],
-  ])('marks github commit %s pinned as %s', (commit, pinned) => {
+  ])('marks github commit %s pinned as %s', async (commit, pinned) => {
     const base = createCatalogComponent()
     const version = base.versions[0]
     if (!version?.artifact.githubSource) {
@@ -272,7 +423,7 @@ describe('toImportPayload', () => {
       ],
     })
 
-    const payload = toImportPayload(component, '/catalog/source.json', '')
+    const payload = await toImportPayload(component, '/catalog/source.json', '')
 
     expect(payload.versions[0]?.artifact.githubSource).toMatchObject({
       commit,

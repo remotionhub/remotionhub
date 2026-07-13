@@ -56,6 +56,49 @@ Start the app:
 make app
 ```
 
+## Studio
+
+`/studio` provides prompt-to-motion generation and private project history. The
+landing page is public, but generation and saving require login. Authentication
+providers are normalized to a Convex `users` ID before Studio ownership checks;
+adding a provider such as WeChat does not require a Studio data migration.
+
+Configure the model in the local Convex deployment. These values are backend
+environment variables and must not be exposed to the browser bundle:
+
+```bash
+npx convex env set --deployment local OPENAI_API_KEY '<your-key>'
+npx convex env set --deployment local STUDIO_OPENAI_MODEL 'gpt-5.2'
+```
+
+For deterministic local or CI smoke tests, select the stub model in the Convex
+deployment environment:
+
+```bash
+npx convex env set --deployment local STUDIO_MODEL_MODE stub
+```
+
+The browser cannot select the model mode. `make studio-smoke` sets the local
+Convex deployment to stub mode, seeds the catalog, builds the application, and
+always runs the signed-out desktop/mobile checks. Authenticated generation,
+follow-up, refresh/history, and Card Avatar Remix checks run only when a valid
+Playwright storage state is supplied. Expired or target-mismatched state is
+treated as unavailable; once state passes preflight, a signed-out page fails
+the authenticated suite instead of silently skipping it:
+
+```bash
+export PLAYWRIGHT_AUTH_STORAGE_STATE_JSON="$(< /absolute/path/to/local-auth-storage-state.json)"
+make studio-smoke
+```
+
+The MVP executes validated generated code with `new Function` on the same page.
+Dependency/API allowlists and source limits reduce accidental misuse but are not
+a trustworthy sandbox. Generated source is not displayed or manually editable,
+projects remain private, and only validated Catalog Studio Bundles can be
+remixed. See the
+[Studio Prompt-to-Motion MVP design](specs/2026-07-10-studio-prompt-to-motion-design.md)
+for the accepted risk and scope restrictions.
+
 ## Catalog Data
 
 Fixture inputs live under `catalog/components/*.json`.
@@ -101,6 +144,7 @@ Run Playwright smoke tests against local Convex:
 ```bash
 make convex
 make e2e
+make studio-smoke
 ```
 
 `PLAYWRIGHT_USE_SYSTEM_CHROME=1` uses the local Google Chrome installation when Playwright browser download is unavailable.

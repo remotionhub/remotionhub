@@ -46,8 +46,8 @@
 - `providers` 同时注册 `createGitHubAuthProvider()` 和 `createWeChatAuthProvider()`。
 - GitHub profile ID 只接受安全整数或纯数字字符串。
 - GitHub 保持 `allowDangerousEmailAccountLinking: false`。
-- 微信使用 Website App `openid` 作为首选账号 ID，并按微信应用 ID 命名空间存储。
-- 仅当微信 profile 不含 `openid` 时才使用 `unionid`，避免同一 Website App 账号在后续授权中因新增 `unionid` 而改变身份。
+- 微信强制使用 Website App `openid` 作为账号 ID，并按微信应用 ID 命名空间存储。
+- 微信 profile 不含 `openid` 时失败关闭，不回退到 `unionid`，避免 profile 字段变化导致账号 ID 漂移。
 - 两个 Provider 共用 `createOrUpdateUser` 回调和 Personal Publisher 初始化调度。
 - OAuth profile 中的 Provider 原始 ID 不写入 `users` 表。
 - 只有 profile 明确标记验证状态时才写入邮箱或手机号验证时间。

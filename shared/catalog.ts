@@ -2,6 +2,7 @@ import crypto from 'node:crypto'
 import semver from 'semver'
 import { z } from 'zod'
 import { isValidTag } from '../src/lib/tags'
+import { studioCompositionInputSchema } from './studio'
 
 export const tagSchema = z.string().min(1).refine(isValidTag, {
   message: 'Tag must be a valid core tag from the taxonomy.',
@@ -52,6 +53,17 @@ export const metadataSchema = z.object({
   fps: z.number().int().positive().optional(),
 })
 
+export const studioBundleDeclarationSchema = z.object({
+  sourcePath: z.string().regex(/^catalog\/studio\/[a-z0-9-]+\.tsx$/),
+  allowedDependencies: z.array(z.enum([
+    'react', 'remotion', '@remotion/shapes', '@remotion/transitions',
+    '@remotion/transitions/fade', '@remotion/transitions/slide',
+    '@remotion/transitions/wipe', '@remotion/lottie', '@remotion/three',
+    '@react-three/fiber', 'three',
+  ])).max(11),
+  composition: studioCompositionInputSchema,
+})
+
 export const artifactSchema = z
   .object({
     kind: z.union([z.literal('github-source'), z.literal('none')]),
@@ -97,6 +109,7 @@ export const catalogVersionSchema = z
     metadata: metadataSchema,
     tags: z.array(tagSchema).default([]),
     artifact: artifactSchema,
+    studioBundle: studioBundleDeclarationSchema.optional(),
   })
   .refine(
     (data) => {
@@ -185,4 +198,12 @@ function stableStringify(value: unknown): string {
 
 export function buildVersionFingerprint(version: unknown) {
   return crypto.createHash('sha256').update(stableStringify(version)).digest('hex')
+}
+
+export function buildCatalogVersionFingerprint(version: unknown) {
+  if (!version || typeof version !== 'object' || Array.isArray(version)) {
+    return buildVersionFingerprint(version)
+  }
+  const { studioBundle: _studioBundle, ...identity } = version as Record<string, unknown>
+  return buildVersionFingerprint(identity)
 }

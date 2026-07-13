@@ -15,7 +15,7 @@
 - UI 交互模仿少数派：Header 图标入口、居中登录弹窗、`其他方式` 区域、微信图标按钮、全页跳转微信扫码页。
 - 安全上必须使用并验证 OAuth `state`，即使少数派观察到的首跳 URL 没带 `state`。
 - 身份模型必须 provider-agnostic，不能把微信字段散落到业务授权逻辑里。
-- Provider account binding 优先使用带 app namespace 的 WebsiteApp `openid`；只有没有 `openid` 时才使用 `unionid`，避免同一用户后续开始返回 `unionid` 时切换 account id。
+- Provider account binding 必须使用带 app namespace 的 WebsiteApp `openid`；缺少 `openid` 时失败关闭，不回退到 `unionid`，避免 profile 字段变化导致 account id 切换。
 - OAuth nickname、avatar、openid、unionid 只能作为身份绑定或 profile 数据，不能作为授权证明。
 - 所有后端授权必须从 `getAuthUserId(ctx)` 或等价 helper 派生，不能接受客户端传入的 user id 作为授权证明。
 - 回跳目标必须是相对 URL，禁止接受绝对 URL 作为 `redirectTo`。
@@ -1714,7 +1714,7 @@ Expected: the handoff makes clear that secrets are not committed and a full logi
 
 ## Plan Self-Review
 
-- Spec coverage: Header icon entry, 少数派-style modal, WeChat alternative method, `qrconnect`, `snsapi_login`, `state`, provider-neutral identity, stable namespaced WebsiteApp `openid`, `unionid` fallback, personal publisher bootstrap, server-only secrets, relative redirects, and verification are covered.
+- Spec coverage: Header icon entry, 少数派-style modal, WeChat alternative method, `qrconnect`, `snsapi_login`, `state`, provider-neutral identity, stable namespaced WebsiteApp `openid`, fail-closed identity validation, personal publisher bootstrap, server-only secrets, relative redirects, and verification are covered.
 - Scope check: phone/email, password, GitHub, Google, Weibo, mini program, official account login, embedded QR, settings, publishing, orgs, and billing remain excluded.
 - Placeholder scan: the plan contains no unfinished markers or unspecified implementation steps.
 - Type consistency: `normalizeWeChatProviderAccountId`, `createWeChatAuthProvider`, `normalizeHandleCandidate`, `fallbackHandleForUserId`, `requireUser`, `api.users.me`, `api.users.ensure`, `internal.users.ensurePersonalPublisherInternal`, `getCurrentRelativeUrl`, `sanitizeRelativeRedirect`, `useAuthStatus`, `UserBootstrap`, and `HeaderAuth` are defined before later tasks consume them.

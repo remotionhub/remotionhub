@@ -27,21 +27,20 @@ function normalizedString(value: unknown) {
 
 export function normalizeWeChatProviderAccountId(
   profile: WeChatProfileLike,
-  options: { allowOpenIdFallback?: boolean; appId?: string } = {},
+  options: { appId?: string } = {},
 ) {
   const openid = normalizedString(profile.openid)
-  if (openid && options.allowOpenIdFallback) {
-    const appId = normalizedString(options.appId)
-    if (!appId) {
-      throw new Error('WeChat openid fallback requires a WeChat app id')
-    }
-    return `wechat:web:${appId}:${openid}`
+  if (!openid) {
+    throw new Error(
+      'WeChat OAuth profile is missing a stable WebsiteApp openid',
+    )
   }
 
-  const unionid = normalizedString(profile.unionid)
-  if (unionid) return unionid
-
-  throw new Error('WeChat OAuth profile is missing a stable WeChat account id')
+  const appId = normalizedString(options.appId)
+  if (!appId) {
+    throw new Error('WeChat WebsiteApp openid requires a WeChat app id')
+  }
+  return `wechat:web:${appId}:${openid}`
 }
 
 export function normalizeGitHubProfileId(profileId: unknown) {
@@ -89,7 +88,6 @@ export function createWeChatAuthProvider() {
     profile(profile) {
       return {
         id: normalizeWeChatProviderAccountId(profile, {
-          allowOpenIdFallback: true,
           appId,
         }),
         name: normalizedString(profile.nickname) ?? 'WeChat User',

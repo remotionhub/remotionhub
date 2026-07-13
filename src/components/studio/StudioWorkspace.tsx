@@ -1,0 +1,503 @@
+import { useMutation, useQuery } from 'convex/react'
+import {
+  Component,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react'
+import { api } from '../../../convex/_generated/api'
+import type { Doc, Id } from '../../../convex/_generated/dataModel'
+import type { StudioComposition } from '../../../shared/studio'
+import { useAuthStatus } from '../../lib/useAuthStatus'
+import { useI18n } from '../I18nProvider'
+import StudioChatPanel from './StudioChatPanel'
+import StudioHistoryDialog from './StudioHistoryDialog'
+import StudioPreview, {
+  type CandidateResult,
+  type RevisionRuntimeError,
+} from './StudioPreview'
+import StudioProjectBar from './StudioProjectBar'
+
+const DESKTOP_QUERY = '(min-width: 900px)'
+
+type FailedPreviewDelivery =
+  | {
+      kind: 'candidate'
+      runId: Id<'studioGenerationRuns'>
+      runStatus: Doc<'studioGenerationRuns'>['status']
+      deliveryId: string
+      result: CandidateResult
+    }
+  | { kind: 'revision-runtime'; result: RevisionRuntimeError }
+
+type PreviewDeliverySnapshot = {
+  project: Pick<Doc<'studioProjects'>, 'currentRevisionId'>
+  run: Pick<
+    Doc<'studioGenerationRuns'>,
+    | '_id'
+    | 'status'
+    | 'candidateFingerprint'
+    | 'inputRevisionId'
+    | 'correctionAttempt'
+  > | null
+}
+
+function isSamePreviewDelivery(
+  left: FailedPreviewDelivery,
+  right: FailedPreviewDelivery,
+) {
+  if (left.kind !== right.kind) return false
+  if (left.kind === 'candidate' && right.kind === 'candidate') {
+    return (
+      left.runId === right.runId &&
+      left.deliveryId === right.deliveryId
+    )
+  }
+  return (
+    left.kind === 'revision-runtime' &&
+    right.kind === 'revision-runtime' &&
+    left.result.revisionId === right.result.revisionId
+  )
+}
+
+function isPreviewDeliveryCurrent(
+  delivery: FailedPreviewDelivery,
+  snapshot: PreviewDeliverySnapshot,
+) {
+  if (delivery.kind === 'candidate') {
+    return (
+      snapshot.run?._id === delivery.runId &&
+      snapshot.run.status === delivery.runStatus &&
+      getCandidateDeliveryId(snapshot.run) === delivery.deliveryId &&
+      snapshot.run.candidateFingerprint === delivery.result.fingerprint
+    )
+  }
+
+  if (snapshot.project.currentRevisionId !== delivery.result.revisionId) {
+    return false
+  }
+  return !(
+    snapshot.run &&
+    snapshot.run.correctionAttempt > 0 &&
+    snapshot.run.inputRevisionId === delivery.result.revisionId
+  )
+}
+
+function subscribeToDesktopQuery(onStoreChange: () => void) {
+  if (typeof window === 'undefined' || !window.matchMedia) return () => undefined
+  const media = window.matchMedia(DESKTOP_QUERY)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function getDesktopSnapshot() {
+  return typeof window === 'undefined' || !window.matchMedia
+    ? true
+    : window.matchMedia(DESKTOP_QUERY).matches
+}
+
+function useIsDesktop() {
+  return useSyncExternalStore(
+    subscribeToDesktopQuery,
+    getDesktopSnapshot,
+    () => true,
+  )
+}
+
+function normalizeWorkspaceError(error: string | undefined) {
+  return (error ?? 'Preview failed').split(/\r?\n/, 1)[0].slice(0, 300)
+}
+
+function getCandidateDeliveryId(
+  run: Pick<
+    Doc<'studioGenerationRuns'>,
+    '_id' | 'candidateFingerprint' | 'correctionAttempt'
+  >,
+) {
+  return JSON.stringify([
+    run._id,
+    run.correctionAttempt,
+    run.candidateFingerprint,
+  ])
+}
+
+function toStudioComposition(
+  composition: Doc<'studioProjects'>['composition'],
+): StudioComposition {
+  return { ...composition, fps: 30 }
+}
+
+function StudioUnavailable() {
+  const { t } = useI18n()
+  return (
+    <main className="studio-unavailable">
+      <div>
+        <h1>{t('studio.unavailable.title')}</h1>
+        <p>{t('studio.unavailable.description')}</p>
+      </div>
+    </main>
+  )
+}
+
+class WorkspaceQueryBoundary extends Component<
+  { children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false }
+
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+
+  render() {
+    return this.state.failed ? <StudioUnavailable /> : this.props.children
+  }
+}
+
+function StudioLoading() {
+  const { t } = useI18n()
+  return (
+    <main className="studio-unavailable">
+      <p role="status">{t('auth.loading')}</p>
+    </main>
+  )
+}
+
+function MobileTabs({
+  selected,
+  onSelect,
+}: {
+  selected: 'chat' | 'preview'
+  onSelect(tab: 'chat' | 'preview'): void
+}) {
+  const { t } = useI18n()
+  const chatRef = useRef<HTMLButtonElement>(null)
+  const previewRef = useRef<HTMLButtonElement>(null)
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+    event.preventDefault()
+    const next = selected === 'chat' ? 'preview' : 'chat'
+    onSelect(next)
+    ;(next === 'chat' ? chatRef : previewRef).current?.focus()
+  }
+
+  return (
+    <div aria-label="Studio workspace" className="studio-mobile-tabs" role="tablist">
+      <button
+        aria-controls="studio-mobile-chat-panel"
+        aria-selected={selected === 'chat'}
+        id="studio-mobile-chat-tab"
+        onClick={() => onSelect('chat')}
+        onKeyDown={handleKeyDown}
+        ref={chatRef}
+        role="tab"
+        tabIndex={selected === 'chat' ? 0 : -1}
+        type="button"
+      >
+        {t('studio.tabs.chat')}
+      </button>
+      <button
+        aria-controls="studio-mobile-preview-panel"
+        aria-selected={selected === 'preview'}
+        id="studio-mobile-preview-tab"
+        onClick={() => onSelect('preview')}
+        onKeyDown={handleKeyDown}
+        ref={previewRef}
+        role="tab"
+        tabIndex={selected === 'preview' ? 0 : -1}
+        type="button"
+      >
+        {t('studio.tabs.preview')}
+      </button>
+    </div>
+  )
+}
+
+function StudioWorkspaceData({
+  projectId,
+  isAuthenticated,
+  isAuthLoading,
+}: {
+  projectId: Id<'studioProjects'>
+  isAuthenticated: boolean
+  isAuthLoading: boolean
+}) {
+  const { t } = useI18n()
+  const isDesktop = useIsDesktop()
+  const [mobileTab, setMobileTab] = useState<'chat' | 'preview'>('chat')
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [failedPreviewDelivery, setFailedPreviewDelivery] =
+    useState<FailedPreviewDelivery | null>(null)
+  const snapshot = useQuery(
+    api.studio.getProject,
+    isAuthenticated ? { projectId } : 'skip',
+  )
+  const messages = useQuery(
+    api.studio.listMessages,
+    isAuthenticated ? { projectId, limit: 100 } : 'skip',
+  )
+  const revisions = useQuery(
+    api.studio.listRevisions,
+    isAuthenticated ? { projectId, limit: 100 } : 'skip',
+  )
+  const updateProjectTitle = useMutation(api.studio.updateProjectTitle)
+  const startFollowUp = useMutation(api.studio.startFollowUp)
+  const acceptCandidate = useMutation(api.studio.acceptCandidate)
+  const rejectCandidate = useMutation(api.studio.rejectCandidate)
+  const reportRuntimeFailure = useMutation(api.studio.reportRuntimeFailure)
+  const retryFailedGeneration = useMutation(api.studio.retryFailedGeneration)
+  const restartPromptGeneration = useMutation(
+    api.studio.restartPromptGeneration,
+  )
+  const processedCandidateDeliveries = useRef(new Set<string>())
+  const reportedRuntimeFailures = useRef(new Set<string>())
+
+  useEffect(() => {
+    if (snapshot === undefined || !failedPreviewDelivery) return
+    if (
+      snapshot === null ||
+      !isPreviewDeliveryCurrent(failedPreviewDelivery, snapshot)
+    ) {
+      setFailedPreviewDelivery(null)
+    }
+  }, [failedPreviewDelivery, snapshot])
+
+  if (!isAuthenticated) return <StudioUnavailable />
+  if (isAuthLoading || snapshot === undefined) return <StudioLoading />
+  if (snapshot === null) return <StudioUnavailable />
+
+  const { project, revision, run } = snapshot
+  const runIsActive =
+    run !== null &&
+    run.status !== 'failed' &&
+    run.status !== 'cancelled' &&
+    run.status !== 'succeeded'
+  const projectComposition = toStudioComposition(project.composition)
+  const revisionComposition = revision
+    ? toStudioComposition(revision.composition)
+    : projectComposition
+  const candidate =
+    run?.candidateCode &&
+    run.candidateComposition &&
+    run.candidateFingerprint
+      ? {
+          code: run.candidateCode,
+          composition: toStudioComposition(run.candidateComposition),
+          deliveryId: getCandidateDeliveryId(run),
+          fingerprint: run.candidateFingerprint,
+        }
+      : null
+  const canRestartInitialGeneration =
+    !revision && run?.status === 'failed' && !run.inputRevisionId
+
+  const deliverPreviewResult = async (delivery: FailedPreviewDelivery) => {
+    if (
+      snapshot === undefined ||
+      snapshot === null ||
+      !isPreviewDeliveryCurrent(delivery, snapshot)
+    ) {
+      if (snapshot !== undefined) setFailedPreviewDelivery(null)
+      return
+    }
+
+    if (delivery.kind === 'candidate') {
+      const { deliveryId, result, runId } = delivery
+      if (processedCandidateDeliveries.current.has(deliveryId)) return
+      processedCandidateDeliveries.current.add(deliveryId)
+      try {
+        if (result.status === 'accepted') {
+          await acceptCandidate({
+            projectId,
+            runId,
+            candidateFingerprint: result.fingerprint,
+          })
+        } else {
+          await rejectCandidate({
+            projectId,
+            runId,
+            candidateFingerprint: result.fingerprint,
+            normalizedError: normalizeWorkspaceError(result.error),
+          })
+        }
+        setFailedPreviewDelivery((current) =>
+          current && isSamePreviewDelivery(current, delivery) ? null : current,
+        )
+      } catch {
+        processedCandidateDeliveries.current.delete(deliveryId)
+        setFailedPreviewDelivery(delivery)
+      }
+      return
+    }
+
+    const { result } = delivery
+    if (reportedRuntimeFailures.current.has(result.revisionId)) return
+    reportedRuntimeFailures.current.add(result.revisionId)
+    try {
+      await reportRuntimeFailure({
+        projectId,
+        revisionId: result.revisionId as Id<'studioRevisions'>,
+        normalizedError: normalizeWorkspaceError(result.error),
+      })
+      setFailedPreviewDelivery((current) =>
+        current && isSamePreviewDelivery(current, delivery) ? null : current,
+      )
+    } catch {
+      reportedRuntimeFailures.current.delete(result.revisionId)
+      setFailedPreviewDelivery(delivery)
+    }
+  }
+
+  const handleCandidateResult = async (result: CandidateResult) => {
+    if (!run || run.candidateFingerprint !== result.fingerprint) return
+    const deliveryId = getCandidateDeliveryId(run)
+    if (result.deliveryId !== deliveryId) return
+    await deliverPreviewResult({
+      kind: 'candidate',
+      deliveryId,
+      runId: run._id,
+      runStatus: run.status,
+      result,
+    })
+  }
+
+  const handleRevisionRuntimeError = async (result: RevisionRuntimeError) => {
+    await deliverPreviewResult({ kind: 'revision-runtime', result })
+  }
+
+  const submitFollowUp = async (prompt: string) => {
+    if (runIsActive) return
+    if (revision) {
+      await startFollowUp({
+        projectId,
+        prompt,
+        expectedCurrentRevisionId: revision._id,
+        idempotencyKey: crypto.randomUUID(),
+      })
+      return
+    }
+    if (!canRestartInitialGeneration) return
+    await restartPromptGeneration({
+      projectId,
+      prompt,
+      idempotencyKey: crypto.randomUUID(),
+    })
+  }
+
+  const retryFailedRun = async () => {
+    if (!run || run.status !== 'failed' || runIsActive) return
+    await retryFailedGeneration({
+      projectId,
+      failedRunId: run._id,
+      idempotencyKey: crypto.randomUUID(),
+    })
+  }
+
+  const chatPanel = (
+    <StudioChatPanel
+      disabled={runIsActive || (!revision && !canRestartInitialGeneration)}
+      messages={messages ?? []}
+      onRetry={run?.status === 'failed' ? retryFailedRun : undefined}
+      onSubmit={submitFollowUp}
+      run={run}
+    />
+  )
+  const previewPanel = (
+    <section aria-label={t('studio.preview.label')} className="studio-preview-stage">
+      {failedPreviewDelivery ? (
+        <div className="studio-preview-delivery-error" role="alert">
+          <p>{t('studio.preview.deliveryFailed')}</p>
+          <button
+            className="studio-text-button"
+            onClick={() => void deliverPreviewResult(failedPreviewDelivery)}
+            type="button"
+          >
+            {t('studio.preview.retryDelivery')}
+          </button>
+        </div>
+      ) : null}
+      <div
+        className="studio-preview-canvas"
+        data-aspect-ratio={(candidate?.composition ?? revisionComposition).aspectRatio}
+      >
+        <StudioPreview
+          candidate={candidate}
+          onCandidateResult={handleCandidateResult}
+          onRevisionRuntimeError={handleRevisionRuntimeError}
+          revisionCode={revision?.code ?? null}
+          revisionComposition={revisionComposition}
+          revisionId={revision?._id ?? null}
+        />
+      </div>
+    </section>
+  )
+
+  return (
+    <main className="studio-workspace-shell">
+      <StudioProjectBar
+        composition={projectComposition}
+        onOpenHistory={() => setHistoryOpen(true)}
+        onSaveTitle={(title) => updateProjectTitle({ projectId, title })}
+        sourceKind={project.source.kind}
+        title={project.title}
+      />
+
+      {isDesktop ? (
+        <div className="studio-workspace-grid">
+          {chatPanel}
+          {previewPanel}
+        </div>
+      ) : (
+        <div className="studio-mobile-workspace">
+          <MobileTabs selected={mobileTab} onSelect={setMobileTab} />
+          <div
+            aria-labelledby="studio-mobile-chat-tab"
+            hidden={mobileTab !== 'chat'}
+            id="studio-mobile-chat-panel"
+            role="tabpanel"
+          >
+            {chatPanel}
+          </div>
+          <div
+            aria-labelledby="studio-mobile-preview-tab"
+            hidden={mobileTab !== 'preview'}
+            id="studio-mobile-preview-panel"
+            role="tabpanel"
+          >
+            {previewPanel}
+          </div>
+        </div>
+      )}
+
+      {revision ? (
+        <StudioHistoryDialog
+          currentRevisionId={revision._id}
+          onClose={() => setHistoryOpen(false)}
+          open={historyOpen}
+          projectId={projectId}
+          revisions={revisions ?? []}
+        />
+      ) : null}
+    </main>
+  )
+}
+
+export default function StudioWorkspace({
+  projectId,
+}: {
+  projectId: Id<'studioProjects'>
+}) {
+  const { isAuthenticated, isLoading } = useAuthStatus()
+  return (
+    <WorkspaceQueryBoundary key={projectId}>
+      <StudioWorkspaceData
+        isAuthenticated={isAuthenticated}
+        isAuthLoading={isLoading}
+        projectId={projectId}
+      />
+    </WorkspaceQueryBoundary>
+  )
+}

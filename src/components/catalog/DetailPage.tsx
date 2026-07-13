@@ -1,8 +1,14 @@
-import { Link } from '@tanstack/react-router'
+import { useAuthActions } from '@convex-dev/auth/react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useMutation } from 'convex/react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { toast } from 'sonner'
+import { api } from '../../../convex/_generated/api'
+import type { Id } from '../../../convex/_generated/dataModel'
 import { Badge } from '#/components/ui/badge'
-import { buttonVariants } from '#/components/ui/button'
+import { Button, buttonVariants } from '#/components/ui/button'
 import {
   Card,
   CardContent,
@@ -14,6 +20,7 @@ import { Textarea } from '#/components/ui/textarea'
 import { useI18n } from '#/components/I18nProvider'
 import { runtimeLabelKey } from '#/lib/catalog'
 import { getLocalizedTag } from '#/lib/tags'
+import { useAuthStatus } from '#/lib/useAuthStatus'
 import CopyButton from './CopyButton'
 import PreviewMedia from './PreviewMedia'
 
@@ -31,6 +38,7 @@ export type CatalogDetail = {
     latestIsPrerelease?: boolean
   }
   selectedVersion: {
+    _id: Id<'componentVersions'>
     version: string
     changelog: string
     preview: { thumbnailUrl?: string; previewVideoUrl?: string; demoUrl?: string }
@@ -57,10 +65,50 @@ export type CatalogDetail = {
     usageMarkdown: string
     agentPrompt: string
   }
+  studioCompatible: boolean
+}
+
+export const PENDING_REMIX_KEY = 'remotionhub.studio.pendingRemix'
+
+function removePendingRemix() {
+  try {
+    window.sessionStorage.removeItem(PENDING_REMIX_KEY)
+  } catch {
+    // Storage cleanup must not override a successful mutation or navigation.
+  }
+}
+
+function writePendingRemix(componentVersionId: string) {
+  try {
+    window.sessionStorage.setItem(
+      PENDING_REMIX_KEY,
+      JSON.stringify({ componentVersionId }),
+    )
+  } catch {
+    // Authentication can continue even when the browser denies storage access.
+  }
+}
+
+function readPendingRemix() {
+  try {
+    const value = JSON.parse(
+      window.sessionStorage.getItem(PENDING_REMIX_KEY) ?? 'null',
+    )
+    return typeof value?.componentVersionId === 'string' ? value : null
+  } catch {
+    removePendingRemix()
+    return null
+  }
 }
 
 export default function DetailPage({ detail }: { detail: CatalogDetail }) {
   const { locale, t } = useI18n()
+  const { isAuthenticated, isLoading } = useAuthStatus()
+  const { signIn } = useAuthActions()
+  const createRemixProject = useMutation(api.studio.createRemixProject)
+  const navigate = useNavigate()
+  const resumeAttempted = useRef(false)
+  const [isRemixing, setIsRemixing] = useState(false)
   const displayName = locale === 'zh' ? (detail.component.displayNameZh ?? detail.component.displayName) : detail.component.displayName
   const summary = locale === 'zh' ? (detail.component.summaryZh ?? detail.component.summary) : detail.component.summary
   const hasSource = detail.artifact.kind === 'github-source' && !!detail.artifact.githubSource
@@ -79,6 +127,57 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
   const visibleTags = detail.component.tags.filter(
     (tag) => tag !== detail.component.runtime,
   )
+
+  const createAndOpenRemix = useCallback(async () => {
+    setIsRemixing(true)
+    try {
+      const result = await createRemixProject({
+        componentVersionId: detail.selectedVersion._id,
+      })
+      removePendingRemix()
+      await navigate({
+        to: '/studio/$projectId',
+        params: { projectId: result.projectId },
+      })
+    } catch {
+      toast.error(t('detail.remixFailed'))
+    } finally {
+      setIsRemixing(false)
+    }
+  }, [createRemixProject, detail.selectedVersion._id, navigate, t])
+
+  useEffect(() => {
+    if (
+      !isAuthenticated ||
+      !detail.studioCompatible ||
+      resumeAttempted.current
+    ) return
+    const pending = readPendingRemix()
+    if (pending?.componentVersionId !== detail.selectedVersion._id) return
+    resumeAttempted.current = true
+    void createAndOpenRemix()
+  }, [
+    createAndOpenRemix,
+    detail.selectedVersion._id,
+    detail.studioCompatible,
+    isAuthenticated,
+  ])
+
+  const handleRemix = async () => {
+    if (isLoading || isRemixing) return
+    if (isAuthenticated) {
+      await createAndOpenRemix()
+      return
+    }
+    writePendingRemix(detail.selectedVersion._id)
+    try {
+      await signIn('github', {
+        redirectTo: `/remotion/${detail.publisher.handle}/${detail.component.slug}`,
+      })
+    } catch {
+      toast.error(t('detail.remixFailed'))
+    }
+  }
 
       const firstAspect = detail.selectedVersion.metadata.aspectRatios?.[0]
       const aspectClass =
@@ -124,6 +223,18 @@ export default function DetailPage({ detail }: { detail: CatalogDetail }) {
             </Badge>
           ))}
         </div>
+        {detail.studioCompatible &&
+          detail.component.runtime === 'remotion' &&
+          detail.selectedVersion.metadata.runtime === 'remotion' && (
+          <Button
+            className="w-fit"
+            disabled={isLoading || isRemixing}
+            onClick={() => void handleRemix()}
+            type="button"
+          >
+            {t('detail.remixInStudio')}
+          </Button>
+        )}
       </header>
 
       <section className="grid gap-4 md:grid-cols-5">

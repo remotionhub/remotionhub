@@ -73,9 +73,9 @@ Authorization must be server-derived:
 - Convex functions authorize from `getAuthUserId(ctx)` or an equivalent helper.
 - Client-supplied user ids, provider ids, openids, unionids, nicknames, and avatars are never authorization proof.
 - WeChat account binding must use a stable provider account id stored through the auth layer.
-- Use the WebsiteApp `openid` under a provider/app namespace such as `wechat:web:<appid>:<openid>` when available.
-- Use `unionid` only when `openid` is unavailable, because switching from an earlier namespaced `openid` account id to `unionid` would create a second account.
-- This tradeoff must be documented because `openid` is app-scoped, while `unionid` is cross-application under the same WeChat Open Platform account.
+- Require the WebsiteApp `openid` under a provider/app namespace such as `wechat:web:<appid>:<openid>`.
+- Fail closed when `openid` is unavailable. Falling back to `unionid` would allow the provider account id to change when a later profile adds or removes `openid`.
+- `openid` is app-scoped, while `unionid` is cross-application under the same WeChat Open Platform account. Any future cross-application identity unification requires an explicit linking or migration design.
 - Nickname and avatar are profile fields only.
 - Missing stable identity must fail closed and create no user or publisher.
 - Future account linking must be explicit and initiated by an already signed-in user.
@@ -131,8 +131,8 @@ The callback handler must:
 4. Exchange `code` for token data using server-side credentials.
 5. Validate the response shape and provider error codes.
 6. Fetch user profile data if needed.
-7. Choose namespaced WebsiteApp `openid` as the provider account id when present.
-8. Fall back to `unionid` only when `openid` is unavailable.
+7. Require namespaced WebsiteApp `openid` as the provider account id.
+8. Fail closed when `openid` is unavailable; do not fall back to `unionid`.
 9. Create or update the auth user.
 10. Ensure the personal publisher.
 11. Redirect only to a validated relative `redirectTo`.
@@ -203,9 +203,9 @@ Do not expose `AUTH_WECHAT_SECRET`, Convex deploy keys, token exchange results, 
 
 Unit tests:
 
-- WeChat profile normalization keeps namespaced WebsiteApp `openid` stable when present.
-- WeChat profile normalization falls back to `unionid` only when `openid` is unavailable.
-- Missing `unionid` and `openid` fails closed.
+- WeChat profile normalization keeps namespaced WebsiteApp `openid` stable when `unionid` appears or disappears.
+- A profile containing only `unionid` fails closed.
+- Missing `openid` fails closed.
 - `state` generation stores a hashed state and relative `redirectTo`.
 - Callback rejects expired, reused, missing, or mismatched `state`.
 - Callback rejects absolute `redirectTo` targets.

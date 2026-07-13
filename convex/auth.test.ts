@@ -22,29 +22,31 @@ describe('normalizeWeChatProviderAccountId', () => {
     expect(
       normalizeWeChatProviderAccountId(
         { openid: 'openid-123', unionid: 'unionid-456' },
-        { allowOpenIdFallback: true, appId: 'wx-test-app' },
+        { appId: 'wx-test-app' },
       ),
     ).toBe('wechat:web:wx-test-app:openid-123')
   })
 
-  it('uses unionid only when openid is unavailable', () => {
-    expect(normalizeWeChatProviderAccountId({ unionid: 'unionid-456' })).toBe(
-      'unionid-456',
-    )
+  it('rejects unionid-only profiles to prevent identity switching', () => {
+    expect(() =>
+      normalizeWeChatProviderAccountId(
+        { unionid: 'unionid-456' },
+        { appId: 'wx-test-app' },
+      ),
+    ).toThrow(/missing a stable WebsiteApp openid/)
   })
 
   it('rejects openid without an app namespace', () => {
     expect(() =>
       normalizeWeChatProviderAccountId(
         { openid: 'openid-123' },
-        { allowOpenIdFallback: true },
       ),
     ).toThrow(/requires a WeChat app id/)
   })
 
-  it('rejects profiles without a stable account id', () => {
+  it('rejects profiles without a stable WebsiteApp openid', () => {
     expect(() => normalizeWeChatProviderAccountId({})).toThrow(
-      /missing a stable WeChat account id/,
+      /missing a stable WebsiteApp openid/,
     )
   })
 })

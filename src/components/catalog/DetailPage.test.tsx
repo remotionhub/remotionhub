@@ -9,9 +9,19 @@ import {
 } from '@testing-library/react'
 import type React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { Id } from '../../../convex/_generated/dataModel'
 import { I18nProvider } from '#/components/I18nProvider'
 import { LOCALE_STORAGE_KEY } from '#/lib/i18n'
 import DetailPage from './DetailPage'
+
+const mocks = vi.hoisted(() => ({
+  createRemixProject: vi.fn(),
+  isAuthenticated: true,
+  isLoading: false,
+  navigate: vi.fn(),
+  signIn: vi.fn(),
+  toastError: vi.fn(),
+}))
 
 vi.mock('@tanstack/react-router', () => ({
   Link: ({
@@ -26,7 +36,25 @@ vi.mock('@tanstack/react-router', () => ({
       {children}
     </a>
   ),
+  useNavigate: () => mocks.navigate,
 }))
+
+vi.mock('@convex-dev/auth/react', () => ({
+  useAuthActions: () => ({ signIn: mocks.signIn }),
+}))
+
+vi.mock('convex/react', () => ({
+  useMutation: () => mocks.createRemixProject,
+}))
+
+vi.mock('#/lib/useAuthStatus', () => ({
+  useAuthStatus: () => ({
+    isAuthenticated: mocks.isAuthenticated,
+    isLoading: mocks.isLoading,
+  }),
+}))
+
+vi.mock('sonner', () => ({ toast: { error: mocks.toastError } }))
 
 const detail = {
   publisher: { handle: 'terence', displayName: 'Terence' },
@@ -40,6 +68,7 @@ const detail = {
     latestIsPrerelease: false,
   },
   selectedVersion: {
+    _id: 'componentVersions:card-avatar' as Id<'componentVersions'>,
     version: '1.0.0',
     changelog: 'Initial release.',
     preview: {
@@ -69,6 +98,7 @@ const detail = {
     usageMarkdown: 'Copy the component folder into your Remotion project.',
     agentPrompt: 'Add the Card Avatar.',
   },
+  studioCompatible: true,
 }
 
 function installLocalStorage() {
@@ -98,16 +128,55 @@ function installLocalStorage() {
     configurable: true,
     value: storage,
   })
+  Object.defineProperty(window, 'sessionStorage', {
+    configurable: true,
+    value: storage,
+  })
+}
+
+function installThrowingSessionStorage(method: 'setItem' | 'removeItem') {
+  const storage = {
+    get length() {
+      return 0
+    },
+    clear() {},
+    getItem() {
+      return null
+    },
+    key() {
+      return null
+    },
+    removeItem() {
+      if (method === 'removeItem') throw new DOMException('Storage denied')
+    },
+    setItem() {
+      if (method === 'setItem') throw new DOMException('Storage denied')
+    },
+  } satisfies Storage
+
+  Object.defineProperty(window, 'sessionStorage', {
+    configurable: true,
+    value: storage,
+  })
 }
 
 describe('DetailPage', () => {
   beforeEach(() => {
     installLocalStorage()
+    mocks.createRemixProject.mockReset().mockResolvedValue({
+      projectId: 'studioProjects:remix',
+    })
+    mocks.navigate.mockReset().mockResolvedValue(undefined)
+    mocks.signIn.mockReset().mockResolvedValue({ signingIn: true })
+    mocks.toastError.mockReset()
+    mocks.isAuthenticated = true
+    mocks.isLoading = false
   })
 
   afterEach(() => {
     cleanup()
     window.localStorage.clear()
+    window.sessionStorage.clear()
   })
 
   function renderDetailPage() {
@@ -262,5 +331,100 @@ describe('DetailPage', () => {
         name: 'Card Avatar 预览不可用',
       }),
     ).toBeTruthy()
+  })
+
+  it('creates a compatible Remix from only the selected version id', async () => {
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+
+    await waitFor(() => {
+      expect(mocks.createRemixProject).toHaveBeenCalledWith({
+        componentVersionId: detail.selectedVersion._id,
+      })
+    })
+    expect(mocks.navigate).toHaveBeenCalledWith({
+      to: '/studio/$projectId',
+      params: { projectId: 'studioProjects:remix' },
+    })
+  })
+
+  it('navigates after Remix creation when pending-intent cleanup is unavailable', async () => {
+    installThrowingSessionStorage('removeItem')
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+
+    await waitFor(() => {
+      expect(mocks.navigate).toHaveBeenCalledWith({
+        to: '/studio/$projectId',
+        params: { projectId: 'studioProjects:remix' },
+      })
+    })
+    expect(mocks.createRemixProject).toHaveBeenCalledTimes(1)
+    expect(mocks.toastError).not.toHaveBeenCalled()
+  })
+
+  it('persists a signed-out Remix intent and resumes it after authentication', async () => {
+    mocks.isAuthenticated = false
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+    await waitFor(() => {
+      expect(mocks.signIn).toHaveBeenCalledWith('github', {
+        redirectTo: '/remotion/terence/card-avatar',
+      })
+    })
+    expect(window.sessionStorage.getItem('remotionhub.studio.pendingRemix')).toBe(
+      JSON.stringify({ componentVersionId: detail.selectedVersion._id }),
+    )
+    expect(mocks.createRemixProject).not.toHaveBeenCalled()
+
+    cleanup()
+    mocks.isAuthenticated = true
+    renderDetailPage()
+    await waitFor(() => expect(mocks.createRemixProject).toHaveBeenCalledTimes(1))
+    expect(window.sessionStorage.getItem('remotionhub.studio.pendingRemix')).toBeNull()
+  })
+
+  it('starts sign-in when pending-intent persistence is unavailable', async () => {
+    mocks.isAuthenticated = false
+    installThrowingSessionStorage('setItem')
+    renderDetailPage()
+
+    fireEvent.click(screen.getByRole('button', { name: '在 Studio 中再创作' }))
+
+    await waitFor(() => {
+      expect(mocks.signIn).toHaveBeenCalledWith('github', {
+        redirectTo: '/remotion/terence/card-avatar',
+      })
+    })
+    expect(mocks.toastError).not.toHaveBeenCalled()
+  })
+
+  it('hides the Remix action for incompatible versions', () => {
+    render(
+      <I18nProvider>
+        <DetailPage detail={{ ...detail, studioCompatible: false }} />
+      </I18nProvider>,
+    )
+
+    expect(screen.queryByRole('button', { name: '在 Studio 中再创作' })).toBeNull()
+  })
+
+  it('does not resume a pending Remix after the version becomes incompatible', async () => {
+    window.sessionStorage.setItem(
+      'remotionhub.studio.pendingRemix',
+      JSON.stringify({ componentVersionId: detail.selectedVersion._id }),
+    )
+
+    render(
+      <I18nProvider>
+        <DetailPage detail={{ ...detail, studioCompatible: false }} />
+      </I18nProvider>,
+    )
+
+    await waitFor(() => expect(mocks.createRemixProject).not.toHaveBeenCalled())
+    expect(window.sessionStorage.getItem('remotionhub.studio.pendingRemix')).not.toBeNull()
   })
 })

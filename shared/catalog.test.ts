@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import {
+  buildCatalogVersionFingerprint,
   buildVersionFingerprint,
+  catalogVersionSchema,
   catalogComponentSchema,
   chooseLatestVersion,
   componentSlugPattern,
   publisherHandlePattern,
 } from './catalog'
+const validBundleDeclaration = {
+  sourcePath: 'catalog/studio/card-avatar.tsx',
+  allowedDependencies: ['remotion'] as const,
+  composition: { aspectRatio: '16:9' as const, durationInFrames: 120 },
+}
 
 const baseVersion = {
   version: '1.0.0',
@@ -230,5 +237,44 @@ describe('catalog validation', () => {
     })
 
     expect(left).toBe(right)
+  })
+
+  it('accepts an opt-in Remotion Studio Bundle declaration', () => {
+    const parsed = catalogVersionSchema.parse({
+      ...baseVersion,
+      studioBundle: validBundleDeclaration,
+    })
+
+    expect(parsed.studioBundle?.sourcePath).toBe(
+      'catalog/studio/card-avatar.tsx',
+    )
+  })
+
+  it('accepts transition presentation subpaths in Studio Bundles', () => {
+    const parsed = catalogVersionSchema.parse({
+      ...baseVersion,
+      studioBundle: {
+        ...validBundleDeclaration,
+        allowedDependencies: [
+          '@remotion/transitions',
+          '@remotion/transitions/fade',
+          '@remotion/transitions/slide',
+          '@remotion/transitions/wipe',
+        ],
+      },
+    })
+
+    expect(parsed.studioBundle?.allowedDependencies).toContain(
+      '@remotion/transitions/wipe',
+    )
+  })
+
+  it('keeps the immutable version fingerprint stable when a bundle is attached', () => {
+    expect(buildCatalogVersionFingerprint(baseVersion)).toBe(
+      buildCatalogVersionFingerprint({
+        ...baseVersion,
+        studioBundle: validBundleDeclaration,
+      }),
+    )
   })
 })
