@@ -56,7 +56,6 @@ const users = defineTable({
   updatedAt: v.optional(v.number()),
 })
   .index('by_handle', ['handle'])
-  .index('by_email', ['email'])
   .index('email', ['email'])
   .index('phone', ['phone'])
 

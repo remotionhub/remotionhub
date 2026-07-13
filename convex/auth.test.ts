@@ -1,4 +1,7 @@
+import { convexTest } from 'convex-test'
 import { describe, expect, it, vi } from 'vitest'
+import { internal } from './_generated/api'
+import schema from './schema'
 import {
   authCallbacks,
   createAbsoluteRedirectUrl,
@@ -10,10 +13,63 @@ import {
   userDataFromAuthProfile,
 } from './auth'
 
+const modules = import.meta.glob('./**/*.ts')
+
 describe('create auth providers', () => {
   it('keeps GitHub and WeChat as independent providers', () => {
     expect(createGitHubAuthProvider().id).toBe('github')
     expect(createWeChatAuthProvider().id).toBe('wechat')
+  })
+})
+
+describe('OAuth account isolation', () => {
+  it('keeps same-email GitHub and WeChat accounts independent', async () => {
+    const t = convexTest(schema, modules)
+    const email = 'shared@example.com'
+
+    for (const provider of ['github', 'wechat'] as const) {
+      const verifier = await t.mutation(internal.auth.store, {
+        args: { type: 'verifier' },
+      })
+      if (typeof verifier !== 'string') {
+        throw new Error('Expected an OAuth verifier id')
+      }
+      const signature = `signature-${provider}`
+      await t.mutation(internal.auth.store, {
+        args: {
+          type: 'verifierSignature',
+          verifier,
+          signature,
+        },
+      })
+      await t.mutation(internal.auth.store, {
+        args: {
+          type: 'userOAuth',
+          provider,
+          providerAccountId: `${provider}-account`,
+          profile: { email, emailVerified: true },
+          signature,
+        },
+      })
+    }
+
+    const records = await t.run(async (ctx) => ({
+      users: await ctx.db
+        .query('users')
+        .withIndex('email', (q) => q.eq('email', email))
+        .collect(),
+      accounts: await ctx.db.query('authAccounts').collect(),
+    }))
+
+    expect(records.users).toHaveLength(2)
+    expect(records.accounts).toHaveLength(2)
+    expect(new Set(records.accounts.map((account) => account.userId)).size).toBe(
+      2,
+    )
+    expect(records.accounts.map((account) => account.provider).sort()).toEqual([
+      'github',
+      'wechat',
+    ])
   })
 })
 
