@@ -178,6 +178,20 @@ describe('catalog validation', () => {
     expect(componentSlugPattern.test('intro pack')).toBe(false)
   })
 
+  it('rejects unregistered catalog publisher handles', () => {
+    expect(() =>
+      catalogComponentSchema.parse({
+        publisher: 'future-publisher',
+        runtime: 'remotion',
+        slug: 'future-component',
+        displayName: 'Future Component',
+        summary: 'A component whose publisher is not registered.',
+        categories: ['card'],
+        versions: [baseVersion],
+      }),
+    ).toThrow(/registered as a catalog publisher/)
+  })
+
   it('rejects http preview URLs outside local fixtures', () => {
     expect(() =>
       catalogComponentSchema.parse({

@@ -169,6 +169,31 @@ describe('users auth queries and publisher bootstrap', () => {
     expect(user?.handle).toBe(publisher?.handle)
   })
 
+  it('keeps catalog publisher handles reserved before catalog import', async () => {
+    const t = convexTest(schema, modules)
+    const userId = await t.run(async (ctx) => {
+      return await ctx.db.insert('users', {
+        name: 'Terence',
+        handle: 'terence',
+        role: 'user',
+        createdAt: 1,
+        updatedAt: 1,
+      })
+    })
+
+    await t.mutation(anyApi.users.ensurePersonalPublisherInternal, { userId })
+
+    const user = await t.run(async (ctx) => await ctx.db.get(userId))
+    const publisher = await t.run(
+      async (ctx) =>
+        await ctx.db.get(user?.personalPublisherId as Id<'publishers'>),
+    )
+
+    expect(publisher?.handle).toMatch(/^terence-[a-z0-9]{8}$/)
+    expect(publisher?.linkedUserId).toBe(userId)
+    expect(user?.handle).toBe(publisher?.handle)
+  })
+
   it('does not reuse a non-personal publisher handle linked to the user', async () => {
     const t = convexTest(schema, modules)
     const userId = await t.run(async (ctx) => {

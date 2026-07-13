@@ -2,6 +2,7 @@ import crypto from 'node:crypto'
 import semver from 'semver'
 import { z } from 'zod'
 import { isValidTag } from '../src/lib/tags'
+import { isCatalogPublisherHandle } from './catalogPublishers'
 import { studioCompositionInputSchema } from './studio'
 
 export const tagSchema = z.string().min(1).refine(isValidTag, {
@@ -127,7 +128,12 @@ export type CatalogVersion = z.infer<typeof catalogVersionSchema>
 
 export const catalogComponentSchema = z
   .object({
-    publisher: z.string().regex(publisherHandlePattern),
+    publisher: z
+      .string()
+      .regex(publisherHandlePattern)
+      .refine(isCatalogPublisherHandle, {
+        message: 'Publisher must be registered as a catalog publisher.',
+      }),
     runtime: runtimeSchema,
     slug: z.string().regex(componentSlugPattern),
     displayName: z.string().min(1),
